@@ -1,6 +1,8 @@
 import wx
 import sys
 
+from pieconfig import *
+
 class PieActor:
     '''Class containing the action-directing functions of the main window'''
     
@@ -31,7 +33,7 @@ class PieActor:
     def onAbout(self, evt):
         info = wx.AboutDialogInfo()
         info.AddDeveloper('Raif Sarcich')
-        info.SetVersion('2.0alpha1')
+        info.SetVersion(PIE_VERSION)
         info.SetCopyright('(c) 2010 Raif Sarcich et. al.')
         info.SetLicence(
     '''This program is free software: you can redistribute it and/or modify
@@ -47,11 +49,11 @@ class PieActor:
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.''')
         info.SetDescription(_('A program to download pdf documents from public websites, and catalogue them in BibTeX format'))
-        info.SetName('Pieberry (...for your library)')
+        info.SetName(_('Pieberry (...for your library)'))
         info.SetWebSite('http://members.iinet.net.au/~raifsarcich/pieberry/')
-        # _icon = wx.EmptyIcon()
-        # _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_48.png')))
-        # info.SetIcon(_icon)
+        _icon = wx.EmptyIcon()
+        _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_48.png')))
+        info.SetIcon(_icon)
         wx.AboutBox(info)
 
     def onDiscard(self, evt):
