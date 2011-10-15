@@ -8,7 +8,7 @@ class PieActor:
         pass
 
     def onFind(self, evt):
-        self.ShowSearchPanel()
+        self.ToggleSearchPanel()
 
     def onFindInFolders(self, evt):
         pass

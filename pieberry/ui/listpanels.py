@@ -29,6 +29,8 @@ class BaseListPanel(wx.Panel):
 
     def Repopulate(self, filtertext=None):
         '''repopulate the list from current data, possibly filtering it'''
+        print 'BaseListPanel: Repopulate: filtertext=%s' % filtertext
+        print self.paneltype
         self.ListDisplay.DeleteAllItems()
         for ref, i in self.objectstore.GetNext():
             self.ListDisplay.AddObject(i, ref, filtertext=filtertext)
@@ -54,6 +56,7 @@ class BaseListPanel(wx.Panel):
 
 class WebListPanel(BaseListPanel):
     '''Class for working with web scrapes'''
+    paneltype = 'WebListPanel'
 
     def _setup_data(self):
         self.objectstore = BetterPieObjectStore()
@@ -70,6 +73,7 @@ class WebListPanel(BaseListPanel):
                               self.onSelectionChanged)
 
 class FileListPanel(BaseListPanel):
+    paneltype = 'FileListPanel'
 
     def _setup_data(self):
         self.objectstore = BetterPieObjectStore()
@@ -87,6 +91,8 @@ class FileListPanel(BaseListPanel):
 
 class BibListPanel(BaseListPanel):
     '''Class for displaying and working with bibliographic data'''
+    paneltype = 'BibListPanel'
+
     def _setup_data(self):
         self.objectstore = BetterPieObjectStore()
 

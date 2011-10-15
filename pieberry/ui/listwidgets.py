@@ -103,7 +103,7 @@ class FileListCtrl(BaseListCtrl):
         
     def AddObject(self, obj, ref, statusmsg='Success', 
                   msgtype='success', filtertext=None):
-        print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
+        # print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, (obj.FileData_FileName, obj.FileData_Root)):
             return
         nexidx = self.InsertImageStringItem(
@@ -130,7 +130,7 @@ class BibListCtrl(BaseListCtrl):
         self.AssignImageList(PieImageList, wx.IMAGE_LIST_SMALL)
     
     def AddObject(self, obj, ref, filtertext=None):
-        print 'BibListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
+        # print 'BibListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, 
                      (obj.Author(), str(obj.ReferDate().year), obj.Title())):
             return

@@ -1,2 +1,2 @@
-from mainwindow import BaseMainWindow
-from altmainwindow import AltMainWindow
+#from mainwindow import BaseMainWindow
+from altmainwindow import BaseMainWindow

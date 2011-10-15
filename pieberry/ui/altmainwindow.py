@@ -1,6 +1,6 @@
 import wx
-import wx.lib.agw.aui as wxaui
-#import wx.aui as wxaui
+#import wx.lib.agw.aui as wxaui
+import wx.aui as wxaui
 
 from events import *
 from searchpanel import *
@@ -9,7 +9,7 @@ from contextpanel import *
 from listpanels import BibListPanel, WebListPanel, FileListPanel
 from actor import PieActor
 
-class AltMainWindow(wx.Frame, PieActor):
+class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
         # begin wxGlade: GladeMainWindow.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -110,8 +110,8 @@ class AltMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.onPageReference, self.menu_pageref)
         self.Bind(wx.EVT_MENU, self.onEmptyReference, self.menu_emptyref)
         self.Bind(wx.EVT_MENU, self.onShowManual, self.menu_manual)
-        self.Bind(wx.EVT_MENU, self.ShowWebPanel, self.menu_scan_web_page)
-        self.Bind(wx.EVT_MENU, self.ShowFilterPanel, self.menu_filter)
+        self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
+        self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
 
         self.menu_savebibs.Enable(False)
         self.menu_discard.Enable(False)
@@ -164,18 +164,34 @@ class AltMainWindow(wx.Frame, PieActor):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
 
     def onChangeTab(self, event): # wxGlade: GladeMainWindow.<event_handler>
-        print "Event handler `onChangeTab' not implemented!"
-        print self.TabBook.GetSelection()
+        if self.FilterPanel: 
+            self.ToggleFilterPanel()
+            self.ClearFiltering(event.OldSelection)
+        # print event.OldSelection
+        # print 'onChangeTab captures new: %s old: %s' % (
+        #     self.TabBook.GetPage(event.Selection).paneltype,
+        #     self.TabBook.GetPage(event.OldSelection).paneltype
+        #     )
+        if self.SearchPanel: self.ToggleSearchPanel()
 
     def onNewContextToShow(self, evt):
         # print 'mainwindow: onNewContextToShow'
         self.ContextPane.SetObject(evt.pieobject)
 
-    def ShowFilterPanel(self, evt=0):
+    def ClearFiltering(self, pageref=None):
+        '''Clear filtering on current page'''
+        if pageref == None:
+            pan = self.TabBook.GetPage(self.TabBook.GetSelection())
+        else:
+            pan = self.TabBook.GetPage(pageref)
+        pan.Repopulate()
+
+    def ToggleFilterPanel(self, evt=0):
         if self.FilterPanel:
             spinfo = self._mgr.GetPane(self.FilterPanel)
             self._mgr.ClosePane(spinfo)
             self._mgr.Update()
+            self.ClearFiltering()
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
@@ -183,12 +199,12 @@ class AltMainWindow(wx.Frame, PieActor):
         self.FilterPanel = FilterToolsPanel(self)
         self._mgr.AddPane(
             self.FilterPanel, 
-            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Filter')).DestroyOnClose(True)
+            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Filter Current View')).DestroyOnClose(True)
             )
         self._mgr.Update()
         self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.tab0.onFilterView)
 
-    def ShowSearchPanel(self, evt=0):
+    def ToggleSearchPanel(self, evt=0):
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
             self._mgr.ClosePane(spinfo)
@@ -200,11 +216,11 @@ class AltMainWindow(wx.Frame, PieActor):
         self.SearchPanel = SearchToolsPanel(self)
         self._mgr.AddPane(
             self.SearchPanel, 
-            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Search')).DestroyOnClose(True)
+            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('New Search')).DestroyOnClose(True)
             )
         self._mgr.Update()
         
-    def ShowWebPanel(self, evt=0):
+    def ToggleWebPanel(self, evt=0):
         if self.WebPanel:
             wpinfo = self._mgr.GetPane(self.WebPanel)
             self._mgr.ClosePane(wpinfo)
