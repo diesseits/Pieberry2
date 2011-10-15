@@ -1,0 +1,7 @@
+import wx
+
+class SearchToolsPanel(wx.Panel):
+    '''Generic search tools panel'''
+    def __init__(self, parent):
+        wx.Panel.__init__(self, parent=parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL)
+

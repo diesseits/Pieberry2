@@ -1,0 +1,88 @@
+#GPLv3 Raif Sarcich 2011
+
+from pieobject import PieObject
+
+class EmptyStoreError(Exception):
+    value = ''
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+class RangeStoreError(Exception):
+    value = ''
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+
+class PieObjectStore:
+    #NB: overload __len__ to enable length checking
+
+    def __init__(self):
+        pass
+
+    def Add(self, obj):
+        print 'PieObjectStore: not implemented: Add'
+
+    def GetNext(self):
+        print 'PieObjectStore: not implemented: GetNext'
+
+    def GetByCollectionIndex(self):
+        '''Reference object within the object store'''
+        print 'PieObjectStore: not implemented: GetByCollectionIndex'
+
+    def GetByObjectIndex(self):
+        '''Reference object by DB index'''
+        print 'PieObjectStore: not implemented: GetByObjectIndex'
+
+
+class SimplePieObjectStore(PieObjectStore):
+    currentindex = -1
+    maxindex = -1
+
+    def __init__(self):
+        self.store = []
+
+    def __len__(self):
+        return len(self.store)
+
+    def __str__(self):
+        return "<SimplePieObjectStore with %d items>" % len(self.store)
+
+    def __getitem__(self, itm):
+        print itm
+        return self.store[itm]
+
+    def Add(self, obj):
+        self.store.append(obj)
+        return len(self.store)-1
+
+    def GetNext(self):
+        if len(self.store) == 0:
+            raise EmptyStoreError
+        if len(self.store) < self.currentitem:
+            raise RangeStoreError
+        if self.currentindex == -1:
+            self.currentindex = 0
+            yield self.store[0]
+        elif self.currentindex == len(self.store):
+            return
+        else:
+            yield self.store[self.currentitem]
+            self.currentitem += 1
+        
+    def GetByCollectionIndex(self, idx):
+        if idx < 0: raise ValueError
+        if len(self.store) < idx:
+            raise RangeStoreError
+        self.currentitem = idx
+        return self.store[idx]
+            
+
+
+class QueryPieObjectStore:
+
+    def __init__(self):
+        pass

@@ -1,0 +1,7 @@
+#GPLv3 Raif Sarcich 2011
+
+class TagHandler:
+    '''tag functionality'''
+
+    def add_tag(tag):
+        self.tags.append(tag)

@@ -1,0 +1,41 @@
+import wx
+
+
+class PieActor:
+    '''Class containing the action-directing functions of the main window'''
+    
+    def __init__(self):
+        pass
+
+    def onFindInFolders(self, evt):
+        pass
+
+    def onDesktopProcess(self, evt):
+        pass
+    
+    def onDesktopSettings(self, evt):
+        pass
+
+    def onSaveBibs(self, evt):
+        pass
+
+    def onClose(self, evt):
+        pass
+
+    def onConfig(self, evt):
+        pass
+
+    def onAbout(self, evt):
+        pass
+
+    def onDiscard(self, evt):
+        pass
+
+    def onPageReference(self, evt):
+        pass
+
+    def onEmptyReference(self, evt):
+        pass
+
+    def onShowManual(self, evt):
+        pass

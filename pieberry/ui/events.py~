@@ -1,0 +1,4 @@
+import wx
+import wx.lib.newevent
+
+PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()

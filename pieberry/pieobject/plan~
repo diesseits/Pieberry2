@@ -1,0 +1,64 @@
+Plan for fundamental object
+
+* pieObject Plan
+
+** Methods of interest
+
+*** MakeBibData(type=unic, key=unic)
+    - Crunches available data and sets bibliography data
+    - Will need to utilise PybTex for author field at least
+    - Set fundamental fields as priority
+
+*** SetFileLocation(loc)
+    - Needs to set a variety of fields appropriately when file is moved
+    - Keep in mind movement to/from staging areas
+
+** Property fields
+
+|---------------+----------------+--------+--------------------------------------------|
+| PropertyGroup | Property       | Type   | Explanation                                |
+|---------------+----------------+--------+--------------------------------------------|
+| Referability  |                |        | Flags for establishing what type of obj    |
+|               | *HasLocalFile  | bool   | there is a corresponding local file        |
+|               | *HasWebRef     | bool   | there is a corresponding web reference     |
+|               | *HasPhysLoc    | bool   | there is a corresponding physical location |
+|               | OpenedCount    | int    | Number of times document opened/interacted |
+|               | IsFavourite    | bool   | Marked as favourite document               |
+| Fundamental   |                |        | Essential fields                           |
+|               | *Title()       | unic   |                                            |
+|               | *Author()      | unic   |                                            |
+|               | *ReferDate()   | pydate | Default date to refer to                   |
+|               | *Tags          | list   | List of tags for this object               |
+|               | DocType        | unic   | Type of document (for fs struct)           |
+|               | CorpAuthor     | bool   | Corporate author                           |
+| BibData       |                |        | BibTeX related data                        |
+|               | BibtexKey      | unic   | Bibtex key                                 |
+|               | BibtexType     | unic   | Bibtex entry type                          |
+| -- Fields     | [various]      | n/a    | Various BibTex Fields                      |
+|               |                |        |                                            |
+| MetaData      |                |        | General metadata                           |
+|               |                |        |                                            |
+| FileSysData   |                |        | Filesystem data                            |
+|               | *FileName      | unic   | Filename                                   |
+|               | *Date          | pydate | File date (generic/preferred)              |
+|               | DateCreated    | pydate | File creation date                         |
+|               | DateModified   | pydate | File modification date                     |
+|               | *Folder        | list   | List of subfolders to root                 |
+|               | *Root          | unic   | Projects, library or staging systems       |
+|               | *Blocked       | bool   | Blocked by process                         |
+|               | *FullPath      | unic   | Full path to file (system specific)        |
+| WebData       |                |        | Web resource (origin) data                 |
+|               | *Url           | unic   | Url (generic/preferred)                    |
+|               | PageUrl        | unic   | Referring page url                         |
+|               | PageTitle      | unic   | Title of page                              |
+|               | DocUrl         | unic   | Specific document url (hard coded)         |
+|               | DateDownloaded | pydate | Date downloaded                            |
+|               | LinkText       | unic   | Alt text of the source link                |
+|               | LastHeading    | unic   | Last heading preceding link                |
+|               | SiteOwner      | unic   | Referring site owner                       |
+| PhysicalData  |                |        | Relating to physical objects               |
+|               | PhysType       | unic   | Physical object type                       |
+|               | LocDesc        | unic   | Description of physical location           |
+|               | LocType        | unic   | Type of location (e.g. library)            |
+|               | Dewey          | unic   | Dewey system assignment                    |
+|               | ISBN           | unic   | ISBN                                       |

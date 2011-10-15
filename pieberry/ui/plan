@@ -1,0 +1,16 @@
+need:
+
+Main window
+(Context panel on right)
+
+Tab view
+A variety of panels that can be used:
+
+Download manager panel
+|- file input panel (use for desktop cleaner too)
+
+Database (library) search panel
+File search panel
+
+Open searches in new (named) tabs
+
