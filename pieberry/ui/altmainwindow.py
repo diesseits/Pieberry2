@@ -20,6 +20,7 @@ class BaseMainWindow(wx.Frame, PieActor):
 
         self.ContextPane = SimpleContextPanel(self, -1)
         self.TabBook = wxaui.AuiNotebook(self, -1)
+        # self.TabBook.SetMinSize((500,500))
 
         # Menu Bar
         menuBar = wx.MenuBar()
@@ -148,17 +149,10 @@ class BaseMainWindow(wx.Frame, PieActor):
             _("Context"))
         self._mgr.Update()
         
-        self.tab0 = BibListPanel(self.TabBook)
-        self.tab1 = WebListPanel(self.TabBook)
-        self.tab2 = FileListPanel(self.TabBook)
-
-        self.TabBook.AddPage(self.tab0, "Bib Tab")
-        self.TabBook.AddPage(self.tab1, "Web Tab")
-        self.TabBook.AddPage(self.tab2, "File Tab")
-
-        self.tab0.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.tab1.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.tab2.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        # Testing
+        self.OpenSearchPane()
+        # End testing
+        
 
     def _do_bindings(self):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
@@ -177,6 +171,9 @@ class BaseMainWindow(wx.Frame, PieActor):
     def onNewContextToShow(self, evt):
         # print 'mainwindow: onNewContextToShow'
         self.ContextPane.SetObject(evt.pieobject)
+
+    def GetCurrentPane(self):
+        return self.TabBook.GetPage(self.TabBook.GetSelection())
 
     def ClearFiltering(self, pageref=None):
         '''Clear filtering on current page'''
@@ -202,7 +199,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Filter Current View')).DestroyOnClose(True)
             )
         self._mgr.Update()
-        self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.tab0.onFilterView)
+        self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.GetCurrentPane().onFilterView)
 
     def ToggleSearchPanel(self, evt=0):
         if self.SearchPanel:
@@ -219,6 +216,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('New Search')).DestroyOnClose(True)
             )
         self._mgr.Update()
+        self.SearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.doSearch)
+
         
     def ToggleWebPanel(self, evt=0):
         if self.WebPanel:
@@ -232,6 +231,22 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Top().MinSize((300,120)).Floatable(False).DestroyOnClose(True)
             )
         self._mgr.Update()
+
+    def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
+        tab = BibListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption)
+
+    def OpenWebPane(self, evt=0, ostore=None, caption=_('Web Scrape')):
+        tab = WebListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption)
+
+    def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
+        tab = FileListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption)
+       
 
 # end of class GladeMainWindow
 

@@ -69,4 +69,6 @@ class PieActor:
         pass
 
     def doSearch(self, evt):
-        pass
+        print 'Actor: doSearch: %s' % evt.searchtext
+        self.OpenSearchPane(caption=evt.searchtext[:20])
+

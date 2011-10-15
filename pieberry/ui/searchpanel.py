@@ -36,17 +36,17 @@ class SearchToolsPanel(wx.Panel):
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
         self.filterchoice = wx.Choice(self, -1)
-        self.closebutton = wx.BitmapButton(
-            self, -1, 
-            wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 
-                                     wx.ART_TOOLBAR, (16, 16)), 
-            style=wx.NO_BORDER)
+        # self.closebutton = wx.BitmapButton(
+        #     self, -1, 
+        #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 
+        #                              wx.ART_TOOLBAR, (16, 16)), 
+        #     style=wx.NO_BORDER)
 
         hsizer_top.Add(lbl, 0, wx.ALL, 5)
         hsizer_top.Add(self.originchoice, 0, wx.ALL, 5)
         hsizer_top.Add(self.searchctrl, 1, wx.ALL, 5)
         hsizer_top.Add(self.filterchoice, 0, wx.ALL, 5)
-        hsizer_top.Add(self.closebutton, 0, wx.ALL, 5)
+        # hsizer_top.Add(self.closebutton, 0, wx.ALL, 5)
 
         sizer.Add(hsizer_top, 1, wx.EXPAND, 0)
         self.SetSizer(sizer)
@@ -54,7 +54,7 @@ class SearchToolsPanel(wx.Panel):
 
         self.searchctrl.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch)
         self.searchctrl.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
-        self.closebutton.Bind(wx.EVT_BUTTON, self.OnClose)
+        # self.closebutton.Bind(wx.EVT_BUTTON, self.OnClose)
 
         self.searchctrl.SetFocus()
 
@@ -70,7 +70,8 @@ class SearchToolsPanel(wx.Panel):
         print 'GetSearch'
 
     def OnSearch(self, evt):
-        print "OnSearch"
+        newevt = PieSearchEvent(searchtext=self.searchctrl.GetValue())
+        wx.PostEvent(self, newevt)
 
     def OnClose(self, evt):
         print "OnClose"
