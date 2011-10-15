@@ -1,8 +1,9 @@
-import wx, wx.aui
+import wx
+import wx.lib.agw.aui as wxaui
+#import wx.aui as wxaui
 
 from events import *
 from searchpanel import *
-from tabpanel import *
 from webpanel import *
 from contextpanel import *
 from listpanels import BibListPanel, WebListPanel, FileListPanel
@@ -14,11 +15,11 @@ class AltMainWindow(wx.Frame, PieActor):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
 
-        self._mgr = wx.aui.AuiManager(self)
+        self._mgr = wxaui.AuiManager(self)
 
 
         self.ContextPane = SimpleContextPanel(self, -1)
-        self.TabBook = wx.aui.AuiNotebook(self, -1)
+        self.TabBook = wxaui.AuiNotebook(self, -1)
 
         # Menu Bar
         menuBar = wx.MenuBar()
@@ -139,11 +140,11 @@ class AltMainWindow(wx.Frame, PieActor):
     def __do_layout(self):
         self._mgr.AddPane(
             self.TabBook, 
-            wx.aui.AuiPaneInfo().Center().CloseButton(False).Gripper(False), 
+            wxaui.AuiPaneInfo().Center().CloseButton(False).Gripper(False), 
             "Tab Book")
         self._mgr.AddPane(
             self.ContextPane, 
-            wx.aui.AuiPaneInfo().Right().MinSize((200,200)).Floatable(False).CaptionVisible(True),
+            wxaui.AuiPaneInfo().Right().MinSize((200,200)).Floatable(False).CaptionVisible(True),
             _("Context"))
         self._mgr.Update()
         
@@ -160,7 +161,7 @@ class AltMainWindow(wx.Frame, PieActor):
         self.tab2.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
 
     def _do_bindings(self):
-        self.TabBook.Bind(wx.aui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
+        self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
 
     def onChangeTab(self, event): # wxGlade: GladeMainWindow.<event_handler>
         print "Event handler `onChangeTab' not implemented!"
@@ -182,7 +183,7 @@ class AltMainWindow(wx.Frame, PieActor):
         self.FilterPanel = FilterToolsPanel(self)
         self._mgr.AddPane(
             self.FilterPanel, 
-            wx.aui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Filter')).DestroyOnClose(True)
+            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Filter')).DestroyOnClose(True)
             )
         self._mgr.Update()
         self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.tab0.onFilterView)
@@ -199,7 +200,7 @@ class AltMainWindow(wx.Frame, PieActor):
         self.SearchPanel = SearchToolsPanel(self)
         self._mgr.AddPane(
             self.SearchPanel, 
-            wx.aui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Search')).DestroyOnClose(True)
+            wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('Search')).DestroyOnClose(True)
             )
         self._mgr.Update()
         
@@ -212,7 +213,7 @@ class AltMainWindow(wx.Frame, PieActor):
         self.WebPanel = WebScrapePanel(self)
         self._mgr.AddPane(
             self.WebPanel, 
-            wx.aui.AuiPaneInfo().Top().MinSize((300,120)).Floatable(False).DestroyOnClose(True)
+            wxaui.AuiPaneInfo().Top().MinSize((300,120)).Floatable(False).DestroyOnClose(True)
             )
         self._mgr.Update()
 
