@@ -1,7 +1,0 @@
-import wx
-
-class BaseContextPanel(wx.Panel):
-    '''Class for generic forms of context'''
-    def __init__(self, parent):
-        wx.Panel.__init__(
-            self, parent=parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL)
