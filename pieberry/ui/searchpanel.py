@@ -70,7 +70,7 @@ class SearchToolsPanel(wx.Panel):
         print 'GetSearch'
 
     def OnSearch(self, evt):
-        newevt = PieSearchEvent(searchtext=self.searchctrl.GetValue())
+        newevt = PieSearchEvent(searchtext=unicode(self.searchctrl.GetValue()))
         wx.PostEvent(self, newevt)
 
     def OnClose(self, evt):

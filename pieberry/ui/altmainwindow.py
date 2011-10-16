@@ -1,13 +1,15 @@
 import wx
-#import wx.lib.agw.aui as wxaui
+import wx.lib.agw.aui as wxauip
+# import wx.lib.agw.flatnotebook as fnb
 import wx.aui as wxaui
 
 from events import *
 from searchpanel import *
 from webpanel import *
 from contextpanel import *
-from listpanels import BibListPanel, WebListPanel, FileListPanel
+from listpanels import *
 from actor import PieActor
+
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -17,10 +19,12 @@ class BaseMainWindow(wx.Frame, PieActor):
 
         self._mgr = wxaui.AuiManager(self)
 
-
         self.ContextPane = SimpleContextPanel(self, -1)
-        self.TabBook = wxaui.AuiNotebook(self, -1)
+        # self.TabPane = NBPanel(self)
+        # self.TabBook = self.TabPane.nb
+        self.TabBook = wxauip.AuiNotebook(self, -1)
         # self.TabBook.SetMinSize((500,500))
+        # self.TabBook = fnb.FlatNotebook(self, -1)
 
         # Menu Bar
         menuBar = wx.MenuBar()
@@ -148,7 +152,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Right().MinSize((200,200)).Floatable(False).CaptionVisible(True),
             _("Context"))
         self._mgr.Update()
-        
+        # self.TabBook.SetMinSize(self.TabPane.sizer.GetSize())
         # Testing
         self.OpenSearchPane()
         # End testing
@@ -210,6 +214,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         if self.FilterPanel:
             spinfo = self._mgr.GetPane(self.FilterPanel)
             self._mgr.ClosePane(spinfo)
+            self.ClearFiltering()
         self.SearchPanel = SearchToolsPanel(self)
         self._mgr.AddPane(
             self.SearchPanel, 
@@ -218,7 +223,6 @@ class BaseMainWindow(wx.Frame, PieActor):
         self._mgr.Update()
         self.SearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.doSearch)
 
-        
     def ToggleWebPanel(self, evt=0):
         if self.WebPanel:
             wpinfo = self._mgr.GetPane(self.WebPanel)
@@ -233,9 +237,19 @@ class BaseMainWindow(wx.Frame, PieActor):
         self._mgr.Update()
 
     def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
+        # if self.SearchPanel:
         tab = BibListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.TabBook.AddPage(tab, caption)
+        self.TabBook.AddPage(tab, caption, select=True)
+        # self._mgr.Update()
+        # if self.SearchPanel:
+        #     # self.SearchPanel.Unbind(EVT_PIE_SEARCH_EVENT)
+        #     spinfo = self._mgr.GetPane(self.SearchPanel)
+        #     # self.SearchPanel.Destroy()
+        #     self._mgr.ClosePane(spinfo)
+        #     self._mgr.Update()
+        # if self.SearchPanel:
+        #     self.ToggleSearchPanel()
 
     def OpenWebPane(self, evt=0, ostore=None, caption=_('Web Scrape')):
         tab = WebListPanel(self.TabBook)

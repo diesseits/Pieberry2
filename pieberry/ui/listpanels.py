@@ -17,6 +17,15 @@ class BaseListPanel(wx.Panel):
         self._do_layout()
         self._do_bindings()
 
+    def _setup_data(self):
+        pass
+
+    def _do_layout(self):
+        pass
+
+    def _do_bindings(self):
+        pass
+
     def AddObjects(self, ostore):
         self.ListDisplay.DeleteAllItems()
         self.objectstore = ostore
@@ -106,7 +115,8 @@ class BibListPanel(BaseListPanel):
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
         self.sizer0.Add(self.sizer1)
         self.SetSizer(self.sizer0)
-        self.Layout()
+        # self.Layout()
+
 
     def _do_bindings(self):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
@@ -115,7 +125,6 @@ class BibListPanel(BaseListPanel):
                               self.onSelectionChanged)
         self.DelButton.Bind(wx.EVT_BUTTON,
                             self.onDeleteItem)
-
 
     def onSelectionActivated(self, evt):
         print 'BibListPanel.onSelectionActivated'

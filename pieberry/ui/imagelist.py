@@ -1,11 +1,11 @@
 import wx
 import os
-from pieconfig.globals import *
+from pieconfig.paths import *
 
-### For test purposes only
-if TEST:
-    IMGDIR = os.path.join(os.getcwd(), 'ui')
-### 
+# ### For test purposes only
+# if TEST:
+#     IMGDIR = os.path.join(os.getcwd(), 'ui')
+# ### 
 
 PieImageList = wx.ImageList(16, 16)
 

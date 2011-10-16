@@ -99,7 +99,7 @@ class FileListCtrl(BaseListCtrl):
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
-        self.AssignImageList(PieImageList, wx.IMAGE_LIST_SMALL)
+        self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
         
     def AddObject(self, obj, ref, statusmsg='Success', 
                   msgtype='success', filtertext=None):
@@ -127,7 +127,7 @@ class BibListCtrl(BaseListCtrl):
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
-        self.AssignImageList(PieImageList, wx.IMAGE_LIST_SMALL)
+        self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
     
     def AddObject(self, obj, ref, filtertext=None):
         # print 'BibListCtrl: AddObject at %d, %s' % (self.currentitem, obj)

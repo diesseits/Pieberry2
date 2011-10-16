@@ -2,12 +2,20 @@ import wx, wx.aui
 
 from events import *
 from searchpanel import *
-from tabpanel import *
 from webpanel import *
 from contextpanel import *
 from listpanels import BibListPanel, WebListPanel, FileListPanel
+from actor import *
 
-class BaseMainWindow(wx.Frame):
+# class NBPanel(wx.Panel):
+#     def __init__(self, parent):
+#         wx.Panel.__init__(self, parent=parent, id=wx.ID_ANY)
+#         self.nb = wxaui.AuiNotebook(self)
+#         self.sizer = wx.BoxSizer(wx.VERTICAL)
+#         self.sizer.Add(self.nb, 1, wx.EXPAND)
+#         self.SetSizer(self.sizer)
+
+class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
         # begin wxGlade: GladeMainWindow.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -63,9 +71,12 @@ class BaseMainWindow(wx.Frame):
         sizer_1.Add(self.SplitterWindow, 1, wx.EXPAND, 0)
         # end wxGlade
 
-        self.tab0 = BibListPanel(self.TabBook)
-        self.tab1 = WebListPanel(self.TabBook)
-        self.tab2 = FileListPanel(self.TabBook)
+        self.tab0 = wx.Panel(self.TabBook)
+        self.tab1 = wx.Panel(self.TabBook)
+        self.tab2 = wx.Panel(self.TabBook)
+        # self.tab0 = BibListPanel(self.TabBook)
+        # self.tab1 = WebListPanel(self.TabBook)
+        # self.tab2 = FileListPanel(self.TabBook)
         # tab2 = ManagedTabPanel(self.TabBook)
         # tab3 = GeneralRedrawablePanel(self.TabBook)
 
@@ -82,6 +93,9 @@ class BaseMainWindow(wx.Frame):
         self.tab1.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         self.tab2.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
 
+        self.SearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.doSearch)
+
+
     def onChangeTab(self, event): # wxGlade: GladeMainWindow.<event_handler>
         print "Event handler `onChangeTab' not implemented!"
         event.Skip()
@@ -89,6 +103,18 @@ class BaseMainWindow(wx.Frame):
     def onNewContextToShow(self, evt):
         # print 'mainwindow: onNewContextToShow'
         self.ContextPane.SetObject(evt.pieobject)
+
+    def GetCurrentPane(self):
+        return self.TabBook.GetPage(self.TabBook.GetSelection())
+
+    def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
+        # if self.SearchPanel:
+        #     self.ToggleSearchPanel()
+        # tab = wx.StaticText(self.TabBook, -1, "hello")
+        tab = BibListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption, select=True)
+
 
 # end of class GladeMainWindow
 

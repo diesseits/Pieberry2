@@ -68,7 +68,8 @@ class BetterPieObjectStore(PieObjectStore):
 
     def GetNext(self):
         if len(self.store) == 0:
-            raise EmptyStoreError
+            # raise EmptyStoreError
+            return
         for ky, vl in self.store.items():
             if vl == None:
                 continue
