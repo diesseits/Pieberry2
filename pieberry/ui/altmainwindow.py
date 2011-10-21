@@ -18,8 +18,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         wx.Frame.__init__(self, *args, **kwds)
 
         self._mgr = wxaui.AuiManager(self)
-
         self.ContextPane = SimpleContextPanel(self, -1)
+
         # self.TabPane = NBPanel(self)
         # self.TabBook = self.TabPane.nb
         self.TabBook = wxauip.AuiNotebook(self, -1)
@@ -32,6 +32,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         toolMenu = wx.Menu()
         locateMenu = wx.Menu()
         gatherMenu = wx.Menu()
+        viewMenu = wx.Menu()
         helpMenu = wx.Menu()
         atomMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
@@ -78,6 +79,9 @@ class BaseMainWindow(wx.Frame, PieActor):
             gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'))
         self.menu_filter = wx.MenuItem(
             locateMenu, -1, _('Fi&lter\tCtrl-i'))
+        self.menu_toggle_context = wx.MenuItem(
+            viewMenu, -1, _('&Toggle context panel'))
+        self.menu_toggle_context.SetCheckable(True)
 
         fileMenu.AppendItem(self.menu_savebibs)
         fileMenu.AppendItem(self.menu_discard)
@@ -94,11 +98,13 @@ class BaseMainWindow(wx.Frame, PieActor):
         locateMenu.AppendItem(self.menu_find_in_folders)
         locateMenu.AppendItem(self.menu_filter)
         gatherMenu.AppendItem(self.menu_atom_process)
+        viewMenu.AppendItem(self.menu_toggle_context)
         menuBar.Append(fileMenu, '&File')
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
         # menuBar.Append(toolMenu, '&Tools')
         # menuBar.Append(atomMenu, '&Desktop cleaner')
+        menuBar.Append(viewMenu, '&View')
         menuBar.Append(helpMenu, '&Help')
         self.SetMenuBar(menuBar)
         # self.SetAutoLayout(True)
@@ -117,6 +123,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.onShowManual, self.menu_manual)
         self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
+        self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
 
         self.menu_savebibs.Enable(False)
         self.menu_discard.Enable(False)
@@ -151,6 +158,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             self.ContextPane, 
             wxaui.AuiPaneInfo().Right().MinSize((200,200)).Floatable(False).CaptionVisible(True),
             _("Context"))
+        self.menu_toggle_context.Check()
+        self.ContextPane.Bind(wxaui.EVT_AUI_PANE_CLOSE, self.menu_toggle_context.Toggle)
         self._mgr.Update()
         # self.TabBook.SetMinSize(self.TabPane.sizer.GetSize())
         # Testing
@@ -186,6 +195,15 @@ class BaseMainWindow(wx.Frame, PieActor):
         else:
             pan = self.TabBook.GetPage(pageref)
         pan.Repopulate()
+
+    def ToggleContextPanel(self, evt):
+        pan = self._mgr.GetPane(self.ContextPane)
+        if pan.IsShown() and not evt.IsChecked():
+            pan.Hide()
+            self._mgr.Update()
+        elif evt.IsChecked() and not pan.IsShown():
+            pan.Show()
+            self._mgr.Update()
 
     def ToggleFilterPanel(self, evt=0):
         if self.FilterPanel:
