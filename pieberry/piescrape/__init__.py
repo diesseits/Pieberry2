@@ -1,9 +1,9 @@
 #GPLv3 Raif Sarcich 2011
 
 from threading import Thread
-from scraper import Scraper
+from scraper import PieScraper
 
-class ScraperThread(Thread, Scraper):
+class PieScraperThread(Thread, PieScraper):
 
     def __init__(self, notify_window, url):
         Thread.__init__(self)

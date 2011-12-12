@@ -1,4 +1,6 @@
-import wx
+import wx, time
+from validators import *
+from events import PieWebScrapeEvent
 
 class WebScrapePanel(wx.Panel):
     '''Generic search tools panel'''
@@ -17,7 +19,7 @@ class WebScrapePanel(wx.Panel):
         self.pasteButton.SetToolTip(tt7)
 
         self.urlField = wx.TextCtrl(
-            self, -1, size=self._DEF_WIDTH, #validator = pieUrlValidator(), 
+            self, -1, size=self._DEF_WIDTH, validator = pieUrlValidator(), 
             style=wx.TE_PROCESS_ENTER|wx.TE_BESTWRAP)
         self.urlField.ChangeValue('http://')
         self.urlField.SetBackgroundColour("pink")
@@ -28,7 +30,7 @@ class WebScrapePanel(wx.Panel):
 
         self.authorField = wx.ComboBox(
             self, -1, size=self._DEF_WIDTH, #choices=dirlist, 
-            #validator=piePlainTextValidator(), 
+            validator=piePlainTextValidator(), 
             style=wx.EXPAND|wx.CB_DROPDOWN)
         tt2 = wx.ToolTip(
             '''Generic "author" to use for downloaded documents. 
@@ -44,7 +46,7 @@ subdirectory in which to store these documents.''')
 
         self.tagField = wx.TextCtrl(
             self, -1, size=self._DEF_WIDTH, 
-            #validator=piePlainTextValidator(), style=wx.EXPAND
+            validator=piePlainTextValidator(), style=wx.EXPAND
             )
         tt3 = wx.ToolTip(_('Category tag and second level subdirectory for downloaded documents.'))
         self.tagField.SetToolTip(tt3)
@@ -89,3 +91,98 @@ subdirectory in which to store these documents.''')
 
         self.SetSizer(sizer0)
         self.Layout()
+        self.urlField.SetFocus()
+        self._do_bindings()
+
+    def _do_bindings(self):
+        '''bind various events'''
+        self.scrape_in_progress = False
+        self.authorField.Bind(wx.EVT_TEXT, self.onAuthorValidate)
+        self.tagField.Bind(wx.EVT_TEXT, self.onTagValidate)
+        self.urlField.Bind(wx.EVT_TEXT_ENTER, self.onScan)
+        self.scanButton.Bind(wx.EVT_BUTTON, self.onWebPanelAction)
+        self.urlField.Bind(wx.EVT_TEXT, self.onUrlTextChanged)
+        self.pasteButton.Bind(wx.EVT_BUTTON, self.onPasteButton)
+
+    def onWebPanelAction(self, evt):
+        '''sort out what sort of action is required - scrape or abort'''
+        if self.scrape_in_progress:
+            self.onAbort(0)
+        else:
+            self.onScan(0)
+        
+    def LockPanel(self, tf):
+        '''Substitute for Enable() - (un)lock things that need (un)locking, 
+        takes boolean'''
+        if tf: tf = False 
+        else: tf = True
+        self.urlField.Enable(tf)
+        self.tagField.Enable(tf)
+        self.authorField.Enable(tf)
+        self.pfUseChoice.Enable(tf)
+        self.corpAuthorCb.Enable(tf)
+
+    def GetData(self, evt=0):
+        '''return the current user entered data on the panel'''
+        self.sc_url = self.urlField.GetValue().strip()
+        self.sc_tag = self.tagField.GetValue().strip()
+        self.sc_auth = self.authorField.GetValue().strip()
+        self.sc_tagbehav = self.use_choice_lookup[self.pfUseChoice.GetCurrentSelection()]
+        self.sc_corpauth = self.corpAuthorCb.IsChecked()
+        if not (self.urlField.GetValidator().Validate() and self.authorField.GetValidator().Validate() and self.tagField.GetValidator().Validate()):
+            raise Exception, "Invalid data for this operation"
+        return (self.sc_url,
+                self.sc_tag,
+                self.sc_auth,
+                self.sc_tagbehav,
+                self.sc_corpauth
+                )
+        
+    def onScan(self, evt):
+        '''set of actions to perform to do a web scrape'''
+        print 'webpanel.OnGo'
+        self.GetData()
+        self.LockPanel(True)
+        self.scanButton.SetLabel(_('Abort'))
+        self.scrape_in_progress = True
+        newevt = PieWebScrapeEvent(
+            url = self.sc_url,
+            catstring = self.sc_tag,
+            catbehaviour = self.sc_tagbehav,
+            author = self.sc_auth,
+            authoriscorporate = self.sc_corpauth
+            )
+        wx.PostEvent(self, newevt)
+
+    def Aborted(self, evt=0):
+        '''when abort is confirmed'''
+        self.LockPanel(False)
+        self.scanButton.SetLabel(_('Scan'))
+        self.scrape_in_progress = False
+
+    def onAbort(self, evt):
+        '''when user says to abort'''
+        # in future: send event to terminate thread
+        self.Aborted()
+
+    def onPasteButton(self, evt):
+        if not wx.TheClipboard.IsOpened():
+            wx.TheClipboard.Open()
+            do = wx.TextDataObject()
+            success = wx.TheClipboard.GetData(do)
+            wx.TheClipboard.Close()
+            if success:
+                self.urlField.SetValue(do.GetText())
+
+    def onAuthorValidate(self, evt=1):
+        self.authorField.GetValidator().Validate()
+        self.authorField.Refresh()
+
+    def onTagValidate(self, evt=1):
+        self.tagField.GetValidator().Validate()
+        self.tagField.Refresh()
+
+    def onUrlTextChanged(self, evt=1):
+        self.url_text_last_changed = time.time()
+        self.urlField.GetValidator().Validate()
+        self.urlField.Refresh() 

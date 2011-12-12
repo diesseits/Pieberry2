@@ -14,7 +14,9 @@ if __name__ == '__main__':
     wx.InitAllImageHandlers()
 
 from pieobject import *
-from ui import BaseMainWindow
+from piescrape import *
+#from ui import BaseMainWindow
+from functionwindow import FunctionMainWindow
 from spoofgeneration import *
 
 def test():
@@ -24,7 +26,7 @@ def test():
         print o
 
 if __name__ == '__main__':
-    frame_1 = BaseMainWindow(None, -1, "")
+    frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
     for i in range(5):

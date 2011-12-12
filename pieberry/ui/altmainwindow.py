@@ -37,42 +37,42 @@ class BaseMainWindow(wx.Frame, PieActor):
         atomMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
             fileMenu, -1, 
-            '&Save Bibliography Changes') # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
+            _('&Save Bibliography Changes')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
         self.menu_savebibs.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_MENU, (16, 16)))
         self.menu_discard = wx.MenuItem(
             fileMenu, -1, 
-            '&Discard Bibliography Changes', 'Discard')
+            _('&Discard Bibliography Changes'), _('Discard'))
         self.menu_quit = wx.MenuItem(
-            fileMenu, -1, '&Quit\tCtrl-q', 'Quit')
+            fileMenu, -1, _('&Quit\tCtrl-q'), _('Quit'))
         self.menu_quit.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_QUIT, wx.ART_MENU))
-        self.menu_config = wx.MenuItem(fileMenu, -1, 'S&ettings', 'Config')
-        self.menu_about = wx.MenuItem(helpMenu, -1, '&About', 'About')
+        self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Config'))
+        self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About'))
         self.menu_pageref = wx.MenuItem(
             toolMenu, 
             -1, 
-            'Create &reference for top-level page', 
-            'Reference')
+            _('Create &reference for top-level page'), 
+            _('Reference'))
         self.menu_emptyref = wx.MenuItem(
             toolMenu, 
             -1, 
-            '&Create new (empty) bibliography entry\tCtrl-n', 
+            _('&Create new (empty) bibliography entry\tCtrl-n'), 
             'Newref')
         self.menu_emptyref.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_MENU))
-        self.menu_manual = wx.MenuItem(helpMenu, -1, '&Manual')
+        self.menu_manual = wx.MenuItem(helpMenu, -1, _('&Manual'))
         self.menu_find = wx.MenuItem(
-            toolMenu, -1, '&Find items in bibliography\tCtrl-f', 'Find')
+            toolMenu, -1, _('&Find items in bibliography\tCtrl-f'), 'Find')
         self.menu_find.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_atom_process = wx.MenuItem(
-            atomMenu, -1, '&Process files from desktop\tCtrl-m', 'Process')
+            atomMenu, -1, _('&Process files from desktop\tCtrl-m'), 'Process')
         # self.menu_atom_process.SetBitmap(
         #     wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
         self.menu_atom_settings = wx.MenuItem(
-            atomMenu, -1, 'Desktop cleaner settings', 'Settings')
+            atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
         self.menu_find_in_folders = wx.MenuItem(
-            toolMenu, -1, 'F&ind your files\tCtrl-shift-f', 'Findall')
+            toolMenu, -1, _('F&ind your files\tCtrl-shift-f'), 'Findall')
         self.menu_find_in_folders.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_scan_web_page = wx.MenuItem(
@@ -99,13 +99,13 @@ class BaseMainWindow(wx.Frame, PieActor):
         locateMenu.AppendItem(self.menu_filter)
         gatherMenu.AppendItem(self.menu_atom_process)
         viewMenu.AppendItem(self.menu_toggle_context)
-        menuBar.Append(fileMenu, '&File')
+        menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
         # menuBar.Append(toolMenu, '&Tools')
         # menuBar.Append(atomMenu, '&Desktop cleaner')
-        menuBar.Append(viewMenu, '&View')
-        menuBar.Append(helpMenu, '&Help')
+        menuBar.Append(viewMenu, _('&View'))
+        menuBar.Append(helpMenu, _('&Help'))
         self.SetMenuBar(menuBar)
         # self.SetAutoLayout(True)
 
@@ -153,7 +153,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self._mgr.AddPane(
             self.TabBook, 
             wxaui.AuiPaneInfo().Center().CloseButton(False).Gripper(False), 
-            "Tab Book")
+            _("Tab Book"))
         self._mgr.AddPane(
             self.ContextPane, 
             wxaui.AuiPaneInfo().Right().MinSize((200,200)).Floatable(False).CaptionVisible(True),
@@ -252,6 +252,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             self.WebPanel, 
             wxaui.AuiPaneInfo().Top().MinSize((300,120)).Floatable(False).DestroyOnClose(True)
             )
+        self.WebPanel.Bind(EVT_PIE_SCRAPE_EVENT, self.OnWebScrape)
         self._mgr.Update()
 
     def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
@@ -279,6 +280,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         self.TabBook.AddPage(tab, caption)
        
+    def OnWebScrape(self, evt):
+        '''stub function for web scrape events'''
+        print 'altmainwindow.OnWebScrape'
 
 # end of class GladeMainWindow
 

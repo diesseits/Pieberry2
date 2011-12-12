@@ -2,6 +2,14 @@
 
 import os
 
+DOC_CONTEXTS = {
+    'submissions': ['submission'],
+    'appendices': ['appendix', 'attachment', 'annexure'],
+    'media': ['media release', 'media statement', 'bulletin'],
+    'etc': ['agenda'],
+    'notices': ['notice']
+    }
+
 ENTRY_TYPE_CHOICES = {0: '@Misc with url field', 
                       1: '@Misc with \url{} in howpublished',
                       2: '@Misc with \href{} in howpublished', 
@@ -33,6 +41,18 @@ AT_example_struct = {
         }
 }
 
+
+#map file extensions to internal generic types
 FEXTENSIONS = {'pdf': ('.pdf',),
-               'word_doc': ('.doc', '.docx', '.rtf', '.xls', '.xlsx', '.xlsm')
+               'word_doc': ('.doc', '.docx', '.rtf', '.xls', '.xlsx', '.xlsm'),
+               'html': ('.htm', '.html'),
+               'plaintext': ('.txt', '.org')
                }
+
+#map mime types to internal generic types
+MIMEMAP = {'application/pdf': 'pdf',
+           'application/msword': 'word_doc',
+           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word_doc',
+           'application/rtf': 'word_doc',
+           'text/html': 'html',
+           'text/plain': 'plaintext'}
