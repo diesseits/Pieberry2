@@ -57,4 +57,15 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def Url(self):
         return self.WebData_Url
 
-
+    def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor=''):
+        '''Add information gleaned from the document being on the web
+        (in-situ)'''
+        assert type(url) in (str, unicode)
+        assert type(pageurl) in (str, unicode)
+        assert type(linktext) in (str, unicode)
+        self.WebData_Url = url
+        self.WebData_PageUrl = pageurl
+        self.WebData_LinkText = linktext
+        self.title = linktext
+        self.author = defaultauthor
+        

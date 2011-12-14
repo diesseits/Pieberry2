@@ -273,7 +273,8 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenWebPane(self, evt=0, ostore=None, caption=_('Web Scrape')):
         tab = WebListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.TabBook.AddPage(tab, caption)
+        self.TabBook.AddPage(tab, caption, select=True)
+        
 
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)

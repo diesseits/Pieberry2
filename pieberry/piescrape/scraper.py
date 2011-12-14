@@ -6,8 +6,9 @@ import wx
 import os
 import re
 import locale
-from BeautifulSoup import *
+#from BeautifulSoup import *
 from pieconfig.paths import *
+from pieobject import *
 from cms import *
 
 prefenc = locale.getpreferredencoding()
@@ -50,8 +51,22 @@ class PieScraper:
         print 'PieScraper.get_page_context:', ttl
 
     def snarf_urls(self):
-        '''return all the urls on a page (& type)'''
-        pass
+        '''return a tuple of pieobjects representing all the in-situ
+        potential documents of a page'''
+        co = GetContextObject(self._urlopener, self._cmstype)
+        urlz = co.get_links()
+        ret = []
+        for linky in urlz:
+            ob = PieObject()
+            ob.add_aspect_onweb(
+                url=linky['Url'],
+                pageurl=self._origin_url,
+                linktext=linky['LinkText'],
+                defaultauthor=self._default_author
+                )
+            ret.append(ob)
+        return tuple(ret)
+              
 
     def snarf_documents(self):
         '''return all the documents on the page'''

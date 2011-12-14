@@ -1,9 +1,11 @@
 import wx
+import pprint
 
 from pieobject import *
 from piescrape import *
 from ui import BaseMainWindow
 from pieconfig.globals import *
+
 
 
 class FunctionMainWindow(BaseMainWindow):
@@ -27,6 +29,11 @@ class FunctionMainWindow(BaseMainWindow):
             author_is_corporate=evt.authoriscorporate,
             category_phrase=evt.catstring)
         #get rid of the following
-        ts.get_page_context()
+        urlz = ts.snarf_urls()
+        #pprint(urlz)
+        self.OpenWebPane()
+        pan = self.GetCurrentPane()
+        for obj in urlz:
+            pan.AddObject(obj)
         
     
