@@ -4,7 +4,7 @@ import wx
 
 from events import *
 from listwidgets import *
-from piedb.objectstore import *
+from pieobject import *
 #from baselistpanel import BaseListPanel # <-- todo
 
 
@@ -68,7 +68,7 @@ class WebListPanel(BaseListPanel):
     paneltype = 'WebListPanel'
 
     def _setup_data(self):
-        self.objectstore = BetterPieObjectStore()
+        self.objectstore = PieObjectStore()
 
     def _do_layout(self):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
@@ -85,7 +85,7 @@ class FileListPanel(BaseListPanel):
     paneltype = 'FileListPanel'
 
     def _setup_data(self):
-        self.objectstore = BetterPieObjectStore()
+        self.objectstore = PieObjectStore()
 
     def _do_layout(self):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
@@ -103,7 +103,7 @@ class BibListPanel(BaseListPanel):
     paneltype = 'BibListPanel'
 
     def _setup_data(self):
-        self.objectstore = BetterPieObjectStore()
+        self.objectstore = PieObjectStore()
 
     def _do_layout(self):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)

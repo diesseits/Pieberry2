@@ -1,5 +1,6 @@
 import wx
 import pprint
+import thread
 
 from pieobject import *
 from piescrape import *
@@ -23,17 +24,22 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnWebScrape(self, evt):
         print 'functionmainwindow.OnWebScrape'
+        self.OpenWebPane()
+        pan = self.GetCurrentPane()
         ts = PieScraper(
             url='file:piescrape/test.html',#evt.url,
             default_author=evt.author,
             author_is_corporate=evt.authoriscorporate,
-            category_phrase=evt.catstring)
-        #get rid of the following
-        urlz = ts.snarf_urls()
-        #pprint(urlz)
-        self.OpenWebPane()
-        pan = self.GetCurrentPane()
-        for obj in urlz:
-            pan.AddObject(obj)
+            category_phrase=evt.catstring,
+            notify_window=self)
+        thread.start_new_thread(ts.snarf_urls, (True, pan))
         
+    def Callback_FillPane(self, ostore, propagate_window):
+        '''Callback function to propagate data into a pane'''
+        print 'FunctionMainWindow.Callback_FillPane'
+        for obj in ostore:
+            propagate_window.AddObject(obj)
+        if self.WebPanel:
+            self.WebPanel.LockPanel(False)
+
     

@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 from pieobject.tags import TagHandler
 from pieobject.biblio import BiblioHandler
+from pieobject.objectstore import PieObjectStore
 
 engine = create_engine('sqlite:///:memory:', echo=True)
 SQLABase = declarative_base()

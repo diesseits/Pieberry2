@@ -121,6 +121,7 @@ subdirectory in which to store these documents.''')
         self.authorField.Enable(tf)
         self.pfUseChoice.Enable(tf)
         self.corpAuthorCb.Enable(tf)
+        self.scanButton.SetLabel(_('Scan'))
 
     def GetData(self, evt=0):
         '''return the current user entered data on the panel'''
