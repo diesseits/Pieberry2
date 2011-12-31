@@ -70,6 +70,7 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_Url = random.choice(urllist)
         ro.WebData_PageUrl = ro.WebData_Url
         ro.WebData_LinkText = random.choice(ipsum)
+        ro.title = ro.WebData_LinkText
     ro.MakeBibData()
     ro.add_tag('Test')
     return ro

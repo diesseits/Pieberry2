@@ -72,14 +72,64 @@ class WebListPanel(BaseListPanel):
 
     def _do_layout(self):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
+        self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         self.ListDisplay = WebListCtrl(self)
+        self.SelAllButton = wx.Button(self, -1, label=_('Select All'))
+        self.DownloadButton = wx.Button(self, -1, label=_('Download selected'))
+        self.sizer1.Add(self.SelAllButton, 0, wx.ALL, 5)
+        self.sizer1.Add((20,20), 1)
+        self.sizer1.Add(self.DownloadButton, 0, wx.ALL, 5)
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
+        self.sizer0.Add(self.sizer1)
         self.SetSizer(self.sizer0)
         self.Layout()
 
     def _do_bindings(self):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_SELECTED,
                               self.onSelectionChanged)
+        self.SelAllButton.Bind(wx.EVT_BUTTON, self.onToggleSelectAll)
+        self.DownloadButton.Bind(wx.EVT_BUTTON, self.onDownload)
+        self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
+                              self.onSelectionActivated)
+
+    def Repopulate(self, filtertext=None, checkstatus=False):
+        '''repopulate the list from current data, possibly filtering it
+        (web panel specific version also with check-all ability)'''
+        print 'BaseListPanel: Repopulate: filtertext=%s' % filtertext
+        print self.paneltype
+        cl = self.ListDisplay.GetCheckedList()
+        print cl
+        self.ListDisplay.DeleteAllItems()
+        for ref, i in self.objectstore.GetNext():
+            if ref in cl:
+                cs = True
+            else:
+                cs = checkstatus
+            self.ListDisplay.AddObject(i, ref, 
+                                       filtertext=filtertext,
+                                       checkstatus=cs)
+
+
+    def onSelectionActivated(self, evt):
+        print 'BibListPanel.onSelectionActivated'
+        print 'Item index from list event:', evt.GetIndex()
+        print 'Item data (reference stored against list):', self.ListDisplay.GetItemData(evt.GetIndex())
+        print 'Object in objectstore by index:', self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
+
+    def onDownload(self, evt):
+        print 'WebListPanel.onDownload'
+        print self.ListDisplay.GetCheckedList()
+        ret = PieObjectStore(
+            [ self.objectstore[x] for x in self.ListDisplay.GetCheckedList() ]
+            )
+        for i in ret: print i
+        print ret
+        return ret
+            
+
+    def onToggleSelectAll(self, evt):
+        print 'WebListPanel.onToggleSelectAll'
+        self.Repopulate(checkstatus=True)
 
 class FileListPanel(BaseListPanel):
     paneltype = 'FileListPanel'

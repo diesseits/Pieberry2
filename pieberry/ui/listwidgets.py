@@ -1,5 +1,6 @@
 import wx
 import wx.lib.mixins.listctrl as listmix
+from pprint import pprint
 
 from imagelist import PieImageList, MessageType
 
@@ -50,7 +51,7 @@ class BaseListCtrl(wx.ListCtrl,
     def onItemSelected(self, evt):
         if evt.GetIndex() == -1: return
         self.currentitem = evt.GetIndex()
-        print 'onItemSelected: self.currentitem'
+        print 'onItemSelected:', self.currentitem
 
     def DeleteAllItems(self):
         self.itemDataMap = {}
@@ -69,24 +70,30 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         BaseListCtrl.__init__(self, parent)
         listmix.CheckListCtrlMixin.__init__(self)
 
-    def AddObject(self, obj, ref, statusmsg='Added', filtertext=None):
+    def AddObject(self, obj, ref, 
+                  statusmsg='Added', 
+                  filtertext=None, 
+                  checkstatus=False):
+        '''Add an object'''
+        print 'Adding:', obj
+        print ' ... which should be checked:', checkstatus
         if filterout(filtertext, (obj.WebData_LinkText, obj.Url())):
             return
         nexidx = self.InsertStringItem(self.currentitem, statusmsg)
         self.SetStringItem(nexidx, 1, obj.WebData_LinkText)
         self.SetStringItem(nexidx, 2, obj.Url())
         self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = [False,
+        self.itemDataMap[ref] = [checkstatus,
                                  obj.WebData_LinkText,
                                  obj.Url()]
+        self.CheckItem(nexidx, checkstatus)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
 
     def OnCheckItem(self, idx, chk):
         print 'WebListCtrl: OnCheckItem:', idx, chk
-        print self.itemDataMap[idx]
-        self.itemDataMap[idx][0] = chk
+        self.itemDataMap[self.GetItemData(idx)][0] = chk
 
     def GetCheckedList(self):
         '''Give a tuple of indices of positively checked items'''

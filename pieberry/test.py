@@ -33,7 +33,7 @@ if __name__ == '__main__':
         o = spoof_pieobject('normal')
         p = spoof_pieobject('web')
         pan = frame_1.GetCurrentPane()
-        pan.AddObject(o)
+        pan.AddObject(p)
         # frame_1.tab0.AddObject(o)
         # frame_1.tab1.AddObject(p)
         # frame_1.tab2.AddObject(o)

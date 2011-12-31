@@ -163,7 +163,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self._mgr.Update()
         # self.TabBook.SetMinSize(self.TabPane.sizer.GetSize())
         # Testing
-        self.OpenSearchPane()
+        self.OpenWebPane()
         # End testing
         
 

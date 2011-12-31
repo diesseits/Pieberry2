@@ -37,8 +37,7 @@ class FunctionMainWindow(BaseMainWindow):
     def Callback_FillPane(self, ostore, propagate_window):
         '''Callback function to propagate data into a pane'''
         print 'FunctionMainWindow.Callback_FillPane'
-        for obj in ostore:
-            propagate_window.AddObject(obj)
+        propagate_window.AddObjects(ostore)
         if self.WebPanel:
             self.WebPanel.LockPanel(False)
 
