@@ -51,3 +51,8 @@ if not os.path.exists(SYSDIR):
     except:
         print 'No authority to create settings directory'
         sys.exit(1)
+
+CACHEDIR = os.path.join(SYSDIR, 'cache')
+
+if not os.path.exists(CACHEDIR):
+    os.mkdir(CACHEDIR)

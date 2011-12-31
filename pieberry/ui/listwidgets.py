@@ -97,7 +97,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
 
     def GetCheckedList(self):
         '''Give a tuple of indices of positively checked items'''
-        return [ idx for idx in self.itemDataMap.keys() if self.itemDataMap[idx][0] == True ]
+        return tuple([ idx for idx in self.itemDataMap.keys() if self.itemDataMap[idx][0] == True ])
 
 class FileListCtrl(BaseListCtrl):
     '''File search/browsing control'''

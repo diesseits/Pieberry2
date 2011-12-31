@@ -170,16 +170,22 @@ class BaseMainWindow(wx.Frame, PieActor):
     def _do_bindings(self):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
 
-    def onChangeTab(self, event): # wxGlade: GladeMainWindow.<event_handler>
+    def CloseUtilityPanes(self, event=None):
+        '''close the search and filter panels'''
         if self.FilterPanel: 
             self.ToggleFilterPanel()
-            self.ClearFiltering(event.OldSelection)
+            if hasattr(event, 'OldSelection'): 
+                self.ClearFiltering(event.OldSelection)
+                # that's probably too hackish
+        if self.SearchPanel: self.ToggleSearchPanel()
+
+    def onChangeTab(self, event):
         # print event.OldSelection
         # print 'onChangeTab captures new: %s old: %s' % (
         #     self.TabBook.GetPage(event.Selection).paneltype,
         #     self.TabBook.GetPage(event.OldSelection).paneltype
         #     )
-        if self.SearchPanel: self.ToggleSearchPanel()
+        self.CloseUtilityPanes(event)
 
     def onNewContextToShow(self, evt):
         # print 'mainwindow: onNewContextToShow'
@@ -270,11 +276,18 @@ class BaseMainWindow(wx.Frame, PieActor):
         # if self.SearchPanel:
         #     self.ToggleSearchPanel()
 
+    def OpenStagingPane(self, evt=0, ostore=None, caption=_('Staging ground')):
+        tab = StagingListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption, select=True)
+        if ostore:
+            tab.AddObjects(ostore)
+
     def OpenWebPane(self, evt=0, ostore=None, caption=_('Web Scrape')):
         tab = WebListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
         self.TabBook.AddPage(tab, caption, select=True)
-        
 
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
@@ -284,6 +297,11 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OnWebScrape(self, evt):
         '''stub function for web scrape events'''
         print 'altmainwindow.OnWebScrape'
+
+    def OnWebPaneDownload(self, evt):
+        '''happens when user elects to download stuff from a web pane'''
+        print 'altmainwindow.OnWebPaneDownload'
+
 
 # end of class GladeMainWindow
 

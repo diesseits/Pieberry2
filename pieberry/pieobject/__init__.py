@@ -40,6 +40,14 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.date = date
         self.tags = []
 
+        #aspects
+        self.aspects = {
+            'onweb': False,
+            'cached': False,
+            'saved': False,
+            'stored': False
+            }
+
     def __repr__(self):
         return "<PieObject %s - %s. (%s)>\n%s" % (self.Title()[:10], self.Author(), str(self.ReferDate()), pformat(self.BibData_Fields))
 
@@ -53,10 +61,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         return self.id
 
     def ReferDate(self):
+        '''The most salient date for this document'''
         return self.date
 
     def Url(self):
         return self.WebData_Url
+
+    def has_aspect(self, t):
+        if not t in self.aspects.keys():
+            raise KeyError, 'Unknown type of aspect'
+        return self.aspects[t]
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor=''):
         '''Add information gleaned from the document being on the web
@@ -69,4 +83,29 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.WebData_LinkText = linktext
         self.title = linktext
         self.author = defaultauthor
+        self.aspects['onweb']=True
+
+    def add_aspect_cached_from_web(self, temp_location):
+        '''Add information pertaining to the downloading and temporary
+        caching of this object'''
+        self.aspects['cached'] = True
+
+    def add_aspect_cached_from_desktop(self, temp_location):
+        '''Add information pertaining to the temporary caching of this
+        object'''
+        self.aspects['cached'] = True
+
+    def add_aspect_stored(self):
+        '''Add information pertaining to the storage of this item in
+        the system'''
+        self.aspects['stored'] = True
+        self.aspects['cached'] = False
+
+    def add_aspect_saved(self):
+        '''Add information pertaining to the saving of this item into the
+        database'''
+        self.aspects['saved'] = True
         
+    def set_session(self, sess):
+        '''Mark a session flag for this object'''
+        self.session = sess
