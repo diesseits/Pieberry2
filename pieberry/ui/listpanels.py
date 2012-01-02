@@ -16,6 +16,7 @@ class BaseListPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id=id, style=style)
         self._setup_data()
         self._do_layout()
+        self.__do_base_bindings()
         self._do_bindings()
 
     def _setup_data(self):
@@ -27,16 +28,42 @@ class BaseListPanel(wx.Panel):
     def _do_bindings(self):
         pass
 
+    def _makemenu(self, evt):
+        '''Prepare to create and display a context menu. Calls a
+        "MakeMenu" method which should be overriden by inheriting
+        classes to provide a menu with appropriate context'''
+        if evt.GetIndex() == -1: return
+        right_click_context = evt.GetIndex()
+        menu = wx.Menu()
+        it_idx = self.ListDisplay.GetItemData(right_click_context)
+        obj = self.objectstore[it_idx]
+        print "## Object for popup menu:", obj
+        self.MakeMenu(menu, obj)
+        self.ListDisplay.PopupMenu( menu, evt.GetPoint() )
+        menu.Destroy() # destroy to avoid mem leak
+
+    def __do_base_bindings(self):
+        wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListDisplay, -1, self._makemenu)
+
+    def MakeMenu(self, menu, obj):
+        pass
+
     def AddObjects(self, ostore):
         self.ListDisplay.DeleteAllItems()
         self.objectstore = ostore
         for ref, i in self.objectstore.GetNext():
             self.ListDisplay.AddObject(i, ref)
 
-    def AddObject(self, obj):
+    def AddObject(self, obj, msgtype=None):
+        '''Add an object into the panel. Returns the reference by which 
+        the object may be found in the item's objectstore, and also the list
+        widget's itemDataMap, if it is visible'''
         ref = self.objectstore.Add(obj)
-        nexidx = self.ListDisplay.AddObject(obj, ref)
-        return nexidx
+        if msgtype:
+            nexidx = self.ListDisplay.AddObject(obj, ref, msgtype=msgtype)
+        else:
+            nexidx = self.ListDisplay.AddObject(obj, ref)
+        return ref
 
     def Repopulate(self, filtertext=None):
         '''repopulate the list from current data, possibly filtering it'''
@@ -71,6 +98,9 @@ class BaseListPanel(wx.Panel):
         print evt.searchtext
         self.Repopulate(filtertext=evt.searchtext)
 
+    def onListRightClick(self, evt):
+        '''build a context menu'''
+        print 'BaseListPanel.onListRightClick'
 
 class WebListPanel(BaseListPanel):
     '''Class for working with web scrapes'''
@@ -137,6 +167,12 @@ class WebListPanel(BaseListPanel):
         print 'WebListPanel.onToggleSelectAll'
         self.Repopulate(checkstatus=True)
 
+    def MakeMenu(self, menu, obj):
+        '''Function to construct a particular context menu'''
+        rcm_testitem = wx.MenuItem(menu, 0, _('Test menu'))
+        rcm_testitem.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+        menu.AppendItem(rcm_testitem)
+
 class FileListPanel(BaseListPanel):
     paneltype = 'FileListPanel'
 
@@ -191,10 +227,16 @@ class StagingListPanel(BaseListPanel):
         self.DiscardButton.Bind(wx.EVT_BUTTON,
                                 self.onDiscardAll)
 
-    def AddObject(self, obj, spin=True):
-        nexidx = BaseListPanel.AddObject(obj)
-        if spin: #TODO: spinny functionality
-            pass
+    def AddObject(self, obj, msgtype):
+        '''An augmented AddObject incorporating spinning trigger'''
+        print 'StagingListPanel.AddObject, msgtype =', msgtype
+        if msgtype=='spin':
+            ref = BaseListPanel.AddObject(self, obj, msgtype='spin')
+            self.spinnerStart(ref)
+        else:
+            if self.spinTimer: self.spinnerStop()
+            ref = BaseListPanel.AddObject(self, obj, msgtype=msgtype)
+        return ref
 
     def onDiscardAll(self, evt):
         print 'StagingListPanel.onDiscardAll()'
@@ -205,9 +247,9 @@ class StagingListPanel(BaseListPanel):
     def onCommitObjects(self, evt):
         print 'StagingListPanel.onCommitObjects()'
 
-    def spinnerStart(self, list_item):
+    def spinnerStart(self, ref):
         '''start a spinning icon to indicate download'''
-        self.spin_list_item = list_item
+        self.spin_item_ref = ref
         self.spinTimer = SpinnyTimer(self)
         self.spinTimer.Start(200)
 
@@ -216,17 +258,28 @@ class StagingListPanel(BaseListPanel):
         if self.spinnerstate == 5:
             self.spinnerstate = -1
         self.spinnerstate += 1
-        sli = self.spinnerstate + 6
-        self.outputList.SetItemImage(self.spin_list_item, sli)
+        sli = self.spinnerstate + 6 #because the images are 6 - 11
+        self.ListDisplay.SetItemImage(
+            self.ListDisplay.GetIndexFromRef(self.spin_item_ref), 
+            sli)
         
     def spinnerStop(self):
         self.spinTimer.Stop()
         self.spinTimer.Destroy()
         self.spinTimer = None
 
-    def DownloadDone(self, outcome):
+    def DownloadDone(self, ref, outcome):
         '''The download is done ... let the user know'''
-        pass
+        idx = self.ListDisplay.GetIndexFromRef(ref)
+        assert outcome in MessageType.keys()
+        self.spinnerStop()
+        self.ListDisplay.DeleteItem(
+            self.ListDisplay.GetIndexFromRef(ref))
+        self.ListDisplay.AddObject(
+            obj=self.objectstore[ref],
+            ref=ref,
+            msgtype=outcome)
+        print 'StagingListPanel.DownloadDone'
 
 
 class BibListPanel(BaseListPanel):

@@ -25,7 +25,8 @@ PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_pdf16.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_doc16.png')))
 
 MessageType = {
-    'spin': 'spin',
+    'start': 'spin',
+    'spin': 6,
     'blank': None,
     'success': 0,
     'fail': 1,

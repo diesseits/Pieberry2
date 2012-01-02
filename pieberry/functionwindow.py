@@ -1,12 +1,14 @@
 import wx
 import pprint
 import thread
+import time
 
 from pieobject import *
 from pieobject.paths import *
 from piescrape import *
 from piescrape.execfn import *
 from ui import BaseMainWindow
+from ui.events import *
 from pieconfig.globals import *
 
 
@@ -23,6 +25,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def __init__(self, *args, **kwds):
         BaseMainWindow.__init__(self, *args, **kwds)
+        EVT_PIE_DOWNLOAD_NOTIFY(self, self.Callback_DownloadNotification)
 
     def OnWebScrape(self, evt):
         print 'functionmainwindow.OnWebScrape'
@@ -55,19 +58,50 @@ class FunctionMainWindow(BaseMainWindow):
             wx.MessageBox(_('No items are selected'), style=wx.ICON_ERROR)
             return
         evt.ostore.set_session(get_session())
-        for obj in evt.ostore:
-            storepath = suggest_path_cache_fromweb(obj)
-            #download_file(url=obj.Url(), suggested_path=storepath)
-            obj.add_aspect_cached_from_web(storepath)
-            print 'Downloading', obj
         wx.CallAfter( #deletepage seems finicky about timing
             self.TabBook.DeletePage,
             self.TabBook.GetPageIndex(evt.pane)
             )
         self.CloseUtilityPanes()
-        self.OpenStagingPane(ostore=evt.ostore)
+        self.OpenStagingPane()
+        thread.start_new_thread(self._thread_downloads, (evt.ostore, self.GetCurrentPane()))
+
+    def _thread_downloads(self, ostore, notify_window):
+        '''threaded method called by OnWebPaneDownload'''
+        for obj in ostore:
+            storepath = suggest_path_cache_fromweb(obj)
+            newevt = PieDownloadNotifyEvent(
+                msgtype='start', 
+                obj=obj, 
+                notify_window=notify_window)
+            wx.PostEvent(self, newevt)
+            time.sleep(5)
+            #download_file(url=obj.Url(), suggested_path=storepath)
+            obj.add_aspect_cached_from_web(storepath)
+            print 'Downloading', obj
+            newevt = PieDownloadNotifyEvent(
+                msgtype='warn', #TODO
+                obj=obj, 
+                notify_window=notify_window)
+            wx.PostEvent(self, newevt)
+
+    def Callback_DownloadNotification(self, evt):
+        '''Do when a download has begun or terminated'''
+        if evt.msgtype in ('start', 'spin'):
+            print 'Download started:', evt.obj
+            # wx.CallAfter(evt.notify_window.AddObject, evt.obj)
+            # store the currently downloading item reference for
+            # future reference
+            self.downloadingitem = evt.notify_window.AddObject(
+                evt.obj, msgtype='spin')
+        else:
+            print 'Download stopped - condition', evt.msgtype
+            outcome = evt.msgtype
+            evt.notify_window.DownloadDone(
+                self.downloadingitem,
+                outcome)
 
     
-        
+    
 
         

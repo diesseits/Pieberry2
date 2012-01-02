@@ -10,3 +10,5 @@ PieWebScrapeEvent, EVT_PIE_SCRAPE_EVENT = wx.lib.newevent.NewEvent()
 PieDownloadEvent, EVT_PIE_DOWNLOAD = wx.lib.newevent.NewEvent()
 # attributes: ostore - the objects to be downloaded
 #             pane - the pane it originates from
+PieDownloadNotifyEvent, EVT_PIE_DOWNLOAD_NOTIFY = wx.lib.newevent.NewEvent()
+# attributes: msgtype (start, success, fail, warn), obj, notify_window

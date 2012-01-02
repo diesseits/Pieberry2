@@ -1,4 +1,4 @@
-import wx
+import wx, sys
 import wx.lib.mixins.listctrl as listmix
 from pprint import pprint
 
@@ -61,6 +61,17 @@ class BaseListCtrl(wx.ListCtrl,
         # self.itemDataMap.pop(ref)
         wx.ListCtrl.DeleteItem(self, ref)
 
+    # TODO: Functionality yet to come for tip windows
+    def onMouseEnterList(self, evt):
+        self.mouseOverList = True
+
+    def onMouseExitList(self, evt):
+        self.mouseOverList = False
+        if self.tipwindow and sys.platform == 'linux2': #irritating non x-platform behaviour 
+            self.tipwindow.Destroy()
+            self.tipwindow = None
+
+
 class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
     '''Control for displaying results in the download/scraping process'''
     columnheads = (_('Download?'), _('Link'), _('Url'))
@@ -74,7 +85,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
                   statusmsg='Added', 
                   filtertext=None, 
                   checkstatus=False):
-        '''Add an object'''
+        '''Add an object, returning the item's current index in the ListCtrl'''
         print 'Adding:', obj
         print ' ... which should be checked:', checkstatus
         if filterout(filtertext, (obj.WebData_LinkText, obj.Url())):
@@ -136,15 +147,16 @@ class BibListCtrl(BaseListCtrl):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
     
-    def AddObject(self, obj, ref, filtertext=None):
-        # print 'BibListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
+    def AddObject(self, obj, ref, filtertext=None, msgtype='success'):
+        print 'BibListCtrl.AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, 
                      (obj.Author(), str(obj.ReferDate().year), obj.Title())):
+            print 'Filtered out - returning'
             return
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
             obj.Author(), 
-            MessageType['success'])
+            MessageType[msgtype])
         self.SetStringItem(nexidx, 1, str(obj.ReferDate().year))
         self.SetStringItem(nexidx, 2, obj.Title())
         self.SetItemData(nexidx, ref)
@@ -154,7 +166,13 @@ class BibListCtrl(BaseListCtrl):
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
-        
+
+    def GetIndexFromRef(self, ref):
+        '''Get the list position of an item by its reference key'''
+        for i in range(len(self.itemDataMap.keys())):
+            if ref == self.GetItemData(i):
+                return i
+        raise ValueError, "ListCtrl does not have an item with reference %d" % ref
     
 
 
