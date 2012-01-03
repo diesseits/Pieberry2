@@ -12,3 +12,7 @@ PieDownloadEvent, EVT_PIE_DOWNLOAD = wx.lib.newevent.NewEvent()
 #             pane - the pane it originates from
 PieDownloadNotifyEvent, EVT_PIE_DOWNLOAD_NOTIFY = wx.lib.newevent.NewEvent()
 # attributes: msgtype (start, success, fail, warn), obj, notify_window
+PiePrefetchStartEvent, EVT_PIE_PREFETCH_START = wx.lib.newevent.NewEvent()
+# attributes:
+PiePrefetchDoneEvent, EVT_PIE_PREFETCH_DONE = wx.lib.newevent.NewEvent()
+# attributes: tag - the prefetched tag.

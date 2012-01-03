@@ -58,8 +58,9 @@ class PieScraper:
             self._further_init()
         co = GetContextObject(self._urlopener, self._cmstype)
         # in old money this was:        translate_non_alphanumerics(readup.title.string.split(' - ')[0][:100].strip())
-        ttl = co.get_context_title()
+        ttl = co.get_context_title().strip()
         print 'PieScraper.get_page_context:', ttl
+        return ttl #in future maybe return a more complex object
 
     def snarf_urls(self, threaded=False, propagate_to=None):
         '''return a tuple of pieobjects representing all the in-situ

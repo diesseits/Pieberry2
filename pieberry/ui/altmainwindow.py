@@ -9,7 +9,7 @@ from webpanel import *
 from contextpanel import *
 from listpanels import *
 from actor import PieActor
-
+from pieconfig.globalvars import *
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -35,6 +35,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         viewMenu = wx.Menu()
         helpMenu = wx.Menu()
         atomMenu = wx.Menu()
+        debugMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
             fileMenu, -1, 
             _('&Save Bibliography Changes')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
@@ -83,6 +84,17 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)
 
+        # BEGIN debug menu
+        self.menu_debug_addwebpane = wx.MenuItem(
+            debugMenu, -1, _('Add Web Pane'))
+        self.menu_debug_addbibpane = wx.MenuItem(
+            debugMenu, -1, _('Add Bib Pane'))
+        debugMenu.AppendItem(self.menu_debug_addwebpane)
+        debugMenu.AppendItem(self.menu_debug_addbibpane)
+        self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
+        self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
+        # END debug menu
+
         fileMenu.AppendItem(self.menu_savebibs)
         fileMenu.AppendItem(self.menu_discard)
         fileMenu.AppendItem(self.menu_config)
@@ -106,6 +118,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         # menuBar.Append(atomMenu, '&Desktop cleaner')
         menuBar.Append(viewMenu, _('&View'))
         menuBar.Append(helpMenu, _('&Help'))
+        if DEBUG: menuBar.Append(debugMenu, _('&Debug'))
         self.SetMenuBar(menuBar)
         # self.SetAutoLayout(True)
 
@@ -162,9 +175,6 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.ContextPane.Bind(wxaui.EVT_AUI_PANE_CLOSE, self.menu_toggle_context.Toggle)
         self._mgr.Update()
         # self.TabBook.SetMinSize(self.TabPane.sizer.GetSize())
-        # Testing
-        self.OpenWebPane()
-        # End testing
         
 
     def _do_bindings(self):
@@ -259,6 +269,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Top().MinSize((300,120)).Floatable(False).DestroyOnClose(True)
             )
         self.WebPanel.Bind(EVT_PIE_SCRAPE_EVENT, self.OnWebScrape)
+        self.WebPanel.Bind(EVT_PIE_PREFETCH_START, self.OnPrefetch)
+        self.Bind(EVT_PIE_PREFETCH_DONE, self.WebPanel.onPrefetchResult)
         self._mgr.Update()
 
     def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
@@ -302,6 +314,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         '''happens when user elects to download stuff from a web pane'''
         print 'altmainwindow.OnWebPaneDownload'
 
+    def OnPrefetch(self, evt):
+        '''happens when the webpanel wants to prefetch something'''
+        print 'altmainwindow.OnPrefetch'
 
 # end of class GladeMainWindow
 

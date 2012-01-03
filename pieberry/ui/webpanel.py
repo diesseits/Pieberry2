@@ -1,6 +1,7 @@
 import wx, time
 from validators import *
-from events import PieWebScrapeEvent
+from events import PieWebScrapeEvent, PiePrefetchStartEvent
+from timers import WebPanelUiTimer
 
 class WebScrapePanel(wx.Panel):
     '''Generic search tools panel'''
@@ -93,6 +94,10 @@ subdirectory in which to store these documents.''')
         self.Layout()
         self.urlField.SetFocus()
         self._do_bindings()
+
+        self.uitimer = WebPanelUiTimer(self)
+        self.uitimer.Start(1000)
+        self.url_text_last_changed = time.time()
 
     def _do_bindings(self):
         '''bind various events'''
@@ -187,3 +192,18 @@ subdirectory in which to store these documents.''')
         self.url_text_last_changed = time.time()
         self.urlField.GetValidator().Validate()
         self.urlField.Refresh() 
+
+    def onPrefetchTag(self, last_iter):
+        '''periodically decide whether to prefetch a tag for the url '''
+        # print 'WebPanel.onPrefetchTag'
+        if 2 > (last_iter - self.url_text_last_changed) > 1:
+            print 'trigger fetch?'
+            if self.urlField.GetValidator().Validate():
+                self.tagField.Disable()
+                newevt = PiePrefetchStartEvent(url=self.urlField.GetValue())
+                wx.PostEvent(self, newevt)
+
+    def onPrefetchResult(self, evt):
+        self.tagField.ChangeValue(evt.tag)
+        self.tagField.Enable()
+

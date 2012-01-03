@@ -32,7 +32,7 @@ class FunctionMainWindow(BaseMainWindow):
         self.OpenWebPane()
         pan = self.GetCurrentPane()
         ts = PieScraper(
-            url='file:piescrape/test.html',#evt.url,
+            url=evt.url,#'file:piescrape/test.html',#evt.url,
             default_author=evt.author,
             author_is_corporate=evt.authoriscorporate,
             category_phrase=evt.catstring,
@@ -64,6 +64,7 @@ class FunctionMainWindow(BaseMainWindow):
             )
         self.CloseUtilityPanes()
         self.OpenStagingPane()
+        self.GetCurrentPane().Disable() #don't let no stupids happen
         thread.start_new_thread(self._thread_downloads, (evt.ostore, self.GetCurrentPane()))
 
     def _thread_downloads(self, ostore, notify_window):
@@ -84,6 +85,7 @@ class FunctionMainWindow(BaseMainWindow):
                 obj=obj, 
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
+        wx.CallAfter(notify_window.Enable)
 
     def Callback_DownloadNotification(self, evt):
         '''Do when a download has begun or terminated'''
@@ -101,7 +103,16 @@ class FunctionMainWindow(BaseMainWindow):
                 self.downloadingitem,
                 outcome)
 
-    
-    
+    def OnPrefetch(self, evt):
+        '''happens when the webpanel wants to prefetch something'''
+        thread.start_new_thread(self._thread_prefetch, (evt.url,))
+
+    def _thread_prefetch(self, url):
+        ts = PieScraper(
+            url=url,
+            notify_window=self)
+        tag = ts.get_page_context()
+        newevt = PiePrefetchDoneEvent(tag=tag)
+        wx.PostEvent(self, newevt)
 
         

@@ -29,11 +29,12 @@ if __name__ == '__main__':
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
-    for i in range(5):
-        o = spoof_pieobject('normal')
-        p = spoof_pieobject('web')
-        pan = frame_1.GetCurrentPane()
-        pan.AddObject(p)
+    frame_1.DebugAddWebPane()
+    # for i in range(5):
+    #     o = spoof_pieobject('normal')
+    #     p = spoof_pieobject('web')
+    #     pan = frame_1.GetCurrentPane()
+    #     pan.AddObject(p)
         # frame_1.tab0.AddObject(o)
         # frame_1.tab1.AddObject(p)
         # frame_1.tab2.AddObject(o)

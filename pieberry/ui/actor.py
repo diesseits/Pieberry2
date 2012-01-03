@@ -4,7 +4,7 @@ import sys
 from pieconfig import *
 
 class PieActor:
-    '''Class containing the action-directing functions of the main window'''
+    '''Class containing basic action-directing functions of the main window'''
     
     def __init__(self):
         pass
@@ -64,7 +64,7 @@ class PieActor:
 
     def onEmptyReference(self, evt):
         pass
-
+    
     def onShowManual(self, evt):
         pass
 
@@ -72,3 +72,19 @@ class PieActor:
         print 'Actor: doSearch: %s' % evt.searchtext
         self.OpenSearchPane(caption=evt.searchtext[:20])
 
+    def DebugAddWebPane(self, evt=0, noobjects=5):
+        from spoofgeneration import *
+        self.OpenWebPane()
+        pan = self.GetCurrentPane()
+        for i in range(noobjects):
+            p = spoof_pieobject('web')
+            pan.AddObject(p)
+
+    def DebugAddBibPane(self, evt=0, noobjects=5):
+        from spoofgeneration import *
+        self.OpenSearchPane()
+        pan = self.GetCurrentPane()
+        for i in range(noobjects):
+            p = spoof_pieobject('normal')
+            pan.AddObject(p)
+    
