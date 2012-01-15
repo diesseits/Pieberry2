@@ -71,7 +71,7 @@ class PieScraper:
         if not self._further_init_done:
             self._further_init()
         co = GetContextObject(self._urlopener, self._cmstype)
-        urlz = co.get_links()
+        urlz = co.get_links(baseurl=self._origin_url)
         ret = PieObjectStore()
         for linky in urlz:
             ob = PieObject()

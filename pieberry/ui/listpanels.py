@@ -246,6 +246,10 @@ class StagingListPanel(BaseListPanel):
         
     def onCommitObjects(self, evt):
         print 'StagingListPanel.onCommitObjects()'
+        newevt = PieCommitStagedEvent(
+            ostore=self.objectstore,
+            pane=self)
+        wx.PostEvent(self, newevt)
 
     def spinnerStart(self, ref):
         '''start a spinning icon to indicate download'''
@@ -309,7 +313,6 @@ class BibListPanel(BaseListPanel):
                               self.onSelectionChanged)
         self.DelButton.Bind(wx.EVT_BUTTON,
                             self.onDeleteItem)
-
 
     def onDeleteItem(self, evt):
         print self.GetSelectedItem() 

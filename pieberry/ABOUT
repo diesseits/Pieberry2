@@ -1,0 +1,35 @@
+Pieberry has principles:
+
+0) Storage is cheap and plentiful
+
+Hard disks cost bugger all and Pieberry is cavalier with file
+space. Much better to have several copies of the same document in
+different places than to not be able to find it when you want
+it. Pieberry will try to keep an eye on multiple documents and stop
+things getting out of hand.
+
+1) Near enough is well and truly good enough
+
+Pieberry is designed to be robust to the vagaries of ordinary internet
+and corporate life. Poorly made websites, inadequate metadata, foolish
+file naming conventions will not faze it, it will always make a best
+guess and keep on going.
+
+2) Nobody (but you) knows or cares about Pieberry
+
+Pieberry is not an enterprise-wide solution, it isn't "social", and it
+doesn't want to get you into trouble for using 'non standard'
+software. It is portable and requires no installation on Windows. It
+doesn't shove everything into some database schema or sync things to
+the cloud. You may have a powerful data and document tracking system
+available to you, managing your stuff, but as far as anyone else can
+see, peering into your part of the share drive, is an immaculately
+logical, well named, navigable file structure that they can find
+whatever it is that they were looking for and sod off again.
+
+3) Pieberry does not spazz out
+
+Change your filenames, delete stuff, move stuff around. Pieberry won't
+freak. At worst, it may lose track of a file and think it's a new
+one. Otherwise, Pieberry just does its best to keep up with what
+you're doing and keep things navigable.

@@ -56,3 +56,10 @@ MIMEMAP = {'application/pdf': 'pdf',
            'application/rtf': 'word_doc',
            'text/html': 'html',
            'text/plain': 'plaintext'}
+
+def mime_map(mt):
+    '''Util function to map file type to mime type'''
+    if MIMEMAP.has_key(mt):
+        return MIMEMAP[mt]
+    else:
+        return 'other'

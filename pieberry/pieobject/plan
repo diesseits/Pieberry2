@@ -15,6 +15,9 @@ Plan for fundamental object
 
 ** Property fields
 
+ "*" = Compulsory once aspect set
+ "+" = Not stored, but must be available
+
 |---------------+----------------+--------+--------------------------------------------|
 | PropertyGroup | Property       | Type   | Explanation                                |
 |---------------+----------------+--------+--------------------------------------------|
@@ -46,7 +49,8 @@ Plan for fundamental object
 |               | *Folder        | list   | List of subfolders to root                 |
 |               | *Root          | unic   | Projects, library or staging systems       |
 |               | *Blocked       | bool   | Blocked by process                         |
-|               | *FullPath      | unic   | Full path to file (system specific)        |
+|               | +FullPath      | unic   | Full path to file (system specific)        |
+|               | FileType       | unic6  | File type * (or also webdata?)             |
 | WebData       |                |        | Web resource (origin) data                 |
 |               | *Url           | unic   | Url (generic/preferred)                    |
 |               | PageUrl        | unic   | Referring page url                         |

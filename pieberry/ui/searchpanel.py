@@ -58,7 +58,6 @@ class SearchToolsPanel(wx.Panel):
 
         self.searchctrl.SetFocus()
 
-
     def SetSearchChoices(self, choices=[]):
         '''Set available search type choices'''
         print 'SetSearchChoices'

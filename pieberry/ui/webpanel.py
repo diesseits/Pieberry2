@@ -197,7 +197,7 @@ subdirectory in which to store these documents.''')
         '''periodically decide whether to prefetch a tag for the url '''
         # print 'WebPanel.onPrefetchTag'
         if 2 > (last_iter - self.url_text_last_changed) > 1:
-            print 'trigger fetch?'
+            # print 'trigger fetch?'
             if self.urlField.GetValidator().Validate():
                 self.tagField.Disable()
                 newevt = PiePrefetchStartEvent(url=self.urlField.GetValue())

@@ -68,10 +68,6 @@ class PieActor:
     def onShowManual(self, evt):
         pass
 
-    def doSearch(self, evt):
-        print 'Actor: doSearch: %s' % evt.searchtext
-        self.OpenSearchPane(caption=evt.searchtext[:20])
-
     def DebugAddWebPane(self, evt=0, noobjects=5):
         from spoofgeneration import *
         self.OpenWebPane()

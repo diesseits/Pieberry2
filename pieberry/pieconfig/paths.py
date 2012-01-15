@@ -52,7 +52,21 @@ if not os.path.exists(SYSDIR):
         print 'No authority to create settings directory'
         sys.exit(1)
 
-CACHEDIR = os.path.join(SYSDIR, 'cache')
+if DEBUG == True:
+    CACHEDIR = ('/tmp/pieberry/cache')
+else:
+    CACHEDIR = os.path.join(SYSDIR, 'cache')
 
-if not os.path.exists(CACHEDIR):
-    os.mkdir(CACHEDIR)
+if DEBUG == True:
+    LIBRARYDIR = ('/tmp/pieberry/library')
+    PROJECTDIR = ('/tmp/pieberry/projects')
+    MEETINGPAPERDIR = ('/tmp/pieberry/meeting papers')
+    RECENTDOCSDIR = ('/tmp/pieberry/recent documents')
+
+ROOT_MAP = { #map these potential roots to allow portability
+    'cachedir': CACHEDIR,
+    'librarydir': LIBRARYDIR,
+    'projectdir': PROJECTDIR,
+    'meetingpaperdir': MEETINGPAPERDIR,
+    'recentdocsdir': RECENTDOCSDIR
+    }

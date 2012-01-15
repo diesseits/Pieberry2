@@ -76,12 +76,15 @@ class FunctionMainWindow(BaseMainWindow):
                 obj=obj, 
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
-            time.sleep(5)
-            #download_file(url=obj.Url(), suggested_path=storepath)
-            obj.add_aspect_cached_from_web(storepath)
-            print 'Downloading', obj
+            # TESTING
+            # time.sleep(0.25)
+            msgtype = download_file(url=obj.Url(), suggested_path=storepath)
+            if msgtype == 'success':
+                obj.add_aspect_cached_from_web(storepath)
+            else:
+                obj.add_aspect_failed_download()
             newevt = PieDownloadNotifyEvent(
-                msgtype='warn', #TODO
+                msgtype=msgtype, 
                 obj=obj, 
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
@@ -115,4 +118,42 @@ class FunctionMainWindow(BaseMainWindow):
         newevt = PiePrefetchDoneEvent(tag=tag)
         wx.PostEvent(self, newevt)
 
+    def OnCommitStaged(self, evt):
+        session = Session()
+        session.add_all(evt.ostore)
+        session.commit()
+        self.CloseUtilityPanes()
+        # wx.MessageBox(
+        #     'Successfully added %d items to your library' % len(evt.ostore))
+        wx.CallAfter( #deletepage seems finicky about timing
+            self.TabBook.DeletePage,
+            self.TabBook.GetPageIndex(evt.pane)
+            )
+
+    def DoSearch(self, evt):
+        print 'Actor: doSearch: %s' % evt.searchtext
+        session = Session()
+        self.OpenSearchPane(caption=evt.searchtext[:20])
+        searchpane = self.GetCurrentPane()
+        query = build_query(evt.searchtext.strip(), session)
+        for instance in query:
+            searchpane.AddObject(instance)
+        wx.CallAfter(self.CloseUtilityPanes)
+
+# TODO: move to a search module
+
+from sqlalchemy import or_
+
+def build_query(t, session):
+    return session.query(
+        PieObject
+        ).filter(or_(
+            PieObject.title.like('%' + t + '%'), 
+            PieObject.author.like('%' + t + '%'), 
+            PieObject.WebData_Url.like('%' + t + '%')
+            ))#.order_by(PieObject.title)
         
+
+                
+            
+

@@ -26,6 +26,7 @@ def test():
         print o
 
 if __name__ == '__main__':
+    SQLABase.metadata.create_all(engine)
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()

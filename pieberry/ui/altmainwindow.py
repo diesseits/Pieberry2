@@ -255,7 +255,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('New Search')).DestroyOnClose(True)
             )
         self._mgr.Update()
-        self.SearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.doSearch)
+        self.SearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.DoSearch)
 
     def ToggleWebPanel(self, evt=0):
         if self.WebPanel:
@@ -291,6 +291,7 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenStagingPane(self, evt=0, ostore=None, caption=_('Staging ground')):
         tab = StagingListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_COMMIT_STAGED, self.OnCommitStaged)
         self.TabBook.AddPage(tab, caption, select=True)
         if ostore:
             tab.AddObjects(ostore)
@@ -305,7 +306,15 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         self.TabBook.AddPage(tab, caption, select=True)
+
+    def DoSearch(self, evt):
+        '''stub'''
+        print 'altmainwindow.DoSearch'
        
+    def OnCommitStaged(self, evt):
+        '''stub'''
+        print 'altmainwindow.OnCommitStaged'
+
     def OnWebScrape(self, evt):
         '''stub function for web scrape events'''
         print 'altmainwindow.OnWebScrape'
