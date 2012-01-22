@@ -86,8 +86,15 @@ class PieActor:
 
     def DebugAddDownloadedPane(self, evt=0, noobjects=5):
         from spoofgeneration import *
-        ostore = spoof_pieobjectstore('webfull')
+        ostore = spoof_pieobjectstore('webfull', noobjects)
         self.OpenStagingPane()
+        pan = self.GetCurrentPane()
+        pan.AddObjects(ostore)
+        
+    def DebugAddAtomisePane(self, evt=0, noobjects=5):
+        from spoofgeneration import *
+        ostore = spoof_pieobjectstore('desktop', noobjects)
+        self.OpenAtomisePane()
         pan = self.GetCurrentPane()
         pan.AddObjects(ostore)
         

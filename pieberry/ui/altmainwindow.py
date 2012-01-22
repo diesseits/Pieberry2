@@ -10,6 +10,7 @@ from contextpanel import *
 from listpanels import *
 from actor import PieActor
 from pieconfig.globalvars import *
+from atomise import atomWidget
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -91,9 +92,14 @@ class BaseMainWindow(wx.Frame, PieActor):
             debugMenu, -1, _('Add Bib Pane'))
         self.menu_debug_adddlpane = wx.MenuItem(
             debugMenu, -1, _('Add Pane with dld items'))
+        self.menu_debug_addatompane = wx.MenuItem(
+            debugMenu, -1, _('Add Pane with desktop items'))
+        debugMenu.AppendItem(self.menu_debug_addatompane)
         debugMenu.AppendItem(self.menu_debug_adddlpane)
         debugMenu.AppendItem(self.menu_debug_addwebpane)
         debugMenu.AppendItem(self.menu_debug_addbibpane)
+        self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
+                  self.menu_debug_addatompane)
         self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
                   self.menu_debug_adddlpane)
         self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
@@ -310,6 +316,10 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        self.TabBook.AddPage(tab, caption, select=True)
+
+    def OpenAtomisePane(self, evt=0, ostore=None, caption=_('Desktop items')):
+        tab = atomWidget(self.TabBook, -1)
         self.TabBook.AddPage(tab, caption, select=True)
 
     def DoSearch(self, evt):

@@ -23,7 +23,8 @@ Session = sessionmaker(bind=engine)
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
-    
+
+    # Fundamental fields
     id = Column(Integer, primary_key=True)
     title = Column(Unicode)
     author = Column(Unicode)
@@ -39,11 +40,14 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     WebData_Url = Column(Unicode)
     WebData_PageUrl = Column(Unicode)
     WebData_LinkText = Column(Unicode)
+    WebData_DateDownloaded = Column(DateTime)
 
     FileData_FileName = Column(Unicode)
     FileData_Root = Column(Unicode)
     FileData_Folder = Column(PickleType)
     FileData_FileType = Column(Unicode(length=6))
+    FileData_DateCreated = Column(DateTime)
+    FileData_DateModified = Column(DateTime)
 
     def __init__(self, title='', author='', date=datetime.datetime.today()):
         self.title = title
@@ -122,12 +126,15 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['cached'] = True
         self.set_file(temp_location)
         self.set_file_type()
+        self.date = datetime.datetime.today()
+        self.WebData_DateDownloaded = self.date
 
     def add_aspect_cached_from_desktop(self, temp_location):
         '''Add information pertaining to the temporary caching of this
         object'''
         self.aspects['cached'] = True
         self.set_file(temp_location)
+        self.date = datetime.datetime.today()
 
     def add_aspect_failed_download(self):
         '''Flag this as a failed download'''

@@ -69,14 +69,14 @@ def spoof_pieobject(objtype="normal"):
         ro = PieObject(t, a, d)
         ro.FileData_FileName = random.choice(filenamelist)
         ro.FileData_Root = random.choice(rootlist)
-    if objtype == 'web':
+    elif objtype == 'web':
         ro = PieObject()
         ro.WebData_Url = random.choice(urllist)
         ro.WebData_PageUrl = ro.WebData_Url
         ro.WebData_LinkText = random.choice(ipsum)
         ro.title = ro.WebData_LinkText
         ro.aspects['onweb'] = True
-    if objtype == 'webfull':
+    elif objtype == 'webfull':
         t = random.choice(ipsum)
         a = random.choice(namelist)
         d = datetime.datetime.today()
@@ -86,6 +86,8 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_LinkText = t + ' [link]'
         ro.FileData_Root = 'cachedir'
         ro.aspects['onweb'] = True
+    elif objtype == 'desktop':
+        ro = PieObject()
     ro.MakeBibData()
     ro.add_tag('Test')
     return ro

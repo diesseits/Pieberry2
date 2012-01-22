@@ -1,12 +1,9 @@
-#!/bin/python
-
-# GNU GPL, Raif Sarcich
+# GNU GPLv3, Raif Sarcich 2012
 
 import wx
 import traceback
 import os, string, time, sys
-from pieberry.pieberry_config import IMGDIR
-
+from pieconfig.paths import IMGDIR
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):
@@ -111,6 +108,9 @@ class atomActionWindow(wx.ScrolledWindow):
         pass
 
     def onDelFile(self):
+        pass
+
+    def onFileAll(self):
         pass
 
     def onMouseOverBmp(self, evt):
