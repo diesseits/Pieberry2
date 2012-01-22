@@ -9,7 +9,7 @@ Plan for fundamental object
     - Will need to utilise PybTex for author field at least
     - Set fundamental fields as priority
 
-*** SetFileLocation(loc)
+*** set_file(loc)
     - Needs to set a variety of fields appropriately when file is moved
     - Keep in mind movement to/from staging areas
 
@@ -33,7 +33,7 @@ Plan for fundamental object
 |               | *ReferDate()   | pydate | Default date to refer to                   |
 |               | *Tags          | list   | List of tags for this object               |
 |               | DocType        | unic   | Type of document (for fs struct)           |
-|               | CorpAuthor     | bool   | Corporate author                           |
+|               | corpauthor     | unic   | Corporate author                           |
 | BibData       |                |        | BibTeX related data                        |
 |               | BibtexKey      | unic   | Bibtex key                                 |
 |               | BibtexType     | unic   | Bibtex entry type                          |

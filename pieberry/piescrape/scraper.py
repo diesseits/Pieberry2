@@ -79,7 +79,9 @@ class PieScraper:
                 url=linky['Url'],
                 pageurl=self._origin_url,
                 linktext=linky['LinkText'],
-                defaultauthor=self._default_author
+                defaultauthor=self._default_author,
+                category_phrase=self._category_phrase,
+                author_is_corporate=self._author_is_corporate
                 )
             ret.Add(ob)
         if threaded: #use callback if threaded, otherwise just return data

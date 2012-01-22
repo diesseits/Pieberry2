@@ -89,8 +89,13 @@ class BaseMainWindow(wx.Frame, PieActor):
             debugMenu, -1, _('Add Web Pane'))
         self.menu_debug_addbibpane = wx.MenuItem(
             debugMenu, -1, _('Add Bib Pane'))
+        self.menu_debug_adddlpane = wx.MenuItem(
+            debugMenu, -1, _('Add Pane with dld items'))
+        debugMenu.AppendItem(self.menu_debug_adddlpane)
         debugMenu.AppendItem(self.menu_debug_addwebpane)
         debugMenu.AppendItem(self.menu_debug_addbibpane)
+        self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
+                  self.menu_debug_adddlpane)
         self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
         self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
         # END debug menu

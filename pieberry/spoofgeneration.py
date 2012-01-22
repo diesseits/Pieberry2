@@ -2,7 +2,10 @@
 
 import random
 import datetime
-from pieobject import PieObject
+import os.path, os
+from pieobject import PieObject, PieObjectStore
+from pieobject.paths import *
+from pieconfig.paths import ROOT_MAP
 
 ipsum = (
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
@@ -55,9 +58,10 @@ urllist = (
 
 filenamelist = ('basin.pdf', 'sink.pdf', 'bath.pdf', 'shower.pdf', 'loo.pdf')
 
-rootlist = ('library', 'projects', 'staging_web', 'staging_desktop')
+rootlist = ROOT_MAP.keys()
 
 def spoof_pieobject(objtype="normal"):
+    '''Generate a spoof PieObject'''
     if objtype == 'normal':
         t = random.choice(ipsum)
         a = random.choice(namelist)
@@ -71,8 +75,44 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_PageUrl = ro.WebData_Url
         ro.WebData_LinkText = random.choice(ipsum)
         ro.title = ro.WebData_LinkText
+        ro.aspects['onweb'] = True
+    if objtype == 'webfull':
+        t = random.choice(ipsum)
+        a = random.choice(namelist)
+        d = datetime.datetime.today()
+        ro = PieObject(t, a, d)
+        ro.WebData_Url = random.choice(urllist)
+        ro.WebData_PageUrl = ro.WebData_Url
+        ro.WebData_LinkText = t + ' [link]'
+        ro.FileData_Root = 'cachedir'
+        ro.aspects['onweb'] = True
     ro.MakeBibData()
     ro.add_tag('Test')
     return ro
 
 
+def spoof_pieobjectstore(objtype="normal", noobjects=5):
+    '''Get a PieObjectStore with spoof data and real files'''
+    category_phrase = "DIRECTORY " + random.choice(ipsum)[:20].strip()
+    ostore = PieObjectStore()
+    sess = get_session()
+    ostore.set_session(sess)
+    digits = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+    for i in range(noobjects):
+        ro = spoof_pieobject(objtype)
+        ro.set_session(sess)
+        ro.collection = category_phrase
+        if objtype == "webfull":
+            fname = ro.Title()[:20] + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
+            fname = os.path.join(
+                os.path.dirname(suggest_path_cache_fromweb(ro)),
+                fname)
+            print 'MAKING FILE AT:', fname
+            if not os.path.isdir(os.path.dirname(fname)):
+                os.makedirs(os.path.dirname(fname))
+            f = open(fname, 'w').close()
+            ro.add_aspect_cached_from_web(fname)
+        ostore.Add(ro)
+    return ostore
+        
+        

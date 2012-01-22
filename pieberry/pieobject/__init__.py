@@ -29,6 +29,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     author = Column(Unicode)
     date = Column(DateTime)
     tags = Column(PickleType)
+    collection = Column(Unicode) # i.e. 'category_phrase'
+    corpauthor = Column(Unicode)
 
     BibData_Key = Column(Unicode)
     BibData_Type = Column(Unicode(length=20))
@@ -48,6 +50,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.author = author
         self.date = date
         self.tags = []
+        self.filemetadata = {}
 
         #aspects
         self.aspects = {
@@ -63,7 +66,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath':
-            if not self.has_aspect('stored') or self.has_aspect('cached'):
+            if not (self.has_aspect('stored') or self.has_aspect('cached')):
                 raise AttributeError
             pathlist = [ROOT_MAP[self.FileData_Root],] + self.FileData_Folder + [self.FileData_FileName,]
             return os.path.join(*pathlist)
@@ -73,8 +76,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def Title(self):
         return self.title
 
-    def Author(self):
-        return self.author
+    def Author(self, favour_corporate=False):
+        if favour_corporate and self.corpauthor:
+            return self.corpauthor
+        else:
+            return self.author
 
     def GetId(self):
         return self.id
@@ -86,12 +92,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def Url(self):
         return self.WebData_Url
 
+    def Collection(self):
+        return self.collection
+
     def has_aspect(self, t):
         if not t in self.aspects.keys():
             raise KeyError, 'Unknown type of aspect'
         return self.aspects[t]
 
-    def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor=''):
+    def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
+                         category_phrase='', author_is_corporate=False):
         '''Add information gleaned from the document being on the web
         (in-situ)'''
         assert type(url) in (str, unicode)
@@ -102,12 +112,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.WebData_LinkText = linktext
         self.title = linktext
         self.author = defaultauthor
+        if author_is_corporate: self.corpauthor = defaultauthor
+        self.collection = category_phrase
         self.aspects['onweb']=True
 
     def add_aspect_cached_from_web(self, temp_location):
         '''Add information pertaining to the downloading and temporary
         caching of this object'''
         self.aspects['cached'] = True
+        self.set_file(temp_location)
+        self.set_file_type()
 
     def add_aspect_cached_from_desktop(self, temp_location):
         '''Add information pertaining to the temporary caching of this
@@ -119,9 +133,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Flag this as a failed download'''
         self.aspects['failed_dl'] = True
 
-    def add_aspect_stored(self):
+    def add_aspect_stored(self, final_fn=None):
         '''Add information pertaining to the storage of this item in
         the system'''
+        if not final_fn == self.FileData_FullPath:
+            self.set_file(final_fn) #set filename if specified and different 
+        self.aspects['stored'] = True
+        self.aspects['cached'] = False
+
+    def flag_aspect_stored(self):
+        '''Variant of add_aspect_stored for use in search queries'''
         self.aspects['stored'] = True
         self.aspects['cached'] = False
 
@@ -134,25 +155,24 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Mark a session flag for this object'''
         self.session = sess
 
-    def set_file(loc):
+    def set_file(self, loc):
         '''Set all kinds of data associated with this being a local file.
         Should have full absolute path given to it.'''
         if not os.path.exists(loc):
             raise IOError, 'Trying to set file data for non existant file'
         self.FileData_FileName = os.path.basename(loc)
-        # self.FileData_FullPath = loc
         diry = os.path.dirname(loc)
         fdroot = None
         for key, pdir in ROOT_MAP.items():
+            # print 'Testing if', diry[:len(pdir)], '==', pdir
             if diry[:len(pdir)] == pdir:
                 fdroot = key
                 self.FileData_Root = key
                 self.FileData_Folder = diry[len(pdir):].split(os.sep)
-            break
+                break
         if not fdroot: raise Exception, 'File stored outside pieberry domain'
-        self.set_file_type()
 
-    def set_file_type(ft=None):
+    def set_file_type(self, ft=None):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
             m = magic.open(magic.MAGIC_MIME)

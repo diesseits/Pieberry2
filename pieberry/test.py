@@ -1,17 +1,24 @@
 #!/usr/bin/python
 
 import wx
-import sys, os
+import sys, os, shutil
 # sys.path.append(os.path.abspath('pieobject'))
 # print os.path.abspath('.')
 
 from pieconfig.globals import *
+from pieconfig.paths import *
 
 if __name__ == '__main__':
+    # use gettext
     import gettext
     gettext.install('pietest')
+    # instantiate app
     app = wx.PySimpleApp(0)
     wx.InitAllImageHandlers()
+    # clear out the directories if debugging
+    if DEBUG:
+        nuke_directories()
+        create_directories()
 
 from pieobject import *
 from piescrape import *
@@ -31,6 +38,7 @@ if __name__ == '__main__':
     app.SetTopWindow(frame_1)
     frame_1.Show()
     frame_1.DebugAddWebPane()
+    frame_1.DebugAddDownloadedPane()
     # for i in range(5):
     #     o = spoof_pieobject('normal')
     #     p = spoof_pieobject('web')

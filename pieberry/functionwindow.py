@@ -2,6 +2,7 @@ import wx
 import pprint
 import thread
 import time
+import traceback
 
 from pieobject import *
 from pieobject.paths import *
@@ -81,6 +82,14 @@ class FunctionMainWindow(BaseMainWindow):
             msgtype = download_file(url=obj.Url(), suggested_path=storepath)
             if msgtype == 'success':
                 obj.add_aspect_cached_from_web(storepath)
+                filemetadata = {}
+                # try:
+                filemetadata = scan_file_metadata(obj)
+                # except:
+                #     traceback.print_exc()
+                #     msgtype='warn'
+                # print 'filemetadata', filemetadata
+                obj.filemetadata = filemetadata
             else:
                 obj.add_aspect_failed_download()
             newevt = PieDownloadNotifyEvent(
@@ -119,8 +128,17 @@ class FunctionMainWindow(BaseMainWindow):
         wx.PostEvent(self, newevt)
 
     def OnCommitStaged(self, evt):
+        ostore = evt.ostore
+        for obj in ostore:
+            path = obj.FileData_FullPath
+            dpath = suggest_path_store_fromweb(obj)
+            if not os.path.isdir(os.path.dirname(dpath)):
+                os.makedirs(os.path.dirname(dpath))
+            print 'COPYING: %s to %s' % (path, dpath)
+            os.renames(path, dpath)
+            obj.add_aspect_stored(dpath)
         session = Session()
-        session.add_all(evt.ostore)
+        session.add_all(ostore)
         session.commit()
         self.CloseUtilityPanes()
         # wx.MessageBox(
@@ -136,8 +154,11 @@ class FunctionMainWindow(BaseMainWindow):
         self.OpenSearchPane(caption=evt.searchtext[:20])
         searchpane = self.GetCurrentPane()
         query = build_query(evt.searchtext.strip(), session)
+        ostore = PieObjectStore()
         for instance in query:
-            searchpane.AddObject(instance)
+            ostore.Add(instance)
+        ostore.instantiate_nonstored()
+        searchpane.AddObjects(ostore)
         wx.CallAfter(self.CloseUtilityPanes)
 
 # TODO: move to a search module

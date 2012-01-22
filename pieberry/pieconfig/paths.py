@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, shutil
 
 from identity import *
 from globalvars import *
@@ -70,3 +70,23 @@ ROOT_MAP = { #map these potential roots to allow portability
     'meetingpaperdir': MEETINGPAPERDIR,
     'recentdocsdir': RECENTDOCSDIR
     }
+
+print 'LIBRARYDIR =', LIBRARYDIR
+print 'PROJECTDIR =', PROJECTDIR
+print 'MEETINGPAPERDIR =', MEETINGPAPERDIR
+print 'RECENDOCSDIR =', RECENTDOCSDIR
+
+def nuke_directories():
+    '''Abolish directories (debug only)'''
+    print 'DELETING ALL DIRECTORIES'
+    for dr in ROOT_MAP.values():
+        if os.path.exists(dr):
+            shutil.rmtree(dr)
+    return True
+
+def create_directories():
+    '''Set up directories'''
+    for dr in ROOT_MAP.values():
+        if not os.path.exists(dr):
+            os.makedirs(dr)
+    return True

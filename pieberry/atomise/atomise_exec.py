@@ -8,7 +8,9 @@ import sys, os, time, re, string, traceback, shutil
 import wx
 import hachoir_metadata
 import atomise_hachoir
-import pyPdf
+import cPickle
+
+from pieconfig.paths import *
 
 re_doc_creation_date = re.compile(r'^Creation date: ([0-9]{4})-([0-9]{2})-([0-9]{2}) ')
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
@@ -24,7 +26,7 @@ def get_fake_metadata(fn):
         ret['title'] = os.path.splitext(os.path.basename(fn))[0][8:]
     else:
         ret['title'] = os.path.splitext(os.path.basename(fn))[0]
-        ret['creation_date'] = time.localtime(os.stat(fn)[9])
+        ret['modification_date'] = time.localtime(os.stat(fn)[9])
     ret['author'] = ''
     return ret
         
@@ -35,24 +37,6 @@ def get_doc_metadata(fn):
         return get_fake_metadata(fn)
     md = {}
     md['title'] = string.join([i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
-    # for i in raw_meta:
-    #     if i[:17] == '- Creation date: ':
-    #         ct = time.localtime(os.stat(fn)[9])
-    #         try:
-    #             ct = time.strptime(i[17:], "%Y-%m-%d %H:%M:%S")
-    #         except ValueError:
-    #             print 'Could not parse time'
-    #         md['creation_date'] = ct
-    #         break
-    # for i in raw_meta:
-    #     if i[:21] == '- Last modification: ':
-    #         mt = time.localtime(os.stat(fn)[8])
-    #         try:
-    #             mt = time.strptime(i[21:], "%Y-%m-%d %H:%M:%S")
-    #         except ValueError:
-    #             print 'Could not parse time'
-    #         md['modification date'] = mt
-    #         break
     mt = time.localtime(os.stat(fn)[8])
     for i in raw_meta: # go by modification not creation
         if i[:21] == '- Last modification: ':
@@ -61,60 +45,54 @@ def get_doc_metadata(fn):
             except ValueError:
                 print 'Could not parse time'
             break
-    md['creation_date'] = mt
+    md['modification_date'] = mt
     md['authors'] = [i[9:].strip() for i in raw_meta if i[:9] == '- Author:']
     md['author'] = string.join([i[9:].strip() for i in raw_meta if i[:9] == '- Author:'], ' and ')
     return md
 
-def get_pdf_metadata(fn):
-    retinfo = {}
-    retinfo['creation_date'] = time.localtime(os.stat(fn)[9])
-    retinfo['author'] = ''
-    retinfo['title'] = ''
-    try:
-        pdf_file = file(fn, 'rb')
-        pdfread = pyPdf.PdfFileReader(pdf_file)
-        docmetadata = pdfread.getDocumentInfo()
-    except:
-        print 'warning - could not read pdf metadata for %s' % fn
-        traceback.print_exc()
-        pdf_file.close()
-        return get_fake_metadata(fn)
-    if docmetadata == None:
-        docmetadata = {} #pyPdf appears to send Nonetypes instead of
-                         #empty dicts, annoyingly
-    # creation date is found here. if not present, fall back to current date
-    try:
-        if docmetadata.has_key('/CreationDate'):
-            rd = docmetadata['/CreationDate'][2:]
-            retinfo['creation_date'] = time.strptime("%s %s %s %s %s" % (rd[0:4], rd[4:6], rd[6:8], rd[8:10], rd[10:12]), "%Y %m %d %H %M")
-            retinfo['creation_date_guessed'] = False
-        else:
-            retinfo['creation_date_guessed'] = True
-    except: #hack ... but sometimes /creationdate is bunged
-        traceback.print_exc()
-        retinfo['creation_date_guessed'] = True
-    # some reformatting necessary when author names are computer-inserted
-    splre = re.compile("[./_ ]")
-    authst = ''
-    if not pdfread.documentInfo:
-        return retinfo
-    if pdfread.documentInfo.author:
-        authst = string.join(splre.split(pdfread.documentInfo.author))
-        authst = string.capwords(authst)
-    retinfo['author'] = authst
-    retinfo['title'] = unicode(pdfread.documentInfo.title)
-    pdf_file.close()
-    return retinfo
+# def get_pdf_metadata(fn):
+#     retinfo = {}
+#     retinfo['creation_date'] = time.localtime(os.stat(fn)[9])
+#     retinfo['author'] = ''
+#     retinfo['title'] = ''
+#     try:
+#         pdf_file = file(fn, 'rb')
+#         pdfread = pyPdf.PdfFileReader(pdf_file)
+#         docmetadata = pdfread.getDocumentInfo()
+#     except:
+#         print 'warning - could not read pdf metadata for %s' % fn
+#         traceback.print_exc()
+#         pdf_file.close()
+#         return get_fake_metadata(fn)
+#     if docmetadata == None:
+#         docmetadata = {} #pyPdf appears to send Nonetypes instead of
+#                          #empty dicts, annoyingly
+#     # creation date is found here. if not present, fall back to current date
+#     try:
+#         if docmetadata.has_key('/CreationDate'):
+#             rd = docmetadata['/CreationDate'][2:]
+#             retinfo['creation_date'] = time.strptime("%s %s %s %s %s" % (rd[0:4], rd[4:6], rd[6:8], rd[8:10], rd[10:12]), "%Y %m %d %H %M")
+#             retinfo['creation_date_guessed'] = False
+#         else:
+#             retinfo['creation_date_guessed'] = True
+#     except: #hack ... but sometimes /creationdate is bunged
+#         traceback.print_exc()
+#         retinfo['creation_date_guessed'] = True
+#     # some reformatting necessary when author names are computer-inserted
+#     splre = re.compile("[./_ ]")
+#     authst = ''
+#     if not pdfread.documentInfo:
+#         return retinfo
+#     if pdfread.documentInfo.author:
+#         authst = string.join(splre.split(pdfread.documentInfo.author))
+#         authst = string.capwords(authst)
+#     retinfo['author'] = authst
+#     retinfo['title'] = unicode(pdfread.documentInfo.title)
+#     pdf_file.close()
+#     return retinfo
 
-def get_other_metadata(fn):
-    pass
 
-import traceback
-import cPickle
-from pieberry.pieberry_config import *
-
-def periodic_sweep():
+def desktop_sweep():
     sweepdir = config.get('AToptions', 'sweep_directory')
     tempdir = config.get('AToptions', 'temp_directory')
 
@@ -204,53 +182,6 @@ def periodic_sweep():
 
     return tuple(returndata)
         
-def score_item(docdata):
-    '''determine the most appropriate matching folder for a document
-    based on its metadata. Return folder name or None'''
-    cf = open(os.path.join(sysdir, 'criteria.pickle'), 'r')
-    criteria = cPickle.load(cf)
-    cf.close()
-
-    docscore = dict([(k, 0) for k, v in criteria.items()])
-    for directory, field_data in criteria.items():
-        for field, searchterms in field_data.items():
-            if not docdata.has_key(field):
-                continue
-            for term in searchterms:
-                if term.lower() in docdata[field].lower():
-                    docscore[directory] += 1
-                if field == 'title': # title searches should also go
-                                     # through the initial file name
-                    if term.lower() in docdata['initial_fn'].lower():
-                        docscore[directory] += 1
-    topkey = ''
-    topscore = 0
-    for k, v in docscore.items():
-        if v > topscore: 
-            topscore = v
-            topkey = k
-    if topscore == 0:
-        return None
-    else:
-        return topkey
-
-def suggest_fn(ifn, creationdate=None, title=None, doctype=None):
-    '''Suggest a suitable filename, taking the longer of the existing
-    filename or the title string of the document'''
-    ext = os.path.splitext(ifn)[1]
-    m = re_dateprefix.match(ifn)
-    if m:
-        dateprefix = m.group(0)
-        usetitle = os.path.splitext(ifn)[0][8:]
-    else:
-        usetitle = os.path.splitext(ifn)[0]
-        if creationdate:
-            dateprefix = time.strftime("%Y%m%d", creationdate)
-        else:
-            dateprefix = time.strftime("%Y%m%d", time.localtime())
-    if config.getboolean('AToptions', 'guess_filename') == True:
-        if len(title) > len(usetitle): usetitle = title[:90] #translate_non_alphanumerics(title[:90])
-    return string.join([s for s in [dateprefix, doctype, usetitle] if s != None], ' - ') + ext
     
 def main(argv):  
     file_list = [fl for fl in os.listdir(os.getcwd()) if os.path.isfile(fl)]

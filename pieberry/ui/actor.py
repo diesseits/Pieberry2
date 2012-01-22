@@ -1,5 +1,5 @@
 import wx
-import sys
+import sys, os
 
 from pieconfig import *
 
@@ -83,4 +83,11 @@ class PieActor:
         for i in range(noobjects):
             p = spoof_pieobject('normal')
             pan.AddObject(p)
-    
+
+    def DebugAddDownloadedPane(self, evt=0, noobjects=5):
+        from spoofgeneration import *
+        ostore = spoof_pieobjectstore('webfull')
+        self.OpenStagingPane()
+        pan = self.GetCurrentPane()
+        pan.AddObjects(ostore)
+        
