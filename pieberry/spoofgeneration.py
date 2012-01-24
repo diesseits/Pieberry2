@@ -95,7 +95,7 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
     '''Get a PieObjectStore with spoof data and real files'''
     category_phrase = "DIRECTORY " + random.choice(ipsum)[:20].strip()
     ostore = PieObjectStore()
-    sess = get_session()
+    sess = get_session(objtype)
     ostore.set_session(sess)
     digits = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
     for i in range(noobjects):

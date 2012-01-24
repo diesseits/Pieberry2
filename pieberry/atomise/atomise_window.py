@@ -2,9 +2,10 @@
 
 import wx
 import traceback
-import os, string, time, sys
+import os, string, time, sys, datetime
 from pieconfig.paths import IMGDIR
 from pieobject import PieObjectStore
+from ui.events import *
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):
@@ -52,23 +53,18 @@ class atomActionWindow(wx.ScrolledWindow):
         wx.ScrolledWindow.__init__(self, parent, -1, style=wx.RAISED_BORDER)
         self.__do_layout()
         self.__init_data()
+        self.parent = parent
         
     def __do_layout(self):
-        self.flexsizer = wx.FlexGridSizer(0, 8, 5, 10)
+        self.flexsizer = wx.FlexGridSizer(0, 7, 5, 10)
         self.flexsizer.AddGrowableCol(1, 2)
-        self.flexsizer.AddGrowableCol(3, 3)
+        # self.flexsizer.AddGrowableCol(3, 3)
         font =  wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        for i in ('    ', 'File', 'Destination folder', 'Destination filename', 'Bibliography', 'Del', 'Open', 'File this'):
+        for i in ('    ', 'File name', 'Destination folder', '', '', '', ''):
             txt = wx.StaticText(self, -1, i, style=wx.ALIGN_CENTER|wx.EXPAND)
             txt.SetFont(font)
             self.flexsizer.Add(txt)
 
-        # self.flexsizer.Add(wx.StaticText(self, -1, '       ', style=wx.ALIGN_CENTER|wx.EXPAND))
-        # self.flexsizer.Add(wx.StaticText(self, -1, 'File', style=wx.ALIGN_CENTER|wx.EXPAND))
-        # self.flexsizer.Add(wx.StaticText(self, -1, 'Destination folder', style=wx.ALIGN_CENTER|wx.EXPAND))
-        # self.flexsizer.Add(wx.StaticText(self, -1, 'Destination filename', style=wx.ALIGN_CENTER|wx.EXPAND))
-        # self.flexsizer.Add(wx.StaticText(self, -1, 'Bibliography', style=wx.ALIGN_CENTER|wx.EXPAND))
-        # self.flexsizer.Add(wx.StaticText(self, -1, 'File This', style=wx.ALIGN_CENTER|wx.EXPAND))
         self.SetSizer(self.flexsizer)
         self.SetScrollbars(0, 20, 0, 50)
 
@@ -82,34 +78,23 @@ class atomActionWindow(wx.ScrolledWindow):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
         # self.currentrow = self.rowdata[ob.getRowId()]
-        self.onCreateBib()
+        self.parent.onCreateBib()
 
     def _on_gofile(self, evt):
         ob = evt.GetEventObject()
         # self.currentrow = self.rowdata[ob.getRowId()]
         self.currentrow = ob.getRowId()
-        self.onGoFile()
+        self.parent.onGoFile()
 
     def _on_delfile(self, evt):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
-        self.onDelFile()
+        self.parent.onDelFile(self.currentrow)
 
     def _on_openfile(self, evt):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
-        self.onOpenFile()
-
-    def onCreateBib(self):
-        '''override for bib entry creation implementation'''
-        pass
-
-    def onGoFile(self):
-        '''override for filing action implementation'''
-        pass
-
-    def onDelFile(self):
-        pass
+        self.parent.onOpenFile()
 
     def onFileAll(self):
         pass
@@ -121,15 +106,13 @@ class atomActionWindow(wx.ScrolledWindow):
         wx.FutureCall(500, self.onMouseStillOverBmp, mob)
 
     def onMouseStillOverBmp(self, rowid):
-        def fmt_time(t):
-            if type(t) == time.struct_time:
-                return time.ctime(time.mktime(t))
-            else:
-                return t
         if self.mouseoverbmp == rowid:
-            # ttflds = ('author', 'title', 'initial_fn', 'creation_date')
-            # ttdata = string.join(['%s: %s' % (k.capitalize(), fmt_time(v)) for k, v in self.rowdata[rowid].items() if k in ttflds], u'\n')
-            ttdata = 'Yet to implement'
+            obj = self.rowdata[rowid]
+            ttdata = string.join([
+                    'Author: %s' % obj.Author(),
+                    'Title: %s' % obj.Title(),
+                    'Date: %s' % obj.ReferDate().ctime()
+                    ], u'\n')
             self.tw = wx.TipWindow(self, ttdata, maxLength=300)
     
     def onMouseOffBmp(self, evt):
@@ -137,11 +120,7 @@ class atomActionWindow(wx.ScrolledWindow):
         # self.tw.Close()
         # self.tw.Destroy()
 
-    def Add(self, obj):
-        return self.addRow(obj)
-
-    def addRow(self, obj, recommended_dir=None):
-
+    def AddObject(self, obj, recommended_dir=None):
         # Todo - customisable attenuation, (also in web scraping)
         def attenuate(f):
             if f == None: return u''
@@ -151,7 +130,7 @@ class atomActionWindow(wx.ScrolledWindow):
                 return f
         
         self.maxrow += 1
-        setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
+        # setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
         if obj.FileData_FileType == 'pdf':
             icon = wx.Image(os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
             setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
@@ -165,12 +144,6 @@ class atomActionWindow(wx.ScrolledWindow):
 
         bm.Bind(wx.EVT_ENTER_WINDOW, self.onMouseOverBmp)
         bm.Bind(wx.EVT_LEAVE_WINDOW, self.onMouseOffBmp)
-                         
-        setattr(self, 'filelabel%d' % self.maxrow, wx.StaticText(self, -1, attenuate(obj.FileData_FileName)))
-        tl = getattr(self, 'filelabel%d' % self.maxrow)
-        tl.SetBackgroundColour('lightblue')
-        setattr(self, 'choice%d' % self.maxrow, wx.Choice(self, -1, choices=self.defaultchoices))
-        ch = getattr(self, 'choice%d' % self.maxrow)
 
         setattr( #TODO need a validator to exclude filesystem chars
             self, 
@@ -180,6 +153,9 @@ class atomActionWindow(wx.ScrolledWindow):
         tc = getattr(
             self,
             'suggesttc%d' % self.maxrow)
+                         
+        setattr(self, 'choice%d' % self.maxrow, wx.Choice(self, -1, choices=self.defaultchoices))
+        ch = getattr(self, 'choice%d' % self.maxrow)
 
         setattr(self, 'bibbutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='Create'))
         bt = getattr(self, 'bibbutton%d' % self.maxrow)
@@ -200,16 +176,15 @@ class atomActionWindow(wx.ScrolledWindow):
             )
         openbt = getattr(self, 'openbutton%d' % self.maxrow)
         
-        setattr(self, 'gobutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='Go'))
+        setattr(self, 'gobutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='File it'))
         gobt = getattr(self, 'gobutton%d' % self.maxrow)
         self.Bind(wx.EVT_BUTTON, self._on_createbib, bt)
         self.Bind(wx.EVT_BUTTON, self._on_gofile, gobt)
         self.Bind(wx.EVT_BUTTON, self._on_delfile, delbt)
         self.Bind(wx.EVT_BUTTON, self._on_openfile, openbt)
         self.flexsizer.Add(bm)
-        self.flexsizer.Add(tl)
-        self.flexsizer.Add(ch, flag=wx.EXPAND)
         self.flexsizer.Add(tc, flag=wx.EXPAND)
+        self.flexsizer.Add(ch, flag=wx.EXPAND)
         self.flexsizer.Add(bt)
         self.flexsizer.Add(delbt)
         self.flexsizer.Add(openbt)
@@ -229,7 +204,6 @@ class atomActionWindow(wx.ScrolledWindow):
 
     def removeRow(self, row):
         bm = getattr(self, 'icon%d' % row, None)
-        tl = getattr(self, 'filelabel%d' % row, None)
         ch = getattr(self, 'choice%d' % row, None)
         bt = getattr(self, 'bibbutton%d' % row, None)
         gobt = getattr(self, 'gobutton%d' % row, None)
@@ -238,7 +212,6 @@ class atomActionWindow(wx.ScrolledWindow):
         tc = getattr(self, 'suggesttc%d' % row, None)
 
         self.flexsizer.Remove(bm)
-        self.flexsizer.Remove(tl)
         self.flexsizer.Remove(ch)
         self.flexsizer.Remove(bt)
         self.flexsizer.Remove(tc)
@@ -246,7 +219,6 @@ class atomActionWindow(wx.ScrolledWindow):
         self.flexsizer.Remove(opbt)
         self.flexsizer.Remove(gobt)
         bm.Destroy()
-        tl.Destroy()
         ch.Destroy()
         bt.Destroy()
         tc.Destroy()
@@ -254,6 +226,7 @@ class atomActionWindow(wx.ScrolledWindow):
         opbt.Destroy()
         gobt.Destroy()
         self.Layout()
+        self.rowdata.Del(row)
 
     def clearAll(self, evt=1):
         for i in range(0, self.maxrow + 1):

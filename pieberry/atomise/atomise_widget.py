@@ -43,7 +43,7 @@ class atomWidget(wx.Panel):
         self.Layout()
 
     def AddObject(self, obj):
-        return self.atomDisplay.Add(obj)
+        return self.atomDisplay.AddObject(obj)
 
     def SetDestinations(self, dests):
         return self.atomDisplay.setDestinations(dests)
@@ -52,6 +52,34 @@ class atomWidget(wx.Panel):
         self.atomDisplay.clearAll()
         for obj in ostore:
             self.AddObject(obj)
+
+    def onDelFile(self, currentrow):
+        obj = self.atomDisplay.rowdata[currentrow]
+        dia = wx.MessageDialog(self, 'Delete %s?' % obj.FileData_FileName,
+                               'Delete File', style=wx.YES_NO|wx.ICON_QUESTION)
+        ans = dia.ShowModal()
+        if ans == wx.ID_YES:
+            try: 
+                os.remove(obj.FileData_FullPath)
+            except:
+                traceback.print_exc()
+                wx.MessageBox('Prevented from deleting this file')
+                return
+            newevt = AtomDelFileEvent(obj=obj, rowid=currentrow)
+            wx.PostEvent(self, newevt) 
+            self.atomDisplay.removeRow(currentrow)
+
+    def onCreateBib(self, row):
+        '''override for bib entry creation implementation'''
+        pass
+
+    def onGoFile(self, row):
+        '''override for filing action implementation'''
+        pass
+
+    def onFileAll(self):
+        pass
+
             
 if __name__ == "__main__":
     pass
