@@ -4,6 +4,7 @@ import wx
 import traceback
 import os, string, time, sys
 from pieconfig.paths import IMGDIR
+from pieobject import PieObjectStore
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):
@@ -15,7 +16,7 @@ if sys.platform == 'win32':
             return self.rowid
 else:
     class atomIcon(wx.Panel):
-        def __init__(self, parent, rowid, bmp):
+        def __init__(self, parent, rowid, bmp, *args, **kwargs):
             wx.Panel.__init__(self, parent, -1, size=(22, 22))#(bmp.GetWidth(), bmp.GetHeight))
             self._bmp = bmp
             self.rowid = rowid
@@ -73,7 +74,7 @@ class atomActionWindow(wx.ScrolledWindow):
 
     def __init_data(self):
         self.rowlist = []
-        self.rowdata = []
+        self.rowdata = PieObjectStore()
         self.maxrow = -1
         self.currentrow = -1
 
@@ -126,8 +127,9 @@ class atomActionWindow(wx.ScrolledWindow):
             else:
                 return t
         if self.mouseoverbmp == rowid:
-            ttflds = ('author', 'title', 'initial_fn', 'creation_date')
-            ttdata = string.join(['%s: %s' % (k.capitalize(), fmt_time(v)) for k, v in self.rowdata[rowid].items() if k in ttflds], u'\n')
+            # ttflds = ('author', 'title', 'initial_fn', 'creation_date')
+            # ttdata = string.join(['%s: %s' % (k.capitalize(), fmt_time(v)) for k, v in self.rowdata[rowid].items() if k in ttflds], u'\n')
+            ttdata = 'Yet to implement'
             self.tw = wx.TipWindow(self, ttdata, maxLength=300)
     
     def onMouseOffBmp(self, evt):
@@ -135,16 +137,22 @@ class atomActionWindow(wx.ScrolledWindow):
         # self.tw.Close()
         # self.tw.Destroy()
 
-    def addRow(self, filedata):
+    def Add(self, obj):
+        return self.addRow(obj)
+
+    def addRow(self, obj, recommended_dir=None):
+
+        # Todo - customisable attenuation, (also in web scraping)
         def attenuate(f):
+            if f == None: return u''
             if len(f) > 40:
                 return f[:36] + ' ...'
             else:
                 return f
         
         self.maxrow += 1
-        # setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
-        if os.path.splitext(filedata['initial_fn'])[1] == '.pdf':
+        setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
+        if obj.FileData_FileType == 'pdf':
             icon = wx.Image(os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
             setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
         else:
@@ -154,18 +162,11 @@ class atomActionWindow(wx.ScrolledWindow):
         bm = getattr(self, 'icon%d' % self.maxrow)
         if sys.platform == 'win32':
             bm.SetBitmap(wx.BitmapFromImage(icon))
-        # if os.path.splitext(filedata['initial_fn'])[1] == '.pdf':
-        #     icon = wx.Image(os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
-        #     bm.SetBitmap(wx.BitmapFromImage(icon))
-        # elif os.path.splitext(filedata['initial_fn'])[1] == '.doc':
-        #     icon = wx.Image(os.path.join(IMGDIR, 'ic_file_doc_22.png'), wx.BITMAP_TYPE_PNG)
-        #     bm.SetBitmap(wx.BitmapFromImage(icon))
-        # self.Bind(wx.EVT_ENTER_WINDOW, self.onMouseOverBmp, bm)
-        # self.Bind(wx.EVT_LEAVE_WINDOW, self.onMouseOffBmp, bm)
+
         bm.Bind(wx.EVT_ENTER_WINDOW, self.onMouseOverBmp)
         bm.Bind(wx.EVT_LEAVE_WINDOW, self.onMouseOffBmp)
                          
-        setattr(self, 'filelabel%d' % self.maxrow, wx.StaticText(self, -1, attenuate(filedata['initial_fn'])))
+        setattr(self, 'filelabel%d' % self.maxrow, wx.StaticText(self, -1, attenuate(obj.FileData_FileName)))
         tl = getattr(self, 'filelabel%d' % self.maxrow)
         tl.SetBackgroundColour('lightblue')
         setattr(self, 'choice%d' % self.maxrow, wx.Choice(self, -1, choices=self.defaultchoices))
@@ -182,7 +183,7 @@ class atomActionWindow(wx.ScrolledWindow):
 
         setattr(self, 'bibbutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='Create'))
         bt = getattr(self, 'bibbutton%d' % self.maxrow)
-        if os.path.splitext(filedata['initial_fn'])[1] != '.pdf':
+        if obj.FileData_FileType != 'pdf':
             bt.Enable(False)
 
         setattr(
@@ -215,12 +216,12 @@ class atomActionWindow(wx.ScrolledWindow):
         self.flexsizer.Add(gobt)
         self.SetScrollbars(0, 20, 0, 50)
         try:
-            ch.SetSelection(self.defaultchoices.index(filedata['recommended_dir']))
+            ch.SetSelection(self.defaultchoices.index(recommended_dir))
         except:
             ch.SetSelection(0)
-        tc.SetValue(filedata['suggested_fn'])
+        tc.SetValue(obj.FileData_FileName)
         self.Layout()
-        self.rowdata.append(filedata)
+        self.rowdata.Add(obj)
 
     def addTestRow(self, evt):
         testdat = {'initial_fn': 'Test row %d' % (self.maxrow + 1)}
@@ -262,7 +263,7 @@ class atomActionWindow(wx.ScrolledWindow):
                 continue
         self.maxrow = -1
         self.currentrow = -1
-        self.rowdata = []
+        self.rowdata = PieObjectStore()
         
     def refresh(self):
         pass

@@ -50,8 +50,8 @@ class SimpleContextPanel(BaseContextPanel):
         self.Layout()
                                      
     def SetObject(self, obj):
-        self.iddisplay.SetLabel(str(obj.GetId()))
+        self.iddisplay.SetLabel(unicode(obj.GetId()))
         self.titledisplay.SetLabel(obj.Title())
         self.authordisplay.SetLabel(obj.Author())
-        self.filelocdisplay.SetLabel(obj.FileData_FullPath)
-        self.collectiondisplay.SetLabel(obj.collection)
+        self.filelocdisplay.SetLabel(unicode(obj.FileData_FullPath))
+        self.collectiondisplay.SetLabel(unicode(obj.collection))

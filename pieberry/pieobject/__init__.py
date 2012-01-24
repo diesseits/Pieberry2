@@ -71,8 +71,13 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def __getattr__(self, name):
         if name == 'FileData_FullPath':
             if not (self.has_aspect('stored') or self.has_aspect('cached')):
-                raise AttributeError
+                return None
             pathlist = [ROOT_MAP[self.FileData_Root],] + self.FileData_Folder + [self.FileData_FileName,]
+            return os.path.join(*pathlist)
+        elif name == 'FileData_ContainingFolder':
+            if not (self.has_aspect('stored') or self.has_aspect('cached')):
+                return None
+            pathlist = [ROOT_MAP[self.FileData_Root],] + self.FileData_Folder
             return os.path.join(*pathlist)
         else:
             raise AttributeError

@@ -24,7 +24,7 @@ class atomWidget(wx.Panel):
     
     def __do_layout(self):
         self.atomDisplay = atomActionWindow(self, -1)
-        self.openbt = wx.Button(self, -1, label='Open temp directory')
+        # self.openbt = wx.Button(self, -1, label='Open temp directory')
         self.procbt = wx.Button(self, -1, label='Process all')
         self.donebt = wx.Button(self, -1, label='Done')
 
@@ -34,7 +34,7 @@ class atomWidget(wx.Panel):
         s2.Add(self.atomDisplay, 1, wx.EXPAND|wx.ALL, 3)
 
         s3.Add((20, 20), 1)
-        s3.Add(self.openbt, 0, wx.EXPAND|wx.ALL, 3)
+        # s3.Add(self.openbt, 0, wx.EXPAND|wx.ALL, 3)
         s3.Add(self.procbt, 0, wx.EXPAND|wx.ALL, 3)
         s3.Add(self.donebt, 0, wx.EXPAND|wx.ALL, 3)
 
@@ -42,27 +42,16 @@ class atomWidget(wx.Panel):
         self.SetSizer(s2)
         self.Layout()
 
-    def addRow(self, filedata):
-        return self.atomDisplay.addRow(filedata)
+    def AddObject(self, obj):
+        return self.atomDisplay.Add(obj)
 
-    def setDestinations(self, dests):
+    def SetDestinations(self, dests):
         return self.atomDisplay.setDestinations(dests)
 
-    def setData(self, listofdicts):
+    def AddObjects(self, ostore):
         self.atomDisplay.clearAll()
-        for item in listofdicts:
-            self.addRow(item)
-
-    def onOpenTemp(self, evt):
-        '''Probably redundant now'''
-        # if sys.platform == 'linux2':
-        #     subprocess.call(('xdg-open', CACHEDIR))
-        # elif sys.platform == 'win32':
-        #     os.startfile(CACHEDIR))
-        # elif sys.platform == 'darwin':
-        #     subprocess.call(('open', CACHEDIR))
-        pass
-
+        for obj in ostore:
+            self.AddObject(obj)
             
 if __name__ == "__main__":
     pass

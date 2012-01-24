@@ -76,7 +76,7 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_LinkText = random.choice(ipsum)
         ro.title = ro.WebData_LinkText
         ro.aspects['onweb'] = True
-    elif objtype == 'webfull':
+    elif objtype in ('webfull', 'desktop'):
         t = random.choice(ipsum)
         a = random.choice(namelist)
         d = datetime.datetime.today()
@@ -86,8 +86,6 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_LinkText = t + ' [link]'
         ro.FileData_Root = 'cachedir'
         ro.aspects['onweb'] = True
-    elif objtype == 'desktop':
-        ro = PieObject()
     ro.MakeBibData()
     ro.add_tag('Test')
     return ro
@@ -104,7 +102,7 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
         ro = spoof_pieobject(objtype)
         ro.set_session(sess)
         ro.collection = category_phrase
-        if objtype == "webfull":
+        if objtype in ("webfull", "desktop"):
             fname = ro.Title()[:20] + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
             fname = os.path.join(
                 os.path.dirname(suggest_path_cache_fromweb(ro)),
