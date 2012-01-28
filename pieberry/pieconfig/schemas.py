@@ -46,7 +46,8 @@ AT_example_struct = {
 FEXTENSIONS = {'pdf': ('.pdf',),
                'word_doc': ('.doc', '.docx', '.rtf', '.xls', '.xlsx', '.xlsm'),
                'html': ('.htm', '.html'),
-               'plaintext': ('.txt', '.org')
+               'plaintext': ('.txt', '.org'),
+               'hachoir_other': ('.zip',)
                }
 
 #map mime types to internal generic types
@@ -55,7 +56,9 @@ MIMEMAP = {'application/pdf': 'pdf',
            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word_doc',
            'application/rtf': 'word_doc',
            'text/html': 'html',
-           'text/plain': 'plaintext'}
+           'text/plain': 'plaintext',
+           'application/x-empty': 'plaintext',
+           'application/x-compressed': 'hachoir_other'}
 
 def mime_map(mt):
     '''Util function to map file type to mime type'''

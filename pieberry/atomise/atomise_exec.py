@@ -10,16 +10,24 @@ import wx
 import hachoir_metadata
 import atomise_hachoir
 
+from pdfrw import PdfReader
+
 from atomise_utility import *
 from pieconfig.paths import *
 from pieobject import *
-
 
 
 def get_metadata_object(fn):
     '''takes a filename, returns an object with relevant metadata gleaned from
     the file. If file type is unrecognised as handleable, then None will be
     returned'''
+    ft = determine_file_type(fn)
+    if ft == 'other':
+        return None
+    if ft == 'pdf':
+        return get_pdf_metadata_object(fn)
+    if ft in ('word_doc', 'hachoir_other'):
+        return get_real_metadata_object(fn)
     return get_fake_metadata_object(fn)
 
 def get_fake_metadata_object(fn):
@@ -39,72 +47,61 @@ def get_fake_metadata_object(fn):
         cdate = datetime.datetime.fromtimestamp(os.stat(fn)[9])
     obj = PieObject(
         title = ttl,
-        date = cdate,
-        fileloc = fn)
+        date = cdate)
     return obj
 
+def get_real_metadata_object(fn):
+    '''get object with metadata gleaned from internal file metadata'''
+    raw_meta = atomise_hachoir.processFileReturn(fn)
+    if not raw_meta: return None
+    r_title = string.join(
+        [i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
 
+    mod_time = datetime.datetime.fromtimestamp(os.stat(fn)[8])
+    for i in raw_meta: # go by modification not creation
+        if i[:21] == '- Last modification: ':
+            try:
+                mod_time = datetime.datetime.strptime(
+                    i[21:], "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                print 'Could not parse time'
+            break
 
-# def get_doc_metadata(fn):
-#     raw_meta = atomise_hachoir.processFileReturn(fn)
-#     if not raw_meta:
-#         print 'Warning - no metadata for file %s' % fn
-#         return get_fake_metadata(fn)
-#     md = {}
-#     md['title'] = string.join([i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
-#     mt = time.localtime(os.stat(fn)[8])
-#     for i in raw_meta: # go by modification not creation
-#         if i[:21] == '- Last modification: ':
-#             try:
-#                 mt = time.strptime(i[21:], "%Y-%m-%d %H:%M:%S")
-#             except ValueError:
-#                 print 'Could not parse time'
-#             break
-#     md['modification_date'] = mt
-#     md['authors'] = [i[9:].strip() for i in raw_meta if i[:9] == '- Author:']
-#     md['author'] = string.join([i[9:].strip() for i in raw_meta if i[:9] == '- Author:'], ' and ')
-#     return md
+    cr_time = datetime.datetime.fromtimestamp(os.stat(fn)[9])
+    for i in raw_meta: # go by modification not creation
+        if i[:17] == '- Creation date: ':
+            try:
+                cr_time = datetime.datetime.strptime(
+                    i[17:], "%Y-%m-%d %H:%M:%S")
+            except ValueError:
+                print 'Could not parse time'
+            break
 
-# def get_pdf_metadata(fn):
-#     retinfo = {}
-#     retinfo['creation_date'] = time.localtime(os.stat(fn)[9])
-#     retinfo['author'] = ''
-#     retinfo['title'] = ''
-#     try:
-#         pdf_file = file(fn, 'rb')
-#         pdfread = pyPdf.PdfFileReader(pdf_file)
-#         docmetadata = pdfread.getDocumentInfo()
-#     except:
-#         print 'warning - could not read pdf metadata for %s' % fn
-#         traceback.print_exc()
-#         pdf_file.close()
-#         return get_fake_metadata(fn)
-#     if docmetadata == None:
-#         docmetadata = {} #pyPdf appears to send Nonetypes instead of
-#                          #empty dicts, annoyingly
-#     # creation date is found here. if not present, fall back to current date
-#     try:
-#         if docmetadata.has_key('/CreationDate'):
-#             rd = docmetadata['/CreationDate'][2:]
-#             retinfo['creation_date'] = time.strptime("%s %s %s %s %s" % (rd[0:4], rd[4:6], rd[6:8], rd[8:10], rd[10:12]), "%Y %m %d %H %M")
-#             retinfo['creation_date_guessed'] = False
-#         else:
-#             retinfo['creation_date_guessed'] = True
-#     except: #hack ... but sometimes /creationdate is bunged
-#         traceback.print_exc()
-#         retinfo['creation_date_guessed'] = True
-#     # some reformatting necessary when author names are computer-inserted
-#     splre = re.compile("[./_ ]")
-#     authst = ''
-#     if not pdfread.documentInfo:
-#         return retinfo
-#     if pdfread.documentInfo.author:
-#         authst = string.join(splre.split(pdfread.documentInfo.author))
-#         authst = string.capwords(authst)
-#     retinfo['author'] = authst
-#     retinfo['title'] = unicode(pdfread.documentInfo.title)
-#     pdf_file.close()
-#     return retinfo
+    authorlist = [i[9:].strip() for i in raw_meta if i[:9] == '- Author:']
+    authorstring = string.join(authorlist, _(' and '))
+    obj = PieObject(
+        title = r_title,
+        date = mod_time,
+        author = authorstring)
+    obj.FileData_DateCreated = cr_time
+    obj.FileData_DateModified = mod_time
+    return obj
+
+def get_pdf_metadata_object(fn):
+    '''hachoir doesn't do pdf'''
+    reader = PdfReader(obj.FileData_FullPath)
+        # assert len(reader.Info.CreationDate) > 0
+    cd = reader.Info.CreationDate.split(':')[1] #get the 'good' bit 
+        # md = reader.Info.ModDate.split(':')[1]
+    creation_date = time.strptime("%s %s %s %s %s" % (
+            cd[0:4], cd[4:6], cd[6:8], cd[8:10], cd[10:12]
+            ), "%Y %m %d %H %M")
+    obj = PieObject(
+        author = reader.Info.Author,
+        title = reader.Info.Title,
+        date = creation_date)
+    obj.FileData_DateCreated = creation_date
+    return obj
 
 def scan_desktop():
     '''Returns an object store of valid (handlable) file in the desktop 
@@ -114,7 +111,7 @@ def scan_desktop():
     for fl in file_list:
         d = get_metadata_object(fl)
         if d:
-            d.add_aspect_ondesktop()
+            d.add_aspect_ondesktop(fl)
             ostore.Add(d)
     return ostore
         
@@ -210,20 +207,3 @@ def desktop_sweep():
     return tuple(returndata)
         
     
-def main(argv):  
-    file_list = [fl for fl in os.listdir(os.getcwd()) if os.path.isfile(fl)]
-    doc_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() == '.doc']
-    pdf_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() == '.pdf']
-
-    print file_list
-    print doc_list
-    print pdf_list
-
-    for fl in doc_list:
-        print get_doc_metadata(fl)
-    for fl in pdf_list:
-        print get_pdf_metadata(fl)
-        
-
-if __name__ == '__main__':
-    main(sys.argv)

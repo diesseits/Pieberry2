@@ -2,7 +2,6 @@
 
 import sqlalchemy
 import datetime
-import mimetypes, magic
 import os, os.path
 from pprint import pprint, pformat
 from sqlalchemy import create_engine
@@ -13,8 +12,8 @@ from sqlalchemy.orm import sessionmaker
 from pieobject.tags import TagHandler
 from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
+from pieobject.diagnostic import *
 from pieconfig.paths import ROOT_MAP
-from pieconfig.schemas import mime_map
 
 
 engine = create_engine('sqlite:///:memory:', echo=True)
@@ -122,7 +121,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             raise ValueError, 'Object does not have aspect: %s' % t
         self.aspects[t] == False
 
-    def add_aspect_ondesktop(self):
+    def add_aspect_ondesktop(self, fn):
+        self.set_file(fn)
+        self.set_file_type(fn)
         self.aspects['ondesktop'] = True
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
@@ -156,7 +157,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['cached'] = True
         self.set_file(temp_location)
         self.date = datetime.datetime.today()
-
+ 
     def add_aspect_failed_download(self):
         '''Flag this as a failed download'''
         self.aspects['failed_dl'] = True
@@ -203,16 +204,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def set_file_type(self, ft=None):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
-            m = magic.open(magic.MAGIC_MIME)
-            m.load()
-            mtype = m.file(self.FileData_FullPath).split(';')[0]
-            # This is an alternative libmagic interface:
-            # mime = magic.Magic(mime=True)
-            # mtype = mime.from_file(self.FileData_FullPath)
-            if not mtype:
-                mtype = mimetypes.guess_type(self.FileData_FullPath)[0]
-            if not mtype:
-                raise Exception, "Could not determine mime type of file"
-            self.FileData_FileType = mime_map(mtype)
+            self.FileData_FileType = determine_file_type(self.FileData_FullPath)
         else:
             self.FileData_FileType = ft
+
