@@ -56,7 +56,10 @@ urllist = (
     "http://www3.jesus.loves.uu/worship.php"
     )
 
-filenamelist = ('basin.pdf', 'sink.pdf', 'bath.pdf', 'shower.pdf', 'loo.pdf')
+filenamelist_pdf = ('basin.pdf', 'sink.pdf', 'bath.pdf', 'shower.pdf', 'loo.pdf')
+filenamelist = ('basin', 'sink', 'bath', 'shower', 'loo')
+digits = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+
 
 rootlist = ROOT_MAP.keys()
 
@@ -97,7 +100,6 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
     ostore = PieObjectStore()
     sess = get_session(objtype)
     ostore.set_session(sess)
-    digits = ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
     for i in range(noobjects):
         ro = spoof_pieobject(objtype)
         ro.set_session(sess)
@@ -115,4 +117,11 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
         ostore.Add(ro)
     return ostore
         
+def fill_desktopdir(noobjects=5):
+    '''Fill the test desktop directory with files'''
+    for i in range(noobjects):
+            fname = random.choice(filenamelist) + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
+            fname = os.path.join(DESKTOPDIR, fname)
+            print 'MAKING DESKTOP FILE AT:', fname
+            f = open(fname, 'w').close()
         

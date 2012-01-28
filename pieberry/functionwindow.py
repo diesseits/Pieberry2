@@ -3,6 +3,7 @@ import pprint
 import thread
 import time
 import traceback
+import shutil, os, os.path
 
 from pieobject import *
 from pieobject.paths import *
@@ -11,7 +12,7 @@ from piescrape.execfn import *
 from ui import BaseMainWindow
 from ui.events import *
 from pieconfig.globals import *
-
+from atomise import *
 
 
 class FunctionMainWindow(BaseMainWindow):
@@ -160,6 +161,22 @@ class FunctionMainWindow(BaseMainWindow):
         ostore.instantiate_nonstored()
         searchpane.AddObjects(ostore)
         wx.CallAfter(self.CloseUtilityPanes)
+
+    def OnDesktopProcess(self, evt):
+        '''Clean out desktop, move to cache dir, present results'''
+        self.OpenAtomisePane()
+        atompane = self.GetCurrentPane()
+        session = get_session('desktop')
+        ostore = scan_desktop()
+        ostore.set_session(session)
+        for obj in ostore:
+            storepath = suggest_path_cache_fromdesktop(obj)
+            os.renames(obj.FileData_FullPath, storepath)
+            obj.add_aspect_cached_from_desktop(storepath)
+            obj.remove_aspect('ondesktop')
+        atompane.AddObjects(ostore)
+        
+
 
 # TODO: move to a search module
 

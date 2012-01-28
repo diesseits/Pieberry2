@@ -5,50 +5,65 @@
 # (c) Raif Sarcich 2010
 
 import sys, os, time, re, string, traceback, shutil
+import datetime
 import wx
 import hachoir_metadata
 import atomise_hachoir
-import cPickle
 
+from atomise_utility import *
 from pieconfig.paths import *
+from pieobject import *
 
-re_doc_creation_date = re.compile(r'^Creation date: ([0-9]{4})-([0-9]{2})-([0-9]{2}) ')
-re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
-def get_fake_metadata(fn):
-    '''get metadata gleaned only from the file system'''
-    ret = {}
+
+def get_metadata_object(fn):
+    '''takes a filename, returns an object with relevant metadata gleaned from
+    the file. If file type is unrecognised as handleable, then None will be
+    returned'''
+    return get_fake_metadata_object(fn)
+
+def get_fake_metadata_object(fn):
+    '''get object with metadata gleaned only from the file system
+    takes a full path'''
     m = re_dateprefix.match(os.path.basename(fn))
     if m:
+        # if it has a date prefix already, use that to infer the relevant
+        # date of the file
         dateprefix = m.group(0)
         ftime = '%s %s %s' % (dateprefix[0:4], dateprefix[4:6], dateprefix[6:8])
-        ret['creation_date'] = time.strptime(ftime, '%Y %m %d')
-        ret['title'] = os.path.splitext(os.path.basename(fn))[0][8:]
+        cdate = datetime.datetime.strptime(ftime, '%Y %m %d')
+        ttl = path.splitext(os.path.basename(fn))[0][8:].lstrip(' -')
     else:
-        ret['title'] = os.path.splitext(os.path.basename(fn))[0]
-        ret['modification_date'] = time.localtime(os.stat(fn)[9])
-    ret['author'] = ''
-    return ret
-        
-def get_doc_metadata(fn):
-    raw_meta = atomise_hachoir.processFileReturn(fn)
-    if not raw_meta:
-        print 'Warning - no metadata for file %s' % fn
-        return get_fake_metadata(fn)
-    md = {}
-    md['title'] = string.join([i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
-    mt = time.localtime(os.stat(fn)[8])
-    for i in raw_meta: # go by modification not creation
-        if i[:21] == '- Last modification: ':
-            try:
-                mt = time.strptime(i[21:], "%Y-%m-%d %H:%M:%S")
-            except ValueError:
-                print 'Could not parse time'
-            break
-    md['modification_date'] = mt
-    md['authors'] = [i[9:].strip() for i in raw_meta if i[:9] == '- Author:']
-    md['author'] = string.join([i[9:].strip() for i in raw_meta if i[:9] == '- Author:'], ' and ')
-    return md
+        # if no date prefix, use os.stat to infer the date of the file
+        ttl = os.path.splitext(os.path.basename(fn))[0]
+        cdate = datetime.datetime.fromtimestamp(os.stat(fn)[9])
+    obj = PieObject(
+        title = ttl,
+        date = cdate,
+        fileloc = fn)
+    return obj
+
+
+
+# def get_doc_metadata(fn):
+#     raw_meta = atomise_hachoir.processFileReturn(fn)
+#     if not raw_meta:
+#         print 'Warning - no metadata for file %s' % fn
+#         return get_fake_metadata(fn)
+#     md = {}
+#     md['title'] = string.join([i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
+#     mt = time.localtime(os.stat(fn)[8])
+#     for i in raw_meta: # go by modification not creation
+#         if i[:21] == '- Last modification: ':
+#             try:
+#                 mt = time.strptime(i[21:], "%Y-%m-%d %H:%M:%S")
+#             except ValueError:
+#                 print 'Could not parse time'
+#             break
+#     md['modification_date'] = mt
+#     md['authors'] = [i[9:].strip() for i in raw_meta if i[:9] == '- Author:']
+#     md['author'] = string.join([i[9:].strip() for i in raw_meta if i[:9] == '- Author:'], ' and ')
+#     return md
 
 # def get_pdf_metadata(fn):
 #     retinfo = {}
@@ -91,6 +106,18 @@ def get_doc_metadata(fn):
 #     pdf_file.close()
 #     return retinfo
 
+def scan_desktop():
+    '''Returns an object store of valid (handlable) file in the desktop 
+    directory'''
+    file_list = [os.path.join(DESKTOPDIR, fl) for fl in os.listdir(DESKTOPDIR) if os.path.isfile(os.path.join(DESKTOPDIR, fl))]
+    ostore = PieObjectStore()
+    for fl in file_list:
+        d = get_metadata_object(fl)
+        if d:
+            d.add_aspect_ondesktop()
+            ostore.Add(d)
+    return ostore
+        
 
 def desktop_sweep():
     sweepdir = config.get('AToptions', 'sweep_directory')

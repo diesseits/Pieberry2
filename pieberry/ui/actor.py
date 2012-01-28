@@ -15,7 +15,7 @@ class PieActor:
     def onFindInFolders(self, evt):
         pass
 
-    def onDesktopProcess(self, evt):
+    def OnDesktopProcess(self, evt):
         pass
     
     def onDesktopSettings(self, evt):

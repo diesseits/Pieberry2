@@ -7,6 +7,7 @@ import sys, os, shutil
 
 from pieconfig.globals import *
 from pieconfig.paths import *
+from spoofgeneration import fill_desktopdir
 
 if __name__ == '__main__':
     # use gettext
@@ -19,6 +20,7 @@ if __name__ == '__main__':
     if DEBUG:
         nuke_directories()
         create_directories()
+        fill_desktopdir()
 
 from pieobject import *
 from piescrape import *

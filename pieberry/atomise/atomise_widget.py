@@ -7,6 +7,7 @@ import pprint
 import shutil
 
 # from atomise_exec import *
+from atomise_utility import *
 from atomise_window import *
 from pieconfig.paths import *
 
@@ -43,7 +44,9 @@ class atomWidget(wx.Panel):
         self.Layout()
 
     def AddObject(self, obj):
-        return self.atomDisplay.AddObject(obj)
+        return self.atomDisplay.AddObject(
+            obj,
+            suggested_fn=suggest_initial_fn(obj))
 
     def SetDestinations(self, dests):
         return self.atomDisplay.setDestinations(dests)

@@ -120,7 +120,7 @@ class atomActionWindow(wx.ScrolledWindow):
         # self.tw.Close()
         # self.tw.Destroy()
 
-    def AddObject(self, obj, recommended_dir=None):
+    def AddObject(self, obj, recommended_dir=None, suggested_fn=None):
         # Todo - customisable attenuation, (also in web scraping)
         def attenuate(f):
             if f == None: return u''
@@ -194,7 +194,10 @@ class atomActionWindow(wx.ScrolledWindow):
             ch.SetSelection(self.defaultchoices.index(recommended_dir))
         except:
             ch.SetSelection(0)
-        tc.SetValue(obj.FileData_FileName)
+        if suggested_fn:
+            tc.SetValue(suggested_fn)
+        else:
+            tc.SetValue(obj.FileData_FileName)
         self.Layout()
         self.rowdata.Add(obj)
 

@@ -49,16 +49,22 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     FileData_DateCreated = Column(DateTime)
     FileData_DateModified = Column(DateTime)
 
-    def __init__(self, title='', author='', date=datetime.datetime.today()):
+    def __init__(self, title='', author='', date=datetime.datetime.today(),
+                 fileloc=None):
         self.title = title
         self.author = author
         self.date = date
         self.tags = []
         self.filemetadata = {}
 
+        if fileloc:
+            self.set_file(fileloc)
+            self.set_file_type(fileloc)
+
         #aspects
         self.aspects = {
             'onweb': False,
+            'ondesktop': False,
             'cached': False,
             'saved': False,
             'stored': False,
@@ -69,8 +75,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         return "<PieObject %s - %s. (%s)>\n%s" % (self.Title()[:10], self.Author(), str(self.ReferDate()), pformat(self.BibData_Fields))
 
     def __getattr__(self, name):
-        if name == 'FileData_FullPath':
-            if not (self.has_aspect('stored') or self.has_aspect('cached')):
+        if name == 'FileData_FullPath': 
+            if not (self.has_aspect('stored') or self.has_aspect('cached') or self.has_aspect('ondesktop')):
                 return None
             pathlist = [ROOT_MAP[self.FileData_Root],] + self.FileData_Folder + [self.FileData_FileName,]
             return os.path.join(*pathlist)
@@ -108,6 +114,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if not t in self.aspects.keys():
             raise KeyError, 'Unknown type of aspect'
         return self.aspects[t]
+
+    def remove_aspect(self, t):
+        if not t in self.aspects.keys():
+            raise KeyError, 'Unknown type of aspect'
+        if not self.aspects[t] == True:
+            raise ValueError, 'Object does not have aspect: %s' % t
+        self.aspects[t] == False
+
+    def add_aspect_ondesktop(self):
+        self.aspects['ondesktop'] = True
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
                          category_phrase='', author_is_corporate=False):

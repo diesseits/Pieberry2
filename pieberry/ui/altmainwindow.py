@@ -10,6 +10,7 @@ from contextpanel import *
 from listpanels import *
 from actor import PieActor
 from pieconfig.globalvars import *
+from pieconfig.paths import IMGDIR
 from atomise import atomWidget
 
 class BaseMainWindow(wx.Frame, PieActor):
@@ -69,8 +70,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_find.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_atom_process = wx.MenuItem(
             atomMenu, -1, _('&Process files from desktop\tCtrl-m'), 'Process')
-        # self.menu_atom_process.SetBitmap(
-        #     wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
+        self.menu_atom_process.SetBitmap(
+            wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
         self.menu_atom_settings = wx.MenuItem(
             atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
         self.menu_find_in_folders = wx.MenuItem(
@@ -135,7 +136,7 @@ class BaseMainWindow(wx.Frame, PieActor):
 
         self.Bind(wx.EVT_MENU, self.onFind, self.menu_find)
         self.Bind(wx.EVT_MENU, self.onFindInFolders, self.menu_find_in_folders)
-        self.Bind(wx.EVT_MENU, self.onDesktopProcess, self.menu_atom_process)
+        self.Bind(wx.EVT_MENU, self.OnDesktopProcess, self.menu_atom_process)
         self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
         self.Bind(wx.EVT_MENU, self.onSaveBibs, self.menu_savebibs)
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)

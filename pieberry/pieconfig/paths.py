@@ -62,19 +62,22 @@ if DEBUG == True:
     PROJECTDIR = ('/tmp/pieberry/projects')
     MEETINGPAPERDIR = ('/tmp/pieberry/meeting papers')
     RECENTDOCSDIR = ('/tmp/pieberry/recent documents')
+    DESKTOPDIR = ('/tmp/pieberry/desktop')
 
 ROOT_MAP = { #map these potential roots to allow portability
     'cachedir': CACHEDIR,
     'librarydir': LIBRARYDIR,
     'projectdir': PROJECTDIR,
     'meetingpaperdir': MEETINGPAPERDIR,
-    'recentdocsdir': RECENTDOCSDIR
+    'recentdocsdir': RECENTDOCSDIR,
+    'desktopdir': DESKTOPDIR
     }
 
 print 'LIBRARYDIR =', LIBRARYDIR
 print 'PROJECTDIR =', PROJECTDIR
 print 'MEETINGPAPERDIR =', MEETINGPAPERDIR
 print 'RECENDOCSDIR =', RECENTDOCSDIR
+print 'DESKTOPDIR =', DESKTOPDIR
 
 def nuke_directories():
     '''Abolish directories (debug only)'''
@@ -90,3 +93,11 @@ def create_directories():
         if not os.path.exists(dr):
             os.makedirs(dr)
     return True
+
+def fill_desktopdir(noobjects=5):
+    '''Fill the test desktop directory with files'''
+    for i in range(noobjects):
+            fname = random.choice(filenamelist) + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
+            fname = os.path.join(DESKTOPDIR, fname)
+            print 'MAKING DESKTOP FILE AT:', fname
+            f = open(fname, 'w').close()

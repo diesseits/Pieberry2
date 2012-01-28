@@ -20,12 +20,12 @@ PieCommitStagedEvent, EVT_PIE_COMMIT_STAGED = wx.lib.newevent.NewEvent()
 # attributes: ostore - the objects to be committed
 #             pane - the originating pane
 AtomDelFileEvent, EVT_ATOM_DEL_FILE = wx.lib.newevent.NewEvent()
-# attributes: object - the object in question
+# attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
 AtomFileFileEvent, EVT_ATOM_FILE_FILE = wx.lib.newevent.NewEvent()
-# attributes: object - the object in question
+# attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
 AtomOpenFileEvent, EVT_ATOM_OPEN_FILE = wx.lib.newevent.NewEvent()
-# attributes: object - the object in question
+# attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
 

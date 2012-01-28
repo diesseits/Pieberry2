@@ -37,6 +37,7 @@ Plan for fundamental object
 | BibData       |                |        | BibTeX related data                        |
 |               | BibtexKey      | unic   | Bibtex key                                 |
 |               | BibtexType     | unic   | Bibtex entry type                          |
+|               | Confidential   | bool   | Document is to be held in confidence       |
 | -- Fields     | [various]      | n/a    | Various BibTex Fields                      |
 |               |                |        |                                            |
 | MetaData      |                |        | General metadata                           |
