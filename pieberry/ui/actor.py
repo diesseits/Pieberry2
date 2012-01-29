@@ -17,6 +17,9 @@ class PieActor:
 
     def OnDesktopProcess(self, evt):
         pass
+
+    def onDesktopFileFile(self, evt):
+        pass
     
     def onDesktopSettings(self, evt):
         pass

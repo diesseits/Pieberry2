@@ -39,8 +39,8 @@ if __name__ == '__main__':
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
-    frame_1.DebugAddWebPane()
-    frame_1.DebugAddDownloadedPane()
+    # frame_1.DebugAddWebPane()
+    # frame_1.DebugAddDownloadedPane()
     # for i in range(5):
     #     o = spoof_pieobject('normal')
     #     p = spoof_pieobject('web')

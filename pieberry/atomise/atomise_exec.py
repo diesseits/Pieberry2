@@ -52,6 +52,7 @@ def get_fake_metadata_object(fn):
 
 def get_real_metadata_object(fn):
     '''get object with metadata gleaned from internal file metadata'''
+    #TODO: workaround for file locking bug
     raw_meta = atomise_hachoir.processFileReturn(fn)
     if not raw_meta: return None
     r_title = string.join(
@@ -116,94 +117,22 @@ def scan_desktop():
     return ostore
         
 
-def desktop_sweep():
-    sweepdir = config.get('AToptions', 'sweep_directory')
-    tempdir = config.get('AToptions', 'temp_directory')
 
-    # first sweep files into temp dir
 
-    file_list = [fl for fl in os.listdir(sweepdir) if os.path.isfile(os.path.join(sweepdir, fl))]
-    doc_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() in FEXTENSIONS['word_doc'] and fl[0] not in '~#']
-    pdf_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() in FEXTENSIONS['pdf']]
-
-    if not os.path.exists(config.get('AToptions', 'temp_directory')):
-        os.makedirs(config.get('AToptions', 'temp_directory'))
-    if not os.path.exists(os.path.join(config.get('AToptions', 'temp_directory'), 'cache')):
-        os.makedirs(os.path.join(config.get('AToptions', 'temp_directory'), 'cache'))
-
-    # [HACKY WORKAROUND]
-    # clear the cache of documents as and when possible
-    for fl in os.listdir(os.path.join(config.get('AToptions', 'temp_directory'), 'cache')):
-        try:
-            if os.path.isfile(os.path.join(config.get('AToptions', 'temp_directory'), 'cache', fl)):
-                os.remove(os.path.join(config.get('AToptions', 'temp_directory'), 'cache', fl))
-        except:
-            print 'file deletion fail'
-    # [/HACKY WORKAROUND]
-
-    for fl in doc_list:
-        try:
-            # shutil.copyfile(os.path.join(sweepdir, fl), os.path.join(tempdir, fl))
-            # os.remove(os.path.join(sweepdir, fl))
-            # shutil.copyfile(os.path.join(sweepdir, fl), os.path.join(tempdir, 'cache', fl))
-            os.rename(os.path.join(sweepdir, fl), os.path.join(tempdir, fl))
-        except Exception, exc:
-            print 'warning - could not move %s to temp\n(%s)' % (fl, unicode(exc))
-    for fl in pdf_list:
-        try:
-            # shutil.copyfile(os.path.join(sweepdir, fl), os.path.join(tempdir, fl))
-            # os.remove(os.path.join(sweepdir, fl))
-            os.rename(os.path.join(sweepdir, fl), os.path.join(tempdir, fl))
-        except Exception, exc:
-            print 'warning - could not move %s to temp\n(%s)' % (fl, unicode(exc))
-
-    # then generate data for all files in temp dir
-
-    file_list = [fl for fl in os.listdir(tempdir) if os.path.isfile(os.path.join(tempdir, fl))]
-    doc_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() in FEXTENSIONS['word_doc']] 
-    pdf_list = [fl for fl in file_list if os.path.splitext(fl)[1].lower() in FEXTENSIONS['pdf']]
-
-    returndata = []
-    import sha
-    for doc in doc_list:
-        d = {}
-        try:
-            # [HACKY WORKAROUND]
-            #this is all to work around the stupid file-locking bug with hachoir
-            shaobj = sha.new(doc + str(time.localtime()))
-            cachedocname = shaobj.hexdigest() + os.path.splitext(doc)[1]
-            shutil.copyfile(os.path.join(tempdir, doc), os.path.join(tempdir, 'cache', cachedocname))
-            d['initial_fn'] = doc
-            d.update(get_doc_metadata(os.path.join(tempdir, 'cache', cachedocname)))
-            # [/HACKY WORKAROUND]
-        except:
-            traceback.print_exc()
-            continue
-        d['recommended_dir'] = score_item(d)
-        d['suggested_fn'] = suggest_fn(
-            doc, 
-            creationdate=d['creation_date'],
-            title=d['title']
-            )
-        returndata.append(d)
-
-    for pdf in pdf_list:
-        d = {}
-        try:
-            d['initial_fn'] = pdf
-            d.update(get_pdf_metadata(os.path.join(tempdir, pdf)))
-        except:
-            traceback.print_exc()
-            continue
-        d['recommended_dir'] = score_item(d)
-        d['suggested_fn'] = suggest_fn(
-            pdf, 
-            creationdate=d['creation_date'],
-            title=d['title']
-            )
-        print d['initial_fn']
-        returndata.append(d)
-
-    return tuple(returndata)
+    # import sha
+    # for doc in doc_list:
+    #     d = {}
+    #     try:
+    #         # [HACKY WORKAROUND]
+    #         #this is all to work around the stupid file-locking bug with hachoir
+    #         shaobj = sha.new(doc + str(time.localtime()))
+    #         cachedocname = shaobj.hexdigest() + os.path.splitext(doc)[1]
+    #         shutil.copyfile(os.path.join(tempdir, doc), os.path.join(tempdir, 'cache', cachedocname))
+    #         d['initial_fn'] = doc
+    #         d.update(get_doc_metadata(os.path.join(tempdir, 'cache', cachedocname)))
+    #         # [/HACKY WORKAROUND]
+    #     except:
+    #         traceback.print_exc()
+    #         continue
         
     

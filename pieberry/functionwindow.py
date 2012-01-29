@@ -176,7 +176,21 @@ class FunctionMainWindow(BaseMainWindow):
             obj.remove_aspect('ondesktop')
         atompane.AddObjects(ostore)
         
-
+    def OnDesktopFileFile(self, evt):
+        '''Add desktop items to the system'''
+        print 'functionwindow.OnDesktopFileFile'
+        #move the file
+        obj = evt.obj
+        session = Session()
+        storepath = suggest_path_store_fromdesktop(
+            obj, 
+            evt.dest_folder,
+            evt.new_fn)
+        os.renames(obj.FileData_FullPath, storepath)
+        obj.add_aspect_stored(storepath)
+        session.add(obj)
+        session.commit()
+        wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)
 
 # TODO: move to a search module
 

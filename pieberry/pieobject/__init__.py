@@ -1,24 +1,18 @@
 #GPLv3 Raif Sarcich 2011
 
-import sqlalchemy
 import datetime
 import os, os.path
 from pprint import pprint, pformat
-from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
+from pieobject.database import *
 from pieobject.tags import TagHandler
 from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
+from pieobject.folder import FOLDER_LOOKUP, PieFolder
 from pieconfig.paths import ROOT_MAP
 
-
-engine = create_engine('sqlite:///:memory:', echo=True)
-SQLABase = declarative_base()
-Session = sessionmaker(bind=engine)
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'

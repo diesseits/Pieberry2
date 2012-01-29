@@ -7,21 +7,23 @@ import pprint
 import shutil
 
 # from atomise_exec import *
+from ui.events import *
 from atomise_utility import *
 from atomise_window import *
 from pieconfig.paths import *
+from pieobject.folder import FOLDER_LOOKUP, PieFolder
 
 class atomWidget(wx.Panel):
+    '''A ui class for displaying files grabbed from the user's desktop'''
+
+    paneltype = 'AtomPanel'
+
     def __init__(self, *args, **kwargs):
         wx.Panel.__init__(self, *args, **kwargs)
         self.__do_layout()
         self.Bind(wx.EVT_BUTTON, self.atomDisplay.onFileAll, self.procbt)
-
-        # cf = open(os.path.join(SYSDIR, 'criteria.pickle'), 'r')
-        # self.criteria = cPickle.load(cf)
-        # cf.close()
-        # self.setDestinations(self.criteria.keys())
-        # self.Bind(wx.EVT_BUTTON, self.onOpenTemp, self.openbt)
+        self.donebt.Bind(wx.EVT_BUTTON, self.onCloseSelf)
+        self.SetDestinations([f.name() for f in FOLDER_LOOKUP['projectdir']])
     
     def __do_layout(self):
         self.atomDisplay = atomActionWindow(self, -1)
@@ -57,6 +59,8 @@ class atomWidget(wx.Panel):
             self.AddObject(obj)
 
     def onDelFile(self, currentrow):
+        '''Delete a file in the staging area. Probably shouldn't be 
+        handling this in a GUI module but hey'''
         obj = self.atomDisplay.rowdata[currentrow]
         dia = wx.MessageDialog(self, 'Delete %s?' % obj.FileData_FileName,
                                'Delete File', style=wx.YES_NO|wx.ICON_QUESTION)
@@ -78,11 +82,41 @@ class atomWidget(wx.Panel):
 
     def onGoFile(self, row):
         '''override for filing action implementation'''
-        pass
+        obj = self.atomDisplay.rowdata[row]
+        ch = getattr(self.atomDisplay, 'choice%d' % self.atomDisplay.currentrow)
+        if ch.GetSelection() == 0:
+            wx.MessageBox('No selected destination for this file')
+            return
+        tc = getattr(self.atomDisplay, 'suggesttc%d' % self.atomDisplay.currentrow)
+        newevt = AtomFileFileEvent(
+            obj=obj, 
+            rowid=row,
+            dest_folder=ch.GetStringSelection(),
+            new_fn=tc.GetValue(),
+            notify_window=self)
+        wx.PostEvent(self, newevt)
+
+    def Callback_onGoFile(self, rowid):
+        '''finish up with filing'''
+        self.atomDisplay.removeRow(rowid)
 
     def onFileAll(self):
         pass
 
+    def onOpenFile(self, rowid):
+        if sys.platform == 'linux2':
+            subprocess.call(
+                ('xdg-open', self.atomDisplay.rowdata[rowid].FileData_FullPath))
+        elif sys.platform == 'win32':
+            os.startfile(self.atomDisplay.rowdata[rowid].FileData_FullPath)
+
+    def onFilterView(self, evt=0):
+        '''Does nothing for this widget'''
+        pass
+
+    def onCloseSelf(self, evt=0):
+        newevt = PieClosePaneEvent()
+        wx.PostEvent(self, newevt)
             
 if __name__ == "__main__":
     pass

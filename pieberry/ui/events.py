@@ -25,7 +25,9 @@ AtomDelFileEvent, EVT_ATOM_DEL_FILE = wx.lib.newevent.NewEvent()
 AtomFileFileEvent, EVT_ATOM_FILE_FILE = wx.lib.newevent.NewEvent()
 # attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
+#             notify_window - this window
 AtomOpenFileEvent, EVT_ATOM_OPEN_FILE = wx.lib.newevent.NewEvent()
 # attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
+PieClosePaneEvent, EVT_PIE_CLOSE_PANE = wx.lib.newevent.NewEvent()
 

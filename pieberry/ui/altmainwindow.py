@@ -192,6 +192,12 @@ class BaseMainWindow(wx.Frame, PieActor):
     def _do_bindings(self):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
 
+    def CloseCurrentPane(self, evt=None):
+        pan = self.GetCurrentPane()
+        panid = self.TabBook.GetSelection()
+        self.TabBook.RemovePage(panid)
+        wx.CallAfter(pan.Destroy)
+
     def CloseUtilityPanes(self, event=None):
         '''close the search and filter panels'''
         if self.FilterPanel: 
@@ -234,6 +240,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             self._mgr.Update()
 
     def ToggleFilterPanel(self, evt=0):
+        print 'ToggleFilterPanel'
         if self.FilterPanel:
             spinfo = self._mgr.GetPane(self.FilterPanel)
             self._mgr.ClosePane(spinfo)
@@ -321,12 +328,14 @@ class BaseMainWindow(wx.Frame, PieActor):
 
     def OpenAtomisePane(self, evt=0, ostore=None, caption=_('Desktop items')):
         tab = atomWidget(self.TabBook, -1)
+        tab.Bind(EVT_ATOM_FILE_FILE, self.OnDesktopFileFile)
+        tab.Bind(EVT_PIE_CLOSE_PANE, self.CloseCurrentPane)
         self.TabBook.AddPage(tab, caption, select=True)
 
     def DoSearch(self, evt):
         '''stub'''
         print 'altmainwindow.DoSearch'
-       
+
     def OnCommitStaged(self, evt):
         '''stub'''
         print 'altmainwindow.OnCommitStaged'

@@ -84,7 +84,7 @@ class atomActionWindow(wx.ScrolledWindow):
         ob = evt.GetEventObject()
         # self.currentrow = self.rowdata[ob.getRowId()]
         self.currentrow = ob.getRowId()
-        self.parent.onGoFile()
+        self.parent.onGoFile(self.currentrow)
 
     def _on_delfile(self, evt):
         ob = evt.GetEventObject()
@@ -94,7 +94,7 @@ class atomActionWindow(wx.ScrolledWindow):
     def _on_openfile(self, evt):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
-        self.parent.onOpenFile()
+        self.parent.onOpenFile(self.currentrow)
 
     def onFileAll(self):
         pass

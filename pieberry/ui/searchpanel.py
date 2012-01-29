@@ -1,5 +1,5 @@
 import wx
-from events import PieSearchEvent
+from events import *
 
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
@@ -18,11 +18,16 @@ class FilterToolsPanel(wx.Panel):
         self.Layout()
         self.searchctrl.SetFocus()
         self.searchctrl.Bind(wx.EVT_TEXT, self.onTextUpdated)
+        self.searchctrl.Bind(wx.EVT_KEY_UP, self.keyTrap)
 
     def onTextUpdated(self, evt):
         newevt = PieSearchEvent(searchtext=self.searchctrl.GetValue())
         wx.PostEvent(self, newevt)
-        
+
+    def keyTrap(self, evt):
+        if evt.GetKeyCode() == wx.WXK_ESCAPE:
+            newevt = PieCloseFilterPanelEvent()
+            self.GetParent().ToggleFilterPanel()
 
 class SearchToolsPanel(wx.Panel):
     '''Generic search tools panel'''
