@@ -16,6 +16,8 @@ PiePrefetchStartEvent, EVT_PIE_PREFETCH_START = wx.lib.newevent.NewEvent()
 # attributes: url
 PiePrefetchDoneEvent, EVT_PIE_PREFETCH_DONE = wx.lib.newevent.NewEvent()
 # attributes: tag - the prefetched tag.
+#             auth - the default author from db
+#             iscorp - whether default author is corporate
 PieCommitStagedEvent, EVT_PIE_COMMIT_STAGED = wx.lib.newevent.NewEvent()
 # attributes: ostore - the objects to be committed
 #             pane - the originating pane

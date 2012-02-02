@@ -53,6 +53,8 @@ FEXTENSIONS = {'pdf': ('.pdf',),
 #map mime types to internal generic types
 MIMEMAP = {'application/pdf': 'pdf',
            'application/msword': 'word_doc',
+           'application/vnd.ms-office': 'word_doc',
+           'application/vnd.oasis.opendocument.presentation': 'word_doc',
            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word_doc',
            'application/rtf': 'word_doc',
            'text/html': 'html',

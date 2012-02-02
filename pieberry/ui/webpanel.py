@@ -3,6 +3,8 @@ from validators import *
 from events import PieWebScrapeEvent, PiePrefetchStartEvent
 from timers import WebPanelUiTimer
 
+from pieobject.website import get_authorlist
+
 class WebScrapePanel(wx.Panel):
     '''Generic search tools panel'''
     _BUTTON_SIZE = wx.Size(100, 50)
@@ -29,8 +31,10 @@ class WebScrapePanel(wx.Panel):
         self.urlField.SetToolTip(tt1)
         lburl = wx.StaticText(self, -1, 'URL:')
 
+        authorlist = get_authorlist()
+        
         self.authorField = wx.ComboBox(
-            self, -1, size=self._DEF_WIDTH, #choices=dirlist, 
+            self, -1, size=self._DEF_WIDTH, choices=authorlist, 
             validator=piePlainTextValidator(), 
             style=wx.EXPAND|wx.CB_DROPDOWN)
         tt2 = wx.ToolTip(
@@ -205,5 +209,9 @@ subdirectory in which to store these documents.''')
 
     def onPrefetchResult(self, evt):
         self.tagField.ChangeValue(evt.tag)
+        if evt.auth:
+            self.authorField.SetValue(evt.auth)
+        if evt.iscorp != None:
+            self.corpAuthorCb.SetValue(evt.iscorp)
         self.tagField.Enable()
 

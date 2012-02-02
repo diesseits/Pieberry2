@@ -52,6 +52,10 @@ class PieScraper:
         self._author_is_corporate = author_is_corporate
         self._category_phrase = category_phrase
 
+    def get_cmstype(self):
+        '''return the cmstype being used'''
+        return self._cmstype
+
     def get_page_context(self):
         '''get relevant context of the url in question'''
         if not self._further_init_done:

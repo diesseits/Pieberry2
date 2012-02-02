@@ -53,16 +53,17 @@ if not os.path.exists(SYSDIR):
         sys.exit(1)
 
 if DEBUG == True:
-    CACHEDIR = ('/tmp/pieberry/cache')
+    CACHEDIR = '/tmp/pieberry/cache'
 else:
     CACHEDIR = os.path.join(SYSDIR, 'cache')
 
 if DEBUG == True:
-    LIBRARYDIR = ('/tmp/pieberry/library')
-    PROJECTDIR = ('/tmp/pieberry/projects')
-    MEETINGPAPERDIR = ('/tmp/pieberry/meeting papers')
-    RECENTDOCSDIR = ('/tmp/pieberry/recent documents')
-    DESKTOPDIR = ('/tmp/pieberry/desktop')
+    TESTDATADIR = '/home/raif/development/v2Pieberry/pieberry/testdata'
+    LIBRARYDIR = '/tmp/pieberry/library'
+    PROJECTDIR = '/tmp/pieberry/projects'
+    MEETINGPAPERDIR = '/tmp/pieberry/meeting papers'
+    RECENTDOCSDIR = '/tmp/pieberry/recent documents'
+    DESKTOPDIR = '/tmp/pieberry/desktop'
 
 ROOT_MAP = { #map these potential roots to allow portability
     'cachedir': CACHEDIR,
@@ -94,10 +95,3 @@ def create_directories():
             os.makedirs(dr)
     return True
 
-def fill_desktopdir(noobjects=5):
-    '''Fill the test desktop directory with files'''
-    for i in range(noobjects):
-            fname = random.choice(filenamelist) + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
-            fname = os.path.join(DESKTOPDIR, fname)
-            print 'MAKING DESKTOP FILE AT:', fname
-            f = open(fname, 'w').close()

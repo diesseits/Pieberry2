@@ -14,6 +14,7 @@ from ui.events import *
 from pieconfig.globals import *
 from atomise import *
 
+import pieobject.website as website
 
 class FunctionMainWindow(BaseMainWindow):
     '''The main window with the actual programmatic functionality added. 
@@ -39,6 +40,13 @@ class FunctionMainWindow(BaseMainWindow):
             author_is_corporate=evt.authoriscorporate,
             category_phrase=evt.catstring,
             notify_window=self)
+        # add website data to database
+        add_website(
+            url = evt.url,
+            defaultauthor = evt.author,
+            authiscorporate = evt.authoriscorporate,
+            cmstype = ts.get_cmstype()
+            )
         thread.start_new_thread(ts.snarf_urls, (True, pan))
         
     def Callback_FillPane(self, ostore, propagate_window):
@@ -125,7 +133,14 @@ class FunctionMainWindow(BaseMainWindow):
             url=url,
             notify_window=self)
         tag = ts.get_page_context()
-        newevt = PiePrefetchDoneEvent(tag=tag)
+        ws = website.lookup_website(url)
+        if ws:
+            auth = ws.DefaultAuthor
+            iscorp = wx.DefaultAuthorIsCorporate
+        else:
+            auth = None
+            iscorp = None
+        newevt = PiePrefetchDoneEvent(tag=tag, auth=auth, iscorp=iscorp)
         wx.PostEvent(self, newevt)
 
     def OnCommitStaged(self, evt):
@@ -171,7 +186,10 @@ class FunctionMainWindow(BaseMainWindow):
         ostore.set_session(session)
         for obj in ostore:
             storepath = suggest_path_cache_fromdesktop(obj)
-            os.renames(obj.FileData_FullPath, storepath)
+            #can't use os.renames - it'll delete the desktop directory
+            if not os.path.isdir(os.path.dirname(storepath)):
+                os.makedirs(os.path.dirname(storepath))
+            os.rename(obj.FileData_FullPath, storepath)
             obj.add_aspect_cached_from_desktop(storepath)
             obj.remove_aspect('ondesktop')
         atompane.AddObjects(ostore)

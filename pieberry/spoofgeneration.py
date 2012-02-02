@@ -119,9 +119,14 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
         
 def fill_desktopdir(noobjects=5):
     '''Fill the test desktop directory with files'''
-    for i in range(noobjects):
-            fname = random.choice(filenamelist) + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
-            fname = os.path.join(DESKTOPDIR, fname)
-            print 'MAKING DESKTOP FILE AT:', fname
-            f = open(fname, 'w').close()
+    for f in os.listdir(TESTDATADIR):
+        print 'copying %s to %s' % (f, os.path.join(CACHEDIR, f))
+        shutil.copyfile(
+            os.path.join(TESTDATADIR, f),
+            os.path.join(DESKTOPDIR, f))
+    # for i in range(noobjects):
+    #         fname = random.choice(filenamelist) + "".join(random.choice(digits) for d in xrange(5)) + ".txt"
+    #         fname = os.path.join(DESKTOPDIR, fname)
+    #         print 'MAKING DESKTOP FILE AT:', fname
+    #         f = open(fname, 'w').close()
         

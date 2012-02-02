@@ -193,10 +193,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
 
     def CloseCurrentPane(self, evt=None):
-        pan = self.GetCurrentPane()
         panid = self.TabBook.GetSelection()
-        self.TabBook.RemovePage(panid)
-        wx.CallAfter(pan.Destroy)
+        self.TabBook.DeletePage(panid)
 
     def CloseUtilityPanes(self, event=None):
         '''close the search and filter panels'''

@@ -90,16 +90,24 @@ def get_real_metadata_object(fn):
 
 def get_pdf_metadata_object(fn):
     '''hachoir doesn't do pdf'''
-    reader = PdfReader(obj.FileData_FullPath)
+    fakeobj = get_fake_metadata_object(fn)
+    try:
+        reader = PdfReader(fn)
+    except Exception, exc:
+        traceback.print_exc(file=open('/tmp/pieberry/dbgop', 'w'))
+        return None
         # assert len(reader.Info.CreationDate) > 0
-    cd = reader.Info.CreationDate.split(':')[1] #get the 'good' bit 
+    if reader.InfoCreationDate:
+        cd = reader.Info.CreationDate.split(':')[1] #get the 'good' bit 
         # md = reader.Info.ModDate.split(':')[1]
-    creation_date = time.strptime("%s %s %s %s %s" % (
-            cd[0:4], cd[4:6], cd[6:8], cd[8:10], cd[10:12]
-            ), "%Y %m %d %H %M")
+        creation_date = time.strptime("%s %s %s %s %s" % (
+                cd[0:4], cd[4:6], cd[6:8], cd[8:10], cd[10:12]
+                ), "%Y %m %d %H %M")
+    else:
+        creation_date = fakeobj.FileData_DateCreated
     obj = PieObject(
-        author = reader.Info.Author,
-        title = reader.Info.Title,
+        author = unicode(reader.Info.Author).strip('()'),
+        title = unicode(reader.Info.Title).strip('()'),
         date = creation_date)
     obj.FileData_DateCreated = creation_date
     return obj
