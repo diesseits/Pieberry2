@@ -129,6 +129,7 @@ class FunctionMainWindow(BaseMainWindow):
         thread.start_new_thread(self._thread_prefetch, (evt.url, ws))
 
     def _thread_prefetch(self, url, ws):
+        '''Threaded actions for prefetching website info'''
         ts = PieScraper(
             url=url,
             notify_window=self)
@@ -176,6 +177,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def DoSearch(self, evt):
         print 'Actor: doSearch: %s' % evt.searchtext
+        if len(evt.searchtext) < 3: return
         session = Session()
         self.OpenSearchPane(caption=evt.searchtext[:20])
         searchpane = self.GetCurrentPane()
@@ -191,6 +193,7 @@ class FunctionMainWindow(BaseMainWindow):
         '''Clean out desktop, move to cache dir, present results'''
         self.OpenAtomisePane()
         atompane = self.GetCurrentPane()
+        previous_files = scan_previous_desktops()
         session = get_session('desktop')
         ostore = scan_desktop()
         ostore.set_session(session)
@@ -202,6 +205,7 @@ class FunctionMainWindow(BaseMainWindow):
             os.rename(obj.FileData_FullPath, storepath)
             obj.add_aspect_cached_from_desktop(storepath)
             obj.remove_aspect('ondesktop')
+        for p_ostore in previous_files: ostore.Extend(p_ostore)
         atompane.AddObjects(ostore)
         
     def OnDesktopFileFile(self, evt):
