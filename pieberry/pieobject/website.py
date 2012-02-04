@@ -21,36 +21,56 @@ class PieWebsite(SQLABase):
     CMSType = Column(Unicode)
     DefaultAuthor = Column(Unicode)
     DefaultAuthorIsCorporate = Column(Boolean)
-    
+
+    def __repr__(self):
+        return '<class PieWebsite domain==%s>' % self.Domain
+
+
+def validify_url(url):
+    '''urlparse is strict about the // delimiter preceding a
+    netloc, but we want to be looser and accept 'www.thing.com' as
+    valid'''
+    if not '//' in url[:8]:
+        return 'http://%s' % url
+    else:
+        return url
+
 def add_website(url, 
                 defaultauthor,
                 authiscorporate=False,
                 name='',
                 cmstype='CMSnormal'):
+    '''Add a website to the historical store of websites'''
     session = Session()
     umatch = lookup_website(url)
     if umatch:
         # update website info 
         umatch.DefaultAuthor = defaultauthor
+        umatch.DefaultAuthorIsCorporate = authiscorporate
         umatch.CMSType = cmstype
     else:
         # create website info entry
         ws = PieWebsite(
-            Domain=urlparse.urlsplit(url)[1],
+            Domain=urlparse.urlsplit(validify_url(url))[1],
             SiteName=name,
             CMSType=cmstype,
             DefaultAuthor=defaultauthor,
             DefaultAuthorIsCorporate=authiscorporate)
         session.add(ws)
+        print 'Added:', ws
     session.commit()
 
 def lookup_website(url):
-    domain = urlparse.urlsplit(url)[1]
+    '''Is this website already stored?'''
+    domain = urlparse.urlsplit(validify_url(url))[1]
     session = Session()
     lookup = session.query(
-        PieWebsite.filter(PieWebsite.Domain==domain))
-    if len(lookup) > 0:
-        return lookup[1]
+        PieWebsite).filter(PieWebsite.Domain==domain)
+    numrtd = session.query(
+        PieWebsite).filter(PieWebsite.Domain==domain).count()
+    if numrtd > 0:
+        print '_#_#_#_ Website found:', url, lookup[0]
+        return lookup[0]
     else:
         return None
 
@@ -66,6 +86,14 @@ def lookup_author(authorname):
 
 # DEBUG STUFF
 
-if DEBUG:
-    pass
+spoofurls = ('http://www.politics.com/', 'www.sex.org', 'www.drugs.co.uk', 'rocknroll.net/', 'religion.eu', 'http://www.aer.gov.au')
+spoofauthors = ('POLTX', 'Funbags inc.', 'Spliffco', 'Drummer From Def Leppard', 'Kings of Eyore', 'Australian Energy Regulator')
+
+def make_spoof_websites():
+    for i in range(len(spoofurls)):
+        add_website(
+            url=spoofurls[i],
+            defaultauthor=spoofauthors[i],
+            authiscorporate=True)
+    print '___ Authors:', get_authorlist()
     

@@ -126,17 +126,17 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnPrefetch(self, evt):
         '''happens when the webpanel wants to prefetch something'''
-        thread.start_new_thread(self._thread_prefetch, (evt.url,))
+        ws = website.lookup_website(evt.url)
+        thread.start_new_thread(self._thread_prefetch, (evt.url, ws))
 
-    def _thread_prefetch(self, url):
+    def _thread_prefetch(self, url, ws):
         ts = PieScraper(
             url=url,
             notify_window=self)
         tag = ts.get_page_context()
-        ws = website.lookup_website(url)
         if ws:
             auth = ws.DefaultAuthor
-            iscorp = wx.DefaultAuthorIsCorporate
+            iscorp = ws.DefaultAuthorIsCorporate
         else:
             auth = None
             iscorp = None

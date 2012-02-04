@@ -34,8 +34,11 @@ def test():
         o = spoof_pieobject()
         print o
 
+from pieobject.website import make_spoof_websites
+
 if __name__ == '__main__':
     SQLABase.metadata.create_all(engine)
+    make_spoof_websites()
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
