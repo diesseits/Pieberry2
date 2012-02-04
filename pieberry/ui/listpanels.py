@@ -155,6 +155,8 @@ class WebListPanel(BaseListPanel):
         ret = PieObjectStore(
             [ self.objectstore[x] for x in self.ListDisplay.GetCheckedList() ]
             )
+        # transfer relevant session data across
+        ret.set_session_data(**self.objectstore.get_session_data())
         for i in ret: print i
         print ret
         newevt = PieDownloadEvent(

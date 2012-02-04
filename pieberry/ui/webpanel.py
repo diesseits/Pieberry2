@@ -137,7 +137,8 @@ subdirectory in which to store these documents.''')
         self.sc_url = self.urlField.GetValue().strip()
         self.sc_tag = self.tagField.GetValue().strip()
         self.sc_auth = self.authorField.GetValue().strip()
-        self.sc_tagbehav = self.use_choice_lookup[self.pfUseChoice.GetCurrentSelection()]
+        self.sc_tagbehav = self.pfUseChoice.GetCurrentSelection()
+        # self.sc_tagbehav = self.use_choice_lookup[self.pfUseChoice.GetCurrentSelection()]
         self.sc_corpauth = self.corpAuthorCb.IsChecked()
         if not (self.urlField.GetValidator().Validate() and self.authorField.GetValidator().Validate() and self.tagField.GetValidator().Validate()):
             raise Exception, "Invalid data for this operation"
@@ -160,7 +161,7 @@ subdirectory in which to store these documents.''')
             catstring = self.sc_tag,
             catbehaviour = self.sc_tagbehav,
             author = self.sc_auth,
-            authoriscorporate = self.sc_corpauth
+            authiscorporate = self.sc_corpauth
             )
         wx.PostEvent(self, newevt)
 
@@ -204,14 +205,29 @@ subdirectory in which to store these documents.''')
             # print 'trigger fetch?'
             if self.urlField.GetValidator().Validate():
                 self.tagField.Disable()
+                self.authorField.Disable()
+                self.pfUseChoice.Disable()
+                self.corpAuthorCb.Disable()
                 newevt = PiePrefetchStartEvent(url=self.urlField.GetValue())
                 wx.PostEvent(self, newevt)
 
     def onPrefetchResult(self, evt):
-        self.tagField.ChangeValue(evt.tag)
+        if evt.tag:
+            self.tagField.ChangeValue(evt.tag)
+        if evt.success == False:
+            # if prefetching failed, then we'll conclude the url isn't
+            # a real one or somehow invalid, and prevent the user
+            # proceeding.
+            self.urlField.GetValidator().AddInvalidUrl(self.urlField.GetValue())
+            self.urlField.GetValidator().inValidate()
         if evt.auth:
             self.authorField.SetValue(evt.auth)
         if evt.iscorp != None:
             self.corpAuthorCb.SetValue(evt.iscorp)
+        if evt.tagbehav != None:
+            self.pfUseChoice.SetSelection(evt.tagbehav)
         self.tagField.Enable()
+        self.authorField.Enable()
+        self.pfUseChoice.Enable()
+        self.corpAuthorCb.Enable()
 

@@ -37,16 +37,10 @@ class FunctionMainWindow(BaseMainWindow):
         ts = PieScraper(
             url=evt.url,#'file:piescrape/test.html',#evt.url,
             default_author=evt.author,
-            author_is_corporate=evt.authoriscorporate,
+            author_is_corporate=evt.authiscorporate,
             category_phrase=evt.catstring,
+            tag_append_behaviour=evt.catbehaviour,
             notify_window=self)
-        # add website data to database
-        add_website(
-            url = evt.url,
-            defaultauthor = evt.author,
-            authiscorporate = evt.authoriscorporate,
-            cmstype = ts.get_cmstype()
-            )
         thread.start_new_thread(ts.snarf_urls, (True, pan))
         
     def Callback_FillPane(self, ostore, propagate_window):
@@ -68,6 +62,12 @@ class FunctionMainWindow(BaseMainWindow):
             wx.MessageBox(_('No items are selected'), style=wx.ICON_ERROR)
             return
         evt.ostore.set_session(get_session())
+        website.add_website(
+            url=evt.ostore.url,
+            defaultauthor=evt.ostore.defaultauthor,
+            authiscorporate=evt.ostore.authiscorporate,
+            tag_append_behaviour=evt.ostore.tag_append_behaviour,
+            cmstype=evt.ostore.cmstype)
         wx.CallAfter( #deletepage seems finicky about timing
             self.TabBook.DeletePage,
             self.TabBook.GetPageIndex(evt.pane)
@@ -91,13 +91,12 @@ class FunctionMainWindow(BaseMainWindow):
             msgtype = download_file(url=obj.Url(), suggested_path=storepath)
             if msgtype == 'success':
                 obj.add_aspect_cached_from_web(storepath)
-                filemetadata = {}
-                # try:
-                filemetadata = scan_file_metadata(obj)
-                # except:
-                #     traceback.print_exc()
-                #     msgtype='warn'
-                # print 'filemetadata', filemetadata
+                try:
+                    filemetadata = scan_file_metadata(obj)
+                except:
+                    traceback.print_exc()
+                    msgtype='warn'
+                    filemetadata = {}
                 obj.filemetadata = filemetadata
             else:
                 obj.add_aspect_failed_download()
@@ -133,14 +132,25 @@ class FunctionMainWindow(BaseMainWindow):
         ts = PieScraper(
             url=url,
             notify_window=self)
-        tag = ts.get_page_context()
+        success = True
+        try:
+            tag = ts.get_page_context()
+        except:
+            # unreadable url ...
+            print 'unreadable url'
+            tag = None
+            success = False
         if ws:
             auth = ws.DefaultAuthor
             iscorp = ws.DefaultAuthorIsCorporate
+            tagbehav = ws.TagAppendBehaviour
         else:
             auth = None
             iscorp = None
-        newevt = PiePrefetchDoneEvent(tag=tag, auth=auth, iscorp=iscorp)
+            tagbehav = None
+        newevt = PiePrefetchDoneEvent(success=success, tag=tag, 
+                                      auth=auth, iscorp=iscorp,
+                                      tagbehav=tagbehav)
         wx.PostEvent(self, newevt)
 
     def OnCommitStaged(self, evt):

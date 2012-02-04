@@ -12,6 +12,7 @@ class pieUrlValidator(wx.PyValidator):
          # self.regexp = re.compile(r'^http://', re.IGNORECASE)
          self.regexp_long = re.compile("([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}|(((news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+)(:[0-9]*)?/*[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\),\\\"]")
          self.regexp_short = re.compile("([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}|(((news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+)(:[0-9]*)?")
+         self.invalid_urls = []
 
      def Clone(self):
          """ Standard cloner.
@@ -19,31 +20,35 @@ class pieUrlValidator(wx.PyValidator):
          """
          return pieUrlValidator()
 
+     def AddInvalidUrl(self, url):
+          if not url in self.invalid_urls:
+               self.invalid_urls.append(url)
+
+     def inValidate(self):
+         textCtrl = self.GetWindow()
+         textCtrl.SetBackgroundColour("pink")
+         textCtrl.SetFocus()
+         textCtrl.Refresh()
+
      def Validate(self, win=None):
          """ Validate the contents of the given text control.
          """
          textCtrl = self.GetWindow()
          text = textCtrl.GetValue()
          if len(text) == 0:
-             # print 'Url required'
-             # wx.MessageBox("This must contain a URL", "Error")
-             textCtrl.SetBackgroundColour("pink")
-             textCtrl.SetFocus()
-             textCtrl.Refresh()
-             return False
+              self.inValidate()
+              return False
+         if text in self.invalid_urls:
+              self.inValidate()
+              return False
          elif self.regexp_long.match(text) is None:
-         # elif (self.regexp_short.match(text) is None) and (self.regexp_long.match(text) is None):
-             # print 'Url is invalid'
-             # wx.MessageBox("This must contain a URL", "Error")
-             textCtrl.SetBackgroundColour("pink")
-             textCtrl.SetFocus()
-             textCtrl.Refresh()
-             return False
+              self.inValidate()
+              return False
          else:
-             textCtrl.SetBackgroundColour(
-                 wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOW))
-             textCtrl.Refresh()
-             return True
+              textCtrl.SetBackgroundColour(
+                   wx.SystemSettings_GetColour(wx.SYS_COLOUR_WINDOW))
+              textCtrl.Refresh()
+              return True
 
      def TransferToWindow(self):
          """ Transfer data from validator to window.

@@ -11,6 +11,7 @@ import cookielib
 from pieconfig.paths import *
 from pieobject import *
 from cms import *
+from pieobject.website import add_website
 
 cj = cookielib.CookieJar()
 prefenc = locale.getpreferredencoding()
@@ -24,24 +25,27 @@ class PieScraper:
                  default_author='', 
                  author_is_corporate=False, 
                  category_phrase='',
-                 notify_window=None):
+                 tag_append_behaviour=0,
+                 notify_window=None
+                 ):
         print 'PieScraper.__init__'
         self._origin_url = url
         self._default_author = default_author
         self._author_is_corporate = author_is_corporate
         self._category_phrase = category_phrase
+        self._tag_append_behaviour = tag_append_behaviour
         self._notify_window = notify_window
         self._further_init_done = False
-        # self._further_init()
 
     def _further_init(self):
-        '''do further crunching of the url, involves crunching'''
+        '''do further crunching of the url, involves crunching, will usually
+        happen as a consequence of threaded methods. Also updates the website
+        memory with new details of the website being scraped.'''
         print 'PieScraper._further_init'
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
         self._urlopener = opener.open(self._origin_url)
         # self._urlopener = urllib2.urlopen(self._origin_url)
         self._cmstype = DiagnoseCMS(self._urlopener)
-        # print 'PieScraper._further_init - self._cmstype:', self._cmstype
 
     def set_context(self, 
                     default_author='', 
@@ -77,6 +81,16 @@ class PieScraper:
         co = GetContextObject(self._urlopener, self._cmstype)
         urlz = co.get_links(baseurl=self._origin_url)
         ret = PieObjectStore()
+        ret.set_session_data(
+            # store information about the session in the ostore
+            url=self._origin_url,
+            cmstype=self._cmstype,
+            defaultauthor=self._default_author,
+            authiscorporate=self._author_is_corporate,
+            category_phrase=self._category_phrase,
+            tag_append_behaviour=self._tag_append_behaviour
+            )
+        print 'wunn...'
         for linky in urlz:
             ob = PieObject()
             ob.add_aspect_onweb(
@@ -88,6 +102,7 @@ class PieScraper:
                 author_is_corporate=self._author_is_corporate
                 )
             ret.Add(ob)
+        print 'twwwoooo....'
         if threaded: #use callback if threaded, otherwise just return data
             if not self._notify_window:
                 raise Exception, 'No window nominated to pass data to'
