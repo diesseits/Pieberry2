@@ -205,15 +205,22 @@ class FunctionMainWindow(BaseMainWindow):
     def DoSearch(self, evt):
         print 'Actor: doSearch: %s' % evt.searchtext
         if len(evt.searchtext) < 3: return
+        self.StatusBar.SetStatusText(_('Searching for "%s"' % evt.searchtext))
         session = Session()
-        self.OpenSearchPane(caption=evt.searchtext[:20])
-        searchpane = self.GetCurrentPane()
         query = build_query(evt.searchtext.strip(), session)
         ostore = PieObjectStore()
         for instance in query:
             ostore.Add(instance)
+        if len(ostore) == 0:
+            # wx.MessageBox(_('No matches found'))
+            self.StatusBar.SetStatusText(_('No matches found'))
+            wx.CallAfter(self.CloseUtilityPanes)
+            return
+        self.OpenSearchPane(caption=evt.searchtext[:20])
+        searchpane = self.GetCurrentPane()
         ostore.instantiate_nonstored()
         searchpane.AddObjects(ostore)
+        self.StatusBar.SetStatusText('')
         wx.CallAfter(self.CloseUtilityPanes)
 
     def OnDesktopProcess(self, evt):

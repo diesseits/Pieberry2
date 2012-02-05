@@ -12,7 +12,7 @@ from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder
 from pieconfig.paths import ROOT_MAP
-
+from pieconfig.schemas import bibtexfields, bibtexmap
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
@@ -26,10 +26,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     collection = Column(Unicode) # i.e. 'category_phrase'
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
+    filemetadata = Column(PickleType)
 
     BibData_Key = Column(Unicode)
     BibData_Type = Column(Unicode(length=20))
-    BibData_Fields = Column(PickleType)
+    BibData_Fields = Column(PickleType) #questionable approach - may
+                                        #make this unsearchable
 
     WebData_Url = Column(Unicode)
     WebData_PageUrl = Column(Unicode)
@@ -47,6 +49,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                  fileloc=None):
         self.title = title
         self.author = author
+        self.corpauthor = ''
         self.date = date
         self.tags = []
         self.filemetadata = {}
@@ -62,7 +65,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'cached': False,
             'saved': False,
             'stored': False,
-            'failed_dl': False
+            'failed_dl': False,
+            'bibdata': False
             }
 
     def __repr__(self):
@@ -90,6 +94,14 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             return self.corpauthor
         else:
             return self.author
+
+    def AuthorIsCorporate(self, favour_corporate=False):
+        if favour_corporate and self.corpauthor:
+            return True
+        elif len(self.author) == 0 and self.corpauthor:
+            return True
+        else:
+            return False
 
     def GetId(self):
         return self.id
@@ -174,6 +186,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Add information pertaining to the saving of this item into the
         database'''
         self.aspects['saved'] = True
+
+    def add_aspect_bibdata(self, **kwargs):
+        '''Add specifically (user requested or other) set
+        bibliographic information'''
+        self.aspects['bibdata'] = True
+        pprint(kwargs)
         
     def set_session(self, sess):
         '''Mark a session flag for this object'''
@@ -202,4 +220,5 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             self.FileData_FileType = determine_file_type(self.FileData_FullPath)
         else:
             self.FileData_FileType = ft
+
 

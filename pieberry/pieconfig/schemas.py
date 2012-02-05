@@ -68,3 +68,72 @@ def mime_map(mt):
         return MIMEMAP[mt]
     else:
         return 'other'
+
+bibtexmap = (
+    ('author', 'author'),
+    ('title', 'title'),
+    # ('month', None),
+    # ('year', None),
+    ('editor', 'BibData_Editor'),
+    ('url', 'WebData_Url'),
+    ('journal', 'BibData_Journal'),
+    ('note', 'BibData_Note'),
+    ('annote', 'BibData_Annote'),
+    ('volume', 'BibData_Volume'),
+    ('pages', 'BibData_Pages'),
+    ('series', 'BibData_Series'),
+    ('type', 'BibData_Type'),
+    ('number', 'BibData_Number'),
+    ('institution', 'BibData_Institution'),
+    ('chapter', 'BibData_Chapter'),
+    ('address', 'BibData_Address'),
+    ('publisher', 'BibData_Publisher')
+    )
+
+bibtexfields = {
+    'article': (
+        ('journal',), 
+        ('volume', 'number', 'pages', 'note', 'annote')
+        ),
+    'book': (
+        ('publisher',), 
+        ('editor', 'volume', 'number', 'series', 'address', 'edition', 
+         'note', 'annote')
+        ),
+    'misc': (
+        ('howpublished',), 
+        ('url', 'note', 'annote')
+        ),
+    'booklet': (
+        ('howpublished',), 
+        ('note', 'annote')
+        ),
+    'online': (
+        ('howpublished', 'url'), 
+        ('note', 'annote')
+        ),
+    'inbook': (
+        ('editor', 'chapter', 'publisher'),
+        ('volume', 'number', 'series', 'type', 'address', 'edition', 
+         'pages', 'note', 'annote')
+        ),
+    'incollection': (
+        ('booktitle',),
+        ('pages', 'publisher', 'editor', 'volume', 'number', 'series', 
+         'type', 'chapter', 'address', 'edition', 'note', 'annote'),
+        ),
+    'techreport': (
+        ('institution',),
+        ('type', 'number', 'address', 'note', 'annote')
+        ),
+    'unpublished': (
+        ('note',),
+        ('annote',)
+        )
+    }
+
+
+silentfields = (
+    'pdflink', 'pdflink_context', 'tag', 'outfilename', 'final_fn', 
+    'download_time', 'creation_date_guessed', 'exclude', 'internal_author', 
+    'internal_title')
