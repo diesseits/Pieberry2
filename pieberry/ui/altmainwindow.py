@@ -2,6 +2,7 @@ import wx
 import wx.lib.agw.aui as wxauip
 # import wx.lib.agw.flatnotebook as fnb
 import wx.aui as wxaui
+import os
 
 from events import *
 from searchpanel import *
