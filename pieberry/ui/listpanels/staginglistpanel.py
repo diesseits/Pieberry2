@@ -7,7 +7,8 @@ from ui.events import *
 from ui.timers import SpinnyTimer
 from listwidgets import *
 from pieobject import *
-from baselistpanel import BaseListPanel # <-- todo
+from baselistpanel import *
+
 
 class StagingListPanel(BaseListPanel):
     '''Class for displaying and working with bibliographic data, with
@@ -27,7 +28,7 @@ class StagingListPanel(BaseListPanel):
         self.ListDisplay = BibListCtrl(self)
         #self.RemoveButton = wx.Button(self, -1, label=_("Remove"))
         self.DiscardButton = wx.Button(self, -1, label=_("Discard all"))
-        self.CommitButton = wx.Button(self, -1, label=_("Store locally"))
+        self.CommitButton = wx.Button(self, -1, label=_("Store these"))
         self.sizer1.Add(self.DiscardButton, 0, wx.ALL, 5)
         self.sizer1.Add((20,20), 1)
         self.sizer1.Add(self.CommitButton, 0, wx.ALL, 5)
@@ -103,3 +104,24 @@ class StagingListPanel(BaseListPanel):
             ref=ref,
             msgtype=outcome)
         print 'StagingListPanel.DownloadDone'
+    
+    def MakeMenu(self, menu, obj):
+        '''Function to construct a particular context menu'''
+        if obj.has_aspect('onweb'):
+            rcm_openinbrowser = wx.MenuItem(menu, 0, _('Open in Browser'))
+            rcm_openinbrowser.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_NORMAL_FILE, wx.ART_MENU))
+            menu.AppendItem(rcm_openinbrowser)
+            self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
+        if obj.has_aspect('cached'):
+            rcm_openfile = wx.MenuItem(menu, 1, _('Open file'))
+            rcm_openfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+            menu.AppendItem(rcm_openfile)
+            self.Bind(wx.EVT_MENU, self.onOpenFile, rcm_openfile)
+            rcm_deletefile = wx.MenuItem(menu, 2, _('Delete'))
+            rcm_deletefile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
+            menu.AppendItem(rcm_deletefile)
+            self.Bind(wx.EVT_MENU, self.onDeleteOnDisk, rcm_deletefile)
+            

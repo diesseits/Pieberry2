@@ -25,6 +25,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     tags = Column(PickleType)
     collection = Column(Unicode) # i.e. 'category_phrase'
     corpauthor = Column(Unicode)
+    aspects = Column(PickleType)
 
     BibData_Key = Column(Unicode)
     BibData_Type = Column(Unicode(length=20))

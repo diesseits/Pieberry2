@@ -34,7 +34,7 @@ class FunctionMainWindow(BaseMainWindow):
         print 'functionmainwindow.OnWebScrape'
         self.OpenWebPane()
         pan = self.GetCurrentPane()
-        self.StatusBar.SetStatusText('Finding documents...')
+        self.StatusBar.SetStatusText(_('Finding documents...'))
         ts = PieScraper(
             url=evt.url,#'file:piescrape/test.html',#evt.url,
             default_author=evt.author,
@@ -63,7 +63,7 @@ class FunctionMainWindow(BaseMainWindow):
         if len(evt.ostore) == 0:
             wx.MessageBox(_('No items are selected'), style=wx.ICON_ERROR)
             return
-        self.StatusBar.SetStatusText('Downloading files...')
+        self.StatusBar.SetStatusText(_('Downloading files...'))
         evt.ostore.set_session(get_session())
         website.add_website(
             url=evt.ostore.url,
@@ -78,7 +78,22 @@ class FunctionMainWindow(BaseMainWindow):
         self.CloseUtilityPanes()
         self.OpenStagingPane()
         self.GetCurrentPane().Disable() #don't let no stupids happen
-        thread.start_new_thread(self._thread_downloads, (evt.ostore, self.GetCurrentPane()))
+        if evt.download == True:
+            thread.start_new_thread(
+                self._thread_downloads, (evt.ostore, self.GetCurrentPane()))
+        else:
+            self._not_threaded_reference(evt.ostore, self.GetCurrentPane())
+
+    def _not_threaded_reference(self, ostore, notify_window):
+        '''unthreaded method called by OnWebPaneDownload'''
+        for obj in ostore:
+            newevt = PieDownloadNotifyEvent(
+                msgtype='normal',
+                obj=obj,
+                notify_window=notify_window)
+            wx.PostEvent(self, newevt)
+        wx.CallAfter(notify_window.Enable)
+        wx.CallAfter(self.StatusBar.SetStatusText, '')
 
     def _thread_downloads(self, ostore, notify_window):
         '''threaded method called by OnWebPaneDownload'''
@@ -113,7 +128,9 @@ class FunctionMainWindow(BaseMainWindow):
 
     def Callback_DownloadNotification(self, evt):
         '''Do when a download has begun or terminated'''
-        if evt.msgtype in ('start', 'spin'):
+        if evt.msgtype == 'normal':
+            evt.notify_window.AddObject(evt.obj, msgtype='success')
+        elif evt.msgtype in ('start', 'spin'):
             print 'Download started:', evt.obj
             # wx.CallAfter(evt.notify_window.AddObject, evt.obj)
             # store the currently downloading item reference for
@@ -126,6 +143,7 @@ class FunctionMainWindow(BaseMainWindow):
             evt.notify_window.DownloadDone(
                 self.downloadingitem,
                 outcome)
+            self.downloadingitem = None
 
     def OnPrefetch(self, evt):
         '''happens when the webpanel wants to prefetch something'''
@@ -161,8 +179,10 @@ class FunctionMainWindow(BaseMainWindow):
         wx.CallAfter(self.StatusBar.SetStatusText, '')
 
     def OnCommitStaged(self, evt):
+        self.StatusBar.SetStatusText(_('Storing staged files'))
         ostore = evt.ostore
         for obj in ostore:
+            if not obj.has_aspect('cached'): continue
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
             if not os.path.isdir(os.path.dirname(dpath)):
@@ -176,6 +196,7 @@ class FunctionMainWindow(BaseMainWindow):
         self.CloseUtilityPanes()
         # wx.MessageBox(
         #     'Successfully added %d items to your library' % len(evt.ostore))
+        self.StatusBar.SetStatusText('')
         wx.CallAfter( #deletepage seems finicky about timing
             self.TabBook.DeletePage,
             self.TabBook.GetPageIndex(evt.pane)
@@ -197,7 +218,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnDesktopProcess(self, evt):
         '''Clean out desktop, move to cache dir, present results'''
-        self.StatusBar.SetStatusText('Scanning desktop')
+        self.StatusBar.SetStatusText(_('Scanning desktop'))
         self.OpenAtomisePane()
         atompane = self.GetCurrentPane()
         previous_files = scan_previous_desktops()

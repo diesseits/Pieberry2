@@ -1,3 +1,3 @@
 #
 
-from openfile import open_file
+from openfile import open_file, open_web_file

@@ -7,8 +7,9 @@ from ui.events import *
 from ui.timers import SpinnyTimer
 from listwidgets import *
 from pieobject import *
+from menufunctions import *
 
-class BaseListPanel(wx.Panel):
+class BaseListPanel(wx.Panel, MenuFunctionsMixin):
     '''Basic class for displaying and working with "results"'''
 
     def __init__(self, parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL):
@@ -17,6 +18,7 @@ class BaseListPanel(wx.Panel):
         self._do_layout()
         self.__do_base_bindings()
         self._do_bindings()
+        self._last_item_right_clicked = 0
 
     def _setup_data(self):
         pass
@@ -27,6 +29,9 @@ class BaseListPanel(wx.Panel):
     def _do_bindings(self):
         pass
 
+    def __do_base_bindings(self):
+        wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListDisplay, -1, self._makemenu)
+
     def _makemenu(self, evt):
         '''Prepare to create and display a context menu. Calls a
         "MakeMenu" method which should be overriden by inheriting
@@ -35,14 +40,12 @@ class BaseListPanel(wx.Panel):
         right_click_context = evt.GetIndex()
         menu = wx.Menu()
         it_idx = self.ListDisplay.GetItemData(right_click_context)
+        self._last_item_right_clicked
         obj = self.objectstore[it_idx]
         print "## Object for popup menu:", obj
         self.MakeMenu(menu, obj)
         self.ListDisplay.PopupMenu( menu, evt.GetPoint() )
         menu.Destroy() # destroy to avoid mem leak
-
-    def __do_base_bindings(self):
-        wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListDisplay, -1, self._makemenu)
 
     def MakeMenu(self, menu, obj):
         pass
@@ -100,3 +103,12 @@ class BaseListPanel(wx.Panel):
     def onListRightClick(self, evt):
         '''build a context menu'''
         print 'BaseListPanel.onListRightClick'
+
+    def GetSelectedItem(self):
+        '''Get the currently selected object'''
+        return self.objectstore[self.GetSelectedItemRef()]
+
+    def GetSelectedItemRef(self):
+        '''return the index (for the _objectstore_ not the list) of 
+        the selected item'''
+        return self.ListDisplay.GetItemData(self.ListDisplay.currentitem)

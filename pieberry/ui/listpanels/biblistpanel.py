@@ -39,20 +39,33 @@ class BibListPanel(BaseListPanel):
 
     def onDeleteItem(self, evt):
         print self.GetSelectedItem() 
-        self.objectstore.Del(self.GetSelectedItemRef())
-        self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
-
-    def GetSelectedItem(self):
-        return self.objectstore[self.GetSelectedItemRef()]
-
-    def GetSelectedItemRef(self):
-        '''return the index (for the _objectstore_ not the list) of 
-        the selected item'''
-        return self.ListDisplay.GetItemData(self.ListDisplay.currentitem)
+        print 'not implemented'
+        # self.objectstore.Del(self.GetSelectedItemRef())
+        # self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
 
     def onSelectionActivated(self, evt):
         pieutility.open_file(
             self.objectstore[
                 self.ListDisplay.GetItemData(evt.GetIndex())].FileData_FullPath)
         
+    def MakeMenu(self, menu, obj):
+        '''Function to construct a particular context menu'''
+        if obj.has_aspect('onweb'):
+            rcm_openinbrowser = wx.MenuItem(menu, 0, _('Open in Browser'))
+            rcm_openinbrowser.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_NORMAL_FILE, wx.ART_MENU))
+            menu.AppendItem(rcm_openinbrowser)
+            self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
+        if obj.has_aspect('stored'):
+            rcm_openfile = wx.MenuItem(menu, 1, _('Open file'))
+            rcm_openfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+            menu.AppendItem(rcm_openfile)
+            self.Bind(wx.EVT_MENU, self.onOpenFile, rcm_openfile)
+            # TODO: Deletion. This can come later, requires DB interaction
+            # rcm_deletefile = wx.MenuItem(menu, 2, _('Delete'))
+            # rcm_deletefile.SetBitmap(
+            #     wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
+            # menu.AppendItem(rcm_deletefile)
+            # self.Bind(wx.EVT_MENU, self.onDeleteOnDisk, rcm_deletefile)
     
