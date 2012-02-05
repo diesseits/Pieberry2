@@ -27,6 +27,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.TabBook = wxauip.AuiNotebook(self, -1)
         # self.TabBook.SetMinSize((500,500))
         # self.TabBook = fnb.FlatNotebook(self, -1)
+        self.StatusBar = wx.StatusBar(self, -1)
+        self.StatusBar.SetStatusStyles([1, wx.SB_FLAT])
 
         # Menu Bar
         menuBar = wx.MenuBar()

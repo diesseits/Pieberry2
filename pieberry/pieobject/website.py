@@ -52,6 +52,7 @@ def add_website(url,
         umatch.DefaultAuthor = defaultauthor
         umatch.DefaultAuthorIsCorporate = authiscorporate
         umatch.CMSType = cmstype
+        umatch.TagAppendBehaviour = tag_append_behaviour
     else:
         # create website info entry
         ws = PieWebsite(

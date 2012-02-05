@@ -125,15 +125,17 @@ def scan_desktop():
     return ostore
 
 def scan_previous_desktops():
-    '''Return a list of objectstores for all the leftover directories containing
-    desktop cleanouts'''
-    dirs = [f for f in os.listdir(CACHEDIR) if os.path.isdir(os.path.join(CACHEDIR, f)) and f[:1] == 'd']
-    # dirs = os.walk(CACHEDIR)[1]
+    '''Return a list of objectstores for all the leftover directories
+    containing desktop cleanouts'''
+    dirs = [f for f in os.listdir(CACHEDIR) 
+            if os.path.isdir(os.path.join(CACHEDIR, f)) and f[:1] == 'd']
     rdata = []
     for d in dirs:
         ostore = PieObjectStore()
         dd = os.path.join(CACHEDIR, d)
-        flist = [os.path.join(dd, fl) for fl in os.listdir(dd) if os.path.isfile(os.path.join(dd, fl))]
+        flist = [os.path.join(dd, fl) 
+                 for fl in os.listdir(dd) 
+                 if os.path.isfile(os.path.join(dd, fl))]
         for fl in flist:
             o = get_metadata_object(fl)
             if o:

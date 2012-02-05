@@ -1,10 +1,11 @@
 #!/bin/python
 
-import sys, os, time, subprocess
+import sys, os, time
 import traceback
 import wx
 import pprint
 import shutil
+import pieutility
 
 # from atomise_exec import *
 from ui.events import *
@@ -104,11 +105,7 @@ class atomWidget(wx.Panel):
         pass
 
     def onOpenFile(self, rowid):
-        if sys.platform == 'linux2':
-            subprocess.call(
-                ('xdg-open', self.atomDisplay.rowdata[rowid].FileData_FullPath))
-        elif sys.platform == 'win32':
-            os.startfile(self.atomDisplay.rowdata[rowid].FileData_FullPath)
+        pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)
 
     def onFilterView(self, evt=0):
         '''Does nothing for this widget'''

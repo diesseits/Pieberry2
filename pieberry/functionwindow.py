@@ -34,6 +34,7 @@ class FunctionMainWindow(BaseMainWindow):
         print 'functionmainwindow.OnWebScrape'
         self.OpenWebPane()
         pan = self.GetCurrentPane()
+        self.StatusBar.SetStatusText('Finding documents...')
         ts = PieScraper(
             url=evt.url,#'file:piescrape/test.html',#evt.url,
             default_author=evt.author,
@@ -49,6 +50,7 @@ class FunctionMainWindow(BaseMainWindow):
         propagate_window.AddObjects(ostore)
         if self.WebPanel:
             self.WebPanel.LockPanel(False)
+        self.StatusBar.SetStatusText('')
 
     def Callback_AddToPane(self, obj, propagate_window):
         '''Stub - in future, maybe add one object at a time as the
@@ -61,6 +63,7 @@ class FunctionMainWindow(BaseMainWindow):
         if len(evt.ostore) == 0:
             wx.MessageBox(_('No items are selected'), style=wx.ICON_ERROR)
             return
+        self.StatusBar.SetStatusText('Downloading files...')
         evt.ostore.set_session(get_session())
         website.add_website(
             url=evt.ostore.url,
@@ -106,6 +109,7 @@ class FunctionMainWindow(BaseMainWindow):
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
         wx.CallAfter(notify_window.Enable)
+        wx.CallAfter(self.StatusBar.SetStatusText, '')
 
     def Callback_DownloadNotification(self, evt):
         '''Do when a download has begun or terminated'''
@@ -125,6 +129,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnPrefetch(self, evt):
         '''happens when the webpanel wants to prefetch something'''
+        self.StatusBar.SetStatusText('Pre-fetching website information...')
         ws = website.lookup_website(evt.url)
         thread.start_new_thread(self._thread_prefetch, (evt.url, ws))
 
@@ -153,6 +158,7 @@ class FunctionMainWindow(BaseMainWindow):
                                       auth=auth, iscorp=iscorp,
                                       tagbehav=tagbehav)
         wx.PostEvent(self, newevt)
+        wx.CallAfter(self.StatusBar.SetStatusText, '')
 
     def OnCommitStaged(self, evt):
         ostore = evt.ostore
@@ -191,6 +197,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnDesktopProcess(self, evt):
         '''Clean out desktop, move to cache dir, present results'''
+        self.StatusBar.SetStatusText('Scanning desktop')
         self.OpenAtomisePane()
         atompane = self.GetCurrentPane()
         previous_files = scan_previous_desktops()
@@ -207,6 +214,7 @@ class FunctionMainWindow(BaseMainWindow):
             obj.remove_aspect('ondesktop')
         for p_ostore in previous_files: ostore.Extend(p_ostore)
         atompane.AddObjects(ostore)
+        self.StatusBar.SetStatusText('')
         
     def OnDesktopFileFile(self, evt):
         '''Add desktop items to the system'''
