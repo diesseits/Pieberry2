@@ -154,11 +154,20 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if t == 'hasfile':
             if self.has_aspect('stored') or self.has_aspect('cached') or self.has_aspect('ondesktop'):
                 return True
+            else: return False
         if not t in self.aspects.keys():
             raise KeyError, 'Unknown type of aspect'
         return self.aspects[t]
 
     def remove_aspect(self, t):
+        if t == 'hasfile':
+            if self.has_aspect('stored'):
+                self.aspects['stored'] = False
+            if self.has_aspect('cached'):
+                self.aspects['cached'] = False
+            if self.has_aspect('ondesktop'):
+                self.aspects['ondesktop'] = False
+            return
         if not t in self.aspects.keys():
             raise KeyError, 'Unknown type of aspect'
         if not self.aspects[t] == True:

@@ -264,7 +264,7 @@ class PieBibEditDialog(wx.Dialog):
                 return
         ret = {}
         ret['title'] = self.titleCtrl.GetValue()
-        ret['BibData_PublicationDate'] = wxdate2pydate(
+        ret['BibData_DatePublished'] = wxdate2pydate(
             self.datePicker.GetValue())
         if not self.keyAutoCb.IsChecked():
             ret['BibData_Key'] = self.keyCtrl.GetValue()
@@ -276,14 +276,11 @@ class PieBibEditDialog(wx.Dialog):
         else:
             ret['author'] = self.authorCtrl.GetValue()
         cbp = self.choiceBook.GetCurrentPage()
-
-        et, moredata = cbp.getData()
-
-        # try:
-        #     et, moredata = cbp.getData()
-        # except Exception, exc:
-        #     wx.MessageBox(unicode(exc))
-        #     return
+        try:
+            et, moredata = cbp.getData()
+        except Exception, exc:
+            wx.MessageBox(unicode(exc))
+            return
         ret['BibData_Type'] = et
         ret.update(moredata)
         self.obj.add_aspect_bibdata(**ret)

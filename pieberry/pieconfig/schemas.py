@@ -109,8 +109,11 @@ bibtexmap = {
     'chapter': 'BibData_Chapter',
     'address': 'BibData_Address',
     'publisher': 'BibData_Publisher',
-    'howpublished': 'BibData_HowPublished'
+    'howpublished': 'BibData_HowPublished',
+    'pie_corpauthor': 'corpauthor', # non-BibTeX fields
+    'pie_datepublished': 'BibData_DatePublished'
     }
+
 
 
 bibtexfields = {

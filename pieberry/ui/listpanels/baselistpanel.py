@@ -31,6 +31,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
 
     def __do_base_bindings(self):
         wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListDisplay, -1, self._makemenu)
+        self.ListDisplay.Bind(wx.EVT_LIST_BEGIN_DRAG, self.onLeftDown)
 
     def _makemenu(self, evt):
         '''Prepare to create and display a context menu. Calls a
@@ -112,3 +113,39 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         '''return the index (for the _objectstore_ not the list) of 
         the selected item'''
         return self.ListDisplay.GetItemData(self.ListDisplay.currentitem)
+
+    def onLeftDown(self, evt):
+        '''called at beginning of drag event'''
+
+        # old pieberry stuff - still relevant?
+        self.suppress_tipwindow = True
+        self.isdragging = True
+        # the tortuous process of getting the right list item
+        xy = wx.GetMousePosition()
+        ol_xy = self.ListDisplay.ScreenToClient(xy)
+        it_idx, flags = self.ListDisplay.HitTest(ol_xy)
+        cur_it = self.ListDisplay.GetItemData(it_idx)
+        obj = self.objectstore[cur_it]
+
+        # if there's no file, don't do anything
+        if not obj.has_aspect('hasfile'):
+            evt.Skip()
+            self.isdragging = False
+            return
+
+        # sanity check for file existence
+        if not os.path.exists(obj.FileData_FullPath):
+            evt.Skip()
+            self.isdragging = False
+            return
+
+        do = wx.FileDataObject()
+        do.AddFile(obj.FileData_FullPath)
+        dropsource = wx.DropSource(self.ListDisplay)
+        dropsource.SetData(do)
+
+        result = dropsource.DoDragDrop()
+        if result == wx.DragCopy:
+            print 'Successful drag and copy'
+        self.suppress_tipwindow = False
+        self.isdragging = False
