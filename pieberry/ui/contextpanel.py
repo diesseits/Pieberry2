@@ -46,6 +46,9 @@ class SimpleContextPanel(BaseContextPanel):
         collectlabel = wx.StaticText(self, -1, 'Collection:')
         self.collectiondisplay = wx.StaticText(self, -1, '')
         self._create_field(collectlabel, self.collectiondisplay)
+        websitelabel = wx.StaticText(self, -1, 'Website:')
+        self.websitedisplay = wx.StaticText(self, -1, '')
+        self._create_field(websitelabel, self.websitedisplay)
         self.SetSizer(self.sizer0)
         self.Layout()
                                      
@@ -55,3 +58,4 @@ class SimpleContextPanel(BaseContextPanel):
         self.authordisplay.SetLabel(obj.Author())
         self.filelocdisplay.SetLabel(unicode(obj.FileData_FullPath))
         self.collectiondisplay.SetLabel(unicode(obj.collection))
+        self.websitedisplay.SetLabel(unicode(obj.website))

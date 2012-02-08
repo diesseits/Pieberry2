@@ -2,6 +2,7 @@ if __name__ == '__main__':
     import sys
     sys.path.append('..')
 
+import traceback
 import wx
 import os
 import re
@@ -93,14 +94,17 @@ class PieScraper:
         print 'wunn...'
         for linky in urlz:
             ob = PieObject()
-            ob.add_aspect_onweb(
-                url=linky['Url'],
-                pageurl=self._origin_url,
-                linktext=linky['LinkText'],
-                defaultauthor=self._default_author,
-                category_phrase=self._category_phrase,
-                author_is_corporate=self._author_is_corporate
-                )
+            try:
+                ob.add_aspect_onweb(
+                    url=linky['Url'],
+                    pageurl=self._origin_url,
+                    linktext=linky['LinkText'],
+                    defaultauthor=self._default_author,
+                    category_phrase=self._category_phrase,
+                    author_is_corporate=self._author_is_corporate
+                    )
+            except Exception, exc:
+                traceback.print_exc()
             ret.Add(ob)
         print 'twwwoooo....'
         if threaded: #use callback if threaded, otherwise just return data

@@ -4,6 +4,8 @@ import datetime
 import os, os.path
 from pprint import pprint, pformat
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, backref
 
 from pieobject.database import *
 from pieobject.tags import TagHandler
@@ -11,6 +13,7 @@ from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder
+from pieobject.website import PieWebsite, referable_website
 from pieconfig.paths import ROOT_MAP
 from pieconfig.schemas import bibtexfields, bibtexmap
 
@@ -27,6 +30,14 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
+
+    #relationships
+
+    website_id = Column(Integer, ForeignKey('piewebsites.id'))
+    website = relationship("PieWebsite", 
+                           backref=backref('referenced_objects', order_by=id))
+
+    #detailed fields
 
     BibData_Key = Column(Unicode)
     BibData_Type = Column(Unicode(length=20))
@@ -195,6 +206,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.collection = category_phrase
         self.aspects['onweb']=True
 
+    # def _attempted_threadsafe_link(self, url):
+    #     '''need a new session to do this in a thread'''
+    #     newsession = Session()
+        # self.website = referable_website(url, newsession)
+
     def add_aspect_cached_from_web(self, temp_location):
         '''Add information pertaining to the downloading and temporary
         caching of this object'''
@@ -233,6 +249,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Add information pertaining to the saving of this item into the
         database'''
         self.aspects['saved'] = True
+        # do links at the time that things are to be committed to
+        # db. Any earlier and it screws things up (and websites,
+        # specifically, won't necessarily be in the piewebsites table
+        if self.WebData_Url:
+            self.website = referable_website(self.WebData_Url, session)
 
     def add_aspect_bibdata(self, **kwargs):
         '''Add specifically (user requested or other) set
@@ -272,3 +293,5 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             self.FileData_FileType = ft
 
 
+# metadata = SQLABase.metadata
+# metadata.create_all(engine)

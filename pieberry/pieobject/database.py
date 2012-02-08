@@ -8,7 +8,8 @@ from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-engine = create_engine('sqlite:///:memory:', echo=True)
-SQLABase = declarative_base()
+# engine = create_engine('sqlite:///:memory:', echo=True)
+engine = create_engine('sqlite:////tmp/pieberry/pieberry.db', echo=False)
+SQLABase = declarative_base(bind=engine)
 Session = sessionmaker(bind=engine)
 session = Session()
