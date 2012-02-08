@@ -32,4 +32,5 @@ AtomOpenFileEvent, EVT_ATOM_OPEN_FILE = wx.lib.newevent.NewEvent()
 # attributes: obj - the object in question
 #             rowid - the row it occupies in the atomWindow
 PieClosePaneEvent, EVT_PIE_CLOSE_PANE = wx.lib.newevent.NewEvent()
-
+PieBibEditEvent, EVT_PIE_BIB_EDIT =  wx.lib.newevent.NewEvent()
+# attributes: obj - the object in question

@@ -11,3 +11,4 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine('sqlite:///:memory:', echo=True)
 SQLABase = declarative_base()
 Session = sessionmaker(bind=engine)
+session = Session()

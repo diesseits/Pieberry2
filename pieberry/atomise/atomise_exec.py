@@ -11,6 +11,7 @@ import hachoir_metadata
 import atomise_hachoir
 
 from pdfrw import PdfReader
+from pprint import pprint
 
 from atomise_utility import *
 from pieconfig.paths import *
@@ -97,10 +98,10 @@ def get_pdf_metadata_object(fn):
         traceback.print_exc(file=open('/tmp/pieberry/dbgop', 'w'))
         return None
         # assert len(reader.Info.CreationDate) > 0
-    if reader.InfoCreationDate:
+    if reader.Info.CreationDate:
         cd = reader.Info.CreationDate.split(':')[1] #get the 'good' bit 
         # md = reader.Info.ModDate.split(':')[1]
-        creation_date = time.strptime("%s %s %s %s %s" % (
+        creation_date = datetime.datetime.strptime("%s %s %s %s %s" % (
                 cd[0:4], cd[4:6], cd[6:8], cd[8:10], cd[10:12]
                 ), "%Y %m %d %H %M")
     else:

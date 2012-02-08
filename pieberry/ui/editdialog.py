@@ -1,11 +1,14 @@
 import wx
 import datetime, time
 
+from pprint import pprint
 from ui.validators import *
+from ui.events import PieBibEditEvent
 
 from pieconfig.schemas import *
 from pieutility.date import wxdate2pydate
 from pieutility.bibtex import *
+from pieobject.database import Session
 
 class PieFieldPanel(wx.ScrolledWindow):
     def __init__(self, parent, entry_type, fieldlist):
@@ -60,19 +63,19 @@ class PieFieldPanel(wx.ScrolledWindow):
             f = getattr(self, '%sCtrl' % it)
             if not f.GetValidator().Validate():
                 raise Exception, 'Value in %s is inappropriate for BibTeX' % it
-            ret[it] = f.GetValue()
+            ret[bibtexmap[it]] = f.GetValue()
         for it in self.fieldlist[1]:
             f = getattr(self, '%sCtrl' % it)
             if not f.GetValidator().Validate():
                 raise Exception, 'Value in %s is inappropriate for BibTeX' % it
             if len(f.GetValue()) > 0:
-                ret[it] = f.GetValue()
+                ret[bibtexmap[it]] = f.GetValue()
         return self.entry_type, ret
 
     def setData(self, data):
         for it, val in data.items():
             f = getattr(self, '%sCtrl' % it, None)
-            if f:
+            if f and val:
                 f.SetValue(val)
 
 
@@ -234,7 +237,7 @@ class PieBibEditDialog(wx.Dialog):
         self.authorCtrl.SetFocus()
         
         bibdata = {}
-        for bibtexkey, objkey in bibtexmap:
+        for bibtexkey, objkey in bibtexmap.items():
             bibdata[bibtexkey] = getattr(obj, objkey)
         self.choiceBook.GetCurrentPage().setData(bibdata)
         
@@ -267,19 +270,25 @@ class PieBibEditDialog(wx.Dialog):
             ret['BibData_Key'] = self.keyCtrl.GetValue()
         else:
             ret['BibData_Key'] = None
-        if self.authorIsCorporateCb.GetValue() == True:
-            ret['author'] = self.authorCtrl.GetValue()
-        else:
+        if self.authorIsCorporateCb.IsChecked() == True:
             ret['corpauthor'] = self.authorCtrl.GetValue()
             ret['author'] = None
+        else:
+            ret['author'] = self.authorCtrl.GetValue()
         cbp = self.choiceBook.GetCurrentPage()
-        try:
-            et, moredata = cbp.getData()
-        except Exception, exc:
-            wx.MessageBox(unicode(exc))
-            return
+
+        et, moredata = cbp.getData()
+
+        # try:
+        #     et, moredata = cbp.getData()
+        # except Exception, exc:
+        #     wx.MessageBox(unicode(exc))
+        #     return
         ret['BibData_Type'] = et
         ret.update(moredata)
+        self.obj.add_aspect_bibdata(**ret)
+        newevt = PieBibEditEvent(obj=self.obj)
+        wx.PostEvent(self, newevt)
         self.EndModal(wx.ID_OK)
 
     def onCancel(self, evt=1):

@@ -69,26 +69,49 @@ def mime_map(mt):
     else:
         return 'other'
 
-bibtexmap = (
-    ('author', 'author'),
-    ('title', 'title'),
-    # ('month', None),
-    # ('year', None),
-    ('editor', 'BibData_Editor'),
-    ('url', 'WebData_Url'),
-    ('journal', 'BibData_Journal'),
-    ('note', 'BibData_Note'),
-    ('annote', 'BibData_Annote'),
-    ('volume', 'BibData_Volume'),
-    ('pages', 'BibData_Pages'),
-    ('series', 'BibData_Series'),
-    ('type', 'BibData_Type'),
-    ('number', 'BibData_Number'),
-    ('institution', 'BibData_Institution'),
-    ('chapter', 'BibData_Chapter'),
-    ('address', 'BibData_Address'),
-    ('publisher', 'BibData_Publisher')
-    )
+# bibtexmap = (
+#     ('author', 'author'),
+#     ('title', 'title'),
+#     # ('month', None),
+#     # ('year', None),
+#     ('editor', 'BibData_Editor'),
+#     ('url', 'WebData_Url'),
+#     ('journal', 'BibData_Journal'),
+#     ('note', 'BibData_Note'),
+#     ('annote', 'BibData_Annote'),
+#     ('volume', 'BibData_Volume'),
+#     ('pages', 'BibData_Pages'),
+#     ('series', 'BibData_Series'),
+#     ('type', 'BibData_Type'),
+#     ('number', 'BibData_Number'),
+#     ('institution', 'BibData_Institution'),
+#     ('chapter', 'BibData_Chapter'),
+#     ('address', 'BibData_Address'),
+#     ('publisher', 'BibData_Publisher')
+#     )
+
+bibtexmap = {
+    'author': 'author',
+    'title': 'title',
+    # 'month': None,
+    # 'year': None,
+    'editor': 'BibData_Editor',
+    'url': 'WebData_Url',
+    'journal': 'BibData_Journal',
+    'note': 'BibData_Note',
+    'annote': 'BibData_Annote',
+    'volume': 'BibData_Volume',
+    'pages': 'BibData_Pages',
+    'series': 'BibData_Series',
+    'type': 'BibData_Type',
+    'number': 'BibData_Number',
+    'institution': 'BibData_Institution',
+    'chapter': 'BibData_Chapter',
+    'address': 'BibData_Address',
+    'publisher': 'BibData_Publisher',
+    'howpublished': 'BibData_HowPublished'
+    }
+
 
 bibtexfields = {
     'article': (

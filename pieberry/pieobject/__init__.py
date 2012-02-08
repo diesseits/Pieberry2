@@ -30,8 +30,20 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     BibData_Key = Column(Unicode)
     BibData_Type = Column(Unicode(length=20))
-    BibData_Fields = Column(PickleType) #questionable approach - may
-                                        #make this unsearchable
+    BibData_Editor = Column(Unicode)
+    BibData_Journal = Column(Unicode)
+    BibData_Note = Column(Unicode)
+    BibData_Annote = Column(Unicode)
+    BibData_Volume = Column(Unicode(length=10))
+    BibData_Pages = Column(Unicode)
+    BibData_Series = Column(Unicode)
+    BibData_Number = Column(Unicode(length=10))
+    BibData_Institution = Column(Unicode)
+    BibData_Chapter = Column(Unicode)
+    BibData_Address = Column(Unicode) 
+    BibData_Publisher = Column(Unicode)
+    BibData_HowPublished = Column(Unicode)
+    BibData_DatePublished = Column(DateTime)
 
     WebData_Url = Column(Unicode)
     WebData_PageUrl = Column(Unicode)
@@ -70,7 +82,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             }
 
     def __repr__(self):
-        return "<PieObject %s - %s. (%s)>\n%s" % (self.Title()[:10], self.Author(), str(self.ReferDate()), pformat(self.BibData_Fields))
+        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10], self.Author(), str(self.ReferDate()))
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath': 
@@ -106,8 +118,30 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def GetId(self):
         return self.id
 
-    def ReferDate(self):
+    def ReferDate(self, prefer_created=False, prefer_modified=False,
+                  prefer_downloaded=False):
         '''The most salient date for this document'''
+        if prefer_created:
+            if self.has_aspect('hasfile') and self.FileData_DateCreated:
+                return self.FileData_DateCreated
+        if prefer_modified:
+            if self.has_aspect('hasfile') and self.FileData_DateModified:
+                return self.FileData_DateModified
+        if prefer_downloaded:
+            if self.has_aspect('onweb') and self.WebData_DateDownloaded:
+                return self.WebData_DateDownloaded
+        # having exhausted preference cases, lets have implicit
+        # preferences. Firstly for bibliographic data, since it's
+        # explicitly set by user. Secondly, file metadata
+        # dates. Thirdly, date of download.
+        if self.BibData_DatePublished: 
+            return self.BibData_DatePublished
+        if self.FileData_DateCreated:
+            return self.FileData_DateCreated
+        if self.WebData_DateDownloaded:
+            return self.WebData_DateDownloaded
+        # I don't want to fall back to self.date in future, it should
+        # have no purpose.
         return self.date
 
     def Url(self):
@@ -117,6 +151,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         return self.collection
 
     def has_aspect(self, t):
+        if t == 'hasfile':
+            if self.has_aspect('stored') or self.has_aspect('cached') or self.has_aspect('ondesktop'):
+                return True
         if not t in self.aspects.keys():
             raise KeyError, 'Unknown type of aspect'
         return self.aspects[t]
@@ -179,6 +216,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def flag_aspect_stored(self):
         '''Variant of add_aspect_stored for use in search queries'''
+        # TODO: probably unnecessary now
         self.aspects['stored'] = True
         self.aspects['cached'] = False
 
@@ -191,6 +229,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Add specifically (user requested or other) set
         bibliographic information'''
         self.aspects['bibdata'] = True
+        for key, val in kwargs.items():
+            if key in bibtexmap.values():
+                setattr(self, key, val)
         pprint(kwargs)
         
     def set_session(self, sess):

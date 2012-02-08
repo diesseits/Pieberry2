@@ -181,7 +181,7 @@ class FunctionMainWindow(BaseMainWindow):
     def OnCommitStaged(self, evt):
         self.StatusBar.SetStatusText(_('Storing staged files'))
         ostore = evt.ostore
-        for obj in ostore:
+        for obj in ostore: # move files - if no file, continue
             if not obj.has_aspect('cached'): continue
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
@@ -190,8 +190,9 @@ class FunctionMainWindow(BaseMainWindow):
             print 'COPYING: %s to %s' % (path, dpath)
             os.renames(path, dpath)
             obj.add_aspect_stored(dpath)
-        session = Session()
+        # session = Session()
         session.add_all(ostore)
+        ostore.set_aspect_saved()
         session.commit()
         self.CloseUtilityPanes()
         # wx.MessageBox(
@@ -202,11 +203,17 @@ class FunctionMainWindow(BaseMainWindow):
             self.TabBook.GetPageIndex(evt.pane)
             )
 
+    def OnEditedBibData(self, evt):
+        '''Handle user editing a (stored) item in the bibliography'''
+        print 'Edited', evt.obj
+        if evt.obj.has_aspect('stored'):
+            session.commit()
+
     def DoSearch(self, evt):
         print 'Actor: doSearch: %s' % evt.searchtext
         if len(evt.searchtext) < 3: return
         self.StatusBar.SetStatusText(_('Searching for "%s"' % evt.searchtext))
-        session = Session()
+        # session = Session()
         query = build_query(evt.searchtext.strip(), session)
         ostore = PieObjectStore()
         for instance in query:
@@ -249,13 +256,14 @@ class FunctionMainWindow(BaseMainWindow):
         print 'functionwindow.OnDesktopFileFile'
         #move the file
         obj = evt.obj
-        session = Session()
+        # session = Session()
         storepath = suggest_path_store_fromdesktop(
             obj, 
             evt.dest_folder,
             evt.new_fn)
         os.renames(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
+        obj.add_aspect_saved()
         session.add(obj)
         session.commit()
         wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)

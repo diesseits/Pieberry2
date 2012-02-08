@@ -23,14 +23,14 @@ class atomWidget(wx.Panel):
         wx.Panel.__init__(self, *args, **kwargs)
         self.__do_layout()
         self.Bind(wx.EVT_BUTTON, self.atomDisplay.onFileAll, self.procbt)
-        self.donebt.Bind(wx.EVT_BUTTON, self.onCloseSelf)
+        # self.donebt.Bind(wx.EVT_BUTTON, self.onCloseSelf)
         self.SetDestinations([f.name() for f in FOLDER_LOOKUP['projectdir']])
     
     def __do_layout(self):
         self.atomDisplay = atomActionWindow(self, -1)
         # self.openbt = wx.Button(self, -1, label='Open temp directory')
         self.procbt = wx.Button(self, -1, label='Process all')
-        self.donebt = wx.Button(self, -1, label='Done')
+        # self.donebt = wx.Button(self, -1, label='Done')
 
         s2 = wx.BoxSizer(wx.VERTICAL)
         s3 = wx.BoxSizer(wx.HORIZONTAL)
@@ -40,7 +40,7 @@ class atomWidget(wx.Panel):
         s3.Add((20, 20), 1)
         # s3.Add(self.openbt, 0, wx.EXPAND|wx.ALL, 3)
         s3.Add(self.procbt, 0, wx.EXPAND|wx.ALL, 3)
-        s3.Add(self.donebt, 0, wx.EXPAND|wx.ALL, 3)
+        # s3.Add(self.donebt, 0, wx.EXPAND|wx.ALL, 3)
 
         s2.Add(s3, 0, wx.EXPAND)
         self.SetSizer(s2)
