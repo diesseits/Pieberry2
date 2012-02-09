@@ -44,6 +44,17 @@ print 'HELPDIR =', HELPDIR
 
 #### Path Construction
 
+def default_paths_relative_to_root(root):
+    ret = {
+        'rootdir': root,
+        'librarydir': os.path.join(root, 'Library'),
+        'projectdir': os.path.join(root, 'Projects'),
+        'meetingpaperdir': os.path.join(root, 'Meeting Papers'),
+        'recentdocsdir': os.path.join(root, 'Recent Documents')
+        }
+    return ret
+
+
 if not os.path.exists(SYSDIR):
     try:
         os.mkdir(SYSDIR)
@@ -64,6 +75,7 @@ if DEBUG == True:
     MEETINGPAPERDIR = '/tmp/pieberry/meeting papers'
     RECENTDOCSDIR = '/tmp/pieberry/recent documents'
     DESKTOPDIR = '/tmp/pieberry/desktop'
+    DBDIR = '/tmp/pieberry'
 
 ROOT_MAP = { #map these potential roots to allow portability
     'cachedir': CACHEDIR,
@@ -71,7 +83,7 @@ ROOT_MAP = { #map these potential roots to allow portability
     'projectdir': PROJECTDIR,
     'meetingpaperdir': MEETINGPAPERDIR,
     'recentdocsdir': RECENTDOCSDIR,
-    'desktopdir': DESKTOPDIR
+    'desktopdir': DESKTOPDIR,
     }
 
 print 'LIBRARYDIR =', LIBRARYDIR
@@ -86,6 +98,8 @@ def nuke_directories():
     for dr in ROOT_MAP.values():
         if os.path.exists(dr):
             shutil.rmtree(dr)
+    if os.path.exists(DBDIR):
+        shutil.rmtree(DBDIR)
     return True
 
 def create_directories():

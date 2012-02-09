@@ -228,9 +228,11 @@ class PieBibEditDialog(wx.Dialog):
         if obj.AuthorIsCorporate():
             self.authorIsCorporateCb.SetValue(wx.CHK_CHECKED)
         if obj.filemetadata.has_key('author'):
+            assert type(obj.filemetadata['author']) == unicode
             self.authorAltCtrl.SetValue(obj.filemetadata['author'])
         self.titleCtrl.SetValue(obj.Title())
         if obj.filemetadata.has_key('title'):
+            assert type(obj.filemetadata['title']) == unicode
             self.titleAltCtrl.SetValue(obj.filemetadata['title'])
         self.datePicker.SetValue(
             wx.DateTimeFromTimeT(time.mktime(obj.ReferDate().timetuple())))

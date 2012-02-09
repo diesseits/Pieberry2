@@ -55,11 +55,11 @@ class BaseMainWindow(wx.Frame, PieActor):
             wx.ArtProvider.GetBitmap(wx.ART_QUIT, wx.ART_MENU))
         self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Config'))
         self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About'))
-        self.menu_pageref = wx.MenuItem(
-            toolMenu, 
-            -1, 
-            _('Create &reference for top-level page'), 
-            _('Reference'))
+        # self.menu_pageref = wx.MenuItem(
+        #     toolMenu, 
+        #     -1, 
+        #     _('Create &reference for top-level page'), 
+        #     _('Reference'))
         self.menu_emptyref = wx.MenuItem(
             toolMenu, 
             -1, 
@@ -120,7 +120,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         helpMenu.AppendItem(self.menu_about)
         gatherMenu.AppendItem(self.menu_scan_web_page)
         gatherMenu.AppendItem(self.menu_emptyref)
-        gatherMenu.AppendItem(self.menu_pageref)
+        # gatherMenu.AppendItem(self.menu_pageref)
         locateMenu.AppendItem(self.menu_find)
         locateMenu.AppendItem(self.menu_find_in_folders)
         locateMenu.AppendItem(self.menu_filter)
@@ -129,13 +129,11 @@ class BaseMainWindow(wx.Frame, PieActor):
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
-        # menuBar.Append(toolMenu, '&Tools')
-        # menuBar.Append(atomMenu, '&Desktop cleaner')
         menuBar.Append(viewMenu, _('&View'))
         menuBar.Append(helpMenu, _('&Help'))
         if DEBUG: menuBar.Append(debugMenu, _('&Debug'))
         self.SetMenuBar(menuBar)
-        # self.SetAutoLayout(True)
+        self.SetAutoLayout(True)
 
         self.Bind(wx.EVT_MENU, self.onFind, self.menu_find)
         self.Bind(wx.EVT_MENU, self.onFindInFolders, self.menu_find_in_folders)
@@ -146,8 +144,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.onConfig, self.menu_config)
         self.Bind(wx.EVT_MENU, self.onAbout, self.menu_about)
         self.Bind(wx.EVT_MENU, self.onDiscard, self.menu_discard)
-        self.Bind(wx.EVT_MENU, self.onPageReference, self.menu_pageref)
-        self.Bind(wx.EVT_MENU, self.onEmptyReference, self.menu_emptyref)
+        # self.Bind(wx.EVT_MENU, self.onPageReference, self.menu_pageref)
+        self.Bind(wx.EVT_MENU, self.OnCreateNewBibObj, self.menu_emptyref)
         self.Bind(wx.EVT_MENU, self.onShowManual, self.menu_manual)
         self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)

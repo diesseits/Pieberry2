@@ -9,7 +9,7 @@ from pieobject import *
 from pieobject.paths import *
 from piescrape import *
 from piescrape.execfn import *
-from ui import BaseMainWindow
+from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
 from pieconfig.globals import *
 from atomise import *
@@ -104,8 +104,6 @@ class FunctionMainWindow(BaseMainWindow):
                 obj=obj, 
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
-            # TESTING
-            # time.sleep(0.25)
             msgtype = download_file(url=obj.Url(), suggested_path=storepath)
             if msgtype == 'success':
                 obj.add_aspect_cached_from_web(storepath)
@@ -116,6 +114,8 @@ class FunctionMainWindow(BaseMainWindow):
                     msgtype='warn'
                     filemetadata = {}
                 obj.filemetadata = filemetadata
+                if filemetadata.has_key('creation_date'):
+                    obj.FileData_DateCreated = filemetadata['creation_date']
             else:
                 obj.add_aspect_failed_download()
             newevt = PieDownloadNotifyEvent(
@@ -181,8 +181,21 @@ class FunctionMainWindow(BaseMainWindow):
     def OnCommitStaged(self, evt):
         self.StatusBar.SetStatusText(_('Storing staged files'))
         ostore = evt.ostore
-        for obj in ostore: # move files - if no file, continue
+        for ref, obj in ostore.GetNext(): # move files - if no file, continue
             if not obj.has_aspect('cached'): continue
+            if obj.has_aspect('onweb'):
+                # test if this has been downloaded/referenced before
+                no_dupes = session.query(PieObject).filter(
+                    PieObject.WebData_Url == obj.WebData_Url).count()
+                if no_dupes > 0:
+                    dia = wx.MessageDialog(
+                        self, 
+                        _('''You have downloaded this before, do you 
+still want to add it to your library?'''), 
+                        style=wx.YES|wx.NO)
+                    ans = dia.ShowModal()
+                    if ans == wx.ID_NO:
+                        ostore.Del(ref)
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
             if not os.path.isdir(os.path.dirname(dpath)):
@@ -208,6 +221,21 @@ class FunctionMainWindow(BaseMainWindow):
         print 'Edited', evt.obj
         if evt.obj.has_aspect('stored'):
             session.commit()
+
+    def OnCreateNewBibObj(self, evt):
+        '''Handle creation of a new user-created bibliography entry
+        from scratch'''
+        obj = PieObject()
+        edwin = PieBibEditDialog(obj, self)
+        # edwin.Bind(
+        #     EVT_PIE_BIB_EDIT, self.OnEditedBibData)
+        res = edwin.ShowModal()
+        if not res == wx.ID_OK:
+            return
+        self.OpenStagingPane()
+        pan = self.GetCurrentPane()
+        obj = edwin.obj
+        pan.AddObject(obj)
 
     def DoSearch(self, evt):
         print 'Actor: doSearch: %s' % evt.searchtext
@@ -278,6 +306,7 @@ def build_query(t, session):
         ).filter(or_(
             PieObject.title.like('%' + t + '%'), 
             PieObject.author.like('%' + t + '%'), 
+            PieObject.corpauthor.like('%' + t + '%'), 
             PieObject.WebData_Url.like('%' + t + '%')
             ))#.order_by(PieObject.title)
         

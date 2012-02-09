@@ -3,7 +3,7 @@
 import datetime
 import os, os.path
 from pprint import pprint, pformat
-from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
+from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
@@ -30,6 +30,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
+    favourite = Column(Boolean)
 
     #relationships
 
@@ -67,6 +68,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     FileData_FileType = Column(Unicode(length=6))
     FileData_DateCreated = Column(DateTime)
     FileData_DateModified = Column(DateTime)
+
+    PhysData_StorageLoc = Column(Unicode)
+    PhysData_Dewey = Column(Unicode(length=20))
+    PhysData_ISBN = Column(Unicode(length=50))
+    PhysData_Accessed = Column(DateTime)
 
     def __init__(self, title='', author='', date=datetime.datetime.today(),
                  fileloc=None):
@@ -114,6 +120,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def Author(self, favour_corporate=False):
         if favour_corporate and self.corpauthor:
+            return self.corpauthor
+        elif not self.author:
             return self.corpauthor
         else:
             return self.author
@@ -201,8 +209,10 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.WebData_PageUrl = pageurl
         self.WebData_LinkText = linktext
         self.title = linktext
-        self.author = defaultauthor
-        if author_is_corporate: self.corpauthor = defaultauthor
+        if author_is_corporate: 
+            self.corpauthor = defaultauthor
+        else:
+            self.author = defaultauthor
         self.collection = category_phrase
         self.aspects['onweb']=True
 
@@ -218,7 +228,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.set_file(temp_location)
         self.set_file_type()
         self.date = datetime.datetime.today()
-        self.WebData_DateDownloaded = self.date
+        self.WebData_DateDownloaded = datetime.datetime.today()
 
     def add_aspect_cached_from_desktop(self, temp_location):
         '''Add information pertaining to the temporary caching of this
@@ -242,8 +252,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def flag_aspect_stored(self):
         '''Variant of add_aspect_stored for use in search queries'''
         # TODO: probably unnecessary now
-        self.aspects['stored'] = True
-        self.aspects['cached'] = False
+        pass
 
     def add_aspect_saved(self):
         '''Add information pertaining to the saving of this item into the
@@ -251,7 +260,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['saved'] = True
         # do links at the time that things are to be committed to
         # db. Any earlier and it screws things up (and websites,
-        # specifically, won't necessarily be in the piewebsites table
+        # specifically, won't necessarily be in the piewebsites table)
         if self.WebData_Url:
             self.website = referable_website(self.WebData_Url, session)
 
@@ -262,6 +271,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         for key, val in kwargs.items():
             if key in bibtexmap.values():
                 setattr(self, key, val)
+        if kwargs.has_key('WebData_Url'):
+            # NOTE: Not sure about doing this. 
+            self.aspects['onweb'] = True
+            # if not self.WebData_PageUrl:
+            #     self.WebData_PageUrl = kwargs['WebData_Url']
         pprint(kwargs)
         
     def set_session(self, sess):

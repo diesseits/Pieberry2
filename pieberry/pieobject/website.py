@@ -39,12 +39,10 @@ def validify_url(url):
         return url
 
 def referable_website(url, sqsess=session):
-    '''Function intended for use outside of module - returns a string
-    by which a PieWebsite can be referred to. For now, that's
-    basically the website domain'''
+    '''Function intended for use outside of module for db relationship
+    purposes - returns a PieWebsite which can be referred to.'''
     query = sqsess.query(PieWebsite).filter(
         PieWebsite.Domain == urlparse.urlsplit(validify_url(url))[1])
-    print 'THE QUERY', query.all()
     return query.first()
 
 def add_website(url, 

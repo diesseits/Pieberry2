@@ -14,6 +14,7 @@ from pdfrw import PdfReader
 from pprint import pprint
 
 from atomise_utility import *
+from pieutility.decoding import *
 from pieconfig.paths import *
 from pieobject import *
 
@@ -107,8 +108,8 @@ def get_pdf_metadata_object(fn):
     else:
         creation_date = fakeobj.FileData_DateCreated
     obj = PieObject(
-        author = unicode(reader.Info.Author).strip('()'),
-        title = unicode(reader.Info.Title).strip('()'),
+        author = reader.Info.Author.decode('utf8').strip('()'),
+        title = reader.Info.Title.decode('utf8').strip('()'),
         date = creation_date)
     obj.FileData_DateCreated = creation_date
     return obj
@@ -116,9 +117,12 @@ def get_pdf_metadata_object(fn):
 def scan_desktop():
     '''Returns an object store of valid (handlable) file in the desktop 
     directory'''
-    file_list = [os.path.join(DESKTOPDIR, fl) for fl in os.listdir(DESKTOPDIR) if os.path.isfile(os.path.join(DESKTOPDIR, fl))]
+    file_list = [os.path.join(DESKTOPDIR, filesystem_decode(fl)) 
+                 for fl in os.listdir(DESKTOPDIR) 
+                 if os.path.isfile(os.path.join(DESKTOPDIR, fl))]
     ostore = PieObjectStore()
     for fl in file_list:
+        assert type(fl) == unicode
         d = get_metadata_object(fl)
         if d:
             d.add_aspect_ondesktop(fl)
@@ -134,7 +138,7 @@ def scan_previous_desktops():
     for d in dirs:
         ostore = PieObjectStore()
         dd = os.path.join(CACHEDIR, d)
-        flist = [os.path.join(dd, fl) 
+        flist = [os.path.join(dd, filesystem_decode(fl)) 
                  for fl in os.listdir(dd) 
                  if os.path.isfile(os.path.join(dd, fl))]
         for fl in flist:

@@ -9,6 +9,9 @@ PY2EXE = False
 global PYNOTIFY
 PYNOTIFY = True
 
+# Unicode error behaviour
+U_ERROR_BEHAV = 'replace'
+
 
 def _dbg(t):
     print t

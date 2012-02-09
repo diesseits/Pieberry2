@@ -1,6 +1,22 @@
 import wx
 from events import *
 
+search_choices = (
+    _('All'),
+    _('Library'),
+    _('Projects'),
+    _('Meeting Papers')
+    )
+
+searchable_fields = {
+    0: _('Main fields'), 
+    1: _('All fields'),
+    2: _('Title'),
+    3: _('Author'),
+    'website.Url': _('Website'),
+    'BibData_Journal': _('Journal')
+    }
+   
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
     def __init__(self, parent):
@@ -31,16 +47,17 @@ class FilterToolsPanel(wx.Panel):
 
 class SearchToolsPanel(wx.Panel):
     '''Generic search tools panel'''
+
     def __init__(self, parent):
         wx.Panel.__init__(self, parent=parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL)
         sizer = wx.BoxSizer(wx.VERTICAL)
         hsizer_top = wx.BoxSizer(wx.HORIZONTAL)
 
         lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
-        self.originchoice = wx.Choice(self, -1)
+        self.originchoice = wx.Choice(self, -1, choices=search_choices)
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
-        self.filterchoice = wx.Choice(self, -1)
+        self.filterchoice = wx.Choice(self, -1, choices=searchable_fields.values())
         # self.closebutton = wx.BitmapButton(
         #     self, -1, 
         #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 

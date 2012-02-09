@@ -47,7 +47,7 @@ class StagingListPanel(BaseListPanel):
         self.DiscardButton.Bind(wx.EVT_BUTTON,
                                 self.onDiscardAll)
 
-    def AddObject(self, obj, msgtype):
+    def AddObject(self, obj, msgtype='success'):
         '''An augmented AddObject incorporating spinning trigger'''
         print 'StagingListPanel.AddObject, msgtype =', msgtype
         if msgtype=='spin':
@@ -124,7 +124,7 @@ class StagingListPanel(BaseListPanel):
                 wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
             menu.AppendItem(rcm_deletefile)
             self.Bind(wx.EVT_MENU, self.onDeleteOnDisk, rcm_deletefile)
-            rcm_editbibdata = wx.MenuItem(menu, 3, 
-                                          _('Edit bibliographic information'))
-            menu.AppendItem(rcm_editbibdata)
-            self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
+        rcm_editbibdata = wx.MenuItem(menu, 3, 
+                                      _('Edit bibliographic information'))
+        menu.AppendItem(rcm_editbibdata)
+        self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)

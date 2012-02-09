@@ -1,5 +1,6 @@
-import os.path, os, wx, traceback, urllib, time
+import os.path, os, wx, traceback, urllib, time, datetime
 from urlparse import urlparse
+from pieconfig.globalvars import U_ERROR_BEHAV
 
 def download_file(
     url, # the url
@@ -36,13 +37,14 @@ def scan_file_metadata(obj):
         # assert len(reader.Info.CreationDate) > 0
         cd = reader.Info.CreationDate.split(':')[1] #get the 'good' bit 
         # md = reader.Info.ModDate.split(':')[1]
-        creation_date = time.strptime("%s %s %s %s %s" % (
+        creation_date = datetime.datetime.strptime("%s %s %s %s %s" % (
                 cd[0:4], cd[4:6], cd[6:8], cd[8:10], cd[10:12]
                 ), "%Y %m %d %H %M")
         return {
-            'author': reader.Info.Author,
-            'title': reader.Info.Title,
-            'creation_date': creation_date
+            'author': unicode(reader.Info.Author, 'utf8', errors=U_ERROR_BEHAV),
+            'title': unicode(reader.Info.Title, 'utf8', errors=U_ERROR_BEHAV),
+            'creation_date': creation_date,
+            'metadata_is_replaceable': True
             }
     else:
         print 'Unknown file type'

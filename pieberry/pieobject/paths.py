@@ -4,7 +4,10 @@
 
 import os, sys, os.path, time
 import urllib2, urlparse
+from pieconfig import PIE_CONFIG
 from pieconfig.paths import *
+from pieconfig.schemas import FEXTENSIONS
+from pieutility.decoding import *
 
 def get_session(source=None):
     '''return a session code for dealing with grouped objects'''
@@ -13,6 +16,16 @@ def get_session(source=None):
     else:
         return 'w_%s' % str(int(time.time()))
 
+def auto_increment_fn(fn):
+    counter = 0
+    dn = os.path.dirname(fn)
+    bn = os.path.splitext(os.path.basename(fn))[0]
+    ext = os.path.splitext(os.path.basename(fn))[1]
+    while os.path.exists(fn):
+        counter += 1
+        fn = os.path.join(dn, '%s_%d%s' % (bn, counter, ext))
+    return fn
+
 def suggest_path_cache_fromweb(obj):
     '''return a FULL PATH to cache a thing in'''
     if not hasattr(obj, 'session'): 
@@ -20,9 +33,7 @@ def suggest_path_cache_fromweb(obj):
     fname = os.path.basename(urlparse.urlsplit(obj.Url()).path)
     print 'suggest_path_cache_fromweb: ____'
     print 'I SUGGEST:', os.path.join(CACHEDIR, obj.session, fname)
-    proposal = os.path.join(CACHEDIR, obj.session, fname)
-    if os.path.exists(proposal):
-        raise IOError, 'File already exists. TODO - auto-fix'
+    proposal = auto_increment_fn(os.path.join(CACHEDIR, obj.session, fname))
     return proposal
 
 def suggest_path_cache_fromdesktop(obj):
@@ -39,8 +50,20 @@ def suggest_path_store_fromweb(obj):
     auth = obj.Author(favour_corporate=True)
     subd = obj.collection
     print 'suggest_path_store_fromweb: ____'
-    proposal = os.path.join(
-        root, auth, subd, obj.FileData_FileName)
+    ext = os.path.splitext(obj.FileData_FullPath)
+    # try to fix odd file extensions (phtml, php etc)
+    if not ext in FEXTENSIONS[obj.FileData_FileType]:
+        if len(FEXTENSIONS[obj.FileData_FileType]) == 1:
+            # only guess if there's only one possible extension
+            ext = FEXTENSIONS[obj.FileData_FileType][0]
+    fn_prop = "%s - %s%s" % (
+        obj.ReferDate().strftime("%Y%m%d"),
+        translate_non_alphanumerics(obj.Title()),
+        ext)
+    proposal = auto_increment_fn(os.path.join(
+            root, auth, subd, 
+            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
+            ))
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
@@ -52,7 +75,7 @@ def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
     print 'suggest_path_store_fromdesktop: ____'
     if new_fn: fn = new_fn
     else: fn = obj.FileData_FileName
-    proposal = os.path.join(root, folder, fn)
+    proposal = auto_increment_fn(os.path.join(root, folder, fn))
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists.'
