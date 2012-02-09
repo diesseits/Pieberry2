@@ -13,11 +13,10 @@ import atomise_hachoir
 from pdfrw import PdfReader
 from pprint import pprint
 
-from atomise_utility import *
 from pieutility.decoding import *
 from pieconfig.paths import *
 from pieobject import *
-
+from pieobject.paths import *
 
 def get_metadata_object(fn):
     '''takes a filename, returns an object with relevant metadata gleaned from
