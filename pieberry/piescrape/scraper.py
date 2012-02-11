@@ -103,6 +103,7 @@ class PieScraper:
                     category_phrase=self._category_phrase,
                     author_is_corporate=self._author_is_corporate
                     )
+                ob.title = linky['SuggestedTitle']
             except Exception, exc:
                 traceback.print_exc()
             ret.Add(ob)

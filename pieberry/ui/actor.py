@@ -2,6 +2,7 @@ import wx
 import sys, os
 
 from pieconfig import *
+from spoofgeneration import *
 
 class PieActor:
     '''Class containing basic action-directing functions of the main window'''
@@ -72,7 +73,6 @@ class PieActor:
         pass
 
     def DebugAddWebPane(self, evt=0, noobjects=5):
-        from spoofgeneration import *
         self.OpenWebPane()
         pan = self.GetCurrentPane()
         for i in range(noobjects):
@@ -80,22 +80,19 @@ class PieActor:
             pan.AddObject(p)
 
     def DebugAddBibPane(self, evt=0, noobjects=5):
-        from spoofgeneration import *
         self.OpenSearchPane()
         pan = self.GetCurrentPane()
         for i in range(noobjects):
             p = spoof_pieobject('normal')
             pan.AddObject(p)
 
-    def DebugAddDownloadedPane(self, evt=0, noobjects=5):
-        from spoofgeneration import *
-        ostore = spoof_pieobjectstore('webfull', noobjects)
+    def DebugAddDownloadedPane(self, evt=0, noobjects=10):
+        ostore = spoof_pieobjectstore('pdffull', noobjects)
         self.OpenStagingPane()
         pan = self.GetCurrentPane()
         pan.AddObjects(ostore)
         
     def DebugAddAtomisePane(self, evt=0, noobjects=5):
-        from spoofgeneration import *
         ostore = spoof_pieobjectstore('desktop', noobjects)
         self.OpenAtomisePane()
         pan = self.GetCurrentPane()

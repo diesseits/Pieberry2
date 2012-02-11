@@ -11,6 +11,7 @@ from piescrape import *
 from piescrape.execfn import *
 from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
+from pieconfig import PIE_CONFIG
 from pieconfig.globals import *
 from atomise import *
 
@@ -160,6 +161,7 @@ class FunctionMainWindow(BaseMainWindow):
         try:
             tag = ts.get_page_context()
         except:
+            traceback.print_exc()
             # unreadable url ...
             print 'unreadable url'
             tag = None
@@ -196,6 +198,9 @@ still want to add it to your library?'''),
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
+            # Write metadata to file if possible
+            if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
+                write_obj_metadata(obj)
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
             if not os.path.isdir(os.path.dirname(dpath)):
@@ -217,10 +222,15 @@ still want to add it to your library?'''),
             )
 
     def OnEditedBibData(self, evt):
-        '''Handle user editing a (stored) item in the bibliography'''
+        '''Handle user editing an item'''
         print 'Edited', evt.obj
-        if evt.obj.has_aspect('stored'):
+        # Recommit object if it's already in the db
+        if evt.obj.has_aspect('saved'):
             session.commit()
+        # Update the ui reflecting changes
+        pan = self.GetCurrentPane()
+        pan.UpdateObject(evt.obj)
+        # TODO: Rewrite metadata, rehome file
 
     def OnCreateNewBibObj(self, evt):
         '''Handle creation of a new user-created bibliography entry

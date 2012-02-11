@@ -79,7 +79,7 @@ def spoof_pieobject(objtype="normal"):
         ro.WebData_LinkText = random.choice(ipsum)
         ro.title = ro.WebData_LinkText
         ro.aspects['onweb'] = True
-    elif objtype in ('webfull', 'desktop'):
+    elif objtype in ('webfull', 'desktop', 'pdffull'):
         t = random.choice(ipsum)
         a = random.choice(namelist)
         d = datetime.datetime.today()
@@ -114,6 +114,18 @@ def spoof_pieobjectstore(objtype="normal", noobjects=5):
                 os.makedirs(os.path.dirname(fname))
             f = open(fname, 'w').close()
             ro.add_aspect_cached_from_web(fname)
+        if objtype == 'pdffull':
+            rf = random.choice(os.listdir(TESTDATADIR))
+            ff = "%s_%s" % ("".join(random.choice(digits) for d in xrange(5)),
+                            rf)
+            destn = os.path.join(os.path.dirname(suggest_path_cache_fromweb(ro)), ff)
+            if not os.path.isdir(os.path.dirname(destn)):
+                os.makedirs(os.path.dirname(destn))
+            shutil.copyfile(os.path.join(TESTDATADIR, rf),
+                            destn
+                            )
+            print 'COPYING FILE AT:', destn
+            ro.add_aspect_cached_from_web(destn)
         ostore.Add(ro)
     return ostore
         

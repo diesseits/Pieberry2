@@ -10,7 +10,8 @@ PIE_CONFIG_DEFAULTS = [
     # ('Profile', 'filing_directory', os.getcwd()),
     # ('Profile', 'default_bibliography', os.path.join(SYSDIR, 'library.bib')),
     # ('Profile', 'exclude_by_default', 'submissions'),
-    ('Profile', 'default_bibtex_entry_type', 'Misc'),
+    ('Format', 'default_bibtex_entry_type', 'Misc'),
+    ('Format', 'default_howpublished_text', 'On The Web'),
     # ('Profile', 'default_bibtex_entry_style', '0'),
     # ('Profile', 'default_bibtex_url_handling', 'href_howpublished'),
     # ('Profile', 'export_tsv', 'false'),
@@ -19,7 +20,8 @@ PIE_CONFIG_DEFAULTS = [
     # ('Format', 'url_level_scrape', 'full'),
     ('Format', 'url_level_represent', 'full'),
     ('Format', 'plaintext_citation_format', 'plaintext'),
-    ('Format', 'filesystem_length_limit', 80)
+    ('Format', 'filesystem_length_limit', 80),
+    ('Format', 'write_pdf_metadata', True)
     ]
 
 for key, path in default_paths_relative_to_root(os.getcwd()).items():

@@ -80,6 +80,14 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         '''Return the currently selected object'''
         print 'BaseListPanel: GetSelectedItem: not implemented'
 
+    def UpdateObject(self, obj):
+        '''Update the displayed data for an object already in the pane. May
+        only work for saved objects'''
+        for stidx, stobj in self.objectstore.GetNext():
+            if obj == stobj:
+                self.ListDisplay.DeleteItemByOstoreRef(stidx)
+                self.ListDisplay.AddObject(obj, stidx)
+
     def onSelectionChanged(self, evt):
         # print 'BibListPanel.onSelectionChanged'
         # print 'Item index:', evt.GetIndex()

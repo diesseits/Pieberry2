@@ -106,8 +106,6 @@ def suggest_initial_fn(obj, doctype=''):
                 [t for t in (dateprefix, doctype, usetitle) if t], ' - ') + ext
 
 
-
-
 #OLD: For reference only
 # def suggest_fn(ifn, creationdate=None, title=None, doctype=None):
 #     '''Suggest a suitable filename, taking the longer of the existing

@@ -107,8 +107,8 @@ def get_pdf_metadata_object(fn):
     else:
         creation_date = fakeobj.FileData_DateCreated
     obj = PieObject(
-        author = reader.Info.Author.decode('utf8').strip('()'),
-        title = reader.Info.Title.decode('utf8').strip('()'),
+        author = unicode(reader.Info.Author, 'utf8', errors=U_ERROR_BEHAV).strip('()'),
+        title = unicode(reader.Info.Title, 'utf8', errors=U_ERROR_BEHAV).strip('()'),
         date = creation_date)
     obj.FileData_DateCreated = creation_date
     return obj

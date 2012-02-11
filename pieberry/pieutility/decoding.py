@@ -45,8 +45,11 @@ def decode_htmlentities(string):
     entity_re = re.compile("&(#?)(\d{1,5}|\w{1,8});")
     return entity_re.subn(substitute_entity, string)[0]
 
-def translate_non_alphanumerics(to_translate, translate_to=u'_'):
-    not_letters_or_digits = u'!"#%\'()*+,-./:;<=>?@[\]^_`{|}~'
+def translate_non_alphanumerics(to_translate, translate_to=u'_', strict=False):
+    if strict:
+        not_letters_or_digits = u'!"#%\'()*+,-./:;<=>?@[\]^_`{|}~\\.'
+    else:
+        not_letters_or_digits = u'/\\?%*:|"<>.'
     if isinstance(to_translate, unicode):
         translate_table = dict((ord(char), unicode(translate_to))
                                for char in not_letters_or_digits)
@@ -57,5 +60,4 @@ def translate_non_alphanumerics(to_translate, translate_to=u'_'):
                                               *len(not_letters_or_digits))
     # split & join whitespace to ensure that we only have single spacing
     return string.join(to_translate.translate(translate_table).split()) 
-
 

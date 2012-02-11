@@ -14,6 +14,7 @@ from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder
 from pieobject.website import PieWebsite, referable_website
+from pieconfig import PIE_CONFIG
 from pieconfig.paths import ROOT_MAP
 from pieconfig.schemas import bibtexfields, bibtexmap
 
@@ -116,6 +117,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             raise AttributeError
 
     def Title(self):
+        if not self.title:
+            if self.WebData_LinkText:
+                return self.WebData_LinkText
+            if self.FileData_FileName:
+                return self.FileData_FileName
         return self.title
 
     def Author(self, favour_corporate=False):
@@ -208,12 +214,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.WebData_Url = url
         self.WebData_PageUrl = pageurl
         self.WebData_LinkText = linktext
-        self.title = linktext
         if author_is_corporate: 
             self.corpauthor = defaultauthor
         else:
             self.author = defaultauthor
         self.collection = category_phrase
+        # Set basic bibliographic data
+        self.BibData_HowPublished = PIE_CONFIG.get(
+            'Format', 'default_howpublished_text')
+        self.BibData_Type = PIE_CONFIG.get(
+            'Format', 'default_bibtex_entry_type')
         self.aspects['onweb']=True
 
     # def _attempted_threadsafe_link(self, url):

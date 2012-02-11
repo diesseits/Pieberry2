@@ -58,8 +58,14 @@ class BaseListCtrl(wx.ListCtrl,
         wx.ListCtrl.DeleteAllItems(self)
 
     def DeleteItem(self, ref):
+        '''Delete an item ... ref means ... what?'''
         # self.itemDataMap.pop(ref)
         wx.ListCtrl.DeleteItem(self, ref)
+
+    def DeleteItemByOstoreRef(self, ref):
+        for i in range(self.GetItemCount()):
+            if self.GetItemData(i) == ref:
+                wx.ListCtrl.DeleteItem(self, i)
 
     # TODO: Functionality yet to come for tip windows
     def onMouseEnterList(self, evt):

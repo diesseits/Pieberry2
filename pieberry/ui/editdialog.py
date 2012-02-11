@@ -6,6 +6,7 @@ from ui.validators import *
 from ui.events import PieBibEditEvent
 
 from pieconfig.schemas import *
+from pieconfig import PIE_CONFIG
 from pieutility.date import wxdate2pydate
 from pieutility.bibtex import *
 from pieobject.database import Session
@@ -224,6 +225,10 @@ class PieBibEditDialog(wx.Dialog):
         if obj.BibData_Type:
             self.choiceBook.ChangeSelection(
                 self.panelref.index(obj.BibData_Type.lower()))
+        else:
+            self.choiceBook.ChangeSelection(
+                self.panelref.index(PIE_CONFIG.get(
+                        'Format', 'default_bibtex_entry_type').lower()))
         self.authorCtrl.SetValue(obj.Author())
         if obj.AuthorIsCorporate():
             self.authorIsCorporateCb.SetValue(wx.CHK_CHECKED)
