@@ -69,6 +69,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     FileData_FileType = Column(Unicode(length=6))
     FileData_DateCreated = Column(DateTime)
     FileData_DateModified = Column(DateTime)
+    FileData_Size = Column(Integer)
 
     PhysData_StorageLoc = Column(Unicode)
     PhysData_Dewey = Column(Unicode(length=20))
@@ -298,6 +299,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if not os.path.exists(loc):
             raise IOError, 'Trying to set file data for non existant file'
         self.FileData_FileName = os.path.basename(loc)
+        self.FileData_Size = os.stat(loc).st_size
         diry = os.path.dirname(loc)
         fdroot = None
         for key, pdir in ROOT_MAP.items():

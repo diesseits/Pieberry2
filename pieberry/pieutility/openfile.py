@@ -10,4 +10,9 @@ def open_file(fn):
 
 def open_web_file(url):
     '''Open a file that is on the internet'''
+    if sys.platform == 'linux2':
+        subprocess.call(
+            ('xdg-open', url))
+    elif sys.platform == 'win32':
+        os.startfile(url)
     print 'open_web_file', url

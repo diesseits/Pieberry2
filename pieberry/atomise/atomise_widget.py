@@ -9,10 +9,10 @@ import pieutility
 
 # from atomise_exec import *
 from ui.events import *
-from atomise_utility import *
 from atomise_window import *
 from pieconfig.paths import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder
+from pieobject.paths import suggest_initial_fn
 
 class atomWidget(wx.Panel):
     '''A ui class for displaying files grabbed from the user's desktop'''
