@@ -71,7 +71,7 @@ class PieScraper:
         print 'PieScraper.get_page_context:', ttl
         return ttl #in future maybe return a more complex object
 
-    def snarf_urls(self, threaded=False, propagate_to=None):
+    def snarf_urls(self, threaded=False, propagate_to=None, types=('pdf',)):
         '''return a tuple of pieobjects representing all the in-situ
         potential documents of a page. Arguments:
          - threaded - bool - is this being run threaded?
@@ -80,7 +80,11 @@ class PieScraper:
         if not self._further_init_done:
             self._further_init()
         co = GetContextObject(self._urlopener, self._cmstype)
-        urlz = co.get_links(baseurl=self._origin_url)
+        try:
+            urlz = co.get_links(types=types, baseurl=self._origin_url)
+        except:
+            traceback.print_exc()
+            raise Exception
         ret = PieObjectStore()
         ret.set_session_data(
             # store information about the session in the ostore

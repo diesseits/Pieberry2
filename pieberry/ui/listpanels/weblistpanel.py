@@ -2,6 +2,7 @@
 
 import wx
 import pieutility
+from pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL
 
 from ui.events import *
 from ui.timers import SpinnyTimer
@@ -43,6 +44,7 @@ class WebListPanel(BaseListPanel):
         self.ReferenceButton.Bind(wx.EVT_BUTTON, self.onReference)
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
                               self.onSelectionActivated)
+        self.LinkTypeChoice.Bind(wx.EVT_CHOICE, self.onLinkTypeChoice)
 
     def Repopulate(self, filtertext=None, checkstatus=False):
         '''repopulate the list from current data, possibly filtering it
@@ -98,3 +100,14 @@ class WebListPanel(BaseListPanel):
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         menu.AppendItem(rcm_openinbrowser)
         self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
+
+    def onLinkTypeChoice(self, evt):
+        if evt.GetSelection() == 0:
+            types = PIE_TYPES_DOCUMENTS
+        elif evt.GetSelection() == 1:
+            types = PIE_TYPES_ALL
+        newevt = PieRefreshWebListEvent(
+            types=types, 
+            session_data=self.objectstore.get_session_data())
+        wx.PostEvent(self, newevt)
+

@@ -50,6 +50,9 @@ FEXTENSIONS = {'pdf': ('.pdf',),
                'hachoir_other': ('.zip',)
                }
 
+PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc')
+PIE_TYPES_ALL = ('pdf', 'word_doc', 'html', 'plaintext', 'hachoir_other')
+
 #map mime types to internal generic types
 MIMEMAP = {'application/pdf': 'pdf',
            'application/msword': 'word_doc',

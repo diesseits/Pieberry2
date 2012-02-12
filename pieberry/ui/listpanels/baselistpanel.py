@@ -157,3 +157,8 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
             print 'Successful drag and copy'
         self.suppress_tipwindow = False
         self.isdragging = False
+    
+    def ClearAllData(self, evt=0):
+        '''Clear everthing including object store and list view'''
+        self.objectstore = {}
+        self.ListDisplay.DeleteAllItems()

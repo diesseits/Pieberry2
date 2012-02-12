@@ -92,8 +92,8 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
                   filtertext=None, 
                   checkstatus=False):
         '''Add an object, returning the item's current index in the ListCtrl'''
-        print 'Adding:', obj
-        print ' ... which should be checked:', checkstatus
+        # print 'Adding:', obj
+        # print ' ... which should be checked:', checkstatus
         if filterout(filtertext, (obj.WebData_LinkText, obj.Url())):
             return
         nexidx = self.InsertStringItem(self.currentitem, statusmsg)

@@ -318,6 +318,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab = WebListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
+        tab.Bind(EVT_PIE_REFRESH_WEB_LIST, self.OnWebPaneRefresh)
         self.TabBook.AddPage(tab, caption, select=True)
 
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):

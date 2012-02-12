@@ -34,3 +34,5 @@ AtomOpenFileEvent, EVT_ATOM_OPEN_FILE = wx.lib.newevent.NewEvent()
 PieClosePaneEvent, EVT_PIE_CLOSE_PANE = wx.lib.newevent.NewEvent()
 PieBibEditEvent, EVT_PIE_BIB_EDIT =  wx.lib.newevent.NewEvent()
 # attributes: obj - the object in question
+PieRefreshWebListEvent, EVT_PIE_REFRESH_WEB_LIST = wx.lib.newevent.NewEvent()
+# attributes: types - type of objects to refresh with (documents, all)

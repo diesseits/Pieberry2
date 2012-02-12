@@ -44,6 +44,20 @@ class FunctionMainWindow(BaseMainWindow):
             tag_append_behaviour=evt.catbehaviour,
             notify_window=self)
         thread.start_new_thread(ts.snarf_urls, (True, pan))
+
+    def OnWebPaneRefresh(self, evt):
+        pan = self.GetCurrentPane()
+        pan.ClearAllData()
+        assert pan.paneltype == 'WebListPanel'
+        self.StatusBar.SetStatusText(_('Finding documents...'))
+        ts = PieScraper(
+            url=evt.session_data['url'],
+            default_author=evt.session_data['defaultauthor'],
+            author_is_corporate=evt.session_data['authiscorporate'],
+            category_phrase=evt.session_data['category_phrase'],
+            tag_append_behaviour=evt.session_data['tag_append_behaviour'],
+            notify_window=self)
+        thread.start_new_thread(ts.snarf_urls, (True, pan), {'types': evt.types})
         
     def Callback_FillPane(self, ostore, propagate_window):
         '''Callback function to propagate data into a pane'''
