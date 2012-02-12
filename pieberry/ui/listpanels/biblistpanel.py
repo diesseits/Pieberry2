@@ -21,8 +21,8 @@ class BibListPanel(BaseListPanel):
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
         self.ListDisplay = BibListCtrl(self)
-        self.DelButton = wx.Button(self, -1, label=_("Delete"))
-        self.sizer1.Add(self.DelButton, 1, wx.ALL, 5)
+        # self.DelButton = wx.Button(self, -1, label=_("Delete"))
+        # self.sizer1.Add(self.DelButton, 1, wx.ALL, 5)
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
         self.sizer0.Add(self.sizer1)
         self.SetSizer(self.sizer0)
@@ -34,8 +34,8 @@ class BibListPanel(BaseListPanel):
                               self.onSelectionActivated)
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_SELECTED,
                               self.onSelectionChanged)
-        self.DelButton.Bind(wx.EVT_BUTTON,
-                            self.onDeleteItem)
+        # self.DelButton.Bind(wx.EVT_BUTTON,
+        #                     self.onDeleteItem)
 
     def onDeleteItem(self, evt):
         print self.GetSelectedItem() 
@@ -50,12 +50,16 @@ class BibListPanel(BaseListPanel):
         
     def MakeMenu(self, menu, obj):
         '''Function to construct a particular context menu'''
+        copyMenu = wx.Menu()
         if obj.has_aspect('onweb'):
             rcm_openinbrowser = wx.MenuItem(menu, 0, _('Open in Browser'))
             rcm_openinbrowser.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_NORMAL_FILE, wx.ART_MENU))
             menu.AppendItem(rcm_openinbrowser)
             self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
+            rcm_copyurl = wx.MenuItem(menu, 7, _('Copy web url'))
+            copyMenu.AppendItem(rcm_copyurl)
+            self.Bind(wx.EVT_MENU, self.onCopyUrl, rcm_copyurl)
         if obj.has_aspect('stored'):
             rcm_openfile = wx.MenuItem(menu, 1, _('Open file'))
             rcm_openfile.SetBitmap(
@@ -68,8 +72,38 @@ class BibListPanel(BaseListPanel):
             #     wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
             # menu.AppendItem(rcm_deletefile)
             # self.Bind(wx.EVT_MENU, self.onDeleteOnDisk, rcm_deletefile)
+        if obj.has_aspect('saved'):
             rcm_editbibdata = wx.MenuItem(menu, 3, 
                                           _('Edit bibliographic information'))
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
-    
+            # citations
+            rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
+                                                _('Copy citation (plain text)'))
+            rcm_openfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
+            copyMenu.AppendItem(rcm_copycitationplain)
+            self.Bind(wx.EVT_MENU, self.onCopyCitation_PlainText, 
+                      rcm_copycitationplain)
+            rcm_copycitationrich = wx.MenuItem(copyMenu, 5,
+                                                _('Copy citation (rich text)'))
+            rcm_openfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
+            copyMenu.AppendItem(rcm_copycitationrich)
+            self.Bind(wx.EVT_MENU, self.onCopyCitation_RichText, 
+                      rcm_copycitationrich)
+            rcm_copycitationorg = wx.MenuItem(copyMenu, 6,
+                                                _('Copy citation (org mode)'))
+            rcm_openfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
+            copyMenu.AppendItem(rcm_copycitationorg)
+            self.Bind(wx.EVT_MENU, self.onCopyCitation_OrgText, 
+                      rcm_copycitationorg)
+        if obj.BibData_Key:
+            rcm_copykey = wx.MenuItem(copyMenu, 8,
+                                      _('Copy BibTeX key'))
+            rcm_copykey.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
+            copyMenu.AppendItem(rcm_copykey)
+            self.Bind(wx.EVT_MENU, self.onCopyBibTeXKey)
+        menu.AppendMenu(20, _('Copy to clipboard ...'), copyMenu)

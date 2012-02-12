@@ -31,7 +31,13 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
-    favourite = Column(Boolean)
+
+    # User Stats
+
+    StatData_Favourite = Column(Boolean)
+    StatData_OpenedCount = Column(Integer)
+    StatData_LastOpened = Column(DateTime)
+    StatData_LastSaved = Column(DateTime)
 
     #relationships
 
@@ -71,10 +77,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     FileData_DateModified = Column(DateTime)
     FileData_Size = Column(Integer)
 
-    PhysData_StorageLoc = Column(Unicode)
-    PhysData_Dewey = Column(Unicode(length=20))
+    PhysData_StorageLoc = Column(Unicode) # Storage location
+    PhysData_StorageType = Column(Unicode) # Type of storage (e.g. personal, library)
+    PhysData_Dewey = Column(Unicode(length=20)) 
     PhysData_ISBN = Column(Unicode(length=50))
-    PhysData_Accessed = Column(DateTime)
+    PhysData_Accessed = Column(DateTime) # Borrowing/accession time
 
     def __init__(self, title='', author='', date=datetime.datetime.today(),
                  fileloc=None):
@@ -171,7 +178,13 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         return self.date
 
     def Url(self):
-        return self.WebData_Url
+        '''The most salient url for reference purposes'''
+        if not self.WebData_Url: return ''
+        if PIE_CONFIG.get('Format', 'url_level_represent') == 'full':
+            return self.WebData_Url
+        else:
+            if self.WebData_PageUrl: return self.WebData_PageUrl
+            else: return self.WebData_Url
 
     def Collection(self):
         return self.collection

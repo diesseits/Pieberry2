@@ -100,8 +100,8 @@ def lookup_author(authorname):
 
 # DEBUG STUFF
 
-spoofurls = ('http://www.politics.com/', 'www.sex.org', 'www.drugs.co.uk', 'rocknroll.net/', 'religion.eu', 'http://www.aer.gov.au')
-spoofauthors = ('POLTX', 'Funbags inc.', 'Spliffco', 'Drummer From Def Leppard', 'Kings of Eyore', 'Australian Energy Regulator')
+spoofurls = ('http://www.politics.com/', 'www.sex.org', 'www.drugs.co.uk', 'rocknroll.net/', 'religion.eu', 'http://www.aer.gov.au', 'http://www.asdf.com')
+spoofauthors = ('POLTX', 'Funbags inc.', 'Spliffco', 'Drummer From Def Leppard', 'Kings of Eyore', 'Australian Energy Regulator', 'Azz Dif')
 
 def make_spoof_websites():
     for i in range(len(spoofurls)):

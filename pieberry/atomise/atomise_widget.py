@@ -29,7 +29,7 @@ class atomWidget(wx.Panel):
     def __do_layout(self):
         self.atomDisplay = atomActionWindow(self, -1)
         # self.openbt = wx.Button(self, -1, label='Open temp directory')
-        self.procbt = wx.Button(self, -1, label='Process all')
+        self.procbt = wx.Button(self, -1, label=_('Process all'))
         # self.donebt = wx.Button(self, -1, label='Done')
 
         s2 = wx.BoxSizer(wx.VERTICAL)
@@ -63,15 +63,15 @@ class atomWidget(wx.Panel):
         '''Delete a file in the staging area. Probably shouldn't be 
         handling this in a GUI module but hey'''
         obj = self.atomDisplay.rowdata[currentrow]
-        dia = wx.MessageDialog(self, 'Delete %s?' % obj.FileData_FileName,
-                               'Delete File', style=wx.YES_NO|wx.ICON_QUESTION)
+        dia = wx.MessageDialog(self, _('Delete %s?' % obj.FileData_FileName),
+                               _('Delete File'), style=wx.YES_NO|wx.ICON_QUESTION)
         ans = dia.ShowModal()
         if ans == wx.ID_YES:
             try: 
                 os.remove(obj.FileData_FullPath)
             except:
                 traceback.print_exc()
-                wx.MessageBox('Prevented from deleting this file')
+                wx.MessageBox(_('Prevented from deleting this file'))
                 return
             newevt = AtomDelFileEvent(obj=obj, rowid=currentrow)
             wx.PostEvent(self, newevt) 
@@ -86,7 +86,7 @@ class atomWidget(wx.Panel):
         obj = self.atomDisplay.rowdata[row]
         ch = getattr(self.atomDisplay, 'choice%d' % self.atomDisplay.currentrow)
         if ch.GetSelection() == 0:
-            wx.MessageBox('No selected destination for this file')
+            wx.MessageBox(_('No selected destination for this file'))
             return
         tc = getattr(self.atomDisplay, 'suggesttc%d' % self.atomDisplay.currentrow)
         newevt = AtomFileFileEvent(

@@ -20,6 +20,7 @@ PIE_CONFIG_DEFAULTS = [
     # ('Format', 'url_level_scrape', 'full'),
     ('Format', 'url_level_represent', 'full'),
     ('Format', 'plaintext_citation_format', 'plaintext'),
+    ('Format', 'richtext_citation_format', 'html'),
     ('Format', 'filesystem_length_limit', 80),
     ('Format', 'write_pdf_metadata', True)
     ]
