@@ -14,7 +14,8 @@ def make_linktest_re_str(filetype, exts):
     ext_str = ''
     for ext in exts:
         ext_str = ext_str + '|'
-        ext_str = ext_str + "%s|%s|%s" % (ext.lower(), ext.capitalize(), 
+        ext_str = ext_str + "%s|%s|%s" % (ext.lower(), 
+                                          '.' + ext[1:].capitalize(), 
                                           ext.upper())
     ret_str = "^.*(%s)" % ext_str[1:]
     print 'Making re out of', ret_str

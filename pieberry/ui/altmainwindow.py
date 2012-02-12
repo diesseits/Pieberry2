@@ -21,7 +21,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         wx.Frame.__init__(self, *args, **kwds)
 
         self._mgr = wxaui.AuiManager(self)
-        self.ContextPane = SimpleContextPanel(self, -1)
+        self.ContextPane = BetterContextPanel(self, -1)
 
         # self.TabPane = NBPanel(self)
         # self.TabBook = self.TabPane.nb

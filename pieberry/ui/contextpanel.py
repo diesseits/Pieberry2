@@ -1,4 +1,4 @@
-import wx
+import wx, wx.html
 
 class BaseContextPanel(wx.Panel):
     '''Class for generic forms of context'''
@@ -20,6 +20,70 @@ class BaseContextPanel(wx.Panel):
         '''Set the object to show context for'''
         print 'SetObject'
 
+html_fundamental = '''
+<body>
+<font size=-1>
+<h4>%(title)s</h4>
+<p>
+<b>Author:</b> %(author)s.<br>
+<b>Date:</b> %(date)s
+</p>
+</font>
+</body>
+'''
+
+from urlparse import urlsplit
+
+class BetterContextPanel(BaseContextPanel):
+
+    def _do_layout(self):
+        self.sizer0 = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.sizer0)
+        self.Layout()
+        self.cleared = True
+
+    def _add_section_onweb(self, obj):
+        if obj.website:
+            self.urlDisplay = wx.HyperlinkCtrl(
+                self, -1, 
+                'From %s' % obj.website.Domain, 
+                obj.Url())
+        else:
+            self.urlDisplay = wx.HyperlinkCtrl(
+                self, -1, 
+                'From %s' % urlsplit(obj.Url())[1], 
+                obj.Url())
+        self.sizer0.Add(self.urlDisplay, 0, wx.EXPAND|wx.ALL, 3)
+        # self.urlDisplay.SetURL(obj.Url())
+    
+    def _add_section_saved(self, obj):
+        pass
+
+    def _add_section_fundamental(self, obj):
+        self.fundHtml = wx.html.HtmlWindow(self, -1)
+        self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 3)
+        self.fundHtml.AppendToPage(html_fundamental % {
+                'author': obj.Author(),
+                'title': obj.Title(),
+                'date': obj.ReferDate().strftime('%d %B %Y')})
+        
+
+    def SetObject(self, obj):
+        self.Clear()
+        self._add_section_fundamental(obj)
+        if obj.has_aspect('onweb'):
+            self._add_section_onweb(obj)
+        self.Layout()
+        self.cleared = False
+
+    def Clear(self):
+        if self.cleared: return
+        self.sizer0.Remove(self.fundHtml)
+        self.fundHtml.Destroy()
+        if self.urlDisplay:
+            self.sizer0.Remove(self.urlDisplay)
+            self.urlDisplay.Destroy()
+        self.cleared = True
     
 class SimpleContextPanel(BaseContextPanel):
     #widgetlist = []
