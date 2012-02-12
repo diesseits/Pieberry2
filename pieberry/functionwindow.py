@@ -44,6 +44,7 @@ class FunctionMainWindow(BaseMainWindow):
             tag_append_behaviour=evt.catbehaviour,
             notify_window=self)
         thread.start_new_thread(ts.snarf_urls, (True, pan))
+        wx.CallAfter(self.ToggleWebPanel)
 
     def OnWebPaneRefresh(self, evt):
         pan = self.GetCurrentPane()
@@ -197,7 +198,12 @@ class FunctionMainWindow(BaseMainWindow):
     def OnCommitStaged(self, evt):
         self.StatusBar.SetStatusText(_('Storing staged files'))
         ostore = evt.ostore
+        progress_dialog = wx.ProgressDialog( 
+            'Committing to the database', 
+            '________________________________________', maximum = len(ostore) )
+        counter = 1
         for ref, obj in ostore.GetNext(): # move files - if no file, continue
+            progress_dialog.Update(counter, 'Adding: %s' % obj.Title())
             if not obj.has_aspect('cached'): continue
             if obj.has_aspect('onweb'):
                 # test if this has been downloaded/referenced before
@@ -206,8 +212,7 @@ class FunctionMainWindow(BaseMainWindow):
                 if no_dupes > 0:
                     dia = wx.MessageDialog(
                         self, 
-                        _('''You have downloaded this before, do you 
-still want to add it to your library?'''), 
+                        _('''You have downloaded "%s" before.\nDo you still want to add it to your library?''' % obj.Title().strip('. ,-:')), 
                         style=wx.YES|wx.NO)
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
@@ -222,13 +227,13 @@ still want to add it to your library?'''),
             print 'COPYING: %s to %s' % (path, dpath)
             os.renames(path, dpath)
             obj.add_aspect_stored(dpath)
+            counter += 1
         # session = Session()
         session.add_all(ostore)
         ostore.set_aspect_saved()
         session.commit()
+        progress_dialog.Destroy()
         self.CloseUtilityPanes()
-        # wx.MessageBox(
-        #     'Successfully added %d items to your library' % len(evt.ostore))
         self.StatusBar.SetStatusText('')
         wx.CallAfter( #deletepage seems finicky about timing
             self.TabBook.DeletePage,

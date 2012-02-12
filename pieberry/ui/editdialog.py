@@ -298,6 +298,7 @@ class PieBibEditDialog(wx.Dialog):
     def onCancel(self, evt=1):
         self.EndModal(wx.ID_CANCEL)
 
+
     def onTitleSwap(self, evt):
         t = self.titleCtrl.GetValue()
         self.titleCtrl.SetValue(self.titleAltCtrl.GetValue())

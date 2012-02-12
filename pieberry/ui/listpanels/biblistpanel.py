@@ -80,21 +80,21 @@ class BibListPanel(BaseListPanel):
             # citations
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
                                                 _('Copy citation (plain text)'))
-            rcm_openfile.SetBitmap(
+            rcm_copycitationplain.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationplain)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_PlainText, 
                       rcm_copycitationplain)
             rcm_copycitationrich = wx.MenuItem(copyMenu, 5,
                                                 _('Copy citation (rich text)'))
-            rcm_openfile.SetBitmap(
+            rcm_copycitationrich.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationrich)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_RichText, 
                       rcm_copycitationrich)
             rcm_copycitationorg = wx.MenuItem(copyMenu, 6,
                                                 _('Copy citation (org mode)'))
-            rcm_openfile.SetBitmap(
+            rcm_copycitationorg.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationorg)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_OrgText, 
