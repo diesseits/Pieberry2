@@ -110,7 +110,6 @@ TESTS = {
 
 def apply_test(retdata, string, test, field):
     '''utility function to tag_by_data'''
-    print ' ..', string
     assert type(retdata[field]) == unicode
     assert test in ('in', 'equals')
     if not retdata.has_key(field):

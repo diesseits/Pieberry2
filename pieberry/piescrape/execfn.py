@@ -29,6 +29,8 @@ def suggest_title(linktext, category_phrase, append_behav):
     Report - Review of the blah"'''
     assert type(linktext) == unicode
     assert type(category_phrase) == unicode
+    if linktext.strip(' :;-_').lower() == category_phrase.strip(' :;-_').lower():
+        return linktext # sanity check - don't double up 
     if append_behav == 0: # append to title with dash:
         return u"%s - %s" % (linktext.strip(' :;-_'), category_phrase.strip())
     elif append_behav == 1: # append with brackets

@@ -85,8 +85,9 @@ class BetterContextPanel(BaseContextPanel):
 
     def Clear(self):
         if self.cleared: return
-        self.sizer0.Remove(self.fundHtml)
-        self.fundHtml.Destroy()
+        if self.fundHtml:
+            self.sizer0.Remove(self.fundHtml)
+            self.fundHtml.Destroy()
         if self.urlDisplay:
             self.sizer0.Remove(self.urlDisplay)
             self.urlDisplay.Destroy()

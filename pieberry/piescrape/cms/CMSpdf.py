@@ -28,10 +28,11 @@ class PDFContextObject:
             self.titlesuggestions['filename'] = unquote(query['fn'][0])
 
     def get_links(self, *args, **kwargs):
-        linkdata = {'Url': self._url,
+        linkdata = {'Url': unicode(self._url),
                     'LastHeading': '',
                     'LinkText': self.get_context_title(),
-                    'SuggestedTitle': self.get_context_title()}
+                    'SuggestedTitle': self.get_context_title(),
+                    'Tags': []}
         ret = [linkdata,]
         return ret
 
@@ -42,6 +43,6 @@ class PDFContextObject:
         else:
             ret = self.titlesuggestions['filename']
         if ret[-4:] in ('.pdf', '.Pdf', '.PDF'):
-            return tr_nan(ret[:-4])
+            return tr_nan(unicode(ret[:-4]))
         else:
-            return tr_nan(ret)
+            return tr_nan(unicode(ret))

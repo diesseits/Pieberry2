@@ -246,10 +246,8 @@ class PieBibEditDialog(wx.Dialog):
         bibdata = {}
         for bibtexkey, objkey in bibtexmap.items():
             bibdata[bibtexkey] = getattr(obj, objkey)
-        self.choiceBook.GetCurrentPage().setData(bibdata)
-        
-# datetime.datetime.fromtimestamp(wx.DateTime.Now().GetTicks())
-# wx.DateTimeFromTimeT(time.mktime(datetime.datetime.now().timetuple())) 
+        for i in range(len(self.panelref)):
+            self.choiceBook.GetPage(i).setData(bibdata)
 
     def onKeygenToggle(self, evt):
         if self.keyAutoCb.IsChecked():

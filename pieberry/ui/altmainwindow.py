@@ -295,16 +295,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         # if self.SearchPanel:
         tab = BibListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.TabBook.AddPage(tab, caption, select=True)
-        # self._mgr.Update()
-        # if self.SearchPanel:
-        #     # self.SearchPanel.Unbind(EVT_PIE_SEARCH_EVENT)
-        #     spinfo = self._mgr.GetPane(self.SearchPanel)
-        #     # self.SearchPanel.Destroy()
-        #     self._mgr.ClosePane(spinfo)
-        #     self._mgr.Update()
-        # if self.SearchPanel:
-        #     self.ToggleSearchPanel()
+        self.TabBook.AddPage(
+            tab, caption, select=True, 
+            bitmap = wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
 
     def OpenStagingPane(self, evt=0, ostore=None, caption=_('Staging ground')):
         tab = StagingListPanel(self.TabBook)
