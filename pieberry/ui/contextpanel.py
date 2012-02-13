@@ -1,4 +1,5 @@
 import wx, wx.html
+from string import join
 
 class BaseContextPanel(wx.Panel):
     '''Class for generic forms of context'''
@@ -21,16 +22,19 @@ class BaseContextPanel(wx.Panel):
         print 'SetObject'
 
 html_fundamental = '''
-<body>
-<font size=-1>
-<h4>%(title)s</h4>
+<body bgcolor="%(color)s">
+<i><b>%(title)s</b></i>
 <p>
+<font size=-1>
 <b>Author:</b> %(author)s.<br>
-<b>Date:</b> %(date)s
+<b>Date:</b> %(date)s<br>
+<b>Tags:</b> %(tags)s
 </p>
 </font>
 </body>
 '''
+
+html_colors = {'kde': "#F0EBE2"}
 
 from urlparse import urlsplit
 
@@ -61,11 +65,14 @@ class BetterContextPanel(BaseContextPanel):
 
     def _add_section_fundamental(self, obj):
         self.fundHtml = wx.html.HtmlWindow(self, -1)
-        self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 3)
+        self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 0)
         self.fundHtml.AppendToPage(html_fundamental % {
                 'author': obj.Author(),
                 'title': obj.Title(),
-                'date': obj.ReferDate().strftime('%d %B %Y')})
+                'date': obj.ReferDate().strftime('%d %B %Y'),
+                'color': html_colors['kde'],
+                'tags': join(obj.tags, ' | ')
+                })
         
 
     def SetObject(self, obj):
@@ -123,3 +130,54 @@ class SimpleContextPanel(BaseContextPanel):
         self.filelocdisplay.SetLabel(unicode(obj.FileData_FullPath))
         self.collectiondisplay.SetLabel(unicode(obj.collection))
         self.websitedisplay.SetLabel(unicode(obj.website))
+
+
+class FavButton(wx.PyControl):
+    '''Custom button for marking entries as favourite'''
+    # TODO - yet to implement
+    def __init__(self, parent, id, bmp, text, **kwargs):
+        wx.PyControl.__init__(self,parent, id, **kwargs)
+
+        self.Bind(wx.EVT_LEFT_DOWN, self._onMouseDown)
+        self.Bind(wx.EVT_LEFT_UP, self._onMouseUp)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self._onMouseLeave)
+        self.Bind(wx.EVT_ENTER_WINDOW, self._onMouseEnter)
+        self.Bind(wx.EVT_ERASE_BACKGROUND,self._onEraseBackground)
+        self.Bind(wx.EVT_PAINT,self._onPaint)
+
+        self._mouseIn = self._mouseDown = False
+
+    def _onMouseEnter(self, event):
+        self._mouseIn = True
+
+    def _onMouseLeave(self, event):
+        self._mouseIn = False
+
+    def _onMouseDown(self, event):
+        self._mouseDown = True
+
+    def _onMouseUp(self, event):
+        self._mouseDown = False
+        self.sendButtonEvent()
+
+    def sendButtonEvent(self):
+        event = wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, self.GetId())
+        event.SetInt(0)
+        event.SetEventObject(self)
+        self.GetEventHandler().ProcessEvent(event)
+
+    def _onEraseBackground(self,event):
+        # reduce flicker
+        pass
+
+    def _onPaint(self, event):
+        dc = wx.BufferedPaintDC(self)
+        dc.SetFont(self.GetFont())
+        dc.SetBackground(wx.Brush(self.GetBackgroundColour()))
+        dc.Clear()
+        # draw whatever you want to draw
+        # draw glossy bitmaps e.g. dc.DrawBitmap
+        if self._mouseIn:
+            pass# on mouserover may be draw different bitmap
+        if self._mouseDown:
+            pass # draw different image text

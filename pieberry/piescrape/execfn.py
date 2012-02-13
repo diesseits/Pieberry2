@@ -22,6 +22,22 @@ def download_file(
         # tell the main window this download failed
         return 'fail'
 
+def suggest_title(linktext, category_phrase, append_behav):
+    '''Suggest a slightly amended title to reflect the pre/appending
+    of category phrases. (This is a good thing because websites often
+    just title things "Draft report" when what they mean is "Draft
+    Report - Review of the blah"'''
+    assert type(linktext) == unicode
+    assert type(category_phrase) == unicode
+    if append_behav == 0: # append to title with dash:
+        return u"%s - %s" % (linktext.strip(' :;-_'), category_phrase.strip())
+    elif append_behav == 1: # append with brackets
+        return u"%s (%s)" % (linktext.strip(' :;-_'), category_phrase.strip())
+    elif append_behav == 2: # prepend with colon
+        return u"%s: %s" % (category_phrase.strip(), linktext.strip(' :;-_')) 
+    elif append_behav == 3: #none
+        return linktext.strip(' :;-_')
+    else: raise Exception, "Invalid append behaviour"
 
 #TODO this probably merits a separate file
 if __name__ == '__main__':

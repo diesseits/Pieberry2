@@ -61,11 +61,11 @@ subdirectory in which to store these documents.''')
             _('Append to title - " ... (Phrase)"'), 
             _('Prepend to title - "Phrase: ..."'), 
             _('Use as subdirectory only'))
-        self.use_choice_lookup = (
-            'append_hyphen', 
-            'append_brackets', 
-            'prepend', 
-            'dironly')
+        # self.use_choice_lookup = (
+        #     'append_hyphen', 
+        #     'append_brackets', 
+        #     'prepend', 
+        #     'dironly')
         self.pfUseChoice = wx.Choice(
             self, -1, choices=pf_use_choices, style=wx.EXPAND)
         tt6 = wx.ToolTip(_('Select how to use the category phrase. It will always be used to create a subdirectory for the downloaded documents. It may also be appended to the titles of the downloaded documents'))

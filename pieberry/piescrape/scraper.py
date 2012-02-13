@@ -13,6 +13,7 @@ from pieconfig.paths import *
 from pieobject import *
 from cms import *
 from pieobject.website import add_website
+from piescrape.execfn import suggest_title
 
 cj = cookielib.CookieJar()
 prefenc = locale.getpreferredencoding()
@@ -105,9 +106,13 @@ class PieScraper:
                     linktext=linky['LinkText'],
                     defaultauthor=self._default_author,
                     category_phrase=self._category_phrase,
-                    author_is_corporate=self._author_is_corporate
+                    author_is_corporate=self._author_is_corporate,
+                    tags=linky['Tags']
                     )
-                ob.title = linky['SuggestedTitle']
+                ob.title = suggest_title(
+                    linky['SuggestedTitle'],
+                    self._category_phrase,
+                    self._tag_append_behaviour)
             except Exception, exc:
                 traceback.print_exc()
             ret.Add(ob)

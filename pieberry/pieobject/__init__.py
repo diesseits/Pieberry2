@@ -189,6 +189,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def Collection(self):
         return self.collection
 
+    def add_tags(self, tags):
+        '''Add to list of tags. Argument must be a list of strings'''
+        self.tags.extend(tags)
+        self.tags.sort()
+
     def has_aspect(self, t):
         if t == 'hasfile':
             if self.has_aspect('stored') or self.has_aspect('cached') or self.has_aspect('ondesktop'):
@@ -219,7 +224,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['ondesktop'] = True
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
-                         category_phrase='', author_is_corporate=False):
+                         category_phrase='', author_is_corporate=False,
+                         tags=None):
         '''Add information gleaned from the document being on the web
         (in-situ)'''
         assert type(url) in (str, unicode)
@@ -238,6 +244,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'Format', 'default_howpublished_text')
         self.BibData_Type = PIE_CONFIG.get(
             'Format', 'default_bibtex_entry_type')
+        if tags:
+            self.add_tags(tags)
         self.aspects['onweb']=True
 
     # def _attempted_threadsafe_link(self, url):

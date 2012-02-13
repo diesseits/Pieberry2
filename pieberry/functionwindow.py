@@ -249,6 +249,8 @@ class FunctionMainWindow(BaseMainWindow):
         # Update the ui reflecting changes
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)
+        if self.ContextPane:
+            self.ContextPane.SetObject(evt.obj)
         # TODO: Rewrite metadata, rehome file
 
     def OnCreateNewBibObj(self, evt):
