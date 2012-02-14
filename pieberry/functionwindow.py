@@ -14,6 +14,7 @@ from ui.events import *
 from pieconfig import PIE_CONFIG
 from pieconfig.globals import *
 from atomise import *
+from searches import *
 
 import pieobject.website as website
 
@@ -273,7 +274,12 @@ class FunctionMainWindow(BaseMainWindow):
         if len(evt.searchtext) < 3: return
         self.StatusBar.SetStatusText(_('Searching for "%s"' % evt.searchtext))
         # session = Session()
-        query = build_query(evt.searchtext.strip(), session)
+        # query = build_query(evt.searchtext.strip(), session)
+        query = build_query_simple(
+            evt.origin,
+            evt.searchtext,
+            evt.fields,
+            session)
         ostore = PieObjectStore()
         for instance in query:
             ostore.Add(instance)
@@ -327,19 +333,8 @@ class FunctionMainWindow(BaseMainWindow):
         session.commit()
         wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)
 
-# TODO: move to a search module
 
-from sqlalchemy import or_
 
-def build_query(t, session):
-    return session.query(
-        PieObject
-        ).filter(or_(
-            PieObject.title.like('%' + t + '%'), 
-            PieObject.author.like('%' + t + '%'), 
-            PieObject.corpauthor.like('%' + t + '%'), 
-            PieObject.WebData_Url.like('%' + t + '%')
-            ))#.order_by(PieObject.title)
         
 
                 

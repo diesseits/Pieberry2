@@ -8,14 +8,18 @@ search_choices = (
     _('Meeting Papers')
     )
 
-searchable_fields = {
-    0: _('Main fields'), 
-    1: _('All fields'),
-    2: _('Title'),
-    3: _('Author'),
-    'website.Url': _('Website'),
-    'BibData_Journal': _('Journal')
-    }
+search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
+
+searchable_fields = (
+    _('Main fields'), 
+    _('All fields'),
+    _('Title'),
+    _('Author'),
+    _('Website'),
+    _('Journal')
+    )
+
+search_field_codes = ('main', 'all', 'title', 'author', 'website', 'journal')
    
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
@@ -53,18 +57,18 @@ class SearchToolsPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         hsizer_top = wx.BoxSizer(wx.HORIZONTAL)
 
-        lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
+        # lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
         self.originchoice = wx.Choice(self, -1, choices=search_choices)
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
-        self.filterchoice = wx.Choice(self, -1, choices=searchable_fields.values())
+        self.filterchoice = wx.Choice(self, -1, choices=searchable_fields)
         # self.closebutton = wx.BitmapButton(
         #     self, -1, 
         #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 
         #                              wx.ART_TOOLBAR, (16, 16)), 
         #     style=wx.NO_BORDER)
 
-        hsizer_top.Add(lbl, 0, wx.ALL, 5)
+        # hsizer_top.Add(lbl, 0, wx.ALL, 5)
         hsizer_top.Add(self.originchoice, 0, wx.ALL, 5)
         hsizer_top.Add(self.searchctrl, 1, wx.ALL, 5)
         hsizer_top.Add(self.filterchoice, 0, wx.ALL, 5)
@@ -91,7 +95,11 @@ class SearchToolsPanel(wx.Panel):
         print 'GetSearch'
 
     def OnSearch(self, evt):
-        newevt = PieSearchEvent(searchtext=unicode(self.searchctrl.GetValue()))
+        newevt = PieSearchEvent(
+            searchtext=unicode(self.searchctrl.GetValue()),
+            origin=search_choice_codes[self.originchoice.GetSelection()],
+            fields=search_field_codes[self.filterchoice.GetSelection()]
+            )
         wx.PostEvent(self, newevt)
 
     def OnClose(self, evt):

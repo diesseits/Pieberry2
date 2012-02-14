@@ -4,7 +4,9 @@ import wx.lib.newevent
 PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()
 # use 'ref' for objectstore reference, 'pieobject' for selected object
 PieSearchEvent, EVT_PIE_SEARCH_EVENT = wx.lib.newevent.NewEvent()
-# use 'searchtext' to store search string
+# attributes: searchtext - to store search string
+#             origin - 'origin' (storage virtual location) of files
+#             fields - code for various search field combinations
 PieWebScrapeEvent, EVT_PIE_SCRAPE_EVENT = wx.lib.newevent.NewEvent()
 # attributes: url, catstring, catbehaviour, author, authoriscorporate
 PieDownloadEvent, EVT_PIE_DOWNLOAD = wx.lib.newevent.NewEvent()
