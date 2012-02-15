@@ -192,6 +192,8 @@ class BaseMainWindow(wx.Frame, PieActor):
 
     def _do_bindings(self):
         self.TabBook.Bind(wxaui.EVT_AUINOTEBOOK_PAGE_CHANGED, self.onChangeTab)
+        self.ContextPane.Bind(EVT_PIE_CONTEXT_PANEL_UPDATE, 
+                              self.OnContextPanelUpdate)
 
     def CloseCurrentPane(self, evt=None):
         panid = self.TabBook.GetSelection()

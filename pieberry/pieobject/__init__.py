@@ -46,8 +46,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     website = relationship("PieWebsite", 
                            backref=backref('referenced_objects', order_by=id))
     tag_id = Column(Integer, ForeignKey('pietags.id'))
-    tags = relationship('PieTag', secondary=pieobject_tags, backref='pieobjects',
-                        order_by=TagName)
+    tags = relationship('PieTag', secondary=pieobject_tags, backref='pieobjects')
     
     folder_id = Column(Integer, ForeignKey('piefolders.id'))
     FileData_FolderAdv = relationship('PieFolder', 

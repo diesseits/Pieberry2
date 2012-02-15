@@ -1,5 +1,8 @@
-import wx, wx.html
+import wx, wx.html, os.path
+from wx.lib.buttons import ThemedGenBitmapToggleButton 
+from pieconfig.paths import IMGDIR
 from string import join
+from ui.events import PieContextPanelUpdateEvent
 
 class BaseContextPanel(wx.Panel):
     '''Class for generic forms of context'''
@@ -42,6 +45,9 @@ class BetterContextPanel(BaseContextPanel):
 
     def _do_layout(self):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
+        self.sizer0.Add((5,5))
+        # self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
+        # self.sizer0.Add(self.sizer1)
         self.SetSizer(self.sizer0)
         self.Layout()
         self.cleared = True
@@ -64,6 +70,13 @@ class BetterContextPanel(BaseContextPanel):
         pass
 
     def _add_section_fundamental(self, obj):
+        # self.favButton = FavBitmapButton(self, -1)
+        # self.favLabel = wx.Panel(self, -1)#wx.StaticText(self, -1, _('Important'))
+        # self.sizer1.Add(self.favButton, 0)
+        # self.sizer1.Add(self.favLabel, 1)
+        self.favpanel = FBBPanel(self, -1)
+        self.favpanel.SetValue(obj.StatData_Favourite)
+        self.sizer0.Add(self.favpanel, 0)
         self.fundHtml = wx.html.HtmlWindow(self, -1)
         self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 0)
         self.fundHtml.AppendToPage(html_fundamental % {
@@ -73,8 +86,15 @@ class BetterContextPanel(BaseContextPanel):
                 'color': html_colors['kde'],
                 'tags': join([unicode(t) for t in obj.tags], ' | ')
                 })
+        self.favpanel.BMB.Bind(wx.EVT_BUTTON, self.EmitUpdate)
         
-
+    def EmitUpdate(self, evt):
+        newevt = PieContextPanelUpdateEvent(
+            obj=self.obj,
+            favourite=self.favpanel.GetValue())
+        wx.PostEvent(self, newevt)
+        
+        
     def SetObject(self, obj):
         self.Clear()
         self._add_section_fundamental(obj)
@@ -82,12 +102,19 @@ class BetterContextPanel(BaseContextPanel):
             self._add_section_onweb(obj)
         self.Layout()
         self.cleared = False
+        self.obj = obj
+
+    def _rem(self, widget):
+        self.sizer0.Remove(widget)
+        widget.Destroy()
 
     def Clear(self):
         if self.cleared: return
         if self.fundHtml:
-            self.sizer0.Remove(self.fundHtml)
-            self.fundHtml.Destroy()
+            self._rem(self.fundHtml)
+            self._rem(self.favpanel)
+            # self.favButton.Destroy()
+            # self.favLabel.Destroy()
         if self.urlDisplay:
             self.sizer0.Remove(self.urlDisplay)
             self.urlDisplay.Destroy()
@@ -131,12 +158,49 @@ class SimpleContextPanel(BaseContextPanel):
         self.filelocdisplay.SetLabel(unicode(obj.FileData_FullPath))
         self.collectiondisplay.SetLabel(unicode(obj.collection))
         self.websitedisplay.SetLabel(unicode(obj.website))
+        self.favpanel.SetValue(obj.StatData_Favourite)
 
+
+
+
+class FavBitmapButton(ThemedGenBitmapToggleButton):
+    image_up = os.path.join(IMGDIR, 'ic_silverstar22.png')
+    image_down = os.path.join(IMGDIR, 'ic_goldstar22.png')
+    
+    def __init__(self, parent, id):
+
+        imageup = wx.Image(self.image_up, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        imagedown = wx.Image(self.image_down, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(self, parent, id, imageup)
+        self.SetBitmapSelected(imagedown)
+
+
+class FBBPanel(wx.Panel):
+    '''Panel to mount the favourite button on'''
+    def __init__(self, parent, id):
+        wx.Panel.__init__(self, parent, id)
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.BMB = FavBitmapButton(self, -1)
+        self.sizer.Add(self.BMB, 0, wx.ALL, 5)
+        self.sizer.Add((22,22), 1)
+        self.SetSizer(self.sizer)
+        self.Layout()
+
+    def GetValue(self):
+        return self.BMB.GetValue()
+
+    def SetValue(self, val):
+        return self.BMB.SetValue(val)
 
 class FavButton(wx.PyControl):
     '''Custom button for marking entries as favourite'''
     # TODO - yet to implement
-    def __init__(self, parent, id, bmp, text, **kwargs):
+
+    imageup = wx.Image(os.path.join(IMGDIR, 'ic_silverstar22.png'), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+    imagedown = wx.Image(os.path.join(IMGDIR, 'ic_goldstar22.png'), wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+
+
+    def __init__(self, parent, id, **kwargs):
         wx.PyControl.__init__(self,parent, id, **kwargs)
 
         self.Bind(wx.EVT_LEFT_DOWN, self._onMouseDown)
@@ -176,9 +240,10 @@ class FavButton(wx.PyControl):
         dc.SetFont(self.GetFont())
         dc.SetBackground(wx.Brush(self.GetBackgroundColour()))
         dc.Clear()
+        dc.DrawBitmap(self.imageup, 0, 0)
         # draw whatever you want to draw
         # draw glossy bitmaps e.g. dc.DrawBitmap
         if self._mouseIn:
-            pass# on mouserover may be draw different bitmap
+            dc.DrawBitmap(self.imagedown, 0, 0)
         if self._mouseDown:
             pass # draw different image text

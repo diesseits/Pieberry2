@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieContextPanelUpdateEvent, EVT_PIE_CONTEXT_PANEL_UPDATE = wx.lib.newevent.NewEvent()
+# attributes:  favourite (boolean)
 PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()
 # use 'ref' for objectstore reference, 'pieobject' for selected object
 PieSearchEvent, EVT_PIE_SEARCH_EVENT = wx.lib.newevent.NewEvent()

@@ -254,6 +254,15 @@ class FunctionMainWindow(BaseMainWindow):
             self.ContextPane.SetObject(evt.obj)
         # TODO: Rewrite metadata, rehome file
 
+    def OnContextPanelUpdate(self, evt):
+        '''Handle update of metadata from context panel'''
+        evt.obj.StatData_Favourite = evt.favourite
+        print evt.obj.StatData_Favourite
+        if evt.obj.has_aspect('saved'):
+            session.commit()
+        pan = self.GetCurrentPane()
+        pan.UpdateObject(evt.obj)
+
     def OnCreateNewBibObj(self, evt):
         '''Handle creation of a new user-created bibliography entry
         from scratch'''
