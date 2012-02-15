@@ -3,7 +3,7 @@
 import random
 import datetime
 import os.path, os
-from pieobject import PieObject, PieObjectStore
+from pieobject import PieObject, PieObjectStore, PieTag
 from pieobject.paths import *
 from pieconfig.paths import ROOT_MAP
 
@@ -91,6 +91,7 @@ def spoof_pieobject(objtype="normal"):
         ro.aspects['onweb'] = True
     ro.MakeBibData()
     ro.add_tag('Test')
+    ro.add_tags(('Foo', 'Bar'))
     return ro
 
 

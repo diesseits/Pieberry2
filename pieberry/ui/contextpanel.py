@@ -71,7 +71,7 @@ class BetterContextPanel(BaseContextPanel):
                 'title': obj.Title(),
                 'date': obj.ReferDate().strftime('%d %B %Y'),
                 'color': html_colors['kde'],
-                'tags': join(obj.tags, ' | ')
+                'tags': join([unicode(t) for t in obj.tags], ' | ')
                 })
         
 

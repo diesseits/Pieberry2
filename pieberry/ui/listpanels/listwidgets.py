@@ -167,7 +167,7 @@ class BibListCtrl(BaseListCtrl):
         self.SetStringItem(nexidx, 2, obj.Title())
         self.SetItemData(nexidx, ref)
         self.itemDataMap[ref] = (obj.Author(), 
-                                 str(obj.ReferDate().year),
+                                 str(obj.ReferDate()),#.year),
                                  obj.Title())
         self.currentitem += 1
         self.EnsureVisible(nexidx)

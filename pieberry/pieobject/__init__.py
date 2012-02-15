@@ -8,7 +8,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
 from pieobject.database import *
-from pieobject.tags import TagHandler
+from pieobject.tags import TagHandler, PieTag, pieobject_tags
 from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
@@ -26,7 +26,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     title = Column(Unicode)
     author = Column(Unicode)
     date = Column(DateTime)
-    tags = Column(PickleType)
+    # tags = Column(PickleType)
+
     collection = Column(Unicode) # i.e. 'category_phrase'
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
@@ -44,6 +45,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     website_id = Column(Integer, ForeignKey('piewebsites.id'))
     website = relationship("PieWebsite", 
                            backref=backref('referenced_objects', order_by=id))
+    tag_id = Column(Integer, ForeignKey('pietags.id'))
+    tags = relationship('PieTag', secondary=pieobject_tags, backref='pieobjects')
 
     #detailed fields
 
@@ -85,6 +88,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def __init__(self, title='', author='', date=datetime.datetime.today(),
                  fileloc=None):
+
         self.title = title
         self.author = author
         self.corpauthor = ''
@@ -188,11 +192,6 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def Collection(self):
         return self.collection
-
-    def add_tags(self, tags):
-        '''Add to list of tags. Argument must be a list of strings'''
-        self.tags.extend(tags)
-        self.tags.sort()
 
     def has_aspect(self, t):
         if t == 'hasfile':
