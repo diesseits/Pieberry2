@@ -11,12 +11,20 @@ from pieobject.database import SQLABase, Session
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 
-session = Session()
+# session = Session()
 
 def tag_exists(t):
+    session = Session()
     q = session.query(PieTag).filter(PieTag.TagName == t).all()
     if q: return True
     return False
+
+def fn_add_tag(tag):
+    session = Session()
+    g = PieTag(tag)
+    session.add(g)
+    session.commit()
+    return g
 
 class TagHandler:
     '''tag functionality'''
@@ -29,9 +37,7 @@ class TagHandler:
         if tag_exists(tag):
             self.tags.append(PieTag(tag))
         else:
-            g = PieTag(tag)
-            session.add(g)
-            session.commit()
+            g = fn_add_tag(tag)
             self.tags.append(g)
 
     def add_tags(self, tags):

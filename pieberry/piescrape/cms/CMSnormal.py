@@ -103,8 +103,10 @@ TESTS = {
         ('slides', 'in', 'SuggestedTitle'),
         ('powerpoint', 'in', 'SuggestedTitle')
         ),
-    'Trololo': (
-        ('submission', 'in', 'PageTitle'),
+    'Secretarial': (
+        ('agenda', 'in', 'SuggestedTitle'),
+        ('attendee', 'in', 'SuggestedTitle'),
+        ('minutes', 'in', 'SuggestedTitle')
         )
     }
 
@@ -135,13 +137,3 @@ def tag_by_data(linkdata):
         if match: retdata.append(tag)
     return retdata
     
-def text_t(node):
-     '''return last substantial (> 5 chars) bit of text before the
-     current BS node'''
-     rettext = ''
-     counter = 0
-     while not len(rettext) > 5 and counter < 10000:
-          node = node.findPrevious(text=True)
-          rettext = unicode(node)
-          counter += 1
-     return rettext

@@ -10,6 +10,7 @@ PIE_CONFIG_DEFAULTS = [
     # ('Profile', 'filing_directory', os.getcwd()),
     # ('Profile', 'default_bibliography', os.path.join(SYSDIR, 'library.bib')),
     # ('Profile', 'exclude_by_default', 'submissions'),
+    ('Profile', 'current_profile', '')
     ('Format', 'default_bibtex_entry_type', 'Misc'),
     ('Format', 'default_howpublished_text', 'On The Web'),
     # ('Profile', 'default_bibtex_entry_style', '0'),
