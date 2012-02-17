@@ -7,20 +7,28 @@ import sys, os, os.path, datetime
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 from sqlalchemy import Table, Text, ForeignKey
 
-from pieobject.database import SQLABase, Session
+from pieobject.database import SQLABase, Session, session
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 
 # session = Session()
 
+def get_tag(t):
+    assert type(t) in (str, unicode)
+    q = session.query(PieTag).filter(PieTag.TagName == t).all()
+    if len(q) == 0: 
+        raise ValueError, 'Tag %s does not exist' % t
+    else:
+        return q[0]
+
 def tag_exists(t):
-    session = Session()
+    # session = Session()
     q = session.query(PieTag).filter(PieTag.TagName == t).all()
     if q: return True
     return False
 
 def fn_add_tag(tag):
-    session = Session()
+    # session = Session()
     g = PieTag(tag)
     session.add(g)
     session.commit()
@@ -34,11 +42,13 @@ class TagHandler:
 
     def add_tag(self, tag):
         assert type(tag) in (unicode, str)
-        if tag_exists(tag):
-            self.tags.append(PieTag(tag))
-        else:
-            g = fn_add_tag(tag)
-            self.tags.append(g)
+        pietag = get_tag(tag)
+        self.tags.append(pietag)
+        # if tag_exists(tag):
+        #     self.tags.append(PieTag(tag))
+        # else:
+        #     g = fn_add_tag(tag)
+        #     self.tags.append(g)
 
     def add_tags(self, tags):
         '''Add to list of tags. Argument must be a list of strings'''
@@ -73,3 +83,14 @@ class PieTag(SQLABase):
     def __unicode__(self):
         return unicode(self.TagName)
 
+def init_tags():
+    '''Insert initial tags'''
+    fn_add_tag('Submissions')
+    fn_add_tag('Presentations')
+    fn_add_tag('Secretarial')
+    fn_add_tag('Test')
+    fn_add_tag('Foo')
+    fn_add_tag('Bar')
+
+# if DEBUG:
+#     init_tags()

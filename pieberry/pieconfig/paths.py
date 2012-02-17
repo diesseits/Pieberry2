@@ -54,7 +54,6 @@ def default_paths_relative_to_root(root):
         }
     return ret
 
-
 if not os.path.exists(SYSDIR):
     try:
         os.mkdir(SYSDIR)
@@ -76,6 +75,8 @@ if DEBUG == True:
     RECENTDOCSDIR = '/tmp/pieberry/recent documents'
     DESKTOPDIR = '/tmp/pieberry/desktop'
     DBDIR = '/tmp/pieberry'
+else:
+    DESKTOPDIR = os.getcwd()
 
 ROOT_MAP = { #map these potential roots to allow portability
     'cachedir': CACHEDIR,

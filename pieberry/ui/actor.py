@@ -3,6 +3,7 @@ import sys, os
 
 from pieconfig import *
 from spoofgeneration import *
+from ui.settingsdialog import PieSettingsDialog
 
 class PieActor:
     '''Class containing basic action-directing functions of the main window'''
@@ -32,7 +33,8 @@ class PieActor:
         sys.exit()
 
     def onConfig(self, evt):
-        pass
+        dia = PieSettingsDialog(self)
+        dia.ShowModal()
 
     def onAbout(self, evt):
         info = wx.AboutDialogInfo()

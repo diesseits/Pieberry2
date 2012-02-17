@@ -75,8 +75,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             atomMenu, -1, _('&Process files from desktop\tCtrl-m'), 'Process')
         self.menu_atom_process.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
-        self.menu_atom_settings = wx.MenuItem(
-            atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
+        # self.menu_atom_settings = wx.MenuItem(
+        #     atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
         self.menu_find_in_folders = wx.MenuItem(
             toolMenu, -1, _('F&ind your files\tCtrl-shift-f'), 'Findall')
         self.menu_find_in_folders.SetBitmap(
@@ -113,7 +113,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         fileMenu.AppendItem(self.menu_savebibs)
         fileMenu.AppendItem(self.menu_discard)
         fileMenu.AppendItem(self.menu_config)
-        fileMenu.AppendItem(self.menu_atom_settings)
+        # fileMenu.AppendItem(self.menu_atom_settings)
         fileMenu.AppendSeparator()
         fileMenu.AppendItem(self.menu_quit)
         helpMenu.AppendItem(self.menu_manual)
@@ -138,7 +138,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.onFind, self.menu_find)
         self.Bind(wx.EVT_MENU, self.onFindInFolders, self.menu_find_in_folders)
         self.Bind(wx.EVT_MENU, self.OnDesktopProcess, self.menu_atom_process)
-        self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
+        # self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
         self.Bind(wx.EVT_MENU, self.onSaveBibs, self.menu_savebibs)
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)
         self.Bind(wx.EVT_MENU, self.onConfig, self.menu_config)
