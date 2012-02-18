@@ -36,11 +36,13 @@ def test():
 
 from pieobject.website import make_spoof_websites
 from pieobject.tags import init_tags
+from pieobject.folder import generate_spoof_folder_list
 
 if __name__ == '__main__':
     SQLABase.metadata.create_all(engine)
     make_spoof_websites()
     init_tags()
+    generate_spoof_folder_list()
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
