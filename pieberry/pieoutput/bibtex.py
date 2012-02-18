@@ -1,4 +1,4 @@
-import datetime
+import datetime, os.path, shutil, traceback
 
 from pieconfig import PIE_CONFIG
 from pieconfig.schemas import bibtexmap
@@ -12,15 +12,16 @@ from pieoutput.formatter import Formatter
 from pybtex.richtext import Text, Tag
 from pybtex.backends import latex, html, plaintext
 from pybtex.bibtex.utils import split_name_list
+from pybtex.database.input import bibtex
+from pybtex.database.output.bibtex import Writer
+from pybtex.database import BibliographyDataError
 from pybtex.core import Entry, Person
-from StringIO import StringIO
-
 
 re_href = re.compile(r'\\href\{(.+?)\}\{(.+?)\}')
 re_corpname = re.compile(r'^\{(.+?)\}(.*)')
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
-def get_pybtex_object(obj):
+def get_pybtex_object(obj, texify=False):
     '''convert from PieObject to a pybtex Entry'''
 
     if not obj.BibData_Type: 
@@ -44,6 +45,11 @@ def get_pybtex_object(obj):
         elif btkey == 'title':
             pybtex_entry.fields[btkey] = obj.Title()
             continue
+        elif btkey == 'url':
+            pybtex_entry.fields[btkey] = obj.Url()
+            continue
+        elif btkey in ('type', 'pie_corpauthor'):
+            continue
         else:
             if not getattr(obj, objfield): continue
             pybtex_entry.fields[btkey] = getattr(obj, bibtexmap[btkey])
@@ -52,15 +58,6 @@ def get_pybtex_object(obj):
 
     return pybtex_entry
 
-
-# def get_formatted_citation_from_bibtex(bibtex_entry):
-#     parser = bibtex.Parser(encoding='utf-8')
-#     f = open(os.path.join(sysdir, 'temp.bib'), 'w')
-#     f.write(bibtex_entry)
-#     f.close()
-#     bib_data = parser.parse_file(os.path.join(sysdir, 'temp.bib'))
-#     e = bib_data.entries[bib_data.entries.keys()[0]]
-#     return get_formatted_citation(e)
 
 def get_formatted_citation(e, key='k', format='html'):
     '''Return a string containing a formatted citation for a given
@@ -110,3 +107,64 @@ def get_formatted_citation(e, key='k', format='html'):
     transtbl = {ord('{'): None, ord('}'): None}
     output_data = output_data.translate(transtbl)
     return output_data
+
+class PiePybtexWriter:
+    '''Class to write out bibliographies as BibTex'''
+    def __init__(self):
+        '''entries is a list of bibdata dicts'''
+        self._entries = []
+        self._location = PIE_CONFIG.get('Profile', 'bibliography_file')
+
+    def addEntry(self, obj):
+        '''Add an entry to the output file'''
+        if not obj.BibData_Key:
+            obj.BibData_Key = autogen_bibtex_key(obj)
+        try:
+            self._entries.append((obj.BibData_Key, 
+                                  get_pybtex_object(obj, texify=True)))
+        except Exception, exc:
+            msg =  'warning - %s - could not output item %s - skipping' % (
+                str(exc), obj.BibData_Key)
+            print msg
+            return msg
+
+    def setLocation(self, location):
+        '''Set the location of the file'''
+        self._location = location
+
+    def write(self, backup=True):
+        '''Write to file. 'types' is a tuple of "contexts" to exclude
+        from the write-out process, such as submissions.'''
+        if os.path.exists(self._location):
+            try:
+                # backup 
+                f = open(self._location, 'r')
+                if backup:
+                    b = open(os.path.join(os.path.split(self._location)[0], 'backup.bib'), 'w')
+                    b.write(f.read())
+                    b.close()
+                f.close()
+            except:
+                raise _('Could not open file')
+        # wipe the file clean
+        f = open(self._location, 'w')
+        f.write('')
+        f.close()
+        # import additional pybtex modules
+
+        parser = bibtex.Parser(encoding='utf-8')
+        bib_object = parser.parse_file(self._location)
+
+        for bib_key, ent in self._entries:
+            bib_object.add_entry(bib_key, ent)
+
+        writer = Writer(encoding='utf-8')
+        try:
+            writer.write_file(bib_object, self._location)
+        except Exception, exc:
+            traceback.print_exc()
+            # restore backed up bibliography file
+            shutil.copyfile(
+                os.path.join(os.path.split(self._location)[0], 'backup.bib'), 
+                self._location)
+            raise IOError, _('Saving of the bibliography file failed,\nmost likely because of invalid data.')

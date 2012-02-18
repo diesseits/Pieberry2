@@ -60,8 +60,6 @@ def build_query_simple(origincode, text, fieldcode, session):
     else:
         raise ValueError, 'Incorrect origin code - %s' % origincode
     
-
-
 def build_query(t, session):
     return session.query(
         PieObject
@@ -71,3 +69,8 @@ def build_query(t, session):
             PieObject.corpauthor.like('%' + t + '%'), 
             PieObject.WebData_Url.like('%' + t + '%')
             ))#.order_by(PieObject.title)
+
+def query_favourites(session):
+    '''List all favourites - for bibtex export'''
+    return session.query(PieObject).filter(
+        PieObject.StatData_Favourite == True)

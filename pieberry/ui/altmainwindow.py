@@ -151,7 +151,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
 
-        self.menu_savebibs.Enable(False)
+        # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 
 

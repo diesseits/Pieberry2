@@ -44,9 +44,13 @@ class BibListPanel(BaseListPanel):
         # self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
 
     def onSelectionActivated(self, evt):
-        pieutility.open_file(
-            self.objectstore[
-                self.ListDisplay.GetItemData(evt.GetIndex())].FileData_FullPath)
+        it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
+        if it.FileData_FullPath:
+            pieutility.open_file(it.FileData_FullPath)
+        elif it.WebData_Url:
+            pieutility.open_url(it.WebData_Url)
+        else:
+            return
         
     def MakeMenu(self, menu, obj):
         '''Function to construct a particular context menu'''

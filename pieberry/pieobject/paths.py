@@ -30,7 +30,7 @@ def suggest_path_cache_fromweb(obj):
     '''return a FULL PATH to cache a thing in'''
     if not hasattr(obj, 'session'): 
         raise AttributeError, 'No session flag for this object - illegal'
-    fname = os.path.basename(urlparse.urlsplit(obj.Url()).path)
+    fname = os.path.basename(urlparse.urlsplit(obj.WebData_Url).path)
     print 'suggest_path_cache_fromweb: ____'
     print 'I SUGGEST:', os.path.join(CACHEDIR, obj.session, fname)
     proposal = auto_increment_fn(os.path.join(CACHEDIR, obj.session, fname))
@@ -50,7 +50,7 @@ def suggest_path_store_fromweb(obj):
     auth = obj.Author(favour_corporate=True)
     subd = obj.collection
     print 'suggest_path_store_fromweb: ____'
-    ext = os.path.splitext(obj.FileData_FullPath)
+    ext = os.path.splitext(obj.FileData_FullPath)[1]
     # try to fix odd file extensions (phtml, php etc)
     if not ext in FEXTENSIONS[obj.FileData_FileType]:
         if len(FEXTENSIONS[obj.FileData_FileType]) == 1:

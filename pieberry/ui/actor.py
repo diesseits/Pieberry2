@@ -88,7 +88,7 @@ class PieActor:
             p = spoof_pieobject('normal')
             pan.AddObject(p)
 
-    def DebugAddDownloadedPane(self, evt=0, noobjects=10):
+    def DebugAddDownloadedPane(self, evt=0, noobjects=5):
         ostore = spoof_pieobjectstore('pdffull', noobjects)
         self.OpenStagingPane()
         pan = self.GetCurrentPane()

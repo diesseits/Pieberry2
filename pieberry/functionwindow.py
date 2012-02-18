@@ -12,16 +12,19 @@ from piescrape.execfn import *
 from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
 from pieconfig import PIE_CONFIG
-from pieconfig.globals import *
+from pieconfig.globalvars import *
+from pieoutput.bibtex import *
 from atomise import *
 from searches import *
+
+if PYNOTIFY: import pynotify
 
 import pieobject.website as website
 
 class FunctionMainWindow(BaseMainWindow):
     '''The main window with the actual programmatic functionality added. 
     
-    Mit liebe und mit function.
+    Mit liebe und mit funktion.
 
      ..
     !!!!,
@@ -121,7 +124,8 @@ class FunctionMainWindow(BaseMainWindow):
                 obj=obj, 
                 notify_window=notify_window)
             wx.PostEvent(self, newevt)
-            msgtype = download_file(url=obj.Url(), suggested_path=storepath)
+            msgtype = download_file(url=obj.WebData_Url, 
+                                    suggested_path=storepath)
             if msgtype == 'success':
                 obj.add_aspect_cached_from_web(storepath)
                 try:
@@ -343,7 +347,26 @@ class FunctionMainWindow(BaseMainWindow):
         wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)
 
     def onSaveBibs(self, evt):
-        pass
+        '''Export bibliography to file nominated in config via pybtex'''
+        exporter = PiePybtexWriter()
+        for obj in query_favourites(session):
+            msg = exporter.addEntry(obj)
+            if msg:
+                wx.MessageBox(msg, _('There is a problem'), wx.ICON_EXCLAMATION)
+        try:
+            exporter.write()
+        except Exception, exc:
+            traceback.print_exc()
+            wx.MessageBox(unicode(exc), _('Error'), wx.ICON_ERROR)
+            return
+        msg = _('Successfully exported bibliography to %s' % PIE_CONFIG.get(
+                'Profile', 'bibliography_file'))
+        self.StatusBar.SetStatusText(msg)
+        if PYNOTIFY:
+            n = pynotify.Notification(
+                'Pieberry', msg, os.path.join(IMGDIR, 'pie_48.png'))
+            n.show()
+
 
 
 

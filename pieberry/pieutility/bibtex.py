@@ -1,5 +1,7 @@
 import string, re
 from latex import escape_bad_latex_chars
+from pybtex.bibtex.utils import split_name_list
+
 
 bibtex_fields = ('title', 'howpublished', 'month', 'year', 'annote', 'note', 'url', 'volume', 'number', 'pages', 'journal', 'edition', 'series', 'publisher', 'chapter', 'type', 'address', 'institution')
 person_fields = ('author', 'editor')
@@ -35,15 +37,24 @@ def format_bibtex_entry(bibdict):
         )
     return ent
 
-def autogen_bibtex_key(bibdict):
-    keytitlecompact = string.join([i[:3] for i in string.split(bibdict['title'].encode("utf-8").translate(string.maketrans("",""), string.punctuation)) if len(i) > 3], '') #ouch ... this compacts the first three letters of each word in the title together, to make a dependably unique key
-    keyauthorcompact = string.join([i[:1] for i in string.split(bibdict['author'].encode("utf-8").translate(string.maketrans("",""), string.punctuation))], '') #same for authors, but just initials
+def autogen_bibtex_key(obj):
+    keytitlecompact = string.join(
+        [i[:3] for i in string.split(obj.Title().encode("utf-8").translate(string.maketrans("",""), string.punctuation)) if len(i) > 3], 
+        '') #ouch ... this compacts the first three letters of each word in the title together, to make a dependably unique key
+    if obj.AuthorIsCorporate():
+        keyauthorcompact = string.join(
+            [i[:1] for i in string.split(obj.Author().encode("utf-8").translate(string.maketrans("",""), string.punctuation))], 
+            '') #same for authors, but just initials
+    else:
+        # print split_name_list(obj.Author())
+        keyauthorcompact = string.split(obj.Author().encode('utf-8').translate(string.maketrans("",""), string.punctuation))[-1]
     key = "%s%s_%s" % (
         keyauthorcompact,
-        bibdict['year'].encode('utf-8'), 
+        str(obj.ReferDate().year), 
         keytitlecompact
         )
     return key
+
 
 def increment_bibtex_key(keytext):
      '''add digits to end of key to try to avoid identical keys'''

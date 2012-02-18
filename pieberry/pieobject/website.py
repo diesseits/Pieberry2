@@ -38,6 +38,11 @@ def validify_url(url):
     else:
         return url
 
+def validify_domain(url):
+    '''truncate to the domain of the url'''
+    s = urlparse.urlsplit(validify_url(url))
+    return urlparse.urlunsplit([s[0], s[1], '', '', ''])
+
 def referable_website(url, sqsess=session):
     '''Function intended for use outside of module for db relationship
     purposes - returns a PieWebsite which can be referred to.'''

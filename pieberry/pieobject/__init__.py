@@ -13,7 +13,7 @@ from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder
-from pieobject.website import PieWebsite, referable_website
+from pieobject.website import PieWebsite, referable_website, validify_domain
 from pieconfig import PIE_CONFIG
 from pieconfig.paths import ROOT_MAP
 from pieconfig.schemas import bibtexfields, bibtexmap
@@ -189,11 +189,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def Url(self):
         '''The most salient url for reference purposes'''
         if not self.WebData_Url: return ''
-        if PIE_CONFIG.get('Format', 'url_level_represent') == 'full':
+        behav = PIE_CONFIG.get('Format', 'url_level_represent')
+        if behav  == 'full':
             return self.WebData_Url
-        else:
+        elif behav == 'referpage':
             if self.WebData_PageUrl: return self.WebData_PageUrl
             else: return self.WebData_Url
+        elif behav == 'domain':
+            return validify_domain(self.WebData_Url)
+        else:
+            raise ValueError, 'Invalid url handling variable'
 
     def Collection(self):
         return self.collection

@@ -1,3 +1,5 @@
+from identity import *
+
 global TEST
 TEST = True
 global DEBUG
@@ -12,6 +14,14 @@ PYNOTIFY = True
 # Unicode error behaviour
 U_ERROR_BEHAV = 'replace'
 
+try:
+    import pynotify
+    if pynotify.init(PIE_APPNAME):
+        PYNOTIFY = True
+    else:
+        PYNOTIFY = False
+except:
+    PYNOTIFY = False
 
 def _dbg(t):
     print t
