@@ -1,10 +1,12 @@
 from ConfigParser import ConfigParser, SafeConfigParser
+from pprint import pprint
 from globalvars import *
 from paths import *
 from schemas import *
 from identity import *
 from defaults import *
 from profiles import *
+
 
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and
@@ -20,7 +22,12 @@ class PieConfig(SafeConfigParser):
         return PROFILES[name]
 
     def add_profile(self, name, configdict):
+        print 'Adding profile:'
+        pprint(configdict)
         add_profile(name, configdict)
+
+    def update_profile(self, name, configdict):
+        update_profile(name, configdict)
 
     def delete_profile(self, name):
         delete_profile(name)

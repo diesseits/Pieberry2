@@ -16,6 +16,8 @@ class ProfilePanel(wx.Panel):
         wx.Panel.__init__(self, *args, **kwargs)
         self.profileChoice = wx.Choice(self, -1, 
                                        choices=PIE_CONFIG.get_profile_names())
+        self.profileChoice.SetStringSelection(
+            PIE_CONFIG.get('TheProfile', 'current_profile'))
         self.profileaddbt = wx.Button(self, -1, _('Add'))
         self.rootdirctrl = wx.DirPickerCtrl(
             self, -1, 
@@ -26,6 +28,7 @@ class ProfilePanel(wx.Panel):
             self, -1, 
             path = PIE_CONFIG.get('Profile', 'desktopdir'),
             style = wx.DIRP_USE_TEXTCTRL)
+        self.desktopdirctrl.SetPath(PIE_CONFIG.get('Profile', 'desktopdir'))
         self.bib_cb = wx.CheckBox(self, -1, _('Export bibliography'),
                                   style=wx.ALIGN_RIGHT)
         self.bib_cb.SetValue(PIE_CONFIG.getboolean('Profile', 
@@ -49,6 +52,17 @@ class ProfilePanel(wx.Panel):
     def GetProfile(self):
         return self.profileChoice.GetStringSelection()
 
+    def Refresh(self):
+        '''Re-set the config controls from the configuation holder'''
+        pass
+
+    def OnChangeProfile(self, evt=0):
+        nprofile = PIE_CONFIG.get_profile(evt.GetString())
+        self.rootdirctrl.SetPath(nprofile['rootdir'])
+        self.desktopdirctrl.SetPath(nprofile['desktopdir'])
+        self.bib_cb.SetValue(nprofile['export_bibtex'])
+        self.bibfilectrl.SetPath(nprofile['bibliography_file'])
+
     def OnAddProfile(self, evt):
         tedia = wx.TextEntryDialog(
             self, _('Name of new settings profile'), _('New profile'), defaultValue='')
@@ -60,6 +74,7 @@ class ProfilePanel(wx.Panel):
             return
         retdata = self.GetData()
         PIE_CONFIG.add_profile(profile_name, retdata[1])
+        # PIE_CONFIG.set('TheProfile', 'current_profile', self.GetProfile())
         self._refill_profile_choice()
         self.profileChoice.SetStringSelection(profile_name)
 
@@ -70,6 +85,7 @@ class ProfilePanel(wx.Panel):
 
     def _do_bindings(self):
         self.profileaddbt.Bind(wx.EVT_BUTTON, self.OnAddProfile)
+        self.profileChoice.Bind(wx.EVT_CHOICE, self.OnChangeProfile)
 
     def _do_layout(self):
         self.mainsizer = wx.BoxSizer(wx.VERTICAL)
@@ -97,8 +113,10 @@ class ProfilePanel(wx.Panel):
 
 
 class FormatPanel(wx.Panel):
-    uchz = {_('Full Url'): 'full', _('Domain only'): 'domain'}
-    uchz_rv = {'full': _('Full Url'), 'domain': _('Domain only')}
+    uchz = {_('Full Url'): 'full', _('Domain only'): 'domain',
+            _('Referring Page'): 'referpage'}
+    uchz_rv = {'full': _('Full Url'), 'domain': _('Domain only'),
+               'referpage': _('Referring Page')}
     ptxtfchz = {_('Citation text only'): 'plaintext', 
                 _('Citation with url'): 'urlplaintext'}
     ptxtfchz_rv = {'plaintext': _('Citation text only'), 
@@ -319,14 +337,17 @@ class PieSettingsDialog(wx.Dialog):
         self.okBt.Bind(wx.EVT_BUTTON, self.onOk)
 
     def onOk(self, evt=1):
+        profiledata = self.profilepanel.GetData()
+        theprofile = self.profilepanel.GetProfile()
         alldata = []
-        alldata.append(self.profilepanel.GetData())
+        alldata.append(profiledata)
         alldata.append(('TheProfile', 
-                        {'current_profile': self.profilepanel.GetProfile()}))
+                        {'current_profile': theprofile}))
         alldata.append(self.formatpanel.GetData())
         for sectionkey, dataset in alldata:
             for key, val in dataset.items():
                 PIE_CONFIG.set(sectionkey, key, str(val))
+        PIE_CONFIG.update_profile(theprofile, profiledata[1])
         PIE_CONFIG.write_pieconfig()
         self.EndModal(wx.ID_OK)
 

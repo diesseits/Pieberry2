@@ -43,12 +43,12 @@ class BaseMainWindow(wx.Frame, PieActor):
         debugMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
             fileMenu, -1, 
-            _('&Save Bibliography Changes')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
+            _('&Export Bibliography')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
         self.menu_savebibs.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_MENU, (16, 16)))
-        self.menu_discard = wx.MenuItem(
-            fileMenu, -1, 
-            _('&Discard Bibliography Changes'), _('Discard'))
+        # self.menu_discard = wx.MenuItem(
+        #     fileMenu, -1, 
+        #     _('&Discard Bibliography Changes'), _('Discard'))
         self.menu_quit = wx.MenuItem(
             fileMenu, -1, _('&Quit\tCtrl-q'), _('Quit'))
         self.menu_quit.SetBitmap(
@@ -111,7 +111,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         # END debug menu
 
         fileMenu.AppendItem(self.menu_savebibs)
-        fileMenu.AppendItem(self.menu_discard)
+        # fileMenu.AppendItem(self.menu_discard)
         fileMenu.AppendItem(self.menu_config)
         # fileMenu.AppendItem(self.menu_atom_settings)
         fileMenu.AppendSeparator()
@@ -143,7 +143,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)
         self.Bind(wx.EVT_MENU, self.onConfig, self.menu_config)
         self.Bind(wx.EVT_MENU, self.onAbout, self.menu_about)
-        self.Bind(wx.EVT_MENU, self.onDiscard, self.menu_discard)
+        # self.Bind(wx.EVT_MENU, self.onDiscard, self.menu_discard)
         # self.Bind(wx.EVT_MENU, self.onPageReference, self.menu_pageref)
         self.Bind(wx.EVT_MENU, self.OnCreateNewBibObj, self.menu_emptyref)
         self.Bind(wx.EVT_MENU, self.onShowManual, self.menu_manual)
@@ -152,7 +152,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
 
         self.menu_savebibs.Enable(False)
-        self.menu_discard.Enable(False)
+        # self.menu_discard.Enable(False)
 
 
         # Menu Bar end

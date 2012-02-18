@@ -342,6 +342,10 @@ class FunctionMainWindow(BaseMainWindow):
         session.commit()
         wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)
 
+    def onSaveBibs(self, evt):
+        pass
+
+
 
 
         
