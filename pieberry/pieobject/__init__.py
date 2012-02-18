@@ -152,6 +152,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def AuthorIsCorporate(self, favour_corporate=False):
         if favour_corporate and self.corpauthor:
             return True
+        elif self.author == None and self.corpauthor:
+            return True
         elif len(self.author) == 0 and self.corpauthor:
             return True
         else:

@@ -23,6 +23,14 @@ re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
 def get_pybtex_object(obj, texify=False):
     '''convert from PieObject to a pybtex Entry'''
+    def f_(text):
+        if type(text) in (str, unicode):
+            if texify:
+                return eblc(text)
+            else:
+                return text
+        else: #this ain't text, don't touch it
+            return text
 
     if not obj.BibData_Type: 
         raise KeyError, 'Necessary fields missing - BibTeX type'
@@ -43,16 +51,16 @@ def get_pybtex_object(obj, texify=False):
                 pybtex_entry.add_person(Person(name), btkey)
             continue 
         elif btkey == 'title':
-            pybtex_entry.fields[btkey] = obj.Title()
+            pybtex_entry.fields[btkey] = f_(obj.Title())
             continue
         elif btkey == 'url':
-            pybtex_entry.fields[btkey] = obj.Url()
+            pybtex_entry.fields[btkey] = f_(obj.Url())
             continue
         elif btkey in ('type', 'pie_corpauthor'):
             continue
         else:
             if not getattr(obj, objfield): continue
-            pybtex_entry.fields[btkey] = getattr(obj, bibtexmap[btkey])
+            pybtex_entry.fields[btkey] = f_(getattr(obj, bibtexmap[btkey]))
     pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
     pybtex_entry.fields['year'] = obj.ReferDate().strftime('%Y')
 
