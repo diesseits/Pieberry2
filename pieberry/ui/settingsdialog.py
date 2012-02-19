@@ -29,14 +29,18 @@ class ProfilePanel(wx.Panel):
             path = PIE_CONFIG.get('Profile', 'desktopdir'),
             style = wx.DIRP_USE_TEXTCTRL)
         self.desktopdirctrl.SetPath(PIE_CONFIG.get('Profile', 'desktopdir'))
-        self.bib_cb = wx.CheckBox(self, -1, _('Export bibliography'),
-                                  style=wx.ALIGN_RIGHT)
+        self.bib_cb = wx.CheckBox(self, -1, 
+                                  _('Export bibliography to pre-specified file'))
+                                  # style=wx.ALIGN_RIGHT)
         self.bib_cb.SetValue(PIE_CONFIG.getboolean('Profile', 
                                                     'export_bibtex'))
         self.bibfilectrl = wx.FilePickerCtrl(
             self, -1,
             wildcard = "*.bib",
             style = wx.FLP_USE_TEXTCTRL|wx.FLP_SAVE)
+        if PIE_CONFIG.getboolean('Profile', 'export_bibtex') == True: 
+            self.bibfilectrl.Enable(True)
+        else: self.bibfilectrl.Enable(False)
         self.bibfilectrl.SetPath(PIE_CONFIG.get('Profile', 'bibliography_file'))
         self._do_layout()
         self._do_bindings()
@@ -56,11 +60,19 @@ class ProfilePanel(wx.Panel):
         '''Re-set the config controls from the configuation holder'''
         pass
 
+    def OnBibCbChecked(self, evt):
+        if evt.IsChecked():
+            self.bibfilectrl.Enable(True)
+        else:
+            self.bibfilectrl.Enable(False)
+
     def OnChangeProfile(self, evt=0):
         nprofile = PIE_CONFIG.get_profile(evt.GetString())
         self.rootdirctrl.SetPath(nprofile['rootdir'])
         self.desktopdirctrl.SetPath(nprofile['desktopdir'])
         self.bib_cb.SetValue(nprofile['export_bibtex'])
+        if nprofile['export_bibtex'] == True: self.bibfilectrl.Enable(True)
+        else: self.bibfilectrl.Enable(False)
         self.bibfilectrl.SetPath(nprofile['bibliography_file'])
 
     def OnAddProfile(self, evt):
@@ -86,6 +98,7 @@ class ProfilePanel(wx.Panel):
     def _do_bindings(self):
         self.profileaddbt.Bind(wx.EVT_BUTTON, self.OnAddProfile)
         self.profileChoice.Bind(wx.EVT_CHOICE, self.OnChangeProfile)
+        self.bib_cb.Bind(wx.EVT_CHECKBOX, self.OnBibCbChecked)
 
     def _do_layout(self):
         self.mainsizer = wx.BoxSizer(wx.VERTICAL)
@@ -222,8 +235,8 @@ class CleanerPanel(wx.Panel):
         wx.Panel.__init__(self, *args, **kwargs)
         self.currentitem = None
         self.dirListCtrl = wx.ListBox(self, -1, choices=[], style=wx.LB_SORT)
-        self.createNewDirBt = wx.Button(self, -1, label=_('Create new project directory'))
-        self.delDirBt = wx.Button(self, -1, label=_('Delete'))
+        self.createNewDirBt = wx.Button(self, -1, label=_('New project directory'))
+        # self.delDirBt = wx.Button(self, -1, label=_('Delete'))
         self.authorKwdTC = wx.TextCtrl(self, -1)
         self.titleKwdTC = wx.TextCtrl(self, -1)
         self._do_layout()
@@ -235,20 +248,36 @@ class CleanerPanel(wx.Panel):
         self.dirListCtrl.SetItems(
             [f.EndName for f in FOLDER_LOOKUP['projectdir']])
 
-    def getCriteria(self):
-        if self.currentitem:
-            self.criteria[self.currentitem]['title'] = [i for i in self.titleKwdTC.GetValue().split(';') if len(i) > 0]
-            self.criteria[self.currentitem]['author'] = [i for i in self.authorKwdTC.GetValue().split(';') if len(i) > 0]
-        return self.criteria
+    def Finalise(self):
+        '''Store filtering criteria for selected item'''
+        if not self.currentitem: return
+        currentfolder = get_project_folder_by_endname(self.currentitem)
+        currentfolder.MatchTerms_Author = [i for i in self.authorKwdTC.GetValue().split(';') if len(i) > 0]
+        currentfolder.MatchTerms_Title = [i for i in self.titleKwdTC.GetValue().split(';') if len(i) > 0]
 
-    def onListSelChanged(self, evt=1):
-        # if self.currentitem and evt.GetString() != self.currentitem:
-        #     self.criteria[self.currentitem]['title'] = [i for i in self.titleKwdTC.GetValue().split(';') if len(i) > 0]
-        #     self.criteria[self.currentitem]['author'] = [i for i in self.authorKwdTC.GetValue().split(';') if len(i) > 0]
-        # self.titleKwdTC.SetValue(string.join(self.criteria[evt.GetString()]['title'], ';'))
-        # self.authorKwdTC.SetValue(string.join(self.criteria[evt.GetString()]['author'], ';'))
-        self.currentitem = evt.GetString()
-
+    def onListSelChanged(self, evt):
+        '''Store filtering criteria for selected item and display it
+        for the next'''
+        if type(evt) in (str, unicode):
+            nextfolder = get_project_folder_by_endname(evt)
+        else:
+            nextfolder = get_project_folder_by_endname(evt.GetString())
+        if nextfolder == None: return
+        if not self.currentitem:
+            self.titleKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Title, ';'))
+            self.authorKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Author, ';'))
+        elif nextfolder.EndName != self.currentitem:
+            self.Finalise()
+            self.titleKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Title, ';'))
+            self.authorKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Author, ';'))
+        print nextfolder
+        print nextfolder.MatchTerms_Author
+        print nextfolder.MatchTerms_Title
+        self.currentitem = nextfolder.EndName
 
     def onCreateNewDir(self, evt=1):
         dia = wx.TextEntryDialog(
@@ -257,29 +286,33 @@ class CleanerPanel(wx.Panel):
         res = dia.ShowModal()
         if res == wx.ID_OK:
             add_new_folder('projectdir', dia.GetValue())
-            self.dirListCtrl.InsertItems([dia.GetValue(),], 0)
+            self.dirListCtrl.Insert(dia.GetValue(), 0)
+            self.dirListCtrl.SetSelection(
+                self.dirListCtrl.FindString(dia.GetValue()))
+            self.onListSelChanged(dia.GetValue())
 
     def onDeleteDir(self, evt=1):
-        if not self.currentitem:
-            return
-        dia = wx.MessageDialog(self, 'Delete %s?' % self.currentitem, 'Delete directory', style=wx.YES_NO|wx.ICON_QUESTION)
-        ans = dia.ShowModal()
-        if ans == wx.ID_YES:
-            self.criteria.pop(self.currentitem)
-            self.dirListCtrl.SetItems(self.criteria.keys())
-            self.currentitem = None
+        pass
+    #     if not self.currentitem:
+    #         return
+    #     dia = wx.MessageDialog(self, 'Delete %s?' % self.currentitem, 'Delete directory', style=wx.YES_NO|wx.ICON_QUESTION)
+    #     ans = dia.ShowModal()
+    #     if ans == wx.ID_YES:
+    #         self.criteria.pop(self.currentitem)
+    #         self.dirListCtrl.SetItems(self.criteria.keys())
+    #         self.currentitem = None
 
     def _do_layout(self):
         s1 = wx.BoxSizer(wx.VERTICAL)
-        s2 = wx.BoxSizer(wx.HORIZONTAL)
         s1.Add(wx.StaticText(self, -1, _('Desktop Cleaner Settings')), 0, 
                wx.ALL, 5)
         s1.Add(wx.StaticLine(self, -1), 0, wx.ALL|wx.EXPAND, 5)
-        s1.Add(wx.StaticText(self, -1, _('Project directories:')), 0, wx.ALL, 3)
-        s1.Add(self.dirListCtrl, 1, wx.ALL|wx.EXPAND, 3)
-        s2.Add(self.createNewDirBt, 3, wx.ALL|wx.EXPAND, 3)
-        s2.Add(self.delDirBt, 1, wx.ALL|wx.EXPAND, 3)
+        s2 = wx.BoxSizer(wx.HORIZONTAL)
+        s2.Add(wx.StaticText(self, -1, _('Project directories:')), 1, wx.ALL|wx.EXPAND, 3)
+        s2.Add(self.createNewDirBt, 0, wx.ALL|wx.EXPAND, 3)
         s1.Add(s2, 0, wx.EXPAND)
+        s1.Add(self.dirListCtrl, 1, wx.ALL|wx.EXPAND, 3)
+        # s2.Add(self.delDirBt, 1, wx.ALL|wx.EXPAND, 3)
         s1.Add(wx.StaticText(self, -1, _('Move files to directory with Author:')), 0, wx.ALL, 3)
         s1.Add(self.authorKwdTC, 0, wx.ALL|wx.EXPAND, 3)
         s1.Add(wx.StaticText(self, -1, _('Move files to directory with Title:')), 0, wx.ALL, 3)
@@ -290,7 +323,7 @@ class CleanerPanel(wx.Panel):
     def _do_bindings(self):
         self.dirListCtrl.Bind(wx.EVT_LISTBOX, self.onListSelChanged)
         self.createNewDirBt.Bind(wx.EVT_BUTTON, self.onCreateNewDir)
-        self.delDirBt.Bind(wx.EVT_BUTTON, self.onDeleteDir)
+        # self.delDirBt.Bind(wx.EVT_BUTTON, self.onDeleteDir)
 
 class PieSettingsDialog(wx.Dialog):
     
@@ -308,7 +341,7 @@ class PieSettingsDialog(wx.Dialog):
         self.formatpanel = FormatPanel(self, -1)
         self.cleanerpanel = CleanerPanel(self, -1)
 
-        self.okBt = wx.Button(self, -1, "Ok")
+        self.okBt = wx.Button(self, wx.ID_OK, "Ok")
         self.cancelBt = wx.Button(self, wx.ID_CANCEL, "Cancel")
         
         self._do_layout()
@@ -335,8 +368,13 @@ class PieSettingsDialog(wx.Dialog):
         
     def _do_bindings(self):
         self.okBt.Bind(wx.EVT_BUTTON, self.onOk)
+        self.cancelBt.Bind(wx.EVT_BUTTON, self.onCancel)
 
     def onOk(self, evt=1):
+        # commit changes to folders
+        self.cleanerpanel.Finalise()
+        commit_folders()
+        # compile PIE_CONFIG settings
         profiledata = self.profilepanel.GetData()
         theprofile = self.profilepanel.GetProfile()
         alldata = []
@@ -350,6 +388,10 @@ class PieSettingsDialog(wx.Dialog):
         PIE_CONFIG.update_profile(theprofile, profiledata[1])
         PIE_CONFIG.write_pieconfig()
         self.EndModal(wx.ID_OK)
+
+    def onCancel(self, evt=1):
+        rollback_folders()
+        self.EndModal(wx.ID_CANCEL)
 
 
 if __name__ == '__main__':

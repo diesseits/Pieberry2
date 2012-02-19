@@ -36,6 +36,24 @@ def add_new_folder(rootname, foldername):
     FOLDER_LOOKUP[rootname].append(newfolder)
     return newfolder
 
+def get_project_folder_by_endname(endname):
+    for fldr in session.query(PieFolder).filter(and_(
+            PieFolder.Root == 'projectdir',
+            PieFolder.EndName == endname)):
+        return fldr
+    return None
+
+def generate_initial_folder_list(rootdir):
+    '''Do a filesystem sweep and return a list of the existing folders'''
+    for diry in os.listdir(ROOT_MAP[projectdir]):
+        continue
+    
+def commit_folders():
+    session.commit()
+
+def rollback_folders():
+    session.rollback()
+
 class PieFolder(SQLABase):
     '''A class for information about library and project folders'''
     __tablename__ = 'piefolders'
@@ -93,9 +111,6 @@ class PieFolder(SQLABase):
         else:
             return os.path.join(*self.SubFolders)
 
-def generate_initial_folder_list(rootdir):
-    '''Do a filesystem sweep and return a list of the existing folders'''
-    pass
 
 #DEBUG STUFF
 

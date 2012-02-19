@@ -349,6 +349,13 @@ class FunctionMainWindow(BaseMainWindow):
     def onSaveBibs(self, evt):
         '''Export bibliography to file nominated in config via pybtex'''
         exporter = PiePybtexWriter()
+        # handle time-of-use export file selection
+        if not PIE_CONFIG.getboolean('Profile', 'export_bibtex'):
+            fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_SAVE)
+            res = fdia.ShowModal()
+            if res == wx.ID_CANCEL: return
+            bibfilepath = fdia.GetPath()
+            exporter.setPath(bibfilepath)
         for obj in query_favourites(session):
             msg = exporter.addEntry(obj)
             if msg:
@@ -366,13 +373,6 @@ class FunctionMainWindow(BaseMainWindow):
             n = pynotify.Notification(
                 'Pieberry', msg, os.path.join(IMGDIR, 'pie_48.png'))
             n.show()
-
-
-
-
-
-        
-
                 
             
 

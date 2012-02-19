@@ -136,7 +136,7 @@ class PiePybtexWriter:
             print msg
             return msg
 
-    def setLocation(self, location):
+    def setPath(self, location):
         '''Set the location of the file'''
         self._location = location
 

@@ -35,6 +35,7 @@ class PieActor:
     def onConfig(self, evt):
         dia = PieSettingsDialog(self)
         dia.ShowModal()
+        dia.Destroy()
 
     def onAbout(self, evt):
         info = wx.AboutDialogInfo()
