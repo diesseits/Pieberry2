@@ -3,6 +3,7 @@
 # DB object for storing information about folders
 
 import sys, os, os.path, datetime
+from pprint import pprint
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
 from sqlalchemy import and_
 
@@ -17,8 +18,28 @@ global FOLDER_LOOKUP
 for key, val in ROOT_MAP.items():
     FOLDER_LOOKUP[key] = []
 
+def recommend_folder(obj):
+    fs = session.query(PieFolder).filter(PieFolder.Root == 'projectdir')
+    f_cands = []
+    for f in fs:
+        score = 0
+        for aterm in f.MatchTerms_Author:
+            if aterm.lower() in obj.Author().lower():
+                score += 1
+        for tterm in f.MatchTerms_Title:
+            if tterm.lower() in obj.Title().lower():
+                score += 1
+            if tterm.lower() in obj.FileData_FileName.lower():
+                score += 1
+        if score > 0: f_cands.append((score, f))
+    if len(f_cands) == 0: return
+    f_cands.sort(lambda x, y: cmp(y[0], x[0]))
+    pprint(f_cands)
+    return f_cands[0][1] # return a PieFolder
+
 def add_new_folder(rootname, foldername):
     '''add a new folder to a root directory'''
+    assert type(foldername) in (str, unicode)
     if not rootname in ROOT_MAP.keys():
         raise Exception, 'Root directory not found'
     foldername = translate_non_alphanumerics(foldername)
@@ -27,10 +48,14 @@ def add_new_folder(rootname, foldername):
             PieFolder.Root == rootname)).all()
     if len(existingfolders) > 0:
         raise Exception, 'This folder already exists in database'
-    if os.path.exists(os.path.join(ROOT_MAP[rootname], foldername)):
-        raise Exception, 'Something with this name already exists on disk'
+    folderpath = os.path.join(ROOT_MAP[rootname], foldername)
+    if os.path.exists(folderpath) and not os.path.isdir(folderpath):
+        raise Exception, 'Conflict: File with this name already exists on disk'
     newfolder = PieFolder(os.path.join(ROOT_MAP[rootname], foldername))
-    os.mkdir(newfolder.path())
+    if os.path.exists(folderpath) and os.path.isdir(folderpath):
+        pass
+    else:
+        os.mkdir(newfolder.path())
     session.add(newfolder)
     session.commit()
     FOLDER_LOOKUP[rootname].append(newfolder)
@@ -43,10 +68,20 @@ def get_project_folder_by_endname(endname):
         return fldr
     return None
 
-def generate_initial_folder_list(rootdir):
+def generate_initial_project_folder_list():
     '''Do a filesystem sweep and return a list of the existing folders'''
-    for diry in os.listdir(ROOT_MAP[projectdir]):
-        continue
+    FOLDER_LOOKUP['projectdir'] = []
+    existing = session.query(
+        PieFolder).filter(PieFolder.Root == 'projectdir').all()
+    for folder in existing:
+        if not os.path.isdir(folder.path()):
+            print 'Warning - %s was loaded but does not exist' % existing.path()
+    FOLDER_LOOKUP['projectdir'].extend(existing)
+    for diry in os.walk(ROOT_MAP['projectdir']).next()[1]:
+        if not get_project_folder_by_endname(diry):
+            newf = add_new_folder('projectdir', diry)
+            print 'Note: new unmapped project folder %s added' % os.path.join(
+                ROOT_MAP['projectdir'], diry)
     
 def commit_folders():
     session.commit()
@@ -120,4 +155,5 @@ def generate_spoof_folder_list():
     '''Generate test folders'''
     for i in range(len(spoof_folder_names)):
         add_new_folder('projectdir', spoof_folder_names[i])
+    os.mkdir(os.path.join(ROOT_MAP['projectdir'], 'saturn'))
 

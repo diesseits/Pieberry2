@@ -12,7 +12,7 @@ from pieobject.tags import TagHandler, PieTag, pieobject_tags
 from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
-from pieobject.folder import FOLDER_LOOKUP, PieFolder
+from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
 from pieobject.website import PieWebsite, referable_website, validify_domain
 from pieconfig import PIE_CONFIG
 from pieconfig.paths import ROOT_MAP

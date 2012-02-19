@@ -11,7 +11,7 @@ import pieutility
 from ui.events import *
 from atomise_window import *
 from pieconfig.paths import *
-from pieobject.folder import FOLDER_LOOKUP, PieFolder
+from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
 from pieobject.paths import suggest_initial_fn
 
 class atomWidget(wx.Panel):
@@ -47,8 +47,11 @@ class atomWidget(wx.Panel):
         self.Layout()
 
     def AddObject(self, obj):
+        recfol = recommend_folder(obj)
+        if recfol: recfol = recfol.EndName
         return self.atomDisplay.AddObject(
             obj,
+            recommended_dir=recfol,
             suggested_fn=suggest_initial_fn(obj))
 
     def SetDestinations(self, dests):

@@ -17,6 +17,7 @@ from pieutility.decoding import *
 from pieconfig.paths import *
 from pieobject import *
 from pieobject.paths import *
+from pieobject.folder import recommend_folder
 
 def get_metadata_object(fn):
     '''takes a filename, returns an object with relevant metadata gleaned from
