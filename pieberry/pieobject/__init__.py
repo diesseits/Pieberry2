@@ -258,6 +258,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if tags:
             self.add_tags(tags)
         self.aspects['onweb']=True
+        self.aspects['bibdata']=True
 
     # def _attempted_threadsafe_link(self, url):
     #     '''need a new session to do this in a thread'''

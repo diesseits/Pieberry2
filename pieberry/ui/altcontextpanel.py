@@ -3,7 +3,6 @@ import wx.lib.agw.foldpanelbar as fpb
 from wx.lib.buttons import ThemedGenBitmapToggleButton 
 from wx.lib import wordwrap
 
-
 from pieconfig.paths import IMGDIR
 from string import join
 from ui.events import PieContextPanelUpdateEvent
@@ -110,7 +109,7 @@ class BibInfoPanel(wx.Panel):
 
     def _do_layout(self):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND, 5)
+        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
         self.SetSizer(self.sizer)
         self.Layout()
 
@@ -118,7 +117,7 @@ class BibInfoPanel(wx.Panel):
         self.sizer.Remove(self.Html)
         self.Html.Destroy()
         self.Html = wx.html.HtmlWindow(self, -1)
-        self.sizer.Add(self.Html, 1, wx.EXPAND|wx.ALL, 5)
+        self.sizer.Add(self.Html, 1, wx.EXPAND|wx.ALL)
         self.Layout()
         info = {'color': html_colors['kde']}
         info['bibtex_type'] = unicode(obj.BibData_Type)
@@ -150,21 +149,23 @@ class FileInfoPanel(wx.Panel):
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(wx.StaticText(self, -1, _('File location:')), 0, wx.ALL, 5)
         self.sizer.Add(self.locte, 1, wx.ALL|wx.EXPAND, 5)
-        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND, 5)
+        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
         self.SetSizer(self.sizer)
         self.Layout()
 
     def SetObject(self, obj):
-        self.locte.SetValue(obj.FileData_FullPath)
+        self.locte.SetValue(unicode(obj.FileData_FullPath))
         self.sizer.Remove(self.Html)
         self.Html.Destroy()
         self.Html = wx.html.HtmlWindow(self, -1, size=(80,80))
-        self.sizer.Add(self.Html, 1, wx.EXPAND|wx.ALL, 5)
+        self.sizer.Add(self.Html, 1, wx.EXPAND)
         self.Layout()
+        if obj.FileData_Size: fsize = unicode(obj.FileData_Size / 1000) + 'kb'
+        else: fsize = _('Nil')
         info = {'color': html_colors['kde']}
         info['path'] = unicode(obj.FileData_FullPath)
         info['type'] = unicode(obj.FileData_FileType)
-        info['size'] = unicode(obj.FileData_Size)
+        info['size'] = fsize
         self.Html.AppendToPage(filehtml % info)
 
 class WebInfoPanel(wx.Panel):

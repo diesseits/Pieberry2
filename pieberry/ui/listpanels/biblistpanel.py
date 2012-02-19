@@ -82,6 +82,7 @@ class BibListPanel(BaseListPanel):
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
             # citations
+        if obj.has_aspect('bibdata'):
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
                                                 _('Copy citation (plain text)'))
             rcm_copycitationplain.SetBitmap(
