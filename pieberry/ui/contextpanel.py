@@ -4,6 +4,7 @@ from pieconfig.paths import IMGDIR
 from string import join
 from ui.events import PieContextPanelUpdateEvent
 
+
 class BaseContextPanel(wx.Panel):
     '''Class for generic forms of context'''
     changed=0

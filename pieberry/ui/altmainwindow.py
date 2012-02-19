@@ -7,7 +7,7 @@ import os
 from events import *
 from searchpanel import *
 from webpanel import *
-from contextpanel import *
+from altcontextpanel import *
 from listpanels import *
 from actor import PieActor
 from pieconfig.globalvars import *
