@@ -24,6 +24,7 @@ def auto_increment_fn(fn):
     while os.path.exists(fn):
         counter += 1
         fn = os.path.join(dn, '%s_%d%s' % (bn, counter, ext))
+        if counter == 1000: raise 'auto_increment_fn: Too many files - giving up'
     return fn
 
 def suggest_path_cache_fromweb(obj):
