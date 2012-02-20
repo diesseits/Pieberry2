@@ -47,8 +47,10 @@ class BibListPanel(BaseListPanel):
         it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
         if it.FileData_FullPath:
             pieutility.open_file(it.FileData_FullPath)
+            it.stats_opened()
         elif it.WebData_Url:
             pieutility.open_url(it.WebData_Url)
+            it.stats_opened()
         else:
             return
         

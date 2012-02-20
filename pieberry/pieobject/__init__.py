@@ -372,8 +372,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             if self.FileData_Type == 'pdf':
                 return 'pdf'
             else: return 'doc'
-            
-
+    
+    def stats_opened(self):
+        self.StatData.LastOpened = date=datetime.datetime.today()
+        self.StatData.OpenedCount += 1
+        print '%s opened %d times' % (self, self.StatData_OpenedCount)
         
 
 # metadata = SQLABase.metadata
