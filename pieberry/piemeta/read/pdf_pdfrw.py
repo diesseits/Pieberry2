@@ -49,6 +49,7 @@ def pdfrw_metadata(fn):
         'author': unicode(reader.Info.Author, 'utf8', errors=U_ERROR_BEHAV),
         'title': unicode(reader.Info.Title, 'utf8', errors=U_ERROR_BEHAV),
         'creation_date': creation_date,
+        'creation_date_guessed': False,
         'metadata_is_replaceable': True
         }
 

@@ -7,12 +7,9 @@
 import sys, os, time, re, string, traceback, shutil
 import datetime
 import wx
-import hachoir_metadata
-import atomise_hachoir
 
 import piemeta
 
-from pdfrw import PdfReader
 from pprint import pprint
 
 from pieutility.decoding import *
