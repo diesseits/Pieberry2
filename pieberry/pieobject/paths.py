@@ -65,7 +65,7 @@ def suggest_path_store_fromweb(obj):
         ext)
     proposal = auto_increment_fn(os.path.join(
             root, auth, subd, tsubd,
-            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
+            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')] #BUG - should apply to non-extension bit of filename
             ))
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
