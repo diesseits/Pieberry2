@@ -86,7 +86,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     FileData_Size = Column(Integer)
 
     PhysData_StorageLoc = Column(Unicode) # Storage location
-    PhysData_StorageType = Column(Unicode) # Type of storage (e.g. personal, library)
+    PhysData_StorageType = Column(Unicode) # Type of storage
+                                           # (e.g. personal, library)
     PhysData_Dewey = Column(Unicode(length=20)) 
     PhysData_ISBN = Column(Unicode(length=50))
     PhysData_Accessed = Column(DateTime) # Borrowing/accession time
@@ -113,7 +114,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'saved': False,
             'stored': False,
             'failed_dl': False,
-            'bibdata': False
+            'bibdata': False,
+            'physical': False
             }
 
     def __repr__(self):
@@ -189,7 +191,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         return self.date
 
     def Url(self):
-        '''The most salient url for reference purposes'''
+        '''The most salient url for _reference_ purposes. If the
+        actual URL is definitely needed, access property
+        WebData_Url'''
         if not self.WebData_Url: return ''
         behav = PIE_CONFIG.get('Format', 'url_level_represent')
         if behav  == 'full':
@@ -305,6 +309,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         # do links at the time that things are to be committed to
         # db. Any earlier and it screws things up (and websites,
         # specifically, won't necessarily be in the piewebsites table)
+        self.StatData_LastSaved = datetime.datetime.today()
         if self.WebData_Url:
             self.website = referable_website(self.WebData_Url, session)
 
