@@ -19,15 +19,15 @@ def get_fake_metadata(fn):
         cdate = datetime.datetime.fromtimestamp(os.stat(fn)[9])
     mdate = datetime.datetime.fromtimestamp(os.stat(fn)[8])
     r = {
-        'creation_date' = cdate,
-        'creation_date_guessed' = True,
-        'modification_date' = mdate,
-        'title' = ttl,
-        'author' = ''
+        'creation_date': cdate,
+        'creation_date_guessed': True,
+        'modification_date': mdate,
+        'title': ttl,
+        'author': ''
         }
 
 def get_fake_metadata_for_aspect(obj):
-    return data = get_fake_metadata(obj.FileData_FullPath)
+    return get_fake_metadata(obj.FileData_FullPath)
     
 def get_fake_metadata_object(fn):
     '''get object with metadata gleaned only from the file system

@@ -28,19 +28,25 @@ def get_metadata_for_aspect(obj):
     '''You already have an object, you want to update it with file
     metadata'''
     assert obj.has_aspect('stored') or obj.has_aspect('cached')
-    ft = obj.FileData_Type
+    try:
+        ft = obj.FileData_FileType
+    except AttributeError:
+        ft = determine_file_type(obj.FileData_FullPath)
     if ft == 'other':
         return None
     if ft == 'pdf':
-        return get_pdf_metadata_for_aspect(fn)
+        return get_pdf_metadata_for_aspect(obj)
     if ft in ('word_doc', 'hachoir_other'):
-        return get_real_metadata_for_aspect(fn)
+        return get_real_metadata_for_aspect(obj)
     return get_fake_metadata_for_aspect(obj)
 
 def write_metadata_to_object(obj, **metadata):
     '''You have an object, you want to write metadata to its
     file. (only going to work for pdfs for the forseeable future'''
-    ft = determine_file_type(fn)
+    try:
+        ft = obj.FileData_FileType
+    except AttributeError:
+        ft = determine_file_type(obj.FileData_FullPath)
     if not ft == 'pdf':
         return False
     try:

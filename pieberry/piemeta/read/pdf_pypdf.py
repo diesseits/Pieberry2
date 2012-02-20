@@ -1,4 +1,4 @@
-import pyPdf, traceback, datetime, string, re
+import pyPdf, traceback, datetime, string, re, os, os.path
 from pieobject import PieObject
 from fake import get_fake_metadata
 

@@ -338,7 +338,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             raise IOError, 'Trying to set file data for non existant file'
         self.FileData_FileName = os.path.basename(loc)
         self.FileData_Size = os.stat(loc).st_size
-        self.FileData_DateModified = datetime.datetime.fromtimestamp(os.stat(fn)[8])
+        self.FileData_DateModified = datetime.datetime.fromtimestamp(
+            os.stat(loc)[8])
         diry = os.path.dirname(loc)
         fdroot = None
         for key, pdir in ROOT_MAP.items():
@@ -369,7 +370,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if window_type == 'filewindow':
             if self.FileData_Type == 'pdf':
                 return 'pdf'
-            else return 'doc'
+            else: return 'doc'
             
 
         

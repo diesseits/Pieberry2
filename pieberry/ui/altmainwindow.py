@@ -12,7 +12,7 @@ from listpanels import *
 from actor import PieActor
 from pieconfig.globalvars import *
 from pieconfig.paths import IMGDIR
-from atomise import atomWidget
+from atomise.atomise_widget import atomWidget
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
