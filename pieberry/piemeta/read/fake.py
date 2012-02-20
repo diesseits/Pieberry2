@@ -25,6 +25,7 @@ def get_fake_metadata(fn):
         'title': ttl,
         'author': ''
         }
+    return r
 
 def get_fake_metadata_for_aspect(obj):
     return get_fake_metadata(obj.FileData_FullPath)

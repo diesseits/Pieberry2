@@ -381,5 +381,8 @@ class FunctionMainWindow(BaseMainWindow):
                 'Pieberry', msg, os.path.join(IMGDIR, 'pie_48.png'))
             n.show()
                 
+    def onClose(self, evt):
+        session.commit()
+        sys.exit()
             
 

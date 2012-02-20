@@ -72,7 +72,7 @@ class PieScraper:
         print 'PieScraper.get_page_context:', ttl
         return ttl #in future maybe return a more complex object
 
-    def snarf_urls(self, threaded=False, propagate_to=None, types=('pdf',)):
+    def snarf_urls(self, threaded=False, propagate_to=None, types=('pdf', 'word_doc')):
         '''return a tuple of pieobjects representing all the in-situ
         potential documents of a page. Arguments:
          - threaded - bool - is this being run threaded?

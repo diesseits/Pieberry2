@@ -118,6 +118,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'physical': False
             }
 
+        self.StatData_OpenedCount = 0
+
     def __repr__(self):
         return "<PieObject %s - %s. (%s)>" % (self.Title()[:10], self.Author(), str(self.ReferDate()))
 
@@ -374,8 +376,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             else: return 'doc'
     
     def stats_opened(self):
-        self.StatData.LastOpened = date=datetime.datetime.today()
-        self.StatData.OpenedCount += 1
+        self.StatData_LastOpened = date=datetime.datetime.today()
+        self.StatData_OpenedCount += 1
         print '%s opened %d times' % (self, self.StatData_OpenedCount)
         
 

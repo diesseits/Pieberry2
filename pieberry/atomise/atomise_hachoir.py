@@ -81,7 +81,11 @@ def parseOptions():
 
 def processFileReturn(filename, display_filename=False, priority=None, human=True, display=True):
     charset = getTerminalCharset()
-    filename, real_filename = unicodeFilename(filename, charset), filename
+    # filename, real_filename = unicode(filename, charset), filename
+    if type(filename) == str:
+        filename, real_filename = unicodeFilename(filename, charset), filename
+    else:
+        real_filename = filename.encode(getTerminalCharset())
     try:
         parser = createParser(filename, real_filename=real_filename, tags=None)
     except InputStreamError, err:
