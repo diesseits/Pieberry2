@@ -1,12 +1,10 @@
 import os, os.path, datetime, re
 
-from pieobject.paths import 
+from pieobject import PieObject
 
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
-def get_fake_metadata_object(fn):
-    '''get object with metadata gleaned only from the file system
-    takes a full path'''
+def get_fake_metadata(fn):
     m = re_dateprefix.match(os.path.basename(fn))
     if m:
         # if it has a date prefix already, use that to infer the relevant
@@ -19,7 +17,25 @@ def get_fake_metadata_object(fn):
         # if no date prefix, use os.stat to infer the date of the file
         ttl = os.path.splitext(os.path.basename(fn))[0]
         cdate = datetime.datetime.fromtimestamp(os.stat(fn)[9])
+    mdate = datetime.datetime.fromtimestamp(os.stat(fn)[8])
+    r = {
+        'creation_date' = cdate,
+        'creation_date_guessed' = True,
+        'modification_date' = mdate,
+        'title' = ttl,
+        'author' = ''
+        }
+
+def get_fake_metadata_for_aspect(obj):
+    return data = get_fake_metadata(obj.FileData_FullPath)
+    
+def get_fake_metadata_object(fn):
+    '''get object with metadata gleaned only from the file system
+    takes a full path'''
+    d = get_fake_metadata(fn)
     obj = PieObject(
-        title = ttl,
-        date = cdate)
+        title = d['title'],
+        date = d['creation_date'])
+    obj.FileData_DateCreated = d['creation_date']
+    obj.FileData_DateModified = d['modification_date']
     return obj

@@ -338,6 +338,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             raise IOError, 'Trying to set file data for non existant file'
         self.FileData_FileName = os.path.basename(loc)
         self.FileData_Size = os.stat(loc).st_size
+        self.FileData_DateModified = datetime.datetime.fromtimestamp(os.stat(fn)[8])
         diry = os.path.dirname(loc)
         fdroot = None
         for key, pdir in ROOT_MAP.items():
@@ -356,6 +357,22 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         else:
             self.FileData_FileType = ft
 
+    def get_icon_code(self, window_type=None):
+        '''Return a code for iconic representation of this object. A
+        context can be given through parameter window_type. The codes
+        will correspond to various items in a wx.ImageList for the
+        list/other type of window concerned. Values may include:
+        'start' 'spin' 'blank' 'success' 'fail' 'warn' 'pass' 'tick'
+        'exclude' 'pdf' 'doc'
+
+        Contexts may include 'filewindow', 'bibwindow', 'dlwindow'''
+        if window_type == 'filewindow':
+            if self.FileData_Type == 'pdf':
+                return 'pdf'
+            else return 'doc'
+            
+
+        
 
 # metadata = SQLABase.metadata
 # metadata.create_all(engine)

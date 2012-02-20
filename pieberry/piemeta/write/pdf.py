@@ -1,4 +1,6 @@
+from pieconfig.globalvars import DEBUG
 from pdfrw import PdfWriter, PdfReader
+import os.path
 
 def write_pdf_metadata(obj):
     '''Write pdf metadata to file using pdfrw'''
@@ -8,12 +10,12 @@ def write_pdf_metadata(obj):
     if not obj.has_aspect('hasfile'):
         print 'Returning - no file for this object'
         return False
-    if not obj.filemetadata.has_key('metadata_is_replaceable'):
-        if DEBUG:
-            pass # should return
-        else: return False
-    if not DEBUG:
-        if not obj.filemetadata['metadata_is_replaceable']: return
+    # if not obj.filemetadata.has_key('metadata_is_replaceable'):
+    #     if DEBUG:
+    #         pass # should return
+    #     else: return False
+    # if not DEBUG:
+    #     if not obj.filemetadata['metadata_is_replaceable']: return
     try:
         trailer = PdfReader(obj.FileData_FullPath)
         trailer.Info.Title = obj.Title()
@@ -23,14 +25,19 @@ def write_pdf_metadata(obj):
         writer.trailer = trailer
         writer.write(os.path.join(
                 obj.FileData_ContainingFolder,
-                'Temp.pdf'))
+                'PieberryTemp.pdf'))
     except:
         print 'Returning: Could not write metadata'
+        try:
+            os.remove(
+                os.path.join(obj.FileData_ContainingFolder, 'PieberryTemp.pdf'))
+        except:
+            pass
         return False
     try:
         os.remove(obj.FileData_FullPath)
         os.rename(
-            os.path.join(obj.FileData_ContainingFolder, 'Temp.pdf'),
+            os.path.join(obj.FileData_ContainingFolder, 'PieberryTemp.pdf'),
             obj.FileData_FullPath
             )
     except Exception, exc:

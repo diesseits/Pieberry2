@@ -1,5 +1,6 @@
 import traceback, datetime, os.path
 from pieconfig.paths import SYSDIR
+from pieobject import PieObject
 
 from pdfrw import PdfReader
 from fake import get_fake_metadata_object

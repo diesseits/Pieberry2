@@ -1,11 +1,23 @@
-import pyPdf, traceback, datetime, time, string
+import pyPdf, traceback, datetime, string, re
+from pieobject import PieObject
+from fake import get_fake_metadata
 
 # TODO: bring up to date for P2
+splre = re.compile("[./_ ]")
 
+def pypdf_object(fn):
+    data = pypdf_metadata(fn)
+    obj = PieObject(
+        title=data['title'],
+        author=data['author'],
+        date=data['creation_date']
+        )
+    obj.FileData_DateCreated = data['creation_date']
+    return obj
 
 def pypdf_metadata(fn):
     retinfo = {}
-    retinfo['creation_date'] = time.localtime(os.stat(fn)[9])
+    retinfo['creation_date'] = datetime.datetime.fromtimestamp(os.stat(fn)[9])
     retinfo['author'] = ''
     retinfo['title'] = ''
     try:
@@ -24,7 +36,7 @@ def pypdf_metadata(fn):
     try:
         if docmetadata.has_key('/CreationDate'):
             rd = docmetadata['/CreationDate'][2:]
-            retinfo['creation_date'] = time.strptime("%s %s %s %s %s" % (rd[0:4], rd[4:6], rd[6:8], rd[8:10], rd[10:12]), "%Y %m %d %H %M")
+            retinfo['creation_date'] = datetime.datetime.strptime("%s %s %s %s %s" % (rd[0:4], rd[4:6], rd[6:8], rd[8:10], rd[10:12]), "%Y %m %d %H %M")
             retinfo['creation_date_guessed'] = False
         else:
             retinfo['creation_date_guessed'] = True
@@ -32,7 +44,6 @@ def pypdf_metadata(fn):
         traceback.print_exc()
         retinfo['creation_date_guessed'] = True
     # some reformatting necessary when author names are computer-inserted
-    splre = re.compile("[./_ ]")
     authst = ''
     if not pdfread.documentInfo:
         return retinfo
