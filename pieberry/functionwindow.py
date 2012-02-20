@@ -5,10 +5,12 @@ import time
 import traceback
 import shutil, os, os.path
 
+import piemeta
+
 from pieobject import *
 from pieobject.paths import *
 from piescrape import *
-from piescrape.execfn import *
+from piescrape.execfn import download_file
 from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
 from pieconfig import PIE_CONFIG
@@ -129,7 +131,7 @@ class FunctionMainWindow(BaseMainWindow):
             if msgtype == 'success':
                 obj.add_aspect_cached_from_web(storepath)
                 try:
-                    filemetadata = scan_file_metadata(obj)
+                    filemetadata = piemeta.get_metadata_for_aspect(obj)
                 except:
                     traceback.print_exc()
                     msgtype='warn'
@@ -224,7 +226,7 @@ class FunctionMainWindow(BaseMainWindow):
                         ostore.Del(ref)
             # Write metadata to file if possible
             if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
-                write_obj_metadata(obj)
+                piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
             if not os.path.isdir(os.path.dirname(dpath)):
