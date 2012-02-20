@@ -70,6 +70,37 @@ def suggest_path_store_fromweb(obj):
         raise IOError, 'File already exists. TODO - auto-fix'
     return proposal
 
+def suggest_path_store_with_bibdata(obj):
+    assert obj.has_aspect('cached')
+    assert obj.has_aspect('bibdata')
+    root = LIBRARYDIR
+    auth = obj.Author(favour_corporate=False)
+    if obj.BibData_Journal:
+        subd = obj.BibData_Journal
+    # elif obj.
+    #     obj.
+    else: subd = ''
+    print 'suggest_path_store_with_bibdata: ____'
+    ext = os.path.splitext(obj.FileData_FullPath)[1]
+    # try to fix odd file extensions (phtml, php etc)
+    if not ext in FEXTENSIONS[obj.FileData_FileType]:
+        if len(FEXTENSIONS[obj.FileData_FileType]) == 1:
+            # only guess if there's only one possible extension
+            ext = FEXTENSIONS[obj.FileData_FileType][0]
+    fn_prop = "%s - %s%s" % (
+        obj.ReferDate().strftime("%Y%m%d"),
+        translate_non_alphanumerics(obj.Title()),
+        ext)
+    proposal = auto_increment_fn(os.path.join(
+            root, auth, subd, 
+            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
+            ))
+    print 'SUGGESTING:', proposal
+    if os.path.exists(proposal):
+        raise IOError, 'File already exists. TODO - auto-fix'
+    return proposal
+    
+
 def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
     assert obj.has_aspect('cached')
     root = PROJECTDIR

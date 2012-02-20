@@ -82,13 +82,19 @@ class atomWidget(wx.Panel):
 
     def onCreateBib(self, row):
         '''override for bib entry creation implementation'''
-        pass
+        from ui.editdialog import PieBibEditDialog
+        obj = self.atomDisplay.rowdata[row]
+        ed = PieBibEditDialog(obj, self.GetParent().GetParent())
+        ed.ShowModal()
+        print obj.title
+        ch = getattr(self.atomDisplay, 'choice%d' % row)
+        ch.Enable(False) 
 
     def onGoFile(self, row):
         '''override for filing action implementation'''
         obj = self.atomDisplay.rowdata[row]
         ch = getattr(self.atomDisplay, 'choice%d' % self.atomDisplay.currentrow)
-        if ch.GetSelection() == 0:
+        if ch.GetSelection() == 0 and not obj.has_aspect('bibdata'):
             wx.MessageBox(_('No selected destination for this file'))
             return
         tc = getattr(self.atomDisplay, 'suggesttc%d' % self.atomDisplay.currentrow)

@@ -78,7 +78,7 @@ class atomActionWindow(wx.ScrolledWindow):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
         # self.currentrow = self.rowdata[ob.getRowId()]
-        self.parent.onCreateBib()
+        self.parent.onCreateBib(self.currentrow)
 
     def _on_gofile(self, evt):
         ob = evt.GetEventObject()
@@ -131,12 +131,19 @@ class atomActionWindow(wx.ScrolledWindow):
         
         self.maxrow += 1
         # setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
+        print 'File type', obj.FileData_FileType
         if obj.FileData_FileType == 'pdf':
-            icon = wx.Image(os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
-            setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
+            icon = wx.Image(
+                os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
+            setattr(self, 
+                    'icon%d' % self.maxrow, 
+                    atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
         else:
-            icon = wx.Image(os.path.join(IMGDIR, 'ic_file_doc_22.png'), wx.BITMAP_TYPE_PNG)
-            setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
+            icon = wx.Image(
+                os.path.join(IMGDIR, 'ic_file_doc_22.png'), wx.BITMAP_TYPE_PNG)
+            setattr(self, 
+                    'icon%d' % self.maxrow, 
+                    atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
 
         bm = getattr(self, 'icon%d' % self.maxrow)
         if sys.platform == 'win32':

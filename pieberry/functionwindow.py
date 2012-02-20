@@ -337,10 +337,15 @@ class FunctionMainWindow(BaseMainWindow):
         #move the file
         obj = evt.obj
         # session = Session()
-        storepath = suggest_path_store_fromdesktop(
-            obj, 
-            evt.dest_folder,
-            evt.new_fn)
+        if obj.has_aspect('bibdata'):
+            storepath = suggest_path_store_with_bibdata(obj)
+            if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
+                piemeta.write_metadata_to_object(obj)
+        else:
+            storepath = suggest_path_store_fromdesktop(
+                obj, 
+                evt.dest_folder,
+                evt.new_fn)
         os.renames(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
         obj.add_aspect_saved()

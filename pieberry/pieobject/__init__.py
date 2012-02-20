@@ -283,6 +283,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         object'''
         self.aspects['cached'] = True
         self.set_file(temp_location)
+        self.set_file_type()
         self.date = datetime.datetime.today()
  
     def add_aspect_failed_download(self):
