@@ -1,6 +1,7 @@
 import wx
 import sys, os
 
+from ui.events import *
 from pieconfig import *
 from spoofgeneration import *
 from ui.settingsdialog import PieSettingsDialog
@@ -101,3 +102,13 @@ class PieActor:
         pan = self.GetCurrentPane()
         pan.AddObjects(ostore)
         
+    def DebugForceScan(self, evt=0):
+        import piefiles
+        indexer = piefiles.PieFileIndexer(self)
+        self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)
+        indexer.run()
+
+    def DisplayIndexerStatus(self, evt):
+        self.StatusBar.SetStatusText(evt.message)
+        print evt.message
+        print '%d of %d' % (evt.track, evt.count)

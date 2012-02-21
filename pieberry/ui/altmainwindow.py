@@ -98,16 +98,20 @@ class BaseMainWindow(wx.Frame, PieActor):
             debugMenu, -1, _('Add Pane with dld items'))
         self.menu_debug_addatompane = wx.MenuItem(
             debugMenu, -1, _('Add Pane with desktop items'))
+        self.menu_debug_forcescan = wx.MenuItem(
+            debugMenu, -1, _('Force scan of folders'))
         debugMenu.AppendItem(self.menu_debug_addatompane)
         debugMenu.AppendItem(self.menu_debug_adddlpane)
         debugMenu.AppendItem(self.menu_debug_addwebpane)
         debugMenu.AppendItem(self.menu_debug_addbibpane)
+        debugMenu.AppendItem(self.menu_debug_forcescan)
         self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
                   self.menu_debug_addatompane)
         self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
                   self.menu_debug_adddlpane)
         self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
         self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
+        self.Bind(wx.EVT_MENU, self.DebugForceScan, self.menu_debug_forcescan)
         # END debug menu
 
         fileMenu.AppendItem(self.menu_savebibs)
