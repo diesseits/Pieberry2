@@ -357,6 +357,7 @@ class FunctionMainWindow(BaseMainWindow):
         '''Export bibliography to file nominated in config via pybtex'''
         exporter = PiePybtexWriter()
         # handle time-of-use export file selection
+        bibfilepath = PIE_CONFIG.get('Profile', 'bibliography_file')
         if not PIE_CONFIG.getboolean('Profile', 'export_bibtex'):
             fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_SAVE)
             res = fdia.ShowModal()
@@ -373,8 +374,7 @@ class FunctionMainWindow(BaseMainWindow):
             traceback.print_exc()
             wx.MessageBox(unicode(exc), _('Error'), wx.ICON_ERROR)
             return
-        msg = _('Successfully exported bibliography to %s' % PIE_CONFIG.get(
-                'Profile', 'bibliography_file'))
+        msg = _('Successfully exported bibliography to %s' % bibfilepath)
         self.StatusBar.SetStatusText(msg)
         if PYNOTIFY:
             n = pynotify.Notification(

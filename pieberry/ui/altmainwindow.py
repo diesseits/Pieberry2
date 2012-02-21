@@ -329,7 +329,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab = atomWidget(self.TabBook, -1)
         tab.Bind(EVT_ATOM_FILE_FILE, self.OnDesktopFileFile)
         tab.Bind(EVT_PIE_CLOSE_PANE, self.CloseCurrentPane)
-        self.TabBook.AddPage(tab, caption, select=True)
+        self.TabBook.AddPage(
+            tab, caption, select=True, 
+            bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
 
     def DoSearch(self, evt):
         '''stub'''

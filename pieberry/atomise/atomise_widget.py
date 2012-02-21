@@ -7,6 +7,7 @@ import pprint
 import shutil
 import pieutility
 
+
 # from atomise_exec import *
 from ui.events import *
 from atomise_window import *
@@ -85,10 +86,10 @@ class atomWidget(wx.Panel):
         from ui.editdialog import PieBibEditDialog
         obj = self.atomDisplay.rowdata[row]
         ed = PieBibEditDialog(obj, self.GetParent().GetParent())
-        ed.ShowModal()
-        print obj.title
-        ch = getattr(self.atomDisplay, 'choice%d' % row)
-        ch.Enable(False) 
+        res = ed.ShowModal()
+        if res == wx.ID_OK:
+            ch = getattr(self.atomDisplay, 'choice%d' % row)
+            ch.Enable(False) 
 
     def onGoFile(self, row):
         '''override for filing action implementation'''

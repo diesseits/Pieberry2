@@ -22,6 +22,7 @@ class PieFileIndexer(Thread):
     files, looks for where they may have reappeared, and looks for new
     files and puts them into the database.'''
     def __init__(self, notify_window):
+        Thread.__init__(self)
         self.session = Session()
         self.nwin = notify_window
 

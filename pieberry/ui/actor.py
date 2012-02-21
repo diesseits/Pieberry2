@@ -106,7 +106,7 @@ class PieActor:
         import piefiles
         indexer = piefiles.PieFileIndexer(self)
         self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)
-        indexer.run()
+        indexer.start()
 
     def DisplayIndexerStatus(self, evt):
         self.StatusBar.SetStatusText(evt.message)

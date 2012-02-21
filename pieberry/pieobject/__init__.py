@@ -39,6 +39,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     StatData_OpenedCount = Column(Integer)
     StatData_LastOpened = Column(DateTime)
     StatData_LastSaved = Column(DateTime)
+    StatData_FollowUp = Column(DateTime)
 
     #relationships
 

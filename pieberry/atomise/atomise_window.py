@@ -164,10 +164,10 @@ class atomActionWindow(wx.ScrolledWindow):
         setattr(self, 'choice%d' % self.maxrow, wx.Choice(self, -1, choices=self.defaultchoices))
         ch = getattr(self, 'choice%d' % self.maxrow)
 
-        setattr(self, 'bibbutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='Create'))
+        setattr(self, 'bibbutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='To Library'))
         bt = getattr(self, 'bibbutton%d' % self.maxrow)
-        if obj.FileData_FileType != 'pdf':
-            bt.Enable(False)
+        # if obj.FileData_FileType != 'pdf':
+        #     bt.Enable(False)
 
         setattr(
             self, 
