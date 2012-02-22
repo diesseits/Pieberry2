@@ -106,9 +106,13 @@ class PieActor:
         import piefiles
         indexer = piefiles.PieFileIndexer(self)
         self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)
+        self.Bind(EVT_PIE_FILE_INDEX_FINISHED, self.OnIndexerFinished)
         indexer.start()
 
     def DisplayIndexerStatus(self, evt):
         self.StatusBar.SetStatusText(evt.message)
         # print evt.message
         # print '%d of %d' % (evt.track, evt.count)
+    
+    def OnIndexerFinished(self, evt):
+        pass

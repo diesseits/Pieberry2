@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, B
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
-from pieobject.database import *
+from piedb import *
 from pieobject.tags import TagHandler, PieTag, pieobject_tags
 from pieobject.biblio import BiblioHandler
 from pieobject.objectstore import PieObjectStore

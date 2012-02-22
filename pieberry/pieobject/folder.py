@@ -7,7 +7,7 @@ from pprint import pprint
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
 from sqlalchemy import and_
 
-from pieobject.database import SQLABase, session
+from piedb import SQLABase, session
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 from pieutility.decoding import *

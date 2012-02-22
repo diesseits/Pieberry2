@@ -2,7 +2,7 @@ from paths import *
 
 import os, sys, os.path
 
-PIE_CONFIG_CATEGORIES = ('TheProfile', 'Profile', 'Format', 'Paths')
+PIE_CONFIG_CATEGORIES = ('TheProfile', 'Profile', 'Format', 'Paths', 'Internal')
 
 PIE_CONFIG_DEFAULTS = [
     # ('Profile', 'sweep_directory', os.getcwd()),
@@ -23,7 +23,9 @@ PIE_CONFIG_DEFAULTS = [
     ('Format', 'plaintext_citation_format', 'plaintext'),
     ('Format', 'richtext_citation_format', 'html'),
     ('Format', 'filesystem_length_limit', 255),
-    ('Format', 'write_pdf_metadata', True)
+    ('Format', 'write_pdf_metadata', True),
+    ('Internal', 'minutes_between_file_indexes', 30),
+    ('Internal', 'minutes_between_backups', 45)
     ]
 
 PIE_PROFILE_KEYS = [y for x, y, z in PIE_CONFIG_DEFAULTS if x == 'Profile']

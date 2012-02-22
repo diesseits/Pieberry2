@@ -335,6 +335,11 @@ class BaseMainWindow(wx.Frame, PieActor):
             tab, caption, select=True, 
             bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
 
+    def CloseAllPanes(self):
+        paneidxs = range(self.TabBook.GetPageCount())
+        for i in paneidxs:
+            self.TabBook.DeletePage(i)
+
     def DoSearch(self, evt):
         '''stub'''
         print 'altmainwindow.DoSearch'

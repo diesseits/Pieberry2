@@ -5,7 +5,6 @@ import time
 import traceback
 import shutil, os, os.path
 
-import piemeta
 
 from pieobject import *
 from pieobject.paths import *
@@ -13,11 +12,15 @@ from piescrape import *
 from piescrape.execfn import download_file
 from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
+from ui.timers import FileIndexTimer
 from pieconfig import PIE_CONFIG
 from pieconfig.globalvars import *
 from pieoutput.bibtex import *
 from atomise import *
 from searches import *
+
+import piemeta
+import piefiles
 
 if PYNOTIFY: import pynotify
 
@@ -36,6 +39,9 @@ class FunctionMainWindow(BaseMainWindow):
     def __init__(self, *args, **kwds):
         BaseMainWindow.__init__(self, *args, **kwds)
         EVT_PIE_DOWNLOAD_NOTIFY(self, self.Callback_DownloadNotification)
+        self.indextimer = FileIndexTimer(self)
+        self.indextimer.Start(
+            PIE_CONFIG.getint('Internal', 'minutes_between_file_indexes') * 60 * 1000)
 
     def OnWebScrape(self, evt):
         print 'functionmainwindow.OnWebScrape'
@@ -385,7 +391,19 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
+        self.indextimer.Stop()
         session.commit()
         sys.exit()
+
+    def OnStartIndexer(self):
+        '''Begin a threaded file indexer session'''
+        indexer = piefiles.PieFileIndexer(self)
+        self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)
+        self.Bind(EVT_PIE_FILE_INDEX_FINISHED, self.OnIndexerFinished)
+        indexer.start()
             
+    def OnIndexerFinished(self, evt):
+        '''Receive notification that the indexer is done'''
+        session.expire_all()
+        self.StatusBar.SetStatusText(_('File indexing finished'))
 

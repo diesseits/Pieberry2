@@ -1,11 +1,12 @@
 import wx
 import wx.lib.newevent
 
+PieFileIndexFinishedEvent, EVT_PIE_FILE_INDEX_FINISHED = wx.lib.newevent.NewEvent()
+# No attributes
 PieFileIndexEvent, EVT_PIE_FILE_INDEX = wx.lib.newevent.NewEvent()
 # attributes: count (total no objects being indexed)
 #             track (where we're up to in the above)
 #             message (activity being conducted)
-
 PieContextPanelUpdateEvent, EVT_PIE_CONTEXT_PANEL_UPDATE = wx.lib.newevent.NewEvent()
 # attributes:  favourite (boolean)
 PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()

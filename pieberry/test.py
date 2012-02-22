@@ -7,6 +7,12 @@ import sys, os, shutil
 
 from pieconfig.globals import *
 from pieconfig.paths import *
+from pieconfig import PIE_CONFIG
+
+from piedb import create_piedb_engine
+
+create_piedb_engine(DBDIR)
+
 from spoofgeneration import fill_desktopdir
 
 if __name__ == '__main__':
@@ -37,6 +43,7 @@ def test():
 from pieobject.website import make_spoof_websites
 from pieobject.tags import init_tags
 from pieobject.folder import generate_spoof_folder_list, generate_initial_project_folder_list
+
 
 if __name__ == '__main__':
     SQLABase.metadata.create_all(engine)

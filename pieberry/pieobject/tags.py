@@ -7,7 +7,7 @@ import sys, os, os.path, datetime
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 from sqlalchemy import Table, Text, ForeignKey
 
-from pieobject.database import SQLABase, Session, session
+from piedb import SQLABase, Session, session
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 

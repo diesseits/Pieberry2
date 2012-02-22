@@ -9,7 +9,7 @@ from pieconfig.schemas import *
 from pieconfig import PIE_CONFIG
 from pieutility.date import wxdate2pydate
 from pieutility.bibtex import *
-from pieobject.database import Session
+from piedb import Session
 
 class PieFieldPanel(wx.ScrolledWindow):
     def __init__(self, parent, entry_type, fieldlist):

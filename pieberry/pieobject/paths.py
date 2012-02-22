@@ -50,7 +50,7 @@ def suggest_path_store_fromweb(obj):
     root = LIBRARYDIR
     auth = obj.Author(favour_corporate=True)
     subd = obj.collection
-    if obj.tags: tsubd = obj.tags[0]
+    if obj.tags: tsubd = unicode(obj.tags[0])
     else: tsubd = ''
     print 'suggest_path_store_fromweb: ____'
     ext = os.path.splitext(obj.FileData_FullPath)[1]
