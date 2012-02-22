@@ -23,6 +23,9 @@ def build_query_simple(origincode, text, fieldcode, session):
             PieObject.collection.like('%' + t + '%'),
             extract('year', PieObject.date) == t # useless approach but hey
             ))
+    elif fieldcode == 'filename':
+        q = session.query(PieObject).filter(
+            PieObject.FileData_FileName.like('%' + t + '%'))
     elif fieldcode == 'title':
         q = session.query(PieObject).filter(PieObject.title.like('%' + t + '%'))
     elif fieldcode == 'author':

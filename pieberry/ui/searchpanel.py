@@ -1,25 +1,26 @@
 import wx
 from events import *
 
-search_choices = (
+origin_choices = (
     _('All'),
     _('Library'),
     _('Projects'),
     _('Meeting Papers')
     )
 
-search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
+origin_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
 
 searchable_fields = (
     _('Main fields'), 
     _('All fields'),
+    _('File name'),
     _('Title'),
     _('Author'),
     _('Website'),
     _('Journal')
     )
 
-search_field_codes = ('main', 'all', 'title', 'author', 'website', 'journal')
+search_field_codes = ('main', 'all', 'filename', 'title', 'author', 'website', 'journal')
    
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
@@ -52,16 +53,16 @@ class FilterToolsPanel(wx.Panel):
 class SearchToolsPanel(wx.Panel):
     '''Generic search tools panel'''
 
-    def __init__(self, parent):
+    def __init__(self, parent, origin=None, field=None):
         wx.Panel.__init__(self, parent=parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL)
         sizer = wx.BoxSizer(wx.VERTICAL)
         hsizer_top = wx.BoxSizer(wx.HORIZONTAL)
 
         # lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
-        self.originchoice = wx.Choice(self, -1, choices=search_choices)
+        self.originchoice = wx.Choice(self, -1, choices=origin_choices)
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
-        self.filterchoice = wx.Choice(self, -1, choices=searchable_fields)
+        self.fieldchoice = wx.Choice(self, -1, choices=searchable_fields)
         # self.closebutton = wx.BitmapButton(
         #     self, -1, 
         #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 
@@ -71,7 +72,7 @@ class SearchToolsPanel(wx.Panel):
         # hsizer_top.Add(lbl, 0, wx.ALL, 5)
         hsizer_top.Add(self.originchoice, 0, wx.ALL, 5)
         hsizer_top.Add(self.searchctrl, 1, wx.ALL, 5)
-        hsizer_top.Add(self.filterchoice, 0, wx.ALL, 5)
+        hsizer_top.Add(self.fieldchoice, 0, wx.ALL, 5)
         # hsizer_top.Add(self.closebutton, 0, wx.ALL, 5)
 
         sizer.Add(hsizer_top, 1, wx.EXPAND, 0)
@@ -81,6 +82,12 @@ class SearchToolsPanel(wx.Panel):
         self.searchctrl.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch)
         self.searchctrl.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
         # self.closebutton.Bind(wx.EVT_BUTTON, self.OnClose)
+        if origin:
+            assert origin in origin_choice_codes
+            self.originchoice.SetSelection(origin_choice_codes.index(origin))
+        if field:
+            assert field in search_field_codes
+            self.fieldchoice.SetSelection(search_field_codes.index(field))
 
         self.searchctrl.SetFocus()
 
@@ -97,8 +104,8 @@ class SearchToolsPanel(wx.Panel):
     def OnSearch(self, evt):
         newevt = PieSearchEvent(
             searchtext=unicode(self.searchctrl.GetValue()),
-            origin=search_choice_codes[self.originchoice.GetSelection()],
-            fields=search_field_codes[self.filterchoice.GetSelection()]
+            origin=origin_choice_codes[self.originchoice.GetSelection()],
+            fields=search_field_codes[self.fieldchoice.GetSelection()]
             )
         wx.PostEvent(self, newevt)
 

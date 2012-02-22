@@ -263,7 +263,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self._mgr.Update()
         self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.GetCurrentPane().onFilterView)
 
-    def ToggleSearchPanel(self, evt=0):
+    def ToggleSearchPanel(self, evt=0, origin=None, field=None):
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
             self._mgr.ClosePane(spinfo)
@@ -273,7 +273,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             spinfo = self._mgr.GetPane(self.FilterPanel)
             self._mgr.ClosePane(spinfo)
             self.ClearFiltering()
-        self.SearchPanel = SearchToolsPanel(self)
+        self.SearchPanel = SearchToolsPanel(self, origin, field)
         self._mgr.AddPane(
             self.SearchPanel, 
             wxaui.AuiPaneInfo().Bottom().MinSize((300,50)).Floatable(False).Caption(_('New Search')).DestroyOnClose(True)
@@ -323,7 +323,9 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        self.TabBook.AddPage(tab, caption, select=True)
+        self.TabBook.AddPage(
+            tab, caption, select=True,
+            bitmap = wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
 
     def OpenAtomisePane(self, evt=0, ostore=None, caption=_('Desktop items')):
         tab = atomWidget(self.TabBook, -1)

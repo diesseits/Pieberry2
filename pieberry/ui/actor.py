@@ -16,7 +16,7 @@ class PieActor:
         self.ToggleSearchPanel()
 
     def onFindInFolders(self, evt):
-        pass
+        self.ToggleSearchPanel(field='filename')
 
     def OnDesktopProcess(self, evt):
         pass

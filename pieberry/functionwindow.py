@@ -303,7 +303,10 @@ class FunctionMainWindow(BaseMainWindow):
             self.StatusBar.SetStatusText(_('No matches found'))
             wx.CallAfter(self.CloseUtilityPanes)
             return
-        self.OpenSearchPane(caption=evt.searchtext[:20])
+        if evt.fields == 'filename':
+            self.OpenFilePane(caption=evt.searchtext[:20])
+        else:
+            self.OpenSearchPane(caption=evt.searchtext[:20])
         searchpane = self.GetCurrentPane()
         ostore.instantiate_nonstored()
         searchpane.AddObjects(ostore)

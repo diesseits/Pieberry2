@@ -118,28 +118,28 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
 
 class FileListCtrl(BaseListCtrl):
     '''File search/browsing control'''
-    columnheads = ('', _('File'), _('Location'))
+    columnheads = (_('Title'), _('Location'), _('File'))
     columnwidths = (150, 150, 150)
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
         
-    def AddObject(self, obj, ref, statusmsg='Success', 
+    def AddObject(self, obj, ref, statusmsg=None, 
                   msgtype='success', filtertext=None):
         # print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, (obj.FileData_FileName, obj.FileData_Root)):
             return
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
-            statusmsg, 
+            obj.Title(), 
             MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, obj.FileData_FileName)
-        self.SetStringItem(nexidx, 2, obj.FileData_Root)
+        self.SetStringItem(nexidx, 1, obj.FileData_ContainingFolder)
+        self.SetStringItem(nexidx, 2, obj.FileData_FileName)
         self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = (statusmsg, 
-                                 obj.FileData_FileName,
-                                 obj.FileData_Root)
+        self.itemDataMap[ref] = (obj.Title(), 
+                                 obj.FileData_ContainingFolder,
+                                 obj.FileData_FileName)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
