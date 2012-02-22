@@ -133,7 +133,8 @@ class FileListCtrl(BaseListCtrl):
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
             obj.Title(), 
-            MessageType[msgtype])
+            MessageType[obj.get_icon_code(window_type='filewindow')])
+            # MessageType[msgtype])
         self.SetStringItem(nexidx, 1, obj.FileData_ContainingFolder)
         self.SetStringItem(nexidx, 2, obj.FileData_FileName)
         self.SetItemData(nexidx, ref)

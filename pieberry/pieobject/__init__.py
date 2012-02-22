@@ -298,6 +298,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         the system'''
         if not final_fn == self.FileData_FullPath:
             self.set_file(final_fn) #set filename if specified and different 
+            self.set_file_type()
         self.aspects['stored'] = True
         self.aspects['cached'] = False
 
@@ -342,8 +343,10 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             raise IOError, 'Trying to set file data for non existant file'
         self.FileData_FileName = os.path.basename(loc)
         self.FileData_Size = os.stat(loc).st_size
-        self.FileData_DateModified = datetime.datetime.fromtimestamp(
-            os.stat(loc)[8])
+        if not self.FileData_DateModified:
+            # don't override mod_date that might come from metadata
+            self.FileData_DateModified = datetime.datetime.fromtimestamp(
+                os.stat(loc)[8])
         diry = os.path.dirname(loc)
         fdroot = None
         for key, pdir in ROOT_MAP.items():
@@ -383,7 +386,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
         Contexts may include 'filewindow', 'bibwindow', 'dlwindow'''
         if window_type == 'filewindow':
-            if self.FileData_Type == 'pdf':
+            if self.FileData_FileType == 'pdf':
                 return 'pdf'
             else: return 'doc'
     
