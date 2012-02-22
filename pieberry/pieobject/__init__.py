@@ -362,6 +362,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         else:
             self.FileData_FileType = ft
 
+    def clear_file(self):
+        '''Clear all file data - the file is gone (but the object isn't)'''
+        self.FileData_FileType = None
+        self.FileData_FileName = None
+        self.FileData_Size = None
+        self.FileData_Root = None
+        self.FileData_Folder = []
+        self.FileData_DateCreated = None
+        self.FileData_DateModified = None
+        self.remove_aspect('hasfile')
+
     def get_icon_code(self, window_type=None):
         '''Return a code for iconic representation of this object. A
         context can be given through parameter window_type. The codes

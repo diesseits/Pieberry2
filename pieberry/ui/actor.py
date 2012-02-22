@@ -110,5 +110,5 @@ class PieActor:
 
     def DisplayIndexerStatus(self, evt):
         self.StatusBar.SetStatusText(evt.message)
-        print evt.message
-        print '%d of %d' % (evt.track, evt.count)
+        # print evt.message
+        # print '%d of %d' % (evt.track, evt.count)
