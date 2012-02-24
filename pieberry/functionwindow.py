@@ -329,12 +329,17 @@ class FunctionMainWindow(BaseMainWindow):
         session = get_session('desktop')
         ostore = scan_desktop()
         ostore.set_session(session)
-        for obj in ostore:
+        for idx, obj in ostore.GetNext():
             storepath = suggest_path_cache_fromdesktop(obj)
             #can't use os.renames - it'll delete the desktop directory
             if not os.path.isdir(os.path.dirname(storepath)):
                 os.makedirs(os.path.dirname(storepath))
-            os.rename(obj.FileData_FullPath, storepath)
+            try:
+                os.rename(obj.FileData_FullPath, storepath)
+            except:
+                traceback.print_exc()
+                ostore.Del(idx)
+                continue
             obj.add_aspect_cached_from_desktop(storepath)
             obj.remove_aspect('ondesktop')
         for p_ostore in previous_files: ostore.Extend(p_ostore)
