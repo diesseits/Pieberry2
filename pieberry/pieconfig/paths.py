@@ -70,7 +70,6 @@ def init_storage_location(path):
         'projectdir': PROJECTDIR,
         'meetingpaperdir': MEETINGPAPERDIR,
         'recentdocsdir': RECENTDOCSDIR,
-        'desktopdir': None,
         }
 
 def init_desktop_location(path):

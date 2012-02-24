@@ -10,7 +10,8 @@ from pieobject import *
 from pieobject.paths import *
 from piescrape import *
 from piescrape.execfn import download_file
-from ui import BaseMainWindow, PieBibEditDialog
+from ui.altmainwindow import BaseMainWindow 
+from ui.editdialog import PieBibEditDialog
 from ui.events import *
 from ui.timers import FileIndexTimer
 from pieconfig.config import PIE_CONFIG

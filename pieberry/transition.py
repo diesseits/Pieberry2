@@ -43,7 +43,11 @@ if PIE_CONFIG.getboolean('Internal', 'first_run'):
     res, rpaths = show_wizard()
     if not res: sys.exit(0)
     PIE_CONFIG.set('Profile', 'rootdir', rpaths[0])
-    assert os.path.isdir(rpaths[0])
+    if not os.path.isdir(rpaths[0]):
+        try: os.makedirs(rpaths[0])
+        except:
+            print 'Could not create user folder - exiting'
+            sys.exit(1)
     PIE_CONFIG.set('Profile', 'desktopdir', rpaths[1])
     assert os.path.isdir(rpaths[1])
 
@@ -91,7 +95,5 @@ frame_1 = FunctionMainWindow(None, -1, "")
 app.SetTopWindow(frame_1)
 frame_1.Show()
 PIE_CONFIG.set('Internal', 'first_run', 'False')
-if PIE_CONFIG.getboolean('Internal', 'first_run'):
-    frame_1.onConfig(1)
 app.MainLoop()
 
