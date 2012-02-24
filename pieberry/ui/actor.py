@@ -2,7 +2,7 @@ import wx
 import sys, os
 
 from ui.events import *
-from pieconfig import *
+from pieconfig.config import *
 from spoofgeneration import *
 from ui.settingsdialog import PieSettingsDialog
 

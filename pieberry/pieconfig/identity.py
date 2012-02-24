@@ -1,2 +1,2 @@
-PIE_APPNAME="pieberry2alpha"
-PIE_VERSION="2.0a1"
+PIE_APPNAME="pieberry2beta"
+PIE_VERSION="2.0b1"

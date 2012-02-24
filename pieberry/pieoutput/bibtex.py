@@ -1,6 +1,6 @@
 import datetime, os.path, shutil, traceback
 
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 from pieconfig.schemas import bibtexmap
 
 from pieutility.latex import escape_bad_latex_chars as eblc

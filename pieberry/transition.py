@@ -1,54 +1,97 @@
 #!/usr/bin/python
+if __name__ != '__main__':
+    sys.exit(1)
 
 import wx
 import sys, os, shutil
-# sys.path.append(os.path.abspath('pieobject'))
-# print os.path.abspath('.')
 
-from pieconfig.globals import *
-from pieconfig.paths import *
 
-if __name__ == '__main__':
-    # use gettext
-    import gettext
-    gettext.install('pietest')
-    # instantiate app
-    app = wx.PySimpleApp(0)
-    wx.InitAllImageHandlers()
-    # clear out the directories if debugging
-    if DEBUG:
-        nuke_directories()
-        create_directories()
-        fill_desktopdir()
+# import global variables
+print 'Init global variables'
+from pieconfig.globalvars import *
 
+
+# set up system paths
+print 'Init system paths'
+import pieconfig.initsys
+pieconfig.initsys.init_config_location()
+pieconfig.initsys.init_resource_locations()
+print 'Init config'
+
+
+# import config source
+import pieconfig.config
+pieconfig.config.make_config()
+print 'Create config'
+from pieconfig.config import PIE_CONFIG
+
+
+# use gettext
+from pieconfig.identity import PIE_APPNAME
+import gettext
+gettext.install(PIE_APPNAME)
+
+
+# instantiate app
+app = wx.PySimpleApp(0)
+wx.InitAllImageHandlers()
+
+
+# run first-run wizard
+if PIE_CONFIG.getboolean('Internal', 'first_run'):
+    from ui.firstrunwizard import show_wizard
+    res, rpaths = show_wizard()
+    if not res: sys.exit(0)
+    PIE_CONFIG.set('Profile', 'rootdir', rpaths[0])
+    assert os.path.isdir(rpaths[0])
+    PIE_CONFIG.set('Profile', 'desktopdir', rpaths[1])
+    assert os.path.isdir(rpaths[1])
+
+
+# set up user paths
+print 'Init user paths'
+import pieconfig.paths
+pieconfig.paths.init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
+pieconfig.paths.create_directories()
+pieconfig.paths.init_desktop_location(PIE_CONFIG.get('Profile', 'desktopdir'))
+
+
+# init database
+print 'Init database'
+from piedb import *
+create_piedb_engine(pieconfig.paths.DBDIR)
+
+
+# clear out the directories if debugging
+# if DEBUG:
+#     nuke_directories()
+#     create_directories()
+#     fill_desktopdir()
+
+print 'Init pieobject'
 from pieobject import *
 from piescrape import *
-#from ui import BaseMainWindow
-from functionwindow import FunctionMainWindow
-
 from pieobject.tags import init_tags
 from pieobject.folder import generate_initial_project_folder_list
 
-if __name__ == '__main__':
-    SQLABase.metadata.create_all(engine)
-    make_spoof_websites()
+
+print 'Init tables'
+SQLABase.metadata.create_all(engine)
+if PIE_CONFIG.getboolean('Internal', 'first_run'):
     init_tags()
-    generate_spoof_folder_list()
-    generate_initial_project_folder_list()
-    frame_1 = FunctionMainWindow(None, -1, "")
-    app.SetTopWindow(frame_1)
-    frame_1.Show()
-    # frame_1.DebugAddWebPane()
-    # frame_1.DebugAddDownloadedPane()
-    # for i in range(5):
-    #     o = spoof_pieobject('normal')
-    #     p = spoof_pieobject('web')
-    #     pan = frame_1.GetCurrentPane()
-    #     pan.AddObject(p)
-        # frame_1.tab0.AddObject(o)
-        # frame_1.tab1.AddObject(p)
-        # frame_1.tab2.AddObject(o)
-        # print frame_1.tab0.objectstore
-        # print frame_1.tab1.objectstore
-    app.MainLoop()
+
+
+print 'Generating initial folder list'
+generate_initial_project_folder_list()
+
+
+print 'Init UI'
+from functionwindow import FunctionMainWindow
+frame_1 = FunctionMainWindow(None, -1, "")
+app.SetTopWindow(frame_1)
+frame_1.Show()
+PIE_CONFIG.set('Internal', 'first_run', 'False')
+if PIE_CONFIG.getboolean('Internal', 'first_run'):
+    frame_1.onConfig(1)
+app.MainLoop()
 

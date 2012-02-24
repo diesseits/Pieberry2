@@ -4,7 +4,7 @@
 
 import os, sys, os.path, time, string, re
 import urllib2, urlparse
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 from pieconfig.paths import *
 from pieconfig.schemas import FEXTENSIONS
 from pieutility.decoding import *

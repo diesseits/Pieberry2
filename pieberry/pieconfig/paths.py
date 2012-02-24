@@ -1,5 +1,6 @@
 import sys, os, shutil
 
+from initsys import *
 from identity import *
 from globalvars import *
 
@@ -11,87 +12,6 @@ def GetAppdir():
     else:
         retval = os.path.dirname(__file__)
     return retval
-
-if sys.platform == 'linux2':
-    SYSDIR = os.path.join(os.environ["HOME"], "".join([".", PIE_APPNAME]))
-elif sys.platform == 'win32':
-    if os.path.exists(os.path.join(os.environ["HOMEPATH"], "Application Data")):
-        SYSDIR = os.path.join(os.environ["HOMEPATH"], "Application Data", PIE_APPNAME)
-    else:
-        SYSDIR = os.getcwd()
-else: 
-    SYSDIR = os.getcwd()
-
-print 'CWD =', os.getcwd()
-print 'SYSDIR =', SYSDIR
-
-PIE_CONFIG_LOCATION = os.path.join(SYSDIR, 'pieberry.ini')
-
-print 'PIE_CONFIG_LOCATION =', PIE_CONFIG_LOCATION
-
-# if PY2EXE:
-#     IMGDIR = os.getcwd()
-#     HELPDIR = os.path.join(os.getcwd(), 'pieberry')
-# else:
-#     IMGDIR = GetAppdir()
-#     HELPDIR = os.path.join(GetAppdir(), 'help')
-
-IMGDIR = os.path.join(os.getcwd(), 'ui')
-HELPDIR = os.path.join(os.getcwd(), 'piehelp')
-
-print 'IMGDIR =', IMGDIR
-print 'HELPDIR =', HELPDIR
-
-#### Path Construction
-
-def default_paths_relative_to_root(root):
-    ret = {
-        'rootdir': root,
-        'librarydir': os.path.join(root, 'Library'),
-        'projectdir': os.path.join(root, 'Projects'),
-        'meetingpaperdir': os.path.join(root, 'Meeting Papers'),
-        'recentdocsdir': os.path.join(root, 'Recent Documents')
-        }
-    return ret
-
-if not os.path.exists(SYSDIR):
-    try:
-        os.mkdir(SYSDIR)
-        print 'Making settings directory'
-    except:
-        print 'No authority to create settings directory'
-        sys.exit(1)
-
-if DEBUG == True:
-    CACHEDIR = '/tmp/pieberry/cache'
-else:
-    CACHEDIR = os.path.join(SYSDIR, 'cache')
-
-if DEBUG == True:
-    TESTDATADIR = '/home/raif/development/v2Pieberry/pieberry/testdata'
-    LIBRARYDIR = '/tmp/pieberry/library'
-    PROJECTDIR = '/tmp/pieberry/projects'
-    MEETINGPAPERDIR = '/tmp/pieberry/meeting papers'
-    RECENTDOCSDIR = '/tmp/pieberry/recent documents'
-    DESKTOPDIR = '/tmp/pieberry/desktop'
-    DBDIR = '/tmp/pieberry'
-else:
-    DESKTOPDIR = os.getcwd()
-
-ROOT_MAP = { #map these potential roots to allow portability
-    'cachedir': CACHEDIR,
-    'librarydir': LIBRARYDIR,
-    'projectdir': PROJECTDIR,
-    'meetingpaperdir': MEETINGPAPERDIR,
-    'recentdocsdir': RECENTDOCSDIR,
-    'desktopdir': DESKTOPDIR,
-    }
-
-print 'LIBRARYDIR =', LIBRARYDIR
-print 'PROJECTDIR =', PROJECTDIR
-print 'MEETINGPAPERDIR =', MEETINGPAPERDIR
-print 'RECENDOCSDIR =', RECENTDOCSDIR
-print 'DESKTOPDIR =', DESKTOPDIR
 
 def nuke_directories():
     '''Abolish directories (debug only)'''
@@ -109,4 +29,83 @@ def create_directories():
         if not os.path.exists(dr):
             os.makedirs(dr)
     return True
+
+def default_paths_relative_to_root(root):
+    ret = {
+        'rootdir': root,
+        'librarydir': os.path.join(root, 'Library'),
+        'projectdir': os.path.join(root, 'Projects'),
+        'meetingpaperdir': os.path.join(root, 'Meeting Papers'),
+        'recentdocsdir': os.path.join(root, 'Recent Documents'),
+        'cachedir': os.path.join(root, '.cache')
+        }
+    return ret
+
+def init_storage_location(path):
+    '''Initialise a storage location, given as a path to a folder,
+    which should or will contain a pieberry database, and a series of
+    subfolders containing the library, project dir, etc.'''
+    assert os.path.isdir(path)
+    global DBDIR
+    DBDIR = path
+    otherpaths = default_paths_relative_to_root(path)
+    global LIBRARYDIR
+    global PROJECTDIR
+    global MEETINGPAPERDIR
+    global RECENTDOCSDIR
+    global CACHEDIR
+    LIBRARYDIR = otherpaths['librarydir']
+    PROJECTDIR = otherpaths['projectdir']
+    MEETINGPAPERDIR = otherpaths['meetingpaperdir']
+    RECENTDOCSDIR = otherpaths['recentdocsdir']
+    CACHEDIR = otherpaths['cachedir']
+    print 'LIBRARYDIR =', LIBRARYDIR
+    print 'PROJECTDIR =', PROJECTDIR
+    print 'MEETINGPAPERDIR =', MEETINGPAPERDIR
+    print 'RECENDOCSDIR =', RECENTDOCSDIR
+    global ROOT_MAP
+    ROOT_MAP = { #map these potential roots to allow portability
+        'cachedir': CACHEDIR,
+        'librarydir': LIBRARYDIR,
+        'projectdir': PROJECTDIR,
+        'meetingpaperdir': MEETINGPAPERDIR,
+        'recentdocsdir': RECENTDOCSDIR,
+        'desktopdir': None,
+        }
+
+def init_desktop_location(path):
+    '''Set the new desktop location'''
+    assert os.path.isdir(path)
+    global DESKTOPDIR
+    DESKTOPDIR = path
+    print 'DESKTOPDIR =', DESKTOPDIR
+    ROOT_MAP['desktopdir'] = DESKTOPDIR
+
+
+# if PY2EXE:
+#     IMGDIR = os.getcwd()
+#     HELPDIR = os.path.join(os.getcwd(), 'pieberry')
+# else:
+#     IMGDIR = GetAppdir()
+#     HELPDIR = os.path.join(GetAppdir(), 'help')
+
+#### Path Construction
+
+
+# if DEBUG == True:
+#     CACHEDIR = '/tmp/pieberry/cache'
+# else:
+#     CACHEDIR = os.path.join(SYSDIR, 'cache')
+
+# if DEBUG == True:
+#     TESTDATADIR = '/home/raif/development/v2Pieberry/pieberry/testdata'
+#     LIBRARYDIR = '/tmp/pieberry/library'
+#     PROJECTDIR = '/tmp/pieberry/projects'
+#     MEETINGPAPERDIR = '/tmp/pieberry/meeting papers'
+#     RECENTDOCSDIR = '/tmp/pieberry/recent documents'
+#     DESKTOPDIR = '/tmp/pieberry/desktop'
+#     DBDIR = '/tmp/pieberry'
+# else:
+#     DESKTOPDIR = os.getcwd()
+
 

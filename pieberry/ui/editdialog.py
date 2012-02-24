@@ -6,7 +6,7 @@ from ui.validators import *
 from ui.events import PieBibEditEvent
 
 from pieconfig.schemas import *
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 from pieutility.date import wxdate2pydate
 from pieutility.bibtex import *
 from piedb import Session

@@ -1,12 +1,11 @@
 from ConfigParser import ConfigParser, SafeConfigParser
 from pprint import pprint
 from globalvars import *
-from paths import *
+from initsys import *
 from schemas import *
 from identity import *
 from defaults import *
 from profiles import *
-
 
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and
@@ -51,6 +50,8 @@ def setup_config(inipath):
     config.write(open(PIE_CONFIG_LOCATION, 'w'))
     return config
 
-PIE_CONFIG = setup_config(PIE_CONFIG_LOCATION)
+def make_config():
+    PIE_CONFIG = setup_config(PIE_CONFIG_LOCATION)
+    global PIE_CONFIG
 
 

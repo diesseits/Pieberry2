@@ -9,7 +9,7 @@ if __name__ == '__main__':
 else:
     from pieconfig.paths import IMGDIR
 
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 
 class ProfilePanel(wx.Panel):
     def __init__(self, *args, **kwargs):

@@ -5,13 +5,12 @@
 # disks etc.
 
 import cPickle, os.path, os
-from paths import *
+from initsys import *
 from globalvars import DEBUG
 from defaults import PIE_PROFILE_KEYS
 
-
-global PROFILES
 PROFILES={}
+global PROFILES
 
 def add_profile(name, prof):
     assert type(prof) == dict

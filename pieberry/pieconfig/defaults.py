@@ -1,5 +1,3 @@
-from paths import *
-
 import os, sys, os.path
 
 PIE_CONFIG_CATEGORIES = ('TheProfile', 'Profile', 'Format', 'Paths', 'Internal')
@@ -11,7 +9,8 @@ PIE_CONFIG_DEFAULTS = [
     ('TheProfile', 'current_profile', 'Default'),
     ('Profile', 'bibliography_file', 'library.bib'),
     # ('Profile', 'exclude_by_default', 'submissions'),
-    ('Profile', 'desktopdir', DESKTOPDIR),
+    ('Profile', 'desktopdir', os.getcwd()),
+    ('Profile', 'rootdir', os.getcwd()),
     ('Format', 'default_bibtex_entry_type', 'Misc'),
     ('Format', 'default_howpublished_text', 'On The Web'),
     # ('Profile', 'default_bibtex_entry_style', '0'),
@@ -25,14 +24,15 @@ PIE_CONFIG_DEFAULTS = [
     ('Format', 'filesystem_length_limit', 255),
     ('Format', 'write_pdf_metadata', True),
     ('Internal', 'minutes_between_file_indexes', 30),
-    ('Internal', 'minutes_between_backups', 45)
+    ('Internal', 'minutes_between_backups', 45),
+    ('Internal', 'first_run', True)
     ]
 
 PIE_PROFILE_KEYS = [y for x, y, z in PIE_CONFIG_DEFAULTS if x == 'Profile']
 
-for key, path in default_paths_relative_to_root(os.getcwd()).items():
-    if key == 'rootdir':
-        PIE_CONFIG_DEFAULTS.append(('Profile', key, path))
-    else:
-        PIE_CONFIG_DEFAULTS.append(('Paths', key, path))
+# for key, path in default_paths_relative_to_root(os.getcwd()).items():
+#     if key == 'rootdir':
+#         PIE_CONFIG_DEFAULTS.append(('Profile', key, path))
+#     else:
+#         PIE_CONFIG_DEFAULTS.append(('Paths', key, path))
      

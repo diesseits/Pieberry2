@@ -13,7 +13,7 @@ from piescrape.execfn import download_file
 from ui import BaseMainWindow, PieBibEditDialog
 from ui.events import *
 from ui.timers import FileIndexTimer
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 from pieconfig.globalvars import *
 from pieoutput.bibtex import *
 from atomise import *

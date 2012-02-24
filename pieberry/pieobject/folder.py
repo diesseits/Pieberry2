@@ -12,8 +12,8 @@ from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 from pieutility.decoding import *
 
-FOLDER_LOOKUP = {}
 global FOLDER_LOOKUP
+FOLDER_LOOKUP = {}
 
 for key, val in ROOT_MAP.items():
     FOLDER_LOOKUP[key] = []

@@ -14,7 +14,7 @@ from pieobject.objectstore import PieObjectStore
 from pieobject.diagnostic import *
 from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
 from pieobject.website import PieWebsite, referable_website, validify_domain
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 from pieconfig.paths import ROOT_MAP
 from pieconfig.schemas import bibtexfields, bibtexmap
 

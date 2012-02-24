@@ -1,6 +1,6 @@
 import datetime
 
-from pieconfig import PIE_CONFIG
+from pieconfig.config import PIE_CONFIG
 
 from pieutility.latex import escape_bad_latex_chars as eblc
 from pieutility.latex import unescape_bad_latex_chars as ublc
