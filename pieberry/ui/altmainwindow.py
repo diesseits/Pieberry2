@@ -225,7 +225,10 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.ContextPane.SetObject(evt.pieobject)
 
     def GetCurrentPane(self):
-        return self.TabBook.GetPage(self.TabBook.GetSelection())
+        try:
+            return self.TabBook.GetPage(self.TabBook.GetSelection())
+        except:
+            raise Exception, 'Cannot select panel'
 
     def ClearFiltering(self, pageref=None):
         '''Clear filtering on current page'''
@@ -251,6 +254,12 @@ class BaseMainWindow(wx.Frame, PieActor):
             self._mgr.ClosePane(spinfo)
             self._mgr.Update()
             self.ClearFiltering()
+            return
+        if self.GetCurrentPane().paneltype not in (
+            'FileListPanel', 
+            'WebListPanel',
+            'BibListPanel',
+            'StagingListPanel'):
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
