@@ -55,10 +55,11 @@ def suggest_path_store_fromweb(obj):
     print 'suggest_path_store_fromweb: ____'
     ext = os.path.splitext(obj.FileData_FullPath)[1]
     # try to fix odd file extensions (phtml, php etc)
-    if not ext in FEXTENSIONS[obj.FileData_FileType]:
-        if len(FEXTENSIONS[obj.FileData_FileType]) == 1:
-            # only guess if there's only one possible extension
-            ext = FEXTENSIONS[obj.FileData_FileType][0]
+    if not obj.FileData_FileType == None:
+        if not ext in FEXTENSIONS[obj.FileData_FileType]:
+            if len(FEXTENSIONS[obj.FileData_FileType]) == 1:
+                # only guess if there's only one possible extension
+                ext = FEXTENSIONS[obj.FileData_FileType][0]
     fn_prop = "%s - %s%s" % (
         obj.ReferDate().strftime("%Y%m%d"),
         translate_non_alphanumerics(obj.Title()),

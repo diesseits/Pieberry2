@@ -60,9 +60,11 @@ class SearchToolsPanel(wx.Panel):
 
         # lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
         self.originchoice = wx.Choice(self, -1, choices=origin_choices)
+        self.originchoice.SetSelection(0)
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
         self.fieldchoice = wx.Choice(self, -1, choices=searchable_fields)
+        self.fieldchoice.SetSelection(0)
         # self.closebutton = wx.BitmapButton(
         #     self, -1, 
         #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 

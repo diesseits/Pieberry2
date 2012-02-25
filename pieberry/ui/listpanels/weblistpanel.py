@@ -105,8 +105,10 @@ class WebListPanel(BaseListPanel):
     def onLinkTypeChoice(self, evt):
         if evt.GetSelection() == 0:
             types = PIE_TYPES_DOCUMENTS
+            self.DownloadButton.Enable(True)
         elif evt.GetSelection() == 1:
             types = PIE_TYPES_ALL
+            self.DownloadButton.Enable(False)
         newevt = PieRefreshWebListEvent(
             types=types, 
             session_data=self.objectstore.get_session_data())

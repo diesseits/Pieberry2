@@ -53,35 +53,38 @@ class NormalContextObject:
             listofallfileextensions.extend(FEXTENSIONS[i])
         print 'types = ', types
         if types == PIE_TYPES_ALL:
-            links.extend(self._bs.findAll('a'))
+            links = self._bs.findAll('a')
+            ret.extend(self.marshal_link_metadata(links, 'unknown', baseurl, listofallfileextensions))
         else:
             for linktype in types:
                 links = []
                 if linktype in LINKTESTS.keys():
                     for linkre in LINKTESTS[linktype]:
                         links.extend(self._bs.findAll('a', href=linkre))
-                ret.extend(self.marshal_link_metadata(links, linktype))
+                ret.extend(self.marshal_link_metadata(links, linktype, baseurl, listofallfileextensions))
             if types == PIE_TYPES_DOCUMENTS:
                 # handle regexs that will find "documents" but might
                 # not know their exact type
                 links = []
                 for linkre in RE_SPECIAL_DOCS:
                     links.extend(self._bs.findAll('a', href=linkre))
-                ret.extend(self.marshal_link_metadata(links, 'unknown'))
+                ret.extend(self.marshal_link_metadata(links, 'unknown', baseurl, listofallfileextensions))
         return ret
 
     def get_context_title(self):
         return unicode(decode_htmlentities(self._bs.title.string))
 
-    def marshal_link_metadata(self, links, linktype):
+    def marshal_link_metadata(self, links, linktype, baseurl, listofallfileextensions):
         '''Marshal the metadata glean-able from the link's context
         together into a dictionary for the edification of other bits
         of this program'''
         ret = []
         for link in links:
             linkdata = {}
-            linkdata['Url'] = urlparse.urljoin(
-                baseurl, link['href'].encode('utf-8'))
+            try:
+                linkdata['Url'] = urlparse.urljoin(
+                    baseurl, link['href'].encode('utf-8'))
+            except: continue
             linkdata['Url'] = unicode(linkdata['Url'])
             if link.findPrevious(head_re):
                 linkdata['LastHeading'] = unicode(
@@ -102,7 +105,7 @@ class NormalContextObject:
             linkdata['Tags'] = tag_by_data(linkdata)
             linkdata['InferredFileType'] = linktype
             ret.append(linkdata)
-            return ret
+        return ret
 
 
 
