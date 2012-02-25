@@ -5,7 +5,6 @@ if __name__ != '__main__':
 import wx
 import sys, os, shutil
 
-
 # import global variables
 print 'Init global variables'
 from pieconfig.globalvars import *
