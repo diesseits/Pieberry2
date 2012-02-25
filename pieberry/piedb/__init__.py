@@ -15,7 +15,7 @@ def create_piedb_engine(rootpath):
     global engine
     global Session
     global session
-    engine = create_engine('sqlite:///%s/pieberry.db' % rootpath, echo=True, 
+    engine = create_engine('sqlite:///%s/pieberry.db' % rootpath, echo=False, 
                        poolclass=NullPool)
     SQLABase = declarative_base(bind=engine)
     Session = sessionmaker(bind=engine)
