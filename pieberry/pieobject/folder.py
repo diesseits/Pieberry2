@@ -9,7 +9,7 @@ from sqlalchemy import and_
 
 from piedb import SQLABase, session
 from pieconfig.paths import ROOT_MAP
-from pieconfig.globals import DEBUG
+from pieconfig.globalvars import DEBUG
 from pieutility.decoding import *
 
 global FOLDER_LOOKUP
