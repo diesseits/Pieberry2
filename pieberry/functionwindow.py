@@ -14,12 +14,14 @@ from ui.altmainwindow import BaseMainWindow
 from ui.editdialog import PieBibEditDialog
 from ui.events import *
 from ui.timers import FileIndexTimer
+from ui.settingsdialog import PieSettingsDialog
 from pieconfig.config import PIE_CONFIG
 from pieconfig.globalvars import *
 from pieoutput.bibtex import *
 from atomise import *
 from searches import *
 
+import piedb
 import piemeta
 import piefiles
 
@@ -292,7 +294,7 @@ class FunctionMainWindow(BaseMainWindow):
         pan.AddObject(obj)
 
     def DoSearch(self, evt):
-        print 'Actor: doSearch: %s' % evt.searchtext
+        # print 'Actor: doSearch: %s' % evt.searchtext
         if len(evt.searchtext) < 3: return
         self.StatusBar.SetStatusText(_('Searching for "%s"' % evt.searchtext))
         # session = Session()
@@ -399,6 +401,7 @@ class FunctionMainWindow(BaseMainWindow):
     def onClose(self, evt):
         self.indextimer.Stop()
         session.commit()
+        session.close()
         sys.exit()
 
     def OnStartIndexer(self):
@@ -413,3 +416,25 @@ class FunctionMainWindow(BaseMainWindow):
         session.expire_all()
         self.StatusBar.SetStatusText(_('File indexing finished'))
 
+    def onConfig(self, evt):
+        dia = PieSettingsDialog(self)
+        dia.Bind(EVT_PIE_LOCATION_CHANGED, self.OnChangeLocation)
+        dia.ShowModal()
+        dia.Destroy()
+
+    def OnChangeLocation(self, evt):
+        wx.MessageBox(_('As you have changed the database location, Pieberry will need to close and be restarted for the changes to come into effect. Closing now (no data will be lost).'))
+        self.onClose(1)
+        # Totally failed at trying to dynamically close and reopen the database. 
+
+        # self.StatusBar.SetStatusText(_("Changing Pieberry's storage location"))
+        # newloc = PIE_CONFIG.get('Profile', 'rootdir')
+        # assert os.path.isdir(newloc)
+        # self.CloseAllPanes()
+        # piedb.close_piedb_engine()
+        # # session.close()
+        # # piedb.del_all()
+        # piedb.create_piedb_engine(newloc)
+        # init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
+        # create_directories()
+        # self.StatusBar.SetStatusText(_("Changed Pieberry's storage location to %s" % newloc))

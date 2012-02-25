@@ -6,11 +6,11 @@ import sys, os, os.path, datetime
 import urlparse
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 
-from piedb import SQLABase, Session
+from piedb import SQLABase, Session, session
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globals import DEBUG
 
-session = Session()
+# session = Session()
 
 class PieWebsite(SQLABase):
     '''A class for information about library and project folders'''

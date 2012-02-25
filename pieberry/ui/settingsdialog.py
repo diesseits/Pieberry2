@@ -1,5 +1,6 @@
 import wx, os.path, os
 from validators import pieBibtexValidator
+from events import PieLocationChangedEvent
 from pieobject.folder import *
 
 if __name__ == '__main__':
@@ -24,6 +25,7 @@ class ProfilePanel(wx.Panel):
             path = PIE_CONFIG.get('Profile', 'rootdir'),
             style = wx.DIRP_USE_TEXTCTRL)
         self.rootdirctrl.SetPath(PIE_CONFIG.get('Profile', 'rootdir'))
+        self.rootdiratstart = PIE_CONFIG.get('Profile', 'rootdir')
         self.desktopdirctrl = wx.DirPickerCtrl(
             self, -1, 
             path = PIE_CONFIG.get('Profile', 'desktopdir'),
@@ -387,6 +389,10 @@ class PieSettingsDialog(wx.Dialog):
                 PIE_CONFIG.set(sectionkey, key, str(val))
         PIE_CONFIG.update_profile(theprofile, profiledata[1])
         PIE_CONFIG.write_pieconfig()
+        if PIE_CONFIG.get('Profile', 'rootdir') != self.profilepanel.rootdiratstart:
+            # tell the system if the root directory has changed
+            newevt = PieLocationChangedEvent()
+            wx.PostEvent(self, newevt)
         self.EndModal(wx.ID_OK)
 
     def onCancel(self, evt=1):

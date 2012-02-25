@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieLocationChangedEvent, EVT_PIE_LOCATION_CHANGED = wx.lib.newevent.NewEvent()
+# No attributes
 PieFileIndexFinishedEvent, EVT_PIE_FILE_INDEX_FINISHED = wx.lib.newevent.NewEvent()
 # No attributes
 PieFileIndexEvent, EVT_PIE_FILE_INDEX = wx.lib.newevent.NewEvent()
