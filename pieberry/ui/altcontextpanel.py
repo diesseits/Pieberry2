@@ -173,7 +173,7 @@ class WebInfoPanel(wx.Panel):
         kwargs['size'] = (80,30)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
 
-        self.urlDisplay = wx.HyperlinkCtrl(self, -1, '', '')
+        self.urlDisplay = wx.HyperlinkCtrl(self, -1, 'empty', 'empty')
         self._do_layout()
 
     def _do_layout(self):
@@ -252,8 +252,8 @@ class FBBPanel(wx.Panel):
         self.title = wx.StaticText(self, -1, '')
         # self.title = wx.TextCtrl(self, -1, style=wx.TE_READONLY)
         # self.title = wx.WindowDC(self)
-        font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
-        self.title.SetFont(font)
+        # font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
+        # self.title.SetFont(font)
         self.sizer.Add(self.title, 1, wx.EXPAND)
         # self.sizer.Add((22,22), 1)
         self.SetSizer(self.sizer)

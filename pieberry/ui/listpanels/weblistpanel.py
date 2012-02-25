@@ -24,6 +24,7 @@ class WebListPanel(BaseListPanel):
         self.SelAllButton = wx.Button(self, -1, label=_('Select All'))
         self.LinkTypeChoice = wx.Choice(self, -1, choices=(
                 _('Documents'), _('All links')))
+        self.LinkTypeChoice.SetSelection(0)
         self.ReferenceButton = wx.Button(self, -1, label=_('Reference selected'))
         self.DownloadButton = wx.Button(self, -1, label=_('Download selected'))
         self.sizer1.Add(self.SelAllButton, 0, wx.ALL, 5)

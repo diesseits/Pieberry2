@@ -2,7 +2,7 @@ import wx
 import wx.lib.agw.aui as wxauip
 # import wx.lib.agw.flatnotebook as fnb
 import wx.aui as wxaui
-import os
+import os, sys
 
 from events import *
 from searchpanel import *
@@ -29,7 +29,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         # self.TabBook.SetMinSize((500,500))
         # self.TabBook = fnb.FlatNotebook(self, -1)
         self.StatusBar = wx.StatusBar(self, -1)
-        self.StatusBar.SetStatusStyles([1, wx.SB_FLAT])
+        if sys.platform != 'win32':
+            self.StatusBar.SetStatusStyles([1, wx.SB_FLAT])
 
         # Menu Bar
         menuBar = wx.MenuBar()
@@ -171,7 +172,10 @@ class BaseMainWindow(wx.Frame, PieActor):
         # begin wxGlade: GladeMainWindow.__set_properties
         self.SetTitle("Pieberry II")
         _icon = wx.EmptyIcon()
-        _icon.CopyFromBitmap(wx.Bitmap("/home/raif/development/v2Pieberry/pieberry/ui/pieberry.ico", wx.BITMAP_TYPE_ANY))
+        if sys.platform == 'win32':
+            _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_16.png')))
+        else:
+            _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pieberry.ico', wx.BITMAP_TYPE_ANY)))
         self.SetIcon(_icon)
         self.SetSize((862, 546))
         # end wxGlade

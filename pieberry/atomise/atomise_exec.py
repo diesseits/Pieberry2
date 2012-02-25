@@ -27,7 +27,12 @@ def scan_desktop():
     ostore = PieObjectStore()
     for fl in file_list:
         assert type(fl) == unicode
-        d = piemeta.get_metadata_object(fl)
+        try:
+            d = piemeta.get_metadata_object(fl)
+        except Exception, exc:
+            print 'Could not handle file: %s' % fl
+            print exc
+            continue
         if d:
             d.add_aspect_ondesktop(fl)
             ostore.Add(d)
