@@ -95,5 +95,6 @@ frame_1 = FunctionMainWindow(None, -1, "")
 app.SetTopWindow(frame_1)
 frame_1.Show()
 PIE_CONFIG.set('Internal', 'first_run', 'False')
+PIE_CONFIG.write_pieconfig()
 app.MainLoop()
 

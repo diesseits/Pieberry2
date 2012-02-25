@@ -3,7 +3,7 @@ from validators import *
 from events import PieWebScrapeEvent, PiePrefetchStartEvent
 from timers import WebPanelUiTimer
 
-from pieobject.website import get_authorlist
+from pieobject.website import get_authorlist, validify_url
 
 class WebScrapePanel(wx.Panel):
     '''Generic search tools panel'''
@@ -157,7 +157,7 @@ subdirectory in which to store these documents.''')
         self.scanButton.SetLabel(_('Abort'))
         self.scrape_in_progress = True
         newevt = PieWebScrapeEvent(
-            url = self.sc_url,
+            url = validify_url(self.sc_url),
             catstring = self.sc_tag,
             catbehaviour = self.sc_tagbehav,
             author = self.sc_auth,

@@ -47,7 +47,6 @@ class NormalContextObject:
         '''receive a tuple of link types to seek
         return a list of dicts containing information on the various
         links'''
-        links = []
         ret = []
         listofallfileextensions = []
         for i in types:
@@ -57,14 +56,28 @@ class NormalContextObject:
             links.extend(self._bs.findAll('a'))
         else:
             for linktype in types:
+                links = []
                 if linktype in LINKTESTS.keys():
                     for linkre in LINKTESTS[linktype]:
                         links.extend(self._bs.findAll('a', href=linkre))
+                ret.extend(self.marshal_link_metadata(links, linktype))
             if types == PIE_TYPES_DOCUMENTS:
                 # handle regexs that will find "documents" but might
                 # not know their exact type
+                links = []
                 for linkre in RE_SPECIAL_DOCS:
                     links.extend(self._bs.findAll('a', href=linkre))
+                ret.extend(self.marshal_link_metadata(links, 'unknown'))
+        return ret
+
+    def get_context_title(self):
+        return unicode(decode_htmlentities(self._bs.title.string))
+
+    def marshal_link_metadata(self, links, linktype):
+        '''Marshal the metadata glean-able from the link's context
+        together into a dictionary for the edification of other bits
+        of this program'''
+        ret = []
         for link in links:
             linkdata = {}
             linkdata['Url'] = urlparse.urljoin(
@@ -73,6 +86,8 @@ class NormalContextObject:
             if link.findPrevious(head_re):
                 linkdata['LastHeading'] = unicode(
                     link.findPrevious(head_re).text)
+            else:
+                linkdata['LastHeading'] = u''
             if hasattr(link, 'text'):
                 linkdata['LinkText'] = decode_htmlentities(unicode(link.text))
                 st = link.text.strip(' -_')
@@ -85,11 +100,11 @@ class NormalContextObject:
                 linkdata['SuggestedTitle'] = unicode(linkdata['Url'])
             linkdata['PageTitle'] = self.get_context_title()
             linkdata['Tags'] = tag_by_data(linkdata)
+            linkdata['InferredFileType'] = linktype
             ret.append(linkdata)
-        return ret
+            return ret
 
-    def get_context_title(self):
-        return unicode(decode_htmlentities(self._bs.title.string))
+
 
 TESTS = {
     'Submissions': (

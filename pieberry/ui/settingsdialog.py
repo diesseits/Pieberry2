@@ -327,21 +327,30 @@ class CleanerPanel(wx.Panel):
         self.createNewDirBt.Bind(wx.EVT_BUTTON, self.onCreateNewDir)
         # self.delDirBt.Bind(wx.EVT_BUTTON, self.onDeleteDir)
 
+class SimplePanel(wx.Panel):
+    def __init__(self, *args, **kwds):
+        wx.Panel.__init__(self, *args, **kwds)
+        self.mainsizer = wx.BoxSizer(wx.VERTICAL)
+        self.bt = wx.Button(self, -1, "Hello")
+        self.mainsizer.Add(self.bt, 1, wx.EXPAND|wx.ALL, 5)
+        self.SetSizer(self.mainsizer)
+        self.Layout()
+
 class PieSettingsDialog(wx.Dialog):
     
     def __init__(self, *args, **kwds):
         # begin wxGlade: pieConfigDialog.__init__
-        kwds["style"] = wx.DEFAULT_DIALOG_STYLE
         kwds["size"] = (600, 400)
         kwds["title"] = _('Pieberry Settings')
         wx.Dialog.__init__(self, *args, **kwds)
+        self.mainsizer = wx.BoxSizer(wx.VERTICAL)
 
         self.listbook = wx.Listbook(self, -1)
         self.listbook.SetImageList(SettingsImageList)
 
-        self.profilepanel = ProfilePanel(self, -1)
-        self.formatpanel = FormatPanel(self, -1)
-        self.cleanerpanel = CleanerPanel(self, -1)
+        self.profilepanel = ProfilePanel(self.listbook, -1)
+        self.formatpanel = FormatPanel(self.listbook, -1)
+        self.cleanerpanel = CleanerPanel(self.listbook, -1)
 
         self.okBt = wx.Button(self, wx.ID_OK, "Ok")
         self.cancelBt = wx.Button(self, wx.ID_CANCEL, "Cancel")
@@ -350,9 +359,8 @@ class PieSettingsDialog(wx.Dialog):
         self._do_bindings()
 
     def _do_layout(self):
-        self.mainsizer = wx.BoxSizer(wx.VERTICAL)
-        self.mainsizer.Add(self.listbook, 1, wx.EXPAND)
-
+        self.mainsizer.Add(self.listbook, 1, wx.EXPAND|wx.ALL, 5)
+        
         self.listbook.AddPage(self.profilepanel, _('Profile'), True, 0)
         self.listbook.AddPage(self.formatpanel, _('Format'), False, 1)
         self.listbook.AddPage(self.cleanerpanel, _('Desktop Cleaner'), False, 2)

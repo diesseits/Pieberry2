@@ -32,6 +32,7 @@ class PDFContextObject:
                     'LastHeading': '',
                     'LinkText': self.get_context_title(),
                     'SuggestedTitle': self.get_context_title(),
+                    'InferredFileType': 'pdf',
                     'Tags': []}
         ret = [linkdata,]
         return ret
