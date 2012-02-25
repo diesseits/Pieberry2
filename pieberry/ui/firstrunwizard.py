@@ -23,9 +23,9 @@ class SelRootPage(TitledPage):
         self.rootdirctrl = wx.DirPickerCtrl(
             self, -1, 
             # path = PIE_CONFIG.get('Profile', 'rootdir'),
-            # path = os.getcwd(),
-            path = '/tmp/pieberry/',
-            style = wx.DIRP_USE_TEXTCTRL)
+            path = os.getcwd(),
+            # path = '/tmp/pieberry/',
+            style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_DIR_MUST_EXIST)
         self.sizer.AddWindow((20,20), 1)
         self.sizer.AddWindow(
             self.rootdirctrl, 0, wx.ALIGN_CENTRE|wx.EXPAND|wx.ALL, 5)
@@ -39,7 +39,7 @@ class SelDeskPage(TitledPage):
             self, -1, 
             # path = PIE_CONFIG.get('Profile', 'rootdir'),
             path = os.getcwd(),
-            style = wx.DIRP_USE_TEXTCTRL)
+            style = wx.DIRP_USE_TEXTCTRL|wx.DIRP_DIR_MUST_EXIST)
         self.sizer.AddWindow((20,20), 1)
         self.sizer.AddWindow(
             self.deskdirctrl, 0, wx.ALIGN_CENTRE|wx.EXPAND|wx.ALL, 5)

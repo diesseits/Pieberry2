@@ -42,7 +42,7 @@ class PieActor:
         info = wx.AboutDialogInfo()
         info.AddDeveloper('Raif Sarcich')
         info.SetVersion(PIE_VERSION)
-        info.SetCopyright('(c) 2010 Raif Sarcich et. al.')
+        info.SetCopyright('(c) 2012 Raif Sarcich et. al.')
         info.SetLicence(
     '''This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class PieActor:
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.''')
-        info.SetDescription(_('A program to download pdf documents from public websites, and catalogue them in BibTeX format'))
+        info.SetDescription(_('The swiss army knife of the public servant. A program encompassing web scraping, cataloguing, filing, search, citation, organisation and archival functions.'))
         info.SetName(_('Pieberry (...for your library)'))
         info.SetWebSite('http://members.iinet.net.au/~raifsarcich/pieberry/')
         _icon = wx.EmptyIcon()

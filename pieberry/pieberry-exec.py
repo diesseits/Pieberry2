@@ -38,7 +38,7 @@ wx.InitAllImageHandlers()
 
 
 # run first-run wizard
-if PIE_CONFIG.getboolean('Internal', 'first_run'):
+if PIE_CONFIG.getboolean('Internal', 'first_run') or not os.path.isdir(PIE_CONFIG.get('Profile', 'rootdir')):
     from ui.firstrunwizard import show_wizard
     res, rpaths = show_wizard()
     if not res: sys.exit(0)
@@ -50,6 +50,7 @@ if PIE_CONFIG.getboolean('Internal', 'first_run'):
             sys.exit(1)
     PIE_CONFIG.set('Profile', 'desktopdir', rpaths[1])
     assert os.path.isdir(rpaths[1])
+
 
 
 # set up user paths
