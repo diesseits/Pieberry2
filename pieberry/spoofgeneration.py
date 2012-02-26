@@ -3,9 +3,9 @@
 import random
 import datetime
 import os.path, os
-from pieobject import PieObject, PieObjectStore, PieTag
-from pieobject.paths import *
-from pieconfig.paths import ROOT_MAP
+from pieberry.pieobject import PieObject, PieObjectStore, PieTag
+from pieberry.pieobject.paths import *
+from pieberry.pieconfig.paths import ROOT_MAP
 
 ipsum = (
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

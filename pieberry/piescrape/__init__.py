@@ -3,7 +3,7 @@
 from threading import Thread
 from scraper import PieScraper
 
-
+# Not using at the moment
 class PieScraperThread(Thread, PieScraper):
 
     def __init__(self, notify_window, *args, **kwargs):

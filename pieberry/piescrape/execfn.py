@@ -1,6 +1,6 @@
 import os.path, os, traceback, urllib
 from urlparse import urlparse
-from pieconfig.globalvars import U_ERROR_BEHAV, DEBUG
+from pieberry.pieconfig.globalvars import U_ERROR_BEHAV, DEBUG
 
 def download_file(
     url, # the url

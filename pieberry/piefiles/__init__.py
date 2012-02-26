@@ -1,13 +1,13 @@
 import os, os.path, sys, wx, traceback, datetime, time
-import piemeta
+import pieberry.piemeta as piemeta
 
 from threading import Thread
 
-from ui.events import PieFileIndexEvent, PieFileIndexFinishedEvent
-from pieobject import PieObject, PieFolder
-from piedb import Session
-from pieobject.diagnostic import *
-from pieconfig.paths import *
+from pieberry.ui.events import PieFileIndexEvent, PieFileIndexFinishedEvent
+from pieberry.pieobject import PieObject, PieFolder
+from pieberry.piedb import Session
+from pieberry.pieobject.diagnostic import *
+from pieberry.pieconfig.paths import *
 
 class TooManyMatchesError(Exception):
     '''This Exception means too many matching files were found'''

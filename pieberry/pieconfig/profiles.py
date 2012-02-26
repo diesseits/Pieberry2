@@ -5,9 +5,9 @@
 # disks etc.
 
 import cPickle, os.path, os
-from initsys import *
-from globalvars import DEBUG
-from defaults import PIE_PROFILE_KEYS
+from pieberry.pieconfig.initsys import *
+from pieberry.pieconfig.globalvars import DEBUG
+from pieberry.pieconfig.defaults import PIE_PROFILE_KEYS
 
 PROFILES={}
 global PROFILES

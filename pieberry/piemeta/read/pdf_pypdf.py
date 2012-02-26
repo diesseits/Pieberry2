@@ -1,6 +1,6 @@
 import pyPdf, traceback, datetime, string, re, os, os.path
-from pieobject import PieObject
-from fake import get_fake_metadata
+from pieberry.pieobject import PieObject
+from pieberry.piemeta.read.fake import get_fake_metadata
 
 # TODO: bring up to date for P2
 splre = re.compile("[./_ ]")

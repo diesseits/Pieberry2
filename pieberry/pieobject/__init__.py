@@ -7,16 +7,16 @@ from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, B
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
-from piedb import *
-from pieobject.tags import TagHandler, PieTag, pieobject_tags
-from pieobject.biblio import BiblioHandler
-from pieobject.objectstore import PieObjectStore
-from pieobject.diagnostic import *
-from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
-from pieobject.website import PieWebsite, referable_website, validify_domain
-from pieconfig.config import PIE_CONFIG
-from pieconfig.paths import ROOT_MAP
-from pieconfig.schemas import bibtexfields, bibtexmap
+from pieberry.piedb import *
+from pieberry.pieobject.tags import TagHandler, PieTag, pieobject_tags
+from pieberry.pieobject.biblio import BiblioHandler
+from pieberry.pieobject.objectstore import PieObjectStore
+from pieberry.pieobject.diagnostic import *
+from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
+from pieberry.pieobject.website import PieWebsite, referable_website, validify_domain
+from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.paths import ROOT_MAP
+from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'

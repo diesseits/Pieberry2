@@ -9,9 +9,9 @@ from sqlalchemy import Table, Text, ForeignKey
 
 print 'PIEDB working dir:', os.getcwd()
 
-from pieconfig.paths import ROOT_MAP
-from pieconfig.globalvars import DEBUG
-from piedb import SQLABase, Session, session
+from pieberry.pieconfig.paths import ROOT_MAP
+from pieberry.pieconfig.globalvars import DEBUG
+from pieberry.piedb import SQLABase, Session, session
 
 # session = Session()
 

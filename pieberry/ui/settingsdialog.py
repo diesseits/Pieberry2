@@ -1,16 +1,16 @@
 import wx, os.path, os
-from validators import pieBibtexValidator
-from events import PieLocationChangedEvent
-from pieobject.folder import *
+from pieberry.ui.validators import pieBibtexValidator
+from pieberry.ui.events import PieLocationChangedEvent
+from pieberry.pieobject.folder import *
 
 if __name__ == '__main__':
     import sys
     sys.path.append('/home/raif/development/v2Pieberry/pieberry')
     IMGDIR = os.getcwd()
 else:
-    from pieconfig.paths import IMGDIR
+    from pieberry.pieconfig.paths import IMGDIR
 
-from pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.config import PIE_CONFIG
 
 class ProfilePanel(wx.Panel):
     def __init__(self, *args, **kwargs):

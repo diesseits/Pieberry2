@@ -8,15 +8,15 @@ import sys, os, time, re, string, traceback, shutil
 import datetime
 import wx
 
-import piemeta
+import pieberry.piemeta
 
 from pprint import pprint
 
-from pieutility.decoding import *
-from pieconfig.paths import *
-from pieobject import *
-from pieobject.paths import *
-from pieobject.folder import recommend_folder
+from pieberry.pieutility.decoding import *
+from pieberry.pieconfig.paths import *
+from pieberry.pieobject import *
+from pieberry.pieobject.paths import *
+from pieberry.pieobject.folder import recommend_folder
 
 def scan_desktop():
     '''Returns an object store of valid (handlable) file in the desktop 
@@ -28,7 +28,7 @@ def scan_desktop():
     for fl in file_list:
         assert type(fl) == unicode
         try:
-            d = piemeta.get_metadata_object(fl)
+            d = pieberry.piemeta.get_metadata_object(fl)
         except Exception, exc:
             print 'Could not handle file: %s' % fl
             print exc
@@ -51,7 +51,7 @@ def scan_previous_desktops():
                  for fl in os.listdir(dd) 
                  if os.path.isfile(os.path.join(dd, fl))]
         for fl in flist:
-            o = piemeta.get_metadata_object(fl)
+            o = pieberry.piemeta.get_metadata_object(fl)
             if o:
                 o.add_aspect_cached_from_desktop(fl)
                 ostore.Add(o)

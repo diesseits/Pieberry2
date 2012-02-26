@@ -1,12 +1,12 @@
 import datetime, string, random, sys
 import shutil, os
 
-from pieconfig.paths import CACHEDIR
-from pieobject.paths import auto_increment_fn
-from pieconfig.globalvars import DEBUG
+from pieberry.pieconfig.paths import CACHEDIR
+from pieberry.pieobject.paths import auto_increment_fn
+from pieberry.pieconfig.globalvars import DEBUG
 import hachoir_metadata
 import atomise.atomise_hachoir as atomise_hachoir
-from fake import get_fake_metadata_object
+from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 if sys.platform == 'win32' or DEBUG:
     # set up a workaround directory to address win32 hachoir bug and

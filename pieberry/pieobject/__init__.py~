@@ -243,7 +243,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
                          category_phrase='', author_is_corporate=False,
-                         tags=None):
+                         tags=None, inferred_filetype=None):
         '''Add information gleaned from the document being on the web
         (in-situ)'''
         assert type(url) in (str, unicode)
@@ -264,6 +264,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'Format', 'default_bibtex_entry_type')
         if tags:
             self.add_tags(tags)
+        if inferred_filetype:
+            self.set_file_type(inferred_filetype)
         self.aspects['onweb']=True
         self.aspects['bibdata']=True
 
@@ -361,8 +363,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def set_file_type(self, ft=None):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
-            self.FileData_FileType = determine_file_type(self.FileData_FullPath)
-        else:
+            try:
+                self.FileData_FileType = determine_file_type(
+                    self.FileData_FullPath)
+            except:
+                # if examination of the file fails to determine its
+                # type, but the type has already been set, just return
+                # (assume the type hasn't changed).
+                if self.FileData_FileType: return
+                else: print 'Warning - failed to determine a file ype' 
+                    #raise Exception, 'Failed to determine a file type'
+        elif ft != 'unknown':
             self.FileData_FileType = ft
 
     def clear_file(self):

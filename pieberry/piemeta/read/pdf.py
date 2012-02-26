@@ -3,14 +3,14 @@
 import traceback
 
 try:
-    from pdf_pdfrw import pdfrw_object, pdfrw_metadata
+    from pieberry.piemeta.read.pdf_pdfrw import pdfrw_object, pdfrw_metadata
     PDFRW = True
 except:
     traceback.print_exc()
     PDFRW = False
 
 try:
-    from pdf_pypdf import pypdf_object, pypdf_metadata
+    from pieberry.piemeta.read.pdf_pypdf import pypdf_object, pypdf_metadata
     PYPDF = True
 except:
     traceback.print_exc()

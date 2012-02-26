@@ -1,13 +1,13 @@
 #GPLv3 Raif Sarcich 2011
 
 import wx
-import pieutility
+import pieberry.pieutility
 
-from ui.events import *
-from ui.timers import SpinnyTimer
-from listwidgets import *
-from pieobject import *
-from menufunctions import *
+from pieberry.ui.events import *
+from pieberry.ui.timers import SpinnyTimer
+from pieberry.ui.listpanels.listwidgets import *
+from pieberry.pieobject import *
+from pieberry.ui.listpanels.menufunctions import *
 
 class BaseListPanel(wx.Panel, MenuFunctionsMixin):
     '''Basic class for displaying and working with "results"'''

@@ -1,14 +1,14 @@
-import pieutility
+import pieberry.pieutility
 import os, os.path, wx
 import traceback
 
-from ui.editdialog import PieBibEditDialog
-from ui.events import EVT_PIE_BIB_EDIT
+from pieberry.ui.editdialog import PieBibEditDialog
+from pieberry.ui.events import EVT_PIE_BIB_EDIT
 
-from pieconfig.identity import PIE_APPNAME
-from pieconfig.paths import IMGDIR
-from pieconfig.globalvars import PYNOTIFY
-from pieoutput.bibtex import *
+from pieberry.pieconfig.identity import PIE_APPNAME
+from pieberry.pieconfig.paths import IMGDIR
+from pieberry.pieconfig.globalvars import PYNOTIFY
+from pieberry.pieoutput.bibtex import *
 
 if PYNOTIFY:
     import pynotify
@@ -22,20 +22,20 @@ class MenuFunctionsMixin:
         obj = self.GetSelectedItem()
         # obj = self.objectstore[self._last_item_right_clicked]
         assert hasattr(obj, 'WebData_Url')
-        pieutility.open_web_file(obj.WebData_Url)
+        pieberry.pieutility.open_web_file(obj.WebData_Url)
         obj.stats_opened()
         
     def onOpenFile(self, evt):
         obj = self.GetSelectedItem()
         # obj = self.objectstore[self._last_item_right_clicked]
         assert hasattr(obj, 'FileData_FullPath')
-        pieutility.open_file(obj.FileData_FullPath)
+        pieberry.pieutility.open_file(obj.FileData_FullPath)
         obj.stats_opened()
 
     def onOpenContainingFolder(self, evt):
         obj = self.GetSelectedItem()
         assert hasattr(obj, 'FileData_FullPath')
-        pieutility.open_file(obj.FileData_ContainingFolder)
+        pieberry.pieutility.open_file(obj.FileData_ContainingFolder)
 
     def onDeleteOnDisk(self, evt):
         # obj = self.objectstore[self._last_item_right_clicked]

@@ -1,6 +1,6 @@
 import os, os.path, datetime, re
 
-from pieobject import PieObject
+from pieberry.pieobject import PieObject
 
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 

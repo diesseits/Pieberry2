@@ -3,7 +3,7 @@ from validators import *
 from events import PieWebScrapeEvent, PiePrefetchStartEvent
 from timers import WebPanelUiTimer
 
-from pieobject.website import get_authorlist, validify_url
+from pieberry.pieobject.website import get_authorlist, validify_url
 
 class WebScrapePanel(wx.Panel):
     '''Generic search tools panel'''

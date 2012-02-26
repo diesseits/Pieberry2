@@ -1,8 +1,8 @@
 from BeautifulSoup import BeautifulSoup
 import re, urlparse, os.path
-from pieutility.decoding import translate_non_alphanumerics as tr_nan
-from pieutility.decoding import decode_htmlentities
-from pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL, FEXTENSIONS
+from pieberry.pieutility.decoding import translate_non_alphanumerics as tr_nan
+from pieberry.pieutility.decoding import decode_htmlentities
+from pieberry.pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL, FEXTENSIONS
 
 
 head_re = re.compile('[hH][1-7]')

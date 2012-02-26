@@ -2,14 +2,14 @@ import wx
 import datetime, time
 
 from pprint import pprint
-from ui.validators import *
-from ui.events import PieBibEditEvent
+from pieberry.ui.validators import *
+from pieberry.ui.events import PieBibEditEvent
 
-from pieconfig.schemas import *
-from pieconfig.config import PIE_CONFIG
-from pieutility.date import wxdate2pydate
-from pieutility.bibtex import *
-from piedb import Session
+from pieberry.pieconfig.schemas import *
+from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieutility.date import wxdate2pydate
+from pieberry.pieutility.bibtex import *
+from pieberry.piedb import Session
 
 class PieFieldPanel(wx.ScrolledWindow):
     def __init__(self, parent, entry_type, fieldlist):

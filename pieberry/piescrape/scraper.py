@@ -9,11 +9,11 @@ import re
 import locale
 import cookielib
 #from BeautifulSoup import *
-from pieconfig.paths import *
-from pieobject import *
+from pieberry.pieconfig.paths import *
+from pieberry.pieobject import *
 from cms import *
-from pieobject.website import add_website
-from piescrape.execfn import suggest_title
+from pieberry.pieobject.website import add_website
+from pieberry.piescrape.execfn import suggest_title
 
 cj = cookielib.CookieJar()
 prefenc = locale.getpreferredencoding()

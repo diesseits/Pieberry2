@@ -1,10 +1,10 @@
 import wx
 import sys, os
 
-from ui.events import *
-from pieconfig.config import *
-from spoofgeneration import *
-from ui.settingsdialog import PieSettingsDialog
+from pieberry.ui.events import *
+from pieberry.pieconfig.config import *
+from pieberry.spoofgeneration import *
+from pieberry.ui.settingsdialog import PieSettingsDialog
 
 class PieActor:
     '''Class containing basic action-directing functions of the main window'''

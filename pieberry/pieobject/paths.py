@@ -4,10 +4,10 @@
 
 import os, sys, os.path, time, string, re
 import urllib2, urlparse
-from pieconfig.config import PIE_CONFIG
-from pieconfig.paths import *
-from pieconfig.schemas import FEXTENSIONS
-from pieutility.decoding import *
+from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.paths import *
+from pieberry.pieconfig.schemas import FEXTENSIONS
+from pieberry.pieutility.decoding import *
 
 def get_session(source=None):
     '''return a session code for dealing with grouped objects'''

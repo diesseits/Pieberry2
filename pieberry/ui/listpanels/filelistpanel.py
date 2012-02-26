@@ -1,13 +1,13 @@
 #GPLv3 Raif Sarcich 2011
 
 import wx
-import pieutility
+import pieberry.pieutility
 
-from ui.events import *
-from ui.timers import SpinnyTimer
-from listwidgets import *
-from pieobject import *
-from baselistpanel import BaseListPanel # <-- todo
+from pieberry.ui.events import *
+from pieberry.ui.timers import SpinnyTimer
+from pieberry.ui.listpanels.listwidgets import *
+from pieberry.pieobject import *
+from pieberry.ui.listpanels.baselistpanel import BaseListPanel # <-- todo
 
 class FileListPanel(BaseListPanel):
     paneltype = 'FileListPanel'
@@ -31,10 +31,10 @@ class FileListPanel(BaseListPanel):
     def onSelectionActivated(self, evt):
         it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
         if it.FileData_FullPath:
-            pieutility.open_file(it.FileData_FullPath)
+            pieberry.pieutility.open_file(it.FileData_FullPath)
             it.stats_opened()
         elif it.WebData_Url:
-            pieutility.open_url(it.WebData_Url)
+            pieberry.pieutility.open_url(it.WebData_Url)
             it.stats_opened()
         else:
             return

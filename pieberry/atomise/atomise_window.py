@@ -3,9 +3,9 @@
 import wx
 import traceback
 import os, string, time, sys, datetime
-from pieconfig.paths import IMGDIR
-from pieobject import PieObjectStore
-from ui.events import *
+from pieberry.pieconfig.paths import IMGDIR
+from pieberry.pieobject import PieObjectStore
+from pieberry.ui.events import *
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):

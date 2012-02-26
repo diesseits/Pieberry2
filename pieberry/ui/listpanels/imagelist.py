@@ -1,6 +1,6 @@
 import wx
 import os
-from pieconfig.paths import *
+from pieberry.pieconfig.paths import *
 
 # ### For test purposes only
 # if TEST:

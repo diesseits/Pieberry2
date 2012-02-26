@@ -19,32 +19,32 @@ def GetAppdir():
     return retval
 
 def main():
-    # os.chdir(GetAppdir())
-    # sys.path.insert(0, GetAppdir())
-    # print 'Setting working directory:', GetAppdir()
+    os.chdir(GetAppdir())
+    sys.path.insert(0, GetAppdir())
+    print 'Setting working directory:', GetAppdir()
 
     # import global variables
     print 'Init global variables'
-    from pieconfig.globalvars import DEBUG, PY2EXE, PYNOTIFY, U_ERROR_BEHAV
+    from pieberry.pieconfig.globalvars import DEBUG, PY2EXE, PYNOTIFY, U_ERROR_BEHAV
 
 
     # set up system paths
     print 'Init system paths'
-    import pieconfig.initsys
-    pieconfig.initsys.init_config_location()
-    pieconfig.initsys.init_resource_locations()
+    import pieberry.pieconfig.initsys
+    pieberry.pieconfig.initsys.init_config_location()
+    pieberry.pieconfig.initsys.init_resource_locations()
     print 'Init config'
 
 
     # import config source
-    import pieconfig.config
-    pieconfig.config.make_config()
+    import pieberry.pieconfig.config
+    pieberry.pieconfig.config.make_config()
     print 'Create config'
-    from pieconfig.config import PIE_CONFIG
+    from pieberry.pieconfig.config import PIE_CONFIG
 
 
     # use gettext
-    from pieconfig.identity import PIE_APPNAME
+    from pieberry.pieconfig.identity import PIE_APPNAME
     import gettext
     gettext.install(PIE_APPNAME)
 
@@ -56,7 +56,7 @@ def main():
 
     # run first-run wizard
     if PIE_CONFIG.getboolean('Internal', 'first_run') or not os.path.isdir(PIE_CONFIG.get('Profile', 'rootdir')):
-        from ui.firstrunwizard import show_wizard
+        from pieberry.ui.firstrunwizard import show_wizard
         res, rpaths = show_wizard()
         if not res: sys.exit(0)
         PIE_CONFIG.set('Profile', 'rootdir', rpaths[0])
@@ -72,17 +72,17 @@ def main():
 
     # set up user paths
     print 'Init user paths'
-    import pieconfig.paths
-    pieconfig.paths.init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
-    pieconfig.paths.create_directories()
-    pieconfig.paths.init_desktop_location(PIE_CONFIG.get('Profile', 'desktopdir'))
+    import pieberry.pieconfig.paths
+    pieberry.pieconfig.paths.init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
+    pieberry.pieconfig.paths.create_directories()
+    pieberry.pieconfig.paths.init_desktop_location(PIE_CONFIG.get('Profile', 'desktopdir'))
 
 
     # init database
     print 'Init database'
-    from piedb import create_piedb_engine
-    create_piedb_engine(pieconfig.paths.DBDIR)
-    from piedb import SQLABase, engine, Session
+    from pieberry.piedb import create_piedb_engine
+    create_piedb_engine(pieberry.pieconfig.paths.DBDIR)
+    from pieberry.piedb import SQLABase, engine, Session
 
     # clear out the directories if debugging
     # if DEBUG:
@@ -90,10 +90,10 @@ def main():
     #     create_directories()
     #     fill_desktopdir()
 
-    print 'Init pieobject'
-    from pieobject import PieObject
-    from pieobject.tags import init_tags
-    from pieobject.folder import generate_initial_project_folder_list
+    print 'Init pieberry.pieobject'
+    from pieberry.pieobject import PieObject
+    from pieberry.pieobject.tags import init_tags
+    from pieberry.pieobject.folder import generate_initial_project_folder_list
 
 
     print 'Init tables'
@@ -106,7 +106,7 @@ def main():
     generate_initial_project_folder_list()
 
 
-    print 'Init UI'
+    print 'Init PIEBERRY.UI'
     from functionwindow import FunctionMainWindow
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)

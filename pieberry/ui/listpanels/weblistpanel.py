@@ -1,14 +1,14 @@
 #GPLv3 Raif Sarcich 2011
 
 import wx
-import pieutility
-from pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL
+import pieberry.pieutility
+from pieberry.pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL
 
-from ui.events import *
-from ui.timers import SpinnyTimer
-from listwidgets import *
-from pieobject import *
-from baselistpanel import BaseListPanel # <-- todo
+from pieberry.ui.events import *
+from pieberry.ui.timers import SpinnyTimer
+from pieberry.ui.listpanels.listwidgets import *
+from pieberry.pieobject import *
+from pieberry.ui.listpanels.baselistpanel import BaseListPanel # <-- todo
 
 class WebListPanel(BaseListPanel):
     '''Class for working with web scrapes'''

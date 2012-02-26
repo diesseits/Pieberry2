@@ -3,9 +3,9 @@ import wx.lib.agw.foldpanelbar as fpb
 from wx.lib.buttons import ThemedGenBitmapToggleButton 
 from wx.lib import wordwrap
 
-from pieconfig.paths import IMGDIR
+from pieberry.pieconfig.paths import IMGDIR
 from string import join
-from ui.events import PieContextPanelUpdateEvent
+from pieberry.ui.events import PieContextPanelUpdateEvent
 from urlparse import urlsplit
 
 html_fundamental = _('''

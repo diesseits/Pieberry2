@@ -5,15 +5,15 @@ import traceback
 import wx
 import pprint
 import shutil
-import pieutility
+import pieberry.pieutility
 
 
 # from atomise_exec import *
-from ui.events import *
-from atomise_window import *
-from pieconfig.paths import *
-from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
-from pieobject.paths import suggest_initial_fn
+from pieberry.ui.events import *
+from pieberry.atomise.atomise_window import *
+from pieberry.pieconfig.paths import *
+from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
+from pieberry.pieobject.paths import suggest_initial_fn
 
 class atomWidget(wx.Panel):
     '''A ui class for displaying files grabbed from the user's desktop'''
@@ -115,7 +115,7 @@ class atomWidget(wx.Panel):
         pass
 
     def onOpenFile(self, rowid):
-        pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)
+        pieberry.pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)
 
     def onFilterView(self, evt=0):
         '''Does nothing for this widget'''

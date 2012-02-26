@@ -6,7 +6,7 @@ try:
 except:
     USE_MAGIC = False
 
-from pieconfig.schemas import mime_map
+from pieberry.pieconfig.schemas import mime_map
 
 def determine_file_type(fn):
     mtype = None

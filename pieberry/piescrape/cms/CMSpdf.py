@@ -1,7 +1,7 @@
 import re, string
 from urlparse import urlsplit, parse_qs
 from urllib import unquote
-from pieutility.decoding import translate_non_alphanumerics as tr_nan
+from pieberry.pieutility.decoding import translate_non_alphanumerics as tr_nan
 
 re_cd_filename = re.compile('^.*filename="(.*\.(pdf|Pdf|PDF))')
 

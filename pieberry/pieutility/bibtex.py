@@ -1,5 +1,5 @@
 import string, re
-from latex import escape_bad_latex_chars
+from pieberry.pieutility.latex import escape_bad_latex_chars
 from pybtex.bibtex.utils import split_name_list
 
 

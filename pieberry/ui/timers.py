@@ -1,5 +1,5 @@
 import wx, time
-from pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.config import PIE_CONFIG
 
 
 class WebPanelUiTimer(wx.Timer):

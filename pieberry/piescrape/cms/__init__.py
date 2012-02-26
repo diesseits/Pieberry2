@@ -12,7 +12,7 @@ from BeautifulSoup import *
 import urllib2
 import CMSnormal, CMSpdf
 
-from pieconfig.schemas import FEXTENSIONS, MIMEMAP
+from pieberry.pieconfig.schemas import FEXTENSIONS, MIMEMAP
 
 #Initial CMSs, before more sophisticated system in place:
 # CMS_pdf: just a pdf link alone

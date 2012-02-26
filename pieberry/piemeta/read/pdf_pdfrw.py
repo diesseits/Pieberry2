@@ -1,9 +1,9 @@
 import traceback, datetime, os.path
-from pieconfig.paths import SYSDIR
-from pieobject import PieObject
+from pieberry.pieconfig.paths import SYSDIR
+from pieberry.pieobject import PieObject
 
 from pdfrw import PdfReader
-from fake import get_fake_metadata_object
+from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 def pdfrw_object(fn):
     '''hachoir doesn't do pdf'''

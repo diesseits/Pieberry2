@@ -4,15 +4,15 @@ import wx.lib.agw.aui as wxauip
 import wx.aui as wxaui
 import os, sys
 
-from events import *
-from searchpanel import *
-from webpanel import *
-from altcontextpanel import *
-from listpanels import *
-from actor import PieActor
-from pieconfig.globalvars import *
-from pieconfig.paths import IMGDIR
-from atomise.atomise_widget import atomWidget
+from pieberry.ui.events import *
+from pieberry.ui.searchpanel import *
+from pieberry.ui.webpanel import *
+from pieberry.ui.altcontextpanel import *
+from pieberry.ui.listpanels import *
+from pieberry.ui.actor import PieActor
+from pieberry.pieconfig.globalvars import *
+from pieberry.pieconfig.paths import IMGDIR
+from pieberry.atomise.atomise_widget import atomWidget
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):

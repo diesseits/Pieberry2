@@ -1,6 +1,6 @@
 from sqlalchemy import or_, extract
 
-from pieobject import PieObject, PieWebsite
+from pieberry.pieobject import PieObject, PieWebsite
 
 # search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
 # search_field_codes = ('main', 'all', 'title', 'author', 'website', 'journal')

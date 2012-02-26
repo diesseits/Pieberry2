@@ -1,10 +1,10 @@
 # Module for the reading and writing of file metadata
 import traceback
 
-from pieobject.diagnostic import determine_file_type
+from pieberry.pieobject.diagnostic import determine_file_type
 
-from read import *
-from write import *
+from pieberry.piemeta.read import *
+from pieberry.piemeta.write import *
 
 # minimum metadata for "for aspect":
 # 'author', 'title', 'creation_date', 'metadata_is_replaceable'

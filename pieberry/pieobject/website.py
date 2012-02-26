@@ -6,9 +6,9 @@ import sys, os, os.path, datetime
 import urlparse
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 
-from piedb import SQLABase, Session, session
-from pieconfig.paths import ROOT_MAP
-from pieconfig.globalvars import DEBUG
+from pieberry.piedb import SQLABase, Session, session
+from pieberry.pieconfig.paths import ROOT_MAP
+from pieberry.pieconfig.globalvars import DEBUG
 
 # session = Session()
 
