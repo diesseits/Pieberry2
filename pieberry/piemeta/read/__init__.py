@@ -5,6 +5,7 @@ from pieberry.piemeta.read.hachoir import get_real_metadata_object, get_real_met
 from pieberry.piemeta.read.fake import get_fake_metadata_object, get_fake_metadata_for_aspect
 
 
+from pieberry.pieconfig.globalvars import DEBUG
 from pieberry.pieconfig.paths import CACHEDIR
 import sys, os, os.path
 
