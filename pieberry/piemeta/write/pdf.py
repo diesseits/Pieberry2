@@ -1,4 +1,4 @@
-from pieconfig.globalvars import DEBUG
+from pieberry.pieconfig.globalvars import DEBUG
 from pdfrw import PdfWriter, PdfReader
 import os.path
 

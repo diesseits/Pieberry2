@@ -1,7 +1,7 @@
 #GPLv3 Raif Sarcich 2011
 
 from threading import Thread
-from scraper import PieScraper
+from pieberry.piescrape.scraper import PieScraper
 
 # Not using at the moment
 class PieScraperThread(Thread, PieScraper):

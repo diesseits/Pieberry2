@@ -1,1 +1,1 @@
-from pdf import write_pdf_metadata 
+from pieberry.piemeta.write.pdf import write_pdf_metadata 
