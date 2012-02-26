@@ -175,7 +175,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         if sys.platform == 'win32':
             _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_16.png')))
         else:
-            _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pieberry.ico', wx.BITMAP_TYPE_ANY)))
+            _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pieberry.ico'), wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
         self.SetSize((862, 546))
         # end wxGlade
