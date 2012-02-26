@@ -44,9 +44,12 @@ class PieScraper:
         happen as a consequence of threaded methods. Also updates the website
         memory with new details of the website being scraped.'''
         print 'PieScraper._further_init'
+        print 'Yeah defs'
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        self._urlopener = opener.open(self._origin_url)
+        print 'Opening url'
+        self._urlopener = opener.open(self._origin_url, timeout=10)
         # self._urlopener = urllib2.urlopen(self._origin_url)
+        print 'Diagnosing cms'
         self._cmstype = DiagnoseCMS(self._urlopener)
 
     def set_context(self, 
@@ -64,8 +67,10 @@ class PieScraper:
 
     def get_page_context(self):
         '''get relevant context of the url in question'''
+        print 'doing further init'
         if not self._further_init_done:
             self._further_init()
+        print 'getting context object'
         co = GetContextObject(self._urlopener, self._cmstype)
         # in old money this was:        translate_non_alphanumerics(readup.title.string.split(' - ')[0][:100].strip())
         ttl = co.get_context_title().strip()

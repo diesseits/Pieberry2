@@ -19,9 +19,18 @@ def GetAppdir():
     return retval
 
 def main():
-    os.chdir(GetAppdir())
-    sys.path.insert(0, GetAppdir())
-    print 'Setting working directory:', GetAppdir()
+    frozen = getattr(sys, 'frozen', '')
+
+    if not frozen:
+        # not frozen: in regular python interpreter
+        approot = GetAppdir()
+    elif frozen in ('dll', 'console_exe', 'windows_exe'):
+        # py2exe:
+        approot = os.path.dirname(sys.executable)
+
+    os.chdir(approot)
+    sys.path.insert(0, approot)
+    print 'Setting working directory:', approot
 
     # import global variables
     print 'Init global variables'

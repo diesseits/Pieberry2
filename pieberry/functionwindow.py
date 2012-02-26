@@ -185,10 +185,12 @@ class FunctionMainWindow(BaseMainWindow):
 
     def _thread_prefetch(self, url, ws):
         '''Threaded actions for prefetching website info'''
+        print 'making piescraper'
         ts = PieScraper(
             url=url,
             notify_window=self)
         success = True
+        print 'trying to get context'
         try:
             tag = ts.get_page_context()
         except:
@@ -238,10 +240,15 @@ class FunctionMainWindow(BaseMainWindow):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
+            if sys.platform == 'win32':
+                dpath = dpath.encode('ascii', 'ignore')
             if not os.path.isdir(os.path.dirname(dpath)):
                 os.makedirs(os.path.dirname(dpath))
             print 'COPYING: %s to %s' % (path, dpath)
-            os.renames(path, dpath)
+            assert os.path.exists(path)
+            assert os.path.exists(os.path.dirname(dpath))
+            shutil.move(path, dpath)
+            # os.renames(path, dpath)
             obj.add_aspect_stored(dpath)
             counter += 1
         # session = Session()

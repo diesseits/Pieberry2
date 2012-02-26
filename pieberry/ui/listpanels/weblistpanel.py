@@ -70,8 +70,6 @@ class WebListPanel(BaseListPanel):
             )
         # transfer relevant session data across
         ret.set_session_data(**self.objectstore.get_session_data())
-        for i in ret: print i
-        print ret
         newevt = PieDownloadEvent(
             ostore=ret,
             pane=self,

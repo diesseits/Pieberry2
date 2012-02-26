@@ -23,7 +23,6 @@ class atomWidget(wx.Panel):
     def __init__(self, *args, **kwargs):
         wx.Panel.__init__(self, *args, **kwargs)
         self.__do_layout()
-        self.Bind(wx.EVT_BUTTON, self.atomDisplay.onFileAll, self.procbt)
         # self.donebt.Bind(wx.EVT_BUTTON, self.onCloseSelf)
         self.SetDestinations([f.name() for f in FOLDER_LOOKUP['projectdir']])
     
@@ -31,6 +30,7 @@ class atomWidget(wx.Panel):
         self.atomDisplay = atomActionWindow(self, -1)
         # self.openbt = wx.Button(self, -1, label='Open temp directory')
         self.procbt = wx.Button(self, -1, label=_('Process all'))
+        self.procbt.Bind(wx.EVT_BUTTON, self.onFileAll)
         # self.donebt = wx.Button(self, -1, label='Done')
 
         s2 = wx.BoxSizer(wx.VERTICAL)
@@ -94,11 +94,11 @@ class atomWidget(wx.Panel):
     def onGoFile(self, row):
         '''override for filing action implementation'''
         obj = self.atomDisplay.rowdata[row]
-        ch = getattr(self.atomDisplay, 'choice%d' % self.atomDisplay.currentrow)
+        ch = getattr(self.atomDisplay, 'choice%d' % row)
         if ch.GetSelection() == 0 and not obj.has_aspect('bibdata'):
             wx.MessageBox(_('No selected destination for this file'))
             return
-        tc = getattr(self.atomDisplay, 'suggesttc%d' % self.atomDisplay.currentrow)
+        tc = getattr(self.atomDisplay, 'suggesttc%d' % row)
         newevt = AtomFileFileEvent(
             obj=obj, 
             rowid=row,
@@ -111,8 +111,13 @@ class atomWidget(wx.Panel):
         '''finish up with filing'''
         self.atomDisplay.removeRow(rowid)
 
-    def onFileAll(self):
-        pass
+    def onFileAll(self, evt):
+        for i in range(0, self.atomDisplay.maxrow + 1):
+            obj = self.atomDisplay.rowdata[i]
+            ch = getattr(self.atomDisplay, 'choice%d' % i)
+            if ch.GetSelection() == 0 and not obj.has_aspect('bibdata'):
+                continue
+            self.onGoFile(i)
 
     def onOpenFile(self, rowid):
         pieberry.pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)

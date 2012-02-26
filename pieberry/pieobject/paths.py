@@ -8,6 +8,9 @@ from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.pieconfig.paths import *
 from pieberry.pieconfig.schemas import FEXTENSIONS
 from pieberry.pieutility.decoding import *
+from hachoir_core.i18n import getTerminalCharset
+
+charset = getTerminalCharset()
 
 def get_session(source=None):
     '''return a session code for dealing with grouped objects'''
@@ -27,6 +30,15 @@ def auto_increment_fn(fn):
         if counter == 1000: raise 'auto_increment_fn: Too many files - giving up'
     return fn
 
+def trim_filename(path):
+    if len(path) > PIE_CONFIG.getint('Format', 'filesystem_length_limit') - 5:
+        dirn = os.path.dirname(path)
+        basen, ext = os.path.splitext(os.path.basename(path))
+        basen = basen[:PIE_CONFIG.getint('Format', 'filesystem_length_limit') - len(ext) - len(dirn) - 5] # -5 to account for addition chars from auto_increment_fn
+        return os.path.join(dirn, basen + ext)
+    else:
+        return path
+
 def suggest_path_cache_fromweb(obj):
     '''return a FULL PATH to cache a thing in'''
     if not hasattr(obj, 'session'): 
@@ -34,13 +46,16 @@ def suggest_path_cache_fromweb(obj):
     fname = os.path.basename(urlparse.urlsplit(obj.WebData_Url).path)
     print 'suggest_path_cache_fromweb: ____'
     print 'I SUGGEST:', os.path.join(CACHEDIR, obj.session, fname)
-    proposal = auto_increment_fn(os.path.join(CACHEDIR, obj.session, fname))
+    proposal = os.path.join(CACHEDIR, obj.session, fname)
+    proposal = trim_filename(proposal)
+    proposal = auto_increment_fn(proposal)
     return proposal
 
 def suggest_path_cache_fromdesktop(obj):
     if not hasattr(obj, 'session'): 
         raise AttributeError, 'No session flag for this object - illegal'
     proposal = os.path.join(CACHEDIR, obj.session, obj.FileData_FileName)
+    proposal = trim_filename(proposal)
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
     return proposal
@@ -60,15 +75,20 @@ def suggest_path_store_fromweb(obj):
             if len(FEXTENSIONS[obj.FileData_FileType]) == 1:
                 # only guess if there's only one possible extension
                 ext = FEXTENSIONS[obj.FileData_FileType][0]
+    # fn_prop = "%s - %s%s" % (
+    #     obj.ReferDate().strftime("%Y%m%d"),
+    #     translate_non_alphanumerics(obj.Title()),
+    #     ext)
     fn_prop = "%s - %s%s" % (
         obj.ReferDate().strftime("%Y%m%d"),
-        translate_non_alphanumerics(obj.Title()),
-        ext)
-    proposal = auto_increment_fn(os.path.join(
-            root, auth, subd, tsubd,
-            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')] #BUG - should apply to non-extension bit of filename
-            ))
-    print 'SUGGESTING:', proposal
+        translate_non_alphanumerics(obj.Title()), ext)
+    proposal = os.path.join(
+        root, auth, subd, tsubd,
+        fn_prop
+        )
+    proposal = trim_filename(proposal)
+    proposal = auto_increment_fn(proposal)
+    print 'SUGGESTING:', proposal, 'OF LENGTH = ', len(proposal)
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
     return proposal
@@ -94,10 +114,12 @@ def suggest_path_store_with_bibdata(obj):
         obj.ReferDate().strftime("%Y%m%d"),
         translate_non_alphanumerics(obj.Title()),
         ext)
-    proposal = auto_increment_fn(os.path.join(
-            root, auth, subd, 
-            fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
-            ))
+    proposal = os.path.join(
+        root, auth, subd, 
+        fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
+        )
+    proposal = trim_filename(proposal)
+    proposal = auto_increment_fn(proposal)
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
@@ -110,7 +132,9 @@ def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
     print 'suggest_path_store_fromdesktop: ____'
     if new_fn: fn = new_fn
     else: fn = obj.FileData_FileName
-    proposal = auto_increment_fn(os.path.join(root, folder, fn))
+    proposal = os.path.join(root, folder, fn)
+    proposal = trim_filename(proposal)
+    proposal = auto_increment_fn(proposal)
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists.'
