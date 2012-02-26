@@ -1,12 +1,20 @@
-import traceback, datetime, os.path
+import traceback, datetime, os.path, shutil, os, sys
 from pieberry.pieconfig.paths import SYSDIR
 from pieberry.pieobject import PieObject
 
+from pieberry.pieobject.paths import auto_increment_fn
+from pieberry.pieconfig.paths import CACHEDIR
 from pdfrw import PdfReader
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 def pdfrw_object(fn):
     '''hachoir doesn't do pdf'''
+    if sys.platform == 'win32':
+        newfn = os.path.join(CACHEDIR, 'Workaround', os.path.basename(fn))
+        if os.path.isfile(newfn):
+            newfn = auto_increment_fn(newfn)
+        shutil.copyfile(fn, newfn)
+        fn = newfn
     fakeobj = get_fake_metadata_object(fn)
     try:
         reader = PdfReader(fn)

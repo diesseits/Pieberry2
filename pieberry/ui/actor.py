@@ -103,8 +103,8 @@ class PieActor:
         pan.AddObjects(ostore)
         
     def DebugForceScan(self, evt=0):
-        import piefiles
-        indexer = piefiles.PieFileIndexer(self)
+        import pieberry.piefiles
+        indexer = pieberry.piefiles.PieFileIndexer(self)
         self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)
         self.Bind(EVT_PIE_FILE_INDEX_FINISHED, self.OnIndexerFinished)
         indexer.start()

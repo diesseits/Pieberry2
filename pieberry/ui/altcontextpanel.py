@@ -1,4 +1,4 @@
-import wx, wx.html, os.path
+import wx, wx.html, os.path, sys
 import wx.lib.agw.foldpanelbar as fpb
 from wx.lib.buttons import ThemedGenBitmapToggleButton 
 from wx.lib import wordwrap
@@ -210,7 +210,10 @@ class FundInfoPanel(wx.Panel):
 
     def SetObject(self, obj):
         self.favpanel.SetValue(obj.StatData_Favourite)
-        self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
+        if sys.platform == 'win32':
+            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
+        else:
+            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
         self.favpanel.SetTitle(obj.Title())
         self.sizer0.Remove(self.fundHtml)
         self.fundHtml.Destroy()

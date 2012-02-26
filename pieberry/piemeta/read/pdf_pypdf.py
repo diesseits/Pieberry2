@@ -1,4 +1,7 @@
-import pyPdf, traceback, datetime, string, re, os, os.path
+import pyPdf, traceback, datetime, string, re, os, os.path, shutil, sys
+
+from pieberry.pieobject.paths import auto_increment_fn
+from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieobject import PieObject
 from pieberry.piemeta.read.fake import get_fake_metadata
 
@@ -6,6 +9,12 @@ from pieberry.piemeta.read.fake import get_fake_metadata
 splre = re.compile("[./_ ]")
 
 def pypdf_object(fn):
+    if sys.platform == 'win32':
+        newfn = os.path.join(CACHEDIR, 'Workaround', os.path.basename(fn))
+        if os.path.isfile(newfn):
+            newfn = auto_increment_fn(newfn)
+        shutil.copyfile(fn, newfn)
+        fn = newfn
     data = pypdf_metadata(fn)
     obj = PieObject(
         title=data['title'],

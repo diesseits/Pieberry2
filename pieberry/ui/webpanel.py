@@ -130,7 +130,7 @@ subdirectory in which to store these documents.''')
         self.authorField.Enable(tf)
         self.pfUseChoice.Enable(tf)
         self.corpAuthorCb.Enable(tf)
-        self.scanButton.SetLabel(_('Scan'))
+        self.scanButton.Enable(tf)
 
     def GetData(self, evt=0):
         '''return the current user entered data on the panel'''
@@ -154,7 +154,7 @@ subdirectory in which to store these documents.''')
         print 'webpanel.OnGo'
         self.GetData()
         self.LockPanel(True)
-        self.scanButton.SetLabel(_('Abort'))
+        # self.scanButton.SetLabel(_('Abort'))
         self.scrape_in_progress = True
         newevt = PieWebScrapeEvent(
             url = validify_url(self.sc_url),
@@ -204,6 +204,7 @@ subdirectory in which to store these documents.''')
         if 2 > (last_iter - self.url_text_last_changed) > 1:
             # print 'trigger fetch?'
             if self.urlField.GetValidator().Validate():
+                self.scanButton.Disable()
                 self.tagField.Disable()
                 self.authorField.Disable()
                 self.pfUseChoice.Disable()
@@ -226,6 +227,7 @@ subdirectory in which to store these documents.''')
             self.corpAuthorCb.SetValue(evt.iscorp)
         if evt.tagbehav != None:
             self.pfUseChoice.SetSelection(evt.tagbehav)
+        self.scanButton.Enable()
         self.tagField.Enable()
         self.authorField.Enable()
         self.pfUseChoice.Enable()

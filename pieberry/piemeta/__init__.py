@@ -11,13 +11,15 @@ from pieberry.piemeta.write import *
 # optional:
 # 'modification_date'
 
-def get_metadata_object(fn):
+def get_metadata_object(fn, fakeonly=False):
     '''takes a filename, returns an object with relevant metadata gleaned from
     the file. If file type is unrecognised as handleable, then None will be
     returned'''
     ft = determine_file_type(fn)
     if ft == 'other':
         return None
+    if fakeonly:
+        return get_fake_metadata_object(fn)
     if ft == 'pdf':
         return get_pdf_metadata_object(fn)
     if ft in ('word_doc', 'hachoir_other'):

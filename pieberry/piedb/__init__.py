@@ -2,12 +2,17 @@
 
 # Database mechanics
 # from pieconfig.paths import DBDIR
-
 import sqlalchemy
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore", sqlalchemy.exc.SAWarning)
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
+
 
 def create_piedb_engine(rootpath):
     global SQLABase

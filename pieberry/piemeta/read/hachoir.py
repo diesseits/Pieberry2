@@ -8,21 +8,6 @@ import hachoir_metadata
 from pieberry.piemeta.read.atomise_hachoir import processFileReturn
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
-if sys.platform == 'win32' or DEBUG:
-    # set up a workaround directory to address win32 hachoir bug and
-    # clear out old files if it does exist
-    thedir = os.path.join(CACHEDIR, 'Workaround')
-    if not os.path.isdir(thedir):
-        print 'Making workaround directory'
-        os.makedirs(thedir)
-    else:
-        fls = [os.path.join(thedir, fl) for fl in os.listdir(thedir) if os.path.isfile(fl)]
-        for fl in fls:
-            try: 
-                os.remove(fl)
-            except:
-                print 'file locked - %s' % fl
-
 def get_real_metadata_object(fn):
     '''get object with metadata gleaned from internal file metadata'''
     #TODO: workaround for file locking bug

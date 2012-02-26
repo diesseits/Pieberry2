@@ -61,6 +61,7 @@ class StagingListPanel(BaseListPanel):
     def onDiscardAll(self, evt):
         print 'StagingListPanel.onDiscardAll()'
         #TODO: insert stuff to delete files, tidy up etc.
+        self.objectstore.delete_all()
         p = self.GetParent()
         wx.CallAfter(p.DeletePage, p.GetPageIndex(self))
         

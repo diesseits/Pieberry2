@@ -106,6 +106,21 @@ class PieObjectStore:
             if not key in ('session', 'sessiondata', 'maxindex', 'currentindex'):
                 setattr(self, key, val)
 
+    def delete_all(self):
+        for obj in self:
+            if obj.has_aspect('hasfile'):
+                try: 
+                    os.remove(obj.FileData_FullPath)
+                    obj.remove_aspect('hasfile')
+                except:
+                    continue
+        if self.session and os.path.isdir(
+            os.path.join(CACHEDIR, self.session)):
+            try:
+                shutil.rmtree(os.path.join(CACHEDIR, self.session))
+            except:
+                pass
+
     def get_session_data(self):
         '''Just give back the session data as a dict'''
         return self.sessiondata
