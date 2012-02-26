@@ -1,4 +1,7 @@
 #!/usr/bin/python
+import pieberry
 import runpy
 	
 runpy.run_module('pieberry')
+
+

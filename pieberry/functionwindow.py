@@ -6,28 +6,28 @@ import traceback
 import shutil, os, os.path
 
 
-from pieobject import *
-from pieobject.paths import *
-from piescrape import *
-from piescrape.execfn import download_file
-from ui.altmainwindow import BaseMainWindow 
-from ui.editdialog import PieBibEditDialog
-from ui.events import *
-from ui.timers import FileIndexTimer
-from ui.settingsdialog import PieSettingsDialog
-from pieconfig.config import PIE_CONFIG
-from pieconfig.globalvars import *
-from pieoutput.bibtex import *
-from atomise import *
-from searches import *
+from pieberry.pieobject import *
+from pieberry.pieobject.paths import *
+from pieberry.piescrape import *
+from pieberry.piescrape.execfn import download_file
+from pieberry.ui.altmainwindow import BaseMainWindow 
+from pieberry.ui.editdialog import PieBibEditDialog
+from pieberry.ui.events import *
+from pieberry.ui.timers import FileIndexTimer
+from pieberry.ui.settingsdialog import PieSettingsDialog
+from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.globalvars import *
+from pieberry.pieoutput.bibtex import *
+from pieberry.atomise import *
+from pieberry.searches import *
 
-import piedb
-import piemeta
-import piefiles
+import pieberry.piedb as piedb
+import pieberry.piemeta as piemeta
+import pieberry.piefiles as piefiles
 
 if PYNOTIFY: import pynotify
 
-import pieobject.website as website
+import pieberry.pieobject.website as website
 
 class FunctionMainWindow(BaseMainWindow):
     '''The main window with the actual programmatic functionality added. 

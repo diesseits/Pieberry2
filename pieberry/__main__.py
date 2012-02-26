@@ -1,3 +1,4 @@
-import run
+import autoinit
+# import run
 
-run.main()
+# run.main()

@@ -30,8 +30,8 @@ def scan_desktop():
         try:
             d = pieberry.piemeta.get_metadata_object(fl)
         except Exception, exc:
+            traceback.print_exc()
             print 'Could not handle file: %s' % fl
-            print exc
             continue
         if d:
             d.add_aspect_ondesktop(fl)

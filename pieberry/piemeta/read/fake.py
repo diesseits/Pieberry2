@@ -12,7 +12,7 @@ def get_fake_metadata(fn):
         dateprefix = m.group(0)
         ftime = '%s %s %s' % (dateprefix[0:4], dateprefix[4:6], dateprefix[6:8])
         cdate = datetime.datetime.strptime(ftime, '%Y %m %d')
-        ttl = path.splitext(os.path.basename(fn))[0][8:].lstrip(' -')
+        ttl = os.path.splitext(os.path.basename(fn))[0][8:].lstrip(' -')
     else:
         # if no date prefix, use os.stat to infer the date of the file
         ttl = os.path.splitext(os.path.basename(fn))[0]

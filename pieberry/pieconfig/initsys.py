@@ -2,6 +2,7 @@ import sys, os, os.path
 from identity import *
 
 # Paths vital to the internals of Pieberry
+frozen = getattr(sys, 'frozen', '')
 
 def init_config_location():
     '''Set up config location'''
@@ -30,8 +31,12 @@ def init_config_location():
 
 def init_resource_locations():
     '''Where to find various bits of the program like bitmaps & help docs'''
-    IMGDIR = os.path.join(os.getcwd(), 'ui')
-    HELPDIR = os.path.join(os.getcwd(), 'piehelp')
+    if frozen in  ('dll', 'console_exe', 'windows_exe'):
+        IMGDIR = os.path.dirname(sys.executable)
+        HELPDIR = os.path.dirname(sys.executable)
+    else:
+        IMGDIR = os.path.join(os.getcwd(), 'ui')
+        HELPDIR = os.path.join(os.getcwd(), 'piehelp')
     global IMGDIR
     global HELPDIR
     print 'IMGDIR =', IMGDIR

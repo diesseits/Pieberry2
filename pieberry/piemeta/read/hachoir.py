@@ -5,7 +5,7 @@ from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieobject.paths import auto_increment_fn
 from pieberry.pieconfig.globalvars import DEBUG
 import hachoir_metadata
-import atomise.atomise_hachoir as atomise_hachoir
+from pieberry.piemeta.read.atomise_hachoir import processFileReturn
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 if sys.platform == 'win32' or DEBUG:
@@ -46,7 +46,7 @@ def get_real_metadata_for_aspect(obj):
     return get_real_metadata(obj.FileData_FullPath)
 
 def get_real_metadata(fn):
-    raw_meta = atomise_hachoir.processFileReturn(fn)
+    raw_meta = processFileReturn(fn)
     if not raw_meta: return None
     r_title = string.join(
         [i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
