@@ -7,9 +7,11 @@ import sys, os, os.path, datetime
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
 from sqlalchemy import Table, Text, ForeignKey
 
-from piedb import SQLABase, Session, session
+print 'PIEDB working dir:', os.getcwd()
+
 from pieconfig.paths import ROOT_MAP
 from pieconfig.globalvars import DEBUG
+from piedb import SQLABase, Session, session
 
 # session = Session()
 

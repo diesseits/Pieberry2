@@ -9,7 +9,7 @@ from sqlalchemy import Table, Text, ForeignKey
 
 from piedb import SQLABase, Session, session
 from pieconfig.paths import ROOT_MAP
-from pieconfig.globals import DEBUG
+from pieconfig.globalvars import DEBUG
 
 # session = Session()
 

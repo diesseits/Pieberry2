@@ -9,7 +9,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-
 def create_piedb_engine(rootpath):
     global SQLABase
     global engine
