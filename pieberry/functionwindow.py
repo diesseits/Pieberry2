@@ -24,6 +24,7 @@ from pieberry.searches import *
 import pieberry.piedb as piedb
 import pieberry.piemeta as piemeta
 import pieberry.piefiles as piefiles
+import pieberry.pieinput as pieinput
 
 if PYNOTIFY: import pynotify
 
@@ -446,3 +447,46 @@ class FunctionMainWindow(BaseMainWindow):
         # init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
         # create_directories()
         # self.StatusBar.SetStatusText(_("Changed Pieberry's storage location to %s" % newloc))
+
+    def OnImportBibtex(self, evt):
+        fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+        res = fdia.ShowModal()
+        if res == wx.ID_CANCEL: return
+        self.StatusBar.SetStatusText(_('Importing from file'))
+        bibfilepath = fdia.GetPath()
+        from pieberry.pieutility.bibtex import autogen_bibtex_key
+        progress_dialog = wx.ProgressDialog( 
+            'Importing from file', 
+            'Reading %s' % bibfilepath, maximum = 1)
+        progress_dialog.Pulse()
+        ents = pieinput.pybtex_entries_from_file(bibfilepath)
+        self.OpenStagingPane()
+        pan = self.GetCurrentPane()
+        count = 0
+        for bibkey, ent in ents.items():
+            try:
+                if not bibkey:
+                    obj = pieinput.pybtex_to_pieberry(akey, ent)
+                    akey = autogen_bibtex_key(obj)
+                    obj.BibData_Key = akey
+                elif query_unique_key(session, bibkey):
+                    # try except etc.
+                    obj = pieinput.pybtex_to_pieberry(bibkey, ent)
+                    print 'adding %s with key: %s' % (obj, bibkey)
+                else:
+                    obj = pieinput.pybtex_to_pieberry(akey, ent)
+                    akey = autogen_bibtex_key(obj)
+                    obj.BibData_Key = akey
+                pan.AddObject(obj)
+                count += 1
+                progress_dialog.UpdatePulse('%d items added' % count)
+            except:
+                print 'Unhandleable entry with key: %s' % bibkey
+        progress_dialog.Destroy()
+        self.StatusBar.SetStatusText(
+            _('Imported %d items from %s.' % (count, bibfilepath)))
+                
+
+            
+            
+        

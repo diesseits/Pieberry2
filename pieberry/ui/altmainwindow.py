@@ -84,6 +84,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_scan_web_page = wx.MenuItem(
             gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'))
+        self.menu_import_bibtex = wx.MenuItem(
+            gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_filter = wx.MenuItem(
             locateMenu, -1, _('Fi&lter\tCtrl-i'))
         self.menu_toggle_context = wx.MenuItem(
@@ -130,6 +132,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         locateMenu.AppendItem(self.menu_find_in_folders)
         locateMenu.AppendItem(self.menu_filter)
         gatherMenu.AppendItem(self.menu_atom_process)
+        gatherMenu.AppendItem(self.menu_import_bibtex)
         viewMenu.AppendItem(self.menu_toggle_context)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
@@ -155,6 +158,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
+        self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
 
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)

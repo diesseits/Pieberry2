@@ -51,7 +51,7 @@ class BaseListCtrl(wx.ListCtrl,
     def onItemSelected(self, evt):
         if evt.GetIndex() == -1: return
         self.currentitem = evt.GetIndex()
-        print 'onItemSelected:', self.currentitem
+        # print 'onItemSelected:', self.currentitem
 
     def DeleteAllItems(self):
         self.itemDataMap = {}
@@ -109,7 +109,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         return nexidx
 
     def OnCheckItem(self, idx, chk):
-        print 'WebListCtrl: OnCheckItem:', idx, chk
+        # print 'WebListCtrl: OnCheckItem:', idx, chk
         self.itemDataMap[self.GetItemData(idx)][0] = chk
 
     def GetCheckedList(self):
@@ -147,7 +147,7 @@ class FileListCtrl(BaseListCtrl):
 
 class BibListCtrl(BaseListCtrl):
     '''Control for displaying richer bibliographic search data'''
-    columnheads = (_('Author'), _('Year'), _('Title'))
+    columnheads = (_('Author'), _('Date'), _('Title'))
     columnwidths = (160, 80, 240)
 
     def __init__(self, parent):
@@ -155,16 +155,16 @@ class BibListCtrl(BaseListCtrl):
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
     
     def AddObject(self, obj, ref, filtertext=None, msgtype='success'):
-        print 'BibListCtrl.AddObject at %d, %s' % (self.currentitem, obj)
+        # print 'BibListCtrl.AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, 
                      (obj.Author(), str(obj.ReferDate().year), obj.Title())):
-            print 'Filtered out - returning'
+            # print 'Filtered out - returning'
             return
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
             obj.Author(), 
             MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, str(obj.ReferDate().year))
+        self.SetStringItem(nexidx, 1, str(obj.ReferDate().strftime('%Y-%m-%d')))
         self.SetStringItem(nexidx, 2, obj.Title())
         self.SetItemData(nexidx, ref)
         self.itemDataMap[ref] = (obj.Author(), 

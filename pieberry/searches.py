@@ -77,3 +77,17 @@ def query_favourites(session):
     '''List all favourites - for bibtex export'''
     return session.query(PieObject).filter(
         PieObject.StatData_Favourite == True)
+
+def query_unique_key(session, key):
+    '''Returns true if the bibtex key is unique within the session'''
+    q = session.query(PieObject).filter(PieObject.BibData_Key == key)
+    count = q.count()
+    if count == 0:
+        return True
+    elif count == 1:
+        return False
+    elif count > 1:
+        print 'WARNING: found multiples of same bibtex key'
+        return False
+    else:
+        raise 'wtf'

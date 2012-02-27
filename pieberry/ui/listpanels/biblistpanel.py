@@ -112,5 +112,5 @@ class BibListPanel(BaseListPanel):
             rcm_copykey.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copykey)
-            self.Bind(wx.EVT_MENU, self.onCopyBibTeXKey)
+            self.Bind(wx.EVT_MENU, self.onCopyBibTeXKey, rcm_copykey)
         menu.AppendMenu(20, _('Copy to clipboard ...'), copyMenu)
