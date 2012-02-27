@@ -84,6 +84,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_scan_web_page = wx.MenuItem(
             gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'))
+        self.menu_scan_web_page.SetBitmap(
+            wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_import_bibtex.SetBitmap(
@@ -337,7 +339,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
         tab.Bind(EVT_PIE_REFRESH_WEB_LIST, self.OnWebPaneRefresh)
-        self.TabBook.AddPage(tab, caption, select=True)
+        self.TabBook.AddPage(
+            tab, caption, select=True,
+            bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
 
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)

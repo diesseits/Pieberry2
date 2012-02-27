@@ -154,12 +154,14 @@ class BibListCtrl(BaseListCtrl):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
     
-    def AddObject(self, obj, ref, filtertext=None, msgtype='success'):
+    def AddObject(self, obj, ref, filtertext=None, msgtype=None):
         # print 'BibListCtrl.AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, 
                      (obj.Author(), str(obj.ReferDate().year), obj.Title())):
             # print 'Filtered out - returning'
             return
+        if not msgtype:
+            msgtype = obj.get_icon_code('bibwindow')
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
             obj.Author(), 

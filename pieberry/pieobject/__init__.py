@@ -393,13 +393,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         will correspond to various items in a wx.ImageList for the
         list/other type of window concerned. Values may include:
         'start' 'spin' 'blank' 'success' 'fail' 'warn' 'pass' 'tick'
-        'exclude' 'pdf' 'doc'
+        'exclude' 'pdf' 'doc' 'star'
 
         Contexts may include 'filewindow', 'bibwindow', 'dlwindow'''
         if window_type == 'filewindow':
             if self.FileData_FileType == 'pdf':
                 return 'pdf'
             else: return 'doc'
+        elif window_type == 'bibwindow':
+            if self.StatData_Favourite:
+                return 'star'
+            else: return 'success'
     
     def stats_opened(self):
         self.StatData_LastOpened = date=datetime.datetime.today()

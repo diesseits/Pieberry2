@@ -23,6 +23,7 @@ PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'al04.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'al05.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_pdf16.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_doc16.png')))
+PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_goldstar16.png')))
 
 MessageType = {
     'start': 'spin',
@@ -35,5 +36,6 @@ MessageType = {
     'tick': 4,
     'exclude': 5,
     'pdf': 12,
-    'doc': 13
+    'doc': 13,
+    'star': 14
     }

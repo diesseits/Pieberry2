@@ -103,7 +103,7 @@ bibhtml = _('''
 
 class BibInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
-        kwargs['size'] = (80,60)
+        kwargs['size'] = (80,80)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.Html = wx.html.HtmlWindow(self, -1)
         self._do_layout()
