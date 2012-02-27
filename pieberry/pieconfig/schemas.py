@@ -111,12 +111,12 @@ bibtexmap = {
 bibtexfields = {
     'article': (
         ('journal',), 
-        ('volume', 'number', 'pages', 'note', 'annote')
+        ('volume', 'number', 'pages', 'note', 'annote', 'url')
         ),
     'book': (
         ('publisher',), 
         ('editor', 'volume', 'number', 'series', 'address', 'edition', 
-         'note', 'annote')
+         'note', 'annote', 'url')
         ),
     'misc': (
         ('howpublished',), 
@@ -124,7 +124,7 @@ bibtexfields = {
         ),
     'booklet': (
         ('howpublished',), 
-        ('note', 'annote')
+        ('note', 'annote', 'url')
         ),
     'online': (
         ('howpublished', 'url'), 
@@ -133,20 +133,20 @@ bibtexfields = {
     'inbook': (
         ('editor', 'chapter', 'publisher'),
         ('volume', 'number', 'series', 'type', 'address', 'edition', 
-         'pages', 'note', 'annote')
+         'pages', 'note', 'annote', 'url')
         ),
     'incollection': (
         ('booktitle',),
         ('pages', 'publisher', 'editor', 'volume', 'number', 'series', 
-         'type', 'chapter', 'address', 'edition', 'note', 'annote'),
+         'type', 'chapter', 'address', 'edition', 'note', 'annote', 'url'),
         ),
     'techreport': (
         ('institution',),
-        ('type', 'number', 'address', 'note', 'annote')
+        ('type', 'number', 'address', 'note', 'annote', 'url')
         ),
     'unpublished': (
         ('note',),
-        ('annote',)
+        ('annote', 'url')
         )
     }
 

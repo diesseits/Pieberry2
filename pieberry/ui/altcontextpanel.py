@@ -93,6 +93,7 @@ bibhtml = _('''
 <font size=-1>
 <p>
 <b>BibTeX Type:</b> %(bibtex_type)s<br>
+<b>BibTeX Key:</b> %(bibtex_key)s<br>
 <b>Publication Date:</b> %(date)s<br>
 </p>
 </font>
@@ -121,6 +122,7 @@ class BibInfoPanel(wx.Panel):
         self.Layout()
         info = {'color': html_colors['kde']}
         info['bibtex_type'] = unicode(obj.BibData_Type)
+        info['bibtex_key'] = unicode(obj.BibData_Key)
         if obj.BibData_DatePublished:
             info['date'] = obj.BibData_DatePublished.strftime('%d %B %Y')
         else: info['date'] = 'None'
@@ -255,8 +257,9 @@ class FBBPanel(wx.Panel):
         self.title = wx.StaticText(self, -1, '')
         # self.title = wx.TextCtrl(self, -1, style=wx.TE_READONLY)
         # self.title = wx.WindowDC(self)
-        # font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
-        # self.title.SetFont(font)
+        if not sys.platform == 'win32':
+            font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
+            self.title.SetFont(font)
         self.sizer.Add(self.title, 1, wx.EXPAND)
         # self.sizer.Add((22,22), 1)
         self.SetSizer(self.sizer)

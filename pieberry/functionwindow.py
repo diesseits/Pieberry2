@@ -456,8 +456,8 @@ class FunctionMainWindow(BaseMainWindow):
         bibfilepath = fdia.GetPath()
         from pieberry.pieutility.bibtex import autogen_bibtex_key
         progress_dialog = wx.ProgressDialog( 
-            'Importing from file', 
-            'Reading %s' % bibfilepath, maximum = 1)
+            _('Importing from file'), 
+            _('Reading %s' % bibfilepath), maximum = 1)
         progress_dialog.Pulse()
         ents = pieinput.pybtex_entries_from_file(bibfilepath)
         self.OpenStagingPane()
@@ -466,7 +466,7 @@ class FunctionMainWindow(BaseMainWindow):
         for bibkey, ent in ents.items():
             try:
                 if not bibkey:
-                    obj = pieinput.pybtex_to_pieberry(akey, ent)
+                    obj = pieinput.pybtex_to_pieberry('', ent)
                     akey = autogen_bibtex_key(obj)
                     obj.BibData_Key = akey
                 elif query_unique_key(session, bibkey):
@@ -474,13 +474,14 @@ class FunctionMainWindow(BaseMainWindow):
                     obj = pieinput.pybtex_to_pieberry(bibkey, ent)
                     print 'adding %s with key: %s' % (obj, bibkey)
                 else:
-                    obj = pieinput.pybtex_to_pieberry(akey, ent)
+                    obj = pieinput.pybtex_to_pieberry('', ent)
                     akey = autogen_bibtex_key(obj)
                     obj.BibData_Key = akey
                 pan.AddObject(obj)
                 count += 1
                 progress_dialog.UpdatePulse('%d items added' % count)
             except:
+                traceback.print_exc()
                 print 'Unhandleable entry with key: %s' % bibkey
         progress_dialog.Destroy()
         self.StatusBar.SetStatusText(

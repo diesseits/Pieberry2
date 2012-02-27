@@ -86,6 +86,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
+        self.menu_import_bibtex.SetBitmap(
+            wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         self.menu_filter = wx.MenuItem(
             locateMenu, -1, _('Fi&lter\tCtrl-i'))
         self.menu_toggle_context = wx.MenuItem(
