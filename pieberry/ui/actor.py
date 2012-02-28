@@ -110,11 +110,7 @@ class PieActor:
         indexer.start()
 
     def DebugAddNotesPane(self, evt):
-        from pieberry.ui.notespane import *
-        tab = RichTextPanel(self.TabBook, -1)
-        caption = 'Notes test'
-        self.TabBook.AddPage(
-            tab, caption, select=True)
+        self.OpenNotesPane()
         # self.OpenNotesPane()
         # pan = self.GetCurrentPane()
 

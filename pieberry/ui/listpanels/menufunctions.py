@@ -72,6 +72,10 @@ class MenuFunctionsMixin:
     def onEditedBibData(self, evt):
         self.GetParent().GetParent().OnEditedBibData(evt)
 
+    def onEditNotes(self, evt):
+        obj = self.GetSelectedItem()
+        self.GetParent().GetParent().OpenNotesPane(obj=obj)
+
     def onCopyCitation_PlainText(self, evt):
         print 'onCopyCitiation_PlainText'
         obj = self.GetSelectedItem()

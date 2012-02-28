@@ -2,7 +2,7 @@ import sys, wx
 import wx.richtext as rt
 from pieberry.pieconfig.initsys import *
 
-class RichTextPanel(wx.Panel):
+class NotesPane(wx.Panel):
     paneltype = 'notespanel'
     
     def __init__(self, *args, **kw):
@@ -12,30 +12,42 @@ class RichTextPanel(wx.Panel):
 
         self.toolbar = wx.ToolBar(self, -1)
 
-        # tb_undo = self.toolbar.AddTool(
-        #     wx.ID_UNDO, wx.ArtProvider.GetBitmap(wx.ART_UNDO, wx.ART_TOOLBAR),
-        #     shortHelpString=_("Undo"))
-
-        # tb_redo = self.toolbar.AddTool(
-        #     wx.ID_REDO, wx.ArtProvider.GetBitmap(wx.ART_REDO, wx.ART_TOOLBAR),
-        #     shortHelpString=_('Redo'))
-
-
-        # self.toolbar.Realize()
         self.MakeToolBar()
         
-        self.rtc = rt.RichTextCtrl(self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+        self.titlelabel = wx.StaticText(self, -1, 'The title')
+        self.rtc = rt.RichTextCtrl(
+            self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+        sizer.Add(self.titlelabel, 0, wx.EXPAND|wx.ALL, 5)
         sizer.Add(self.toolbar, 0, wx.EXPAND)
-        sizer.Add(self.rtc, 1, wx.ALL|wx.EXPAND, 5)
+        sizer.Add(self.rtc, 1, wx.ALL|wx.EXPAND, 0)
+
+
+        self.donebt = wx.Button(self, -1, _('Done'))
+        lsizer = wx.BoxSizer(wx.HORIZONTAL)
+        lsizer.Add((20,20), 1)
+        lsizer.Add(self.donebt, 0, wx.ALL, 5)
+        
+        sizer.Add(lsizer, 0, wx.EXPAND)
+
         self.SetSizer(sizer)
         self.Layout()
+        self._do_bindings()
         wx.CallAfter(self.rtc.SetFocus)
+
+    def _do_bindings(self):
+        
         self.rtc.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.donebt.Bind(wx.EVT_BUTTON, self.OnDone)
+
+    def SetObject(self, obj):
+        self._obj = obj
+        self.titlelabel.SetLabel(obj.Title())
+        
+    def OnDone(self, evt):
+        pass
 
     def OnKeyDown(self, evt):
-        print evt.GetKeyCode()
         keycode = evt.GetKeyCode()
-
         if evt.ControlDown():
             if (keycode == ord('B') ):
                 self.rtc.ApplyBoldToSelection()
@@ -43,9 +55,7 @@ class RichTextPanel(wx.Panel):
                 self.rtc.ApplyItalicToSelection()
             elif (keycode == ord('U')):
                 self.rtc.ApplyUnderlineToSelection()
-
         evt.Skip()
-
 
     def OnURL(self, evt):
 
@@ -381,24 +391,24 @@ class RichTextPanel(wx.Panel):
         doBind( tbar.AddTool(wx.ID_REDO, wx.ArtProvider.GetBitmap(wx.ART_REDO, wx.ART_TOOLBAR),
                              shortHelpString="Redo"), self.ForwardEvent, self.ForwardEvent)
         tbar.AddSeparator()
-        # doBind( tbar.AddTool(-1, images._rt_bold.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Bold"), self.OnBold, self.OnUpdateBold)
-        # doBind( tbar.AddTool(-1, images._rt_italic.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Italic"), self.OnItalic, self.OnUpdateItalic)
-        # doBind( tbar.AddTool(-1, images._rt_underline.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Underline"), self.OnUnderline, self.OnUpdateUnderline)
-        # tbar.AddSeparator()
-        # doBind( tbar.AddTool(-1, images._rt_alignleft.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Align Left"), self.OnAlignLeft, self.OnUpdateAlignLeft)
-        # doBind( tbar.AddTool(-1, images._rt_centre.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Center"), self.OnAlignCenter, self.OnUpdateAlignCenter)
-        # doBind( tbar.AddTool(-1, images._rt_alignright.GetBitmap(), isToggle=True,
-        #                       shortHelpString="Align Right"), self.OnAlignRight, self.OnUpdateAlignRight)
-        # tbar.AddSeparator()
-        # doBind( tbar.AddTool(-1, images._rt_indentless.GetBitmap(),
-        #                       shortHelpString="Indent Less"), self.OnIndentLess)
-        # doBind( tbar.AddTool(-1, images._rt_indentmore.GetBitmap(),
-        #                       shortHelpString="Indent More"), self.OnIndentMore)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-text-bold.png')), isToggle=True,
+                              shortHelpString="Bold"), self.OnBold, self.OnUpdateBold)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-text-italic.png')), isToggle=True,
+                              shortHelpString="Italic"), self.OnItalic, self.OnUpdateItalic)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-text-underline.png')), isToggle=True,
+                              shortHelpString="Underline"), self.OnUnderline, self.OnUpdateUnderline)
+        tbar.AddSeparator()
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-justify-left.png')), isToggle=True,
+                              shortHelpString="Align Left"), self.OnAlignLeft, self.OnUpdateAlignLeft)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-justify-center.png')), isToggle=True,
+                              shortHelpString="Center"), self.OnAlignCenter, self.OnUpdateAlignCenter)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-justify-right.png')), isToggle=True,
+                              shortHelpString="Align Right"), self.OnAlignRight, self.OnUpdateAlignRight)
+        tbar.AddSeparator()
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-indent-less.png')),
+                              shortHelpString="Indent Less"), self.OnIndentLess)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-indent-more.png')),
+                              shortHelpString="Indent More"), self.OnIndentMore)
         # tbar.AddSeparator()
         # doBind( tbar.AddTool(-1, images._rt_font.GetBitmap(),
         #                       shortHelpString="Font"), self.OnFont)

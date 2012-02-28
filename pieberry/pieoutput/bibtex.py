@@ -82,7 +82,7 @@ def get_formatted_citation(e, key='k', format='html'):
     href_search = re_href.search(rendered_data)
     output_data = None
     if format == 'html':
-        if e.fields.has_key('url'):
+        if e.fields.has_key('url') and e.fields.has_key('howpublished'):
             output_data = rendered_data.replace(
                 e.fields['howpublished'], 
                 '<a href="%s">%s</a>' % (
@@ -93,13 +93,13 @@ def get_formatted_citation(e, key='k', format='html'):
     elif format == 'plaintext':
         pass #nothing to be done in this case
     elif format == 'urlplaintext':
-        if e.fields.has_key('url'):
+        if e.fields.has_key('url') and e.fields.has_key('howpublished'):
             output_data = '%s\n%s' % (
                 rendered_data,
                 e.fields['url']
                 )
     elif format == 'org':
-        if e.fields.has_key('url'):
+        if e.fields.has_key('url') and e.fields.has_key('howpublished'):
             output_data = rendered_data.replace(
                 e.fields['howpublished'],
                 '[[%s][%s]]' % (

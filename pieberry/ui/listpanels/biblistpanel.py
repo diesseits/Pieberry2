@@ -83,6 +83,10 @@ class BibListPanel(BaseListPanel):
                                           _('Edit bibliographic information'))
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
+            rcm_editnotes = wx.MenuItem(menu, 18, 
+                                        _('Edit notes on this item'))
+            menu.AppendItem(rcm_editnotes)
+            self.Bind(wx.EVT_MENU, self.onEditNotes, rcm_editnotes)
             # citations
         if obj.has_aspect('bibdata'):
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,

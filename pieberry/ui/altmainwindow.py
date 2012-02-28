@@ -13,6 +13,7 @@ from pieberry.ui.actor import PieActor
 from pieberry.pieconfig.globalvars import *
 from pieberry.pieconfig.paths import IMGDIR
 from pieberry.atomise.atomise_widget import atomWidget
+from pieberry.ui.notespane import NotesPane
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -288,6 +289,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             )
         self._mgr.Update()
         self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.GetCurrentPane().onFilterView)
+        if evt: evt.Skip()
 
     def ToggleSearchPanel(self, evt=0, origin=None, field=None):
         if self.SearchPanel:
@@ -362,6 +364,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.TabBook.AddPage(
             tab, caption, select=True, 
             bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
+
+    def OpenNotesPane(self, obj, caption=_('Notes')):
+        tab = NotesPane(self.TabBook, -1)
+        if not obj: return
+        tab.SetObject(obj)
+        caption = 'Notes: %s' % obj.Title()[:15]
+        self.TabBook.AddPage(
+            tab, caption, select=True)
 
     def CloseAllPanes(self):
         paneidxs = range(self.TabBook.GetPageCount())
