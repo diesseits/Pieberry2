@@ -109,10 +109,19 @@ class PieActor:
         self.Bind(EVT_PIE_FILE_INDEX_FINISHED, self.OnIndexerFinished)
         indexer.start()
 
+    def DebugAddNotesPane(self, evt):
+        from pieberry.ui.notespane import *
+        tab = RichTextPanel(self.TabBook, -1)
+        caption = 'Notes test'
+        self.TabBook.AddPage(
+            tab, caption, select=True)
+        # self.OpenNotesPane()
+        # pan = self.GetCurrentPane()
+
     def DisplayIndexerStatus(self, evt):
         self.StatusBar.SetStatusText(evt.message)
         # print evt.message
         # print '%d of %d' % (evt.track, evt.count)
-    
+
     def OnIndexerFinished(self, evt):
         pass

@@ -107,11 +107,15 @@ class BaseMainWindow(wx.Frame, PieActor):
             debugMenu, -1, _('Add Pane with desktop items'))
         self.menu_debug_forcescan = wx.MenuItem(
             debugMenu, -1, _('Force scan of folders'))
+        self.menu_debug_notespane = wx.MenuItem(
+            debugMenu, -1, 'Add notes pane')
         debugMenu.AppendItem(self.menu_debug_addatompane)
         debugMenu.AppendItem(self.menu_debug_adddlpane)
         debugMenu.AppendItem(self.menu_debug_addwebpane)
         debugMenu.AppendItem(self.menu_debug_addbibpane)
         debugMenu.AppendItem(self.menu_debug_forcescan)
+        debugMenu.AppendItem(self.menu_debug_notespane)
+        self.Bind(wx.EVT_MENU, self.DebugAddNotesPane, self.menu_debug_notespane)
         self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
                   self.menu_debug_addatompane)
         self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
@@ -272,6 +276,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             'WebListPanel',
             'BibListPanel',
             'StagingListPanel'):
+            evt.Skip()
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
