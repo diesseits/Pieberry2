@@ -16,6 +16,7 @@ from pieberry.piedb import SQLABase, Session, session
 # session = Session()
 
 def get_tag(t, threadsess=None):
+    '''Get a tag (assumed to exist) in the tag table'''
     assert type(t) in (str, unicode)
     if threadsess: mysess = threadsess
     else: mysess = session
@@ -23,16 +24,19 @@ def get_tag(t, threadsess=None):
     if len(q) == 0: 
         raise ValueError, 'Tag %s does not exist' % t
     else:
+        # these operations somehow stop sqlalchemy panicking at having
+        # more than one instance of the same object in the same
+        # session.
+        r = q[0]
+        r = mysess.merge(r)
         return q[0]
 
 def tag_exists(t):
-    # session = Session()
     q = session.query(PieTag).filter(PieTag.TagName == t).all()
     if q: return True
     return False
 
 def fn_add_tag(tag):
-    # session = Session()
     g = PieTag(tag)
     session.add(g)
     session.commit()
@@ -57,14 +61,20 @@ class TagHandler:
     def add_tags(self, tags, threaded=False):
         '''Add to list of tags. Argument must be a list of strings, if
         threaded, will generate own session for the transaction'''
-        print 'DOING THREADED:', threaded
         if threaded:
             threadsess = Session()
         for tag in tags:
             if threaded:
-                self.add_tag(tag, threadsess)
+                try:
+                    self.add_tag(tag, threadsess)
+                except Exception, exc:
+                    print 'Could not add tag %s, %s' % (tag, exc)
             else:
-                self.add_tag(tag)
+                try:
+                    self.add_tag(tag)
+                except Exception, exc:
+                    print 'Could not add tag %s, %s' % (tag, exc)
+
 
     def remove_tag(self, tagname):
         raise NotImplemented, 'Tag removal yet to be implemented'

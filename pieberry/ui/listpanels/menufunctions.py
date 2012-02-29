@@ -1,9 +1,10 @@
 import pieberry.pieutility
-import os, os.path, wx
+import os, os.path, wx, sys
 import traceback
 
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import EVT_PIE_BIB_EDIT
+from pieberry.ui.htmldataobject import HTMLDataObject
 
 from pieberry.pieconfig.identity import PIE_APPNAME
 from pieberry.pieconfig.paths import IMGDIR
@@ -113,8 +114,15 @@ class MenuFunctionsMixin:
             traceback.print_exc()
             wx.MessageBox(unicode(exc), "Error")
             return
-        clipdata = wx.TextDataObject()
-        clipdata.SetText(cite)        
+        if sys.platform == 'win32':
+            clipdata = HTMLDataObject()
+            clipdata.SetValue(cite)
+        else:
+            clipdata = wx.TextDataObject()
+            clipdata.SetText(cite)
+            fmt = wx.DataFormat(wx.DF_INVALID)
+            fmt.SetId('text/html')
+            clipdata.SetFormat(fmt)
         if PYNOTIFY:
             n = pynotify.Notification(
                 "Citation", 
