@@ -277,7 +277,6 @@ class BaseMainWindow(wx.Frame, PieActor):
             'WebListPanel',
             'BibListPanel',
             'StagingListPanel'):
-            evt.Skip()
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
@@ -289,7 +288,6 @@ class BaseMainWindow(wx.Frame, PieActor):
             )
         self._mgr.Update()
         self.FilterPanel.Bind(EVT_PIE_SEARCH_EVENT, self.GetCurrentPane().onFilterView)
-        if evt: evt.Skip()
 
     def ToggleSearchPanel(self, evt=0, origin=None, field=None):
         if self.SearchPanel:

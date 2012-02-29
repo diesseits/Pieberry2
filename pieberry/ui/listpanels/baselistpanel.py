@@ -3,6 +3,7 @@
 import wx
 import pieberry.pieutility
 
+from pprint import pprint
 from pieberry.ui.events import *
 from pieberry.ui.timers import SpinnyTimer
 from pieberry.ui.listpanels.listwidgets import *
@@ -94,6 +95,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         # print 'Item data:', self.ListDisplay.GetItemData(evt.GetIndex())
         self.ListDisplay.onItemSelected(evt)
         ref = self.ListDisplay.GetItemData(evt.GetIndex())
+        # pprint(self.objectstore[ref].aspects)
         newevt = PieListSelectionEvent(
             ref=ref, 
             pieobject=self.objectstore[ref])

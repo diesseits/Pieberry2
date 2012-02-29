@@ -113,7 +113,8 @@ class PieScraper:
                     category_phrase=self._category_phrase,
                     author_is_corporate=self._author_is_corporate,
                     tags=linky['Tags'],
-                    inferred_filetype = linky['InferredFileType']
+                    inferred_filetype = linky['InferredFileType'],
+                    threaded=threaded
                     )
                 ob.title = suggest_title(
                     linky['SuggestedTitle'],

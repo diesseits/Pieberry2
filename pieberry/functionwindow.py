@@ -253,8 +253,8 @@ class FunctionMainWindow(BaseMainWindow):
             obj.add_aspect_stored(dpath)
             counter += 1
         # session = Session()
-        session.add_all(ostore)
         ostore.set_aspect_saved()
+        session.add_all(ostore)
         time.sleep(1)
         session.commit()
         progress_dialog.Destroy()

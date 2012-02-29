@@ -15,9 +15,11 @@ from pieberry.piedb import SQLABase, Session, session
 
 # session = Session()
 
-def get_tag(t):
+def get_tag(t, threadsess=None):
     assert type(t) in (str, unicode)
-    q = session.query(PieTag).filter(PieTag.TagName == t).all()
+    if threadsess: mysess = threadsess
+    else: mysess = session
+    q = mysess.query(PieTag).filter(PieTag.TagName == t).all()
     if len(q) == 0: 
         raise ValueError, 'Tag %s does not exist' % t
     else:
@@ -42,9 +44,9 @@ class TagHandler:
     def __init__(self):
         pass
 
-    def add_tag(self, tag):
+    def add_tag(self, tag, threadsess=None):
         assert type(tag) in (unicode, str)
-        pietag = get_tag(tag)
+        pietag = get_tag(tag, threadsess)
         self.tags.append(pietag)
         # if tag_exists(tag):
         #     self.tags.append(PieTag(tag))
@@ -52,10 +54,17 @@ class TagHandler:
         #     g = fn_add_tag(tag)
         #     self.tags.append(g)
 
-    def add_tags(self, tags):
-        '''Add to list of tags. Argument must be a list of strings'''
+    def add_tags(self, tags, threaded=False):
+        '''Add to list of tags. Argument must be a list of strings, if
+        threaded, will generate own session for the transaction'''
+        print 'DOING THREADED:', threaded
+        if threaded:
+            threadsess = Session()
         for tag in tags:
-            self.add_tag(tag)
+            if threaded:
+                self.add_tag(tag, threadsess)
+            else:
+                self.add_tag(tag)
 
     def remove_tag(self, tagname):
         raise NotImplemented, 'Tag removal yet to be implemented'

@@ -7,16 +7,16 @@ from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, B
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
-from piedb import *
-from pieobject.tags import TagHandler, PieTag, pieobject_tags
-from pieobject.biblio import BiblioHandler
-from pieobject.objectstore import PieObjectStore
-from pieobject.diagnostic import *
-from pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
-from pieobject.website import PieWebsite, referable_website, validify_domain
-from pieconfig.config import PIE_CONFIG
-from pieconfig.paths import ROOT_MAP
-from pieconfig.schemas import bibtexfields, bibtexmap
+from pieberry.piedb import *
+from pieberry.pieobject.tags import TagHandler, PieTag, pieobject_tags
+from pieberry.pieobject.biblio import BiblioHandler
+from pieberry.pieobject.objectstore import PieObjectStore
+from pieberry.pieobject.diagnostic import *
+from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
+from pieberry.pieobject.website import PieWebsite, referable_website, validify_domain
+from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieconfig.paths import ROOT_MAP
+from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
@@ -393,13 +393,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         will correspond to various items in a wx.ImageList for the
         list/other type of window concerned. Values may include:
         'start' 'spin' 'blank' 'success' 'fail' 'warn' 'pass' 'tick'
-        'exclude' 'pdf' 'doc'
+        'exclude' 'pdf' 'doc' 'star'
 
         Contexts may include 'filewindow', 'bibwindow', 'dlwindow'''
         if window_type == 'filewindow':
             if self.FileData_FileType == 'pdf':
                 return 'pdf'
             else: return 'doc'
+        elif window_type == 'bibwindow':
+            if self.StatData_Favourite:
+                return 'star'
+            else: return 'success'
     
     def stats_opened(self):
         self.StatData_LastOpened = date=datetime.datetime.today()

@@ -33,6 +33,9 @@ class PieObjectStore:
         self.sessiondata = {}
 
     def __len__(self):
+        # hmm, I think this is probably a bug. Not all these keys
+        # might have items. Not changing it till some bugged behaviour
+        # emerges though.
         return len(self.store.keys())
 
     def __str__(self):
@@ -135,7 +138,11 @@ class PieObjectStore:
 
     def set_aspect_saved(self):
         '''Mark all objects in the ostore as saved'''
+        # print 'Setting %d objects to flag saved' % len(self)
+        count = 0
         for obj in self:
+            count += 1
+            # print '%d: flagging %s saved' % (count, obj)
             obj.add_aspect_saved()
 
     def instantiate_nonstored(self):

@@ -243,7 +243,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
                          category_phrase='', author_is_corporate=False,
-                         tags=None, inferred_filetype=None):
+                         tags=None, inferred_filetype=None, threaded=False):
         '''Add information gleaned from the document being on the web
         (in-situ)'''
         assert type(url) in (str, unicode)
@@ -263,7 +263,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.BibData_Type = PIE_CONFIG.get(
             'Format', 'default_bibtex_entry_type')
         if tags:
-            self.add_tags(tags)
+            self.add_tags(tags, threaded)
         if inferred_filetype:
             self.set_file_type(inferred_filetype)
         self.aspects['onweb']=True
