@@ -1,6 +1,6 @@
-from sqlalchemy import or_, extract
+from sqlalchemy import or_, extract, desc
 
-from pieberry.pieobject import PieObject, PieWebsite
+from pieberry.pieobject import PieObject, PieWebsite, PieObjectStore
 
 # search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
 # search_field_codes = ('main', 'all', 'title', 'author', 'notes', 'website', 'journal')
@@ -99,3 +99,9 @@ def query_unique_key(session, key):
         return False
     else:
         raise 'wtf'
+
+def build_query_most_recent(session, number=50):
+    '''Returns the most recently saved pieobjects in the database'''
+    q = session.query(PieObject).order_by(desc(PieObject.StatData_LastSaved))[:number]
+    return PieObjectStore(q)
+

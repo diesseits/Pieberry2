@@ -56,7 +56,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_quit.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_QUIT, wx.ART_MENU))
         self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Config'))
-        self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About'))
+        self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About Pieberry'))
         # self.menu_pageref = wx.MenuItem(
         #     toolMenu, 
         #     -1, 
@@ -66,25 +66,25 @@ class BaseMainWindow(wx.Frame, PieActor):
             toolMenu, 
             -1, 
             _('&Create new (empty) bibliography entry\tCtrl-n'), 
-            'Newref')
+            _('Bring up a dialog to allow you to enter bibliographic data'))
         self.menu_emptyref.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_MENU))
         self.menu_manual = wx.MenuItem(helpMenu, -1, _('&Manual'))
         self.menu_find = wx.MenuItem(
-            toolMenu, -1, _('&Find items in bibliography\tCtrl-f'), 'Find')
+            toolMenu, -1, _('&Find items in bibliography\tCtrl-f'), _('Search Pieberry\'s internal database'))
         self.menu_find.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_atom_process = wx.MenuItem(
-            atomMenu, -1, _('&Process files from desktop\tCtrl-m'), 'Process')
+            atomMenu, -1, _('&Process files from desktop\tCtrl-m'), _('Get documents off your desktop and sort them into folders'))
         self.menu_atom_process.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
         # self.menu_atom_settings = wx.MenuItem(
         #     atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
         self.menu_find_in_folders = wx.MenuItem(
-            toolMenu, -1, _('F&ind your files\tCtrl-shift-f'), 'Findall')
+            toolMenu, -1, _('F&ind your files\tCtrl-shift-f'), _('Search database by file name'))
         self.menu_find_in_folders.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_scan_web_page = wx.MenuItem(
-            gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'))
+            gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'), _('Read and find links to documents on a given web page'))
         self.menu_scan_web_page.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
         self.menu_import_bibtex = wx.MenuItem(
@@ -92,10 +92,12 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_import_bibtex.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         self.menu_filter = wx.MenuItem(
-            locateMenu, -1, _('Fi&lter\tCtrl-i'))
+            locateMenu, -1, _('Fi&lter\tCtrl-i'), _('Filter the items in the current view'))
         self.menu_toggle_context = wx.MenuItem(
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)
+        self.menu_view_recent = wx.MenuItem(
+            viewMenu, -1, _('View most &recent documents\tCtrl-r'))
 
         # BEGIN debug menu
         self.menu_debug_addwebpane = wx.MenuItem(
@@ -143,6 +145,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         gatherMenu.AppendItem(self.menu_atom_process)
         gatherMenu.AppendItem(self.menu_import_bibtex)
         viewMenu.AppendItem(self.menu_toggle_context)
+        viewMenu.AppendItem(self.menu_view_recent)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -168,7 +171,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
-
+        self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 
@@ -183,7 +186,7 @@ class BaseMainWindow(wx.Frame, PieActor):
 
     def __set_properties(self):
         # begin wxGlade: GladeMainWindow.__set_properties
-        self.SetTitle("Pieberry II")
+        self.SetTitle("Pieberry")
         _icon = wx.EmptyIcon()
         if sys.platform == 'win32':
             _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_16.png')))

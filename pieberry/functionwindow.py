@@ -493,7 +493,14 @@ class FunctionMainWindow(BaseMainWindow):
         self.StatusBar.SetStatusText(
             _('Imported %d items from %s.' % (count, bibfilepath)))
                 
-
+    def OnViewMostRecent(self, evt):
+        '''Bring up a view of the most recently added db items'''
+        self.OpenSearchPane(caption=_('Recent Documents'))
+        pan = self.GetCurrentPane()
+        q = build_query_most_recent(
+            session,
+            PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
+        pan.AddObjects(q)
             
             
         
