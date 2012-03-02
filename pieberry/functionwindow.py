@@ -505,7 +505,10 @@ class FunctionMainWindow(BaseMainWindow):
     def OnFlagChecked(self, evt):
         assert evt.flagkey in ('StatData_Favourite', 'StatData_FollowUpFlag')
         assert type(evt.flagval) == bool
-        setattr(evt.obj, evt.flagkey, evt.flagval)
+        if evt.flagkey == 'StatData_FollowUpFlag':
+            evt.obj.flag_followup(evt.flagval)
+        else:
+            setattr(evt.obj, evt.flagkey, evt.flagval)
         session.commit()
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)

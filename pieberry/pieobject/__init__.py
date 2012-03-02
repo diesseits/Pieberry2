@@ -41,6 +41,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     StatData_LastOpened = Column(DateTime)
     StatData_LastSaved = Column(DateTime)
     StatData_FollowUpDate = Column(DateTime)
+    StatData_FollowUpDueDate = Column(DateTime)
     StatData_FollowUpFlag = Column(Boolean)
 
     #relationships
@@ -340,6 +341,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             # if not self.WebData_PageUrl:
             #     self.WebData_PageUrl = kwargs['WebData_Url']
         pprint(kwargs)
+
+    def flag_followup(self, flagstatus, duedate=None):
+        '''Flag this object for review or follow up by the user.'''
+        assert type(flagstatus) == bool
+        self.StatData_FollowUpFlag = flagstatus
+        self.StatData_FollowUpDate = datetime.datetime.today()
         
     def set_session(self, sess):
         '''Mark a session flag for this object'''

@@ -1,4 +1,4 @@
-import wx, sys
+import wx, sys, datetime
 import wx.lib.mixins.listctrl as listmix
 from pprint import pprint
 
@@ -171,6 +171,15 @@ class BibListCtrl(BaseListCtrl):
         self.SetStringItem(nexidx, 1, str(obj.ReferDate().strftime('%Y-%m-%d')))
         self.SetStringItem(nexidx, 2, obj.Title())
         self.SetItemData(nexidx, ref)
+        # colorise if flagged for follow up
+        if obj.StatData_FollowUpFlag:
+            td = datetime.datetime.today() - obj.StatData_FollowUpDate
+            if td.days == 0:
+                self.SetItemTextColour(nexidx, 'blue')
+            elif td.days < 4:
+                self.SetItemTextColour(nexidx, 'purple')
+            elif td.days > 6:
+                self.SetItemTextColour(nexidx, 'red')
         self.itemDataMap[ref] = (obj.Author(), 
                                  str(obj.ReferDate()),#.year),
                                  obj.Title())
