@@ -287,6 +287,12 @@ class FunctionMainWindow(BaseMainWindow):
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)
 
+    def OnNotesPaneUpdate(self, evt):
+        evt.obj.notes = evt.htmlcontent
+        if evt.obj.has_aspect('saved'):
+            session.commit()
+        wx.CallAfter(self.CloseCurrentPane)
+
     def OnCreateNewBibObj(self, evt):
         '''Handle creation of a new user-created bibliography entry
         from scratch'''

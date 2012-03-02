@@ -1,6 +1,8 @@
 import sys, wx
 import wx.richtext as rt
 from pieberry.pieconfig.initsys import *
+from pieberry.pieconfig.paths import CACHEDIR
+from pieberry.ui.events import PieNotesPaneUpdateEvent
 
 class NotesPane(wx.Panel):
     paneltype = 'notespanel'
@@ -15,9 +17,16 @@ class NotesPane(wx.Panel):
         self.MakeToolBar()
         
         self.titlelabel = wx.StaticText(self, -1, 'The title')
+        self.authorlabel = wx.StaticText(self, -1, 'The Author')
+        self.datelabel = wx.StaticText(self, -1, 'Date')
         self.rtc = rt.RichTextCtrl(
             self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
         sizer.Add(self.titlelabel, 0, wx.EXPAND|wx.ALL, 5)
+        font = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+        self.titlelabel.SetFont(font)
+
+        sizer.Add(self.authorlabel, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
+        sizer.Add(self.datelabel, 0, wx.EXPAND|wx.ALL, 5)
         sizer.Add(self.toolbar, 0, wx.EXPAND)
         sizer.Add(self.rtc, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -42,9 +51,41 @@ class NotesPane(wx.Panel):
     def SetObject(self, obj):
         self._obj = obj
         self.titlelabel.SetLabel(obj.Title())
+        self.authorlabel.SetLabel(obj.Author())
+        self.datelabel.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
+        if obj.notes:
+            self.SetHtmlContent(obj.notes)
         
     def OnDone(self, evt):
-        pass
+        if not self._obj: raise 'No object set for this pane'
+        newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetHtmlContent(),
+                                         obj=self._obj)
+        wx.PostEvent(self, newevt)
+
+    def GetHtmlContent(self):
+        handler = rt.RichTextXMLHandler()
+        # handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
+        # handler.SetFontSizeMapping([7,9,11,12,14,22,100])
+  
+        import cStringIO
+        stream = cStringIO.StringIO()
+        if not handler.SaveStream(self.rtc.GetBuffer(), stream):
+            return ""
+  
+        return stream.getvalue()
+
+    def SetHtmlContent(self, content):
+        print content
+        from cStringIO import StringIO
+        out = StringIO()
+        handler = wx.richtext.RichTextXMLHandler()
+        buffer = self.rtc.GetBuffer()
+        buffer.AddHandler(handler)
+        out.write(content)
+        out.seek(0)
+        handler.LoadStream(buffer, out)
+        print out.read()
+        self.rtc.Refresh()
 
     def OnKeyDown(self, evt):
         keycode = evt.GetKeyCode()
@@ -66,6 +107,8 @@ class NotesPane(wx.Panel):
 
         # This gives us a string suitable for the file dialog based on
         # the file handlers that are loaded
+        handler = rt.RichTextHTMLHandler()
+        rt.RichTextBuffer.AddHandler(handler)
         wildcard, types = rt.RichTextBuffer.GetExtWildcard(save=False)
         dlg = wx.FileDialog(self, "Choose a filename",
                             wildcard=wildcard,

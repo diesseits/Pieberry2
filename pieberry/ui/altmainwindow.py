@@ -370,6 +370,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         caption = 'Notes: %s' % obj.Title()[:15]
         self.TabBook.AddPage(
             tab, caption, select=True)
+        tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
     def CloseAllPanes(self):
         paneidxs = range(self.TabBook.GetPageCount())

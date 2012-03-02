@@ -32,6 +32,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     corpauthor = Column(Unicode)
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
+    notes = Column(Unicode)
 
     # User Stats
 
