@@ -105,7 +105,6 @@ class BibListPanel(BaseListPanel):
             wx.EVT_MENU(menu, 20, self.onFlagFollowUp)
             # citations
         if obj.has_aspect('bibdata'):
-            menu.AppendSeparator()
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
                                                 _('Copy citation (plain text)'))
             rcm_copycitationplain.SetBitmap(
@@ -134,4 +133,6 @@ class BibListPanel(BaseListPanel):
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copykey)
             self.Bind(wx.EVT_MENU, self.onCopyBibTeXKey, rcm_copykey)
-        menu.AppendMenu(20, _('Copy to clipboard ...'), copyMenu)
+        if obj.has_aspect('onweb') or obj.has_aspect('bibdata'):
+            menu.AppendSeparator()
+            menu.AppendMenu(20, _('Copy to clipboard ...'), copyMenu)
