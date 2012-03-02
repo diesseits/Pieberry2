@@ -85,7 +85,11 @@ class MenuFunctionsMixin:
         wx.PostEvent(self, newevt)
 
     def onFlagFollowUp(self, evt):
-        print dir(evt)
+        obj = self.GetSelectedItem()
+        newevt = PieFlagCheckedEvent(flagkey='StatData_FollowUpFlag',
+                                     flagval=evt.Checked(),
+                                     obj=obj)
+        wx.PostEvent(self, newevt)
 
     def onCopyCitation_PlainText(self, evt):
         print 'onCopyCitiation_PlainText'

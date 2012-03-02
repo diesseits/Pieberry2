@@ -94,6 +94,13 @@ class BibListPanel(BaseListPanel):
             if obj.StatData_Favourite:
                 menu.Check(rcm_flagfavourite.GetId(), True)
             wx.EVT_MENU(menu, 19, self.onFlagFavourite)
+            rcm_flagfollowup = wx.MenuItem(menu, 20,
+                                           _('Flag for review/follow-up'),
+                                           kind=wx.ITEM_CHECK)
+            menu.AppendItem(rcm_flagfollowup)
+            if obj.StatData_FollowUpFlag:
+                menu.Check(rcm_flagfollowup.GetId(), True)
+            wx.EVT_MENU(menu, 20, self.onFlagFollowUp)
             # citations
         if obj.has_aspect('bibdata'):
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,

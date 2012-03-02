@@ -503,7 +503,7 @@ class FunctionMainWindow(BaseMainWindow):
         pan.AddObjects(q)
 
     def OnFlagChecked(self, evt):
-        assert evt.flagkey in ('StatData_Favourite', 'StatData_FollowUp')
+        assert evt.flagkey in ('StatData_Favourite', 'StatData_FollowUpFlag')
         assert type(evt.flagval) == bool
         setattr(evt.obj, evt.flagkey, evt.flagval)
         session.commit()

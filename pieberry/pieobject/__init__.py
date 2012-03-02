@@ -40,7 +40,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     StatData_OpenedCount = Column(Integer)
     StatData_LastOpened = Column(DateTime)
     StatData_LastSaved = Column(DateTime)
-    StatData_FollowUp = Column(DateTime)
+    StatData_FollowUpDate = Column(DateTime)
+    StatData_FollowUpFlag = Column(Boolean)
 
     #relationships
 
@@ -407,7 +408,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return 'pdf'
             else: return 'doc'
         elif window_type == 'bibwindow':
-            if self.StatData_Favourite:
+            if self.StatData_FollowUpFlag:
+                return 'flag'
+            elif self.StatData_Favourite:
                 return 'star'
             else: return 'success'
     
