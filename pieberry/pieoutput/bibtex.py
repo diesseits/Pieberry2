@@ -61,9 +61,12 @@ def get_pybtex_object(obj, texify=False):
         else:
             if not getattr(obj, objfield): continue
             pybtex_entry.fields[btkey] = f_(getattr(obj, bibtexmap[btkey]))
-    pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
+    if not (obj.ReferDate().day == 1 and obj.ReferDate().month == 1):
+        # hacky hack - if publication date is supposedly 1 January,
+        # then we disbelieve it and assume that only the year has been
+        # set.
+        pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
     pybtex_entry.fields['year'] = obj.ReferDate().strftime('%Y')
-
     return pybtex_entry
 
 

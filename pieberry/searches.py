@@ -3,7 +3,7 @@ from sqlalchemy import or_, extract
 from pieberry.pieobject import PieObject, PieWebsite
 
 # search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
-# search_field_codes = ('main', 'all', 'title', 'author', 'website', 'journal')
+# search_field_codes = ('main', 'all', 'title', 'author', 'notes', 'website', 'journal')
 
 def build_query_simple(origincode, text, fieldcode, session):
     '''Build a simple query for use with the pieberry search bar'''
@@ -21,6 +21,10 @@ def build_query_simple(origincode, text, fieldcode, session):
             PieObject.author.like('%' + t + '%'), 
             PieObject.corpauthor.like('%' + t + '%'), 
             PieObject.collection.like('%' + t + '%'),
+            PieObject.notes.like('%' + t + '%'),
+            PieObject.FileData_FileName.like('%' + t + '%'),
+            PieObject.WebData_Url.like('%' + t + '%'), 
+            PieObject.WebData_LinkText.like('%' + t + '%'), 
             extract('year', PieObject.date) == t # useless approach but hey
             ))
     elif fieldcode == 'filename':
@@ -33,6 +37,10 @@ def build_query_simple(origincode, text, fieldcode, session):
             PieObject.author.like('%' + t + '%'), 
             PieObject.corpauthor.like('%' + t + '%'), 
             ))
+    elif fieldcode == 'notes':
+        q = session.query(PieObject).filter(
+            PieObject.notes.like('%' + t + '%')
+            )
     elif fieldcode == 'website':
         q = session.query(PieObject).join(PieWebsite).filter(or_(
             PieObject.WebData_Url.like('%' + t + '%'), 

@@ -16,11 +16,12 @@ searchable_fields = (
     _('File name'),
     _('Title'),
     _('Author'),
+    _('Notes'),
     _('Website'),
     _('Journal')
     )
 
-search_field_codes = ('main', 'all', 'filename', 'title', 'author', 'website', 'journal')
+search_field_codes = ('main', 'all', 'filename', 'title', 'author', 'notes', 'website', 'journal')
    
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
