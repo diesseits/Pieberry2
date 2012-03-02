@@ -56,11 +56,11 @@ class atomActionWindow(wx.ScrolledWindow):
         self.parent = parent
         
     def __do_layout(self):
-        self.flexsizer = wx.FlexGridSizer(0, 7, 5, 10)
+        self.flexsizer = wx.FlexGridSizer(0, 8, 5, 10)
         self.flexsizer.AddGrowableCol(1, 2)
         # self.flexsizer.AddGrowableCol(3, 3)
         font =  wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        for i in ('    ', 'File name', 'Destination folder', '', '', '', ''):
+        for i in ('    ', 'File name', 'Destination folder', '', '', '', '', ''):
             txt = wx.StaticText(self, -1, i, style=wx.ALIGN_CENTER|wx.EXPAND)
             txt.SetFont(font)
             self.flexsizer.Add(txt)
@@ -95,6 +95,13 @@ class atomActionWindow(wx.ScrolledWindow):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
         self.parent.onOpenFile(self.currentrow)
+
+    def _on_flag(self, evt):
+        ob = evt.GetEventObject()
+        self.currentrow = ob.getRowId()
+        bt = getattr(self, 'flagbutton%d' % self.currentrow)
+        bt.SetBackgroundColour('pink')
+        self.parent.onFlag(self.currentrow)
 
     def onFileAll(self):
         pass
@@ -182,19 +189,25 @@ class atomActionWindow(wx.ScrolledWindow):
             atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, (16, 16)))
             )
         openbt = getattr(self, 'openbutton%d' % self.maxrow)
-        
+        setattr(self, 'flagbutton%d' % self.maxrow, atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_flag16.png')))
+                )
+        flagbt = getattr(self, 'flagbutton%d' % self.maxrow)
+        if obj.StatData_FollowUpFlag:
+            flagbt.SetBackgroundColour('pink')
         setattr(self, 'gobutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='File it'))
         gobt = getattr(self, 'gobutton%d' % self.maxrow)
         self.Bind(wx.EVT_BUTTON, self._on_createbib, bt)
         self.Bind(wx.EVT_BUTTON, self._on_gofile, gobt)
         self.Bind(wx.EVT_BUTTON, self._on_delfile, delbt)
         self.Bind(wx.EVT_BUTTON, self._on_openfile, openbt)
+        self.Bind(wx.EVT_BUTTON, self._on_flag, flagbt)
         self.flexsizer.Add(bm)
         self.flexsizer.Add(tc, flag=wx.EXPAND)
         self.flexsizer.Add(ch, flag=wx.EXPAND)
         self.flexsizer.Add(bt)
         self.flexsizer.Add(delbt)
         self.flexsizer.Add(openbt)
+        self.flexsizer.Add(flagbt)
         self.flexsizer.Add(gobt)
         self.SetScrollbars(0, 20, 0, 50)
         try:
@@ -219,6 +232,7 @@ class atomActionWindow(wx.ScrolledWindow):
         gobt = getattr(self, 'gobutton%d' % row, None)
         delbt = getattr(self, 'delbutton%d' % row, None)
         opbt = getattr(self, 'openbutton%d' % row, None)
+        flbt = getattr(self, 'flagbutton%d' % row, None)
         tc = getattr(self, 'suggesttc%d' % row, None)
 
         self.flexsizer.Remove(bm)
@@ -227,6 +241,7 @@ class atomActionWindow(wx.ScrolledWindow):
         self.flexsizer.Remove(tc)
         self.flexsizer.Remove(delbt)
         self.flexsizer.Remove(opbt)
+        self.flexsizer.Remove(flbt)
         self.flexsizer.Remove(gobt)
         bm.Destroy()
         ch.Destroy()
@@ -234,6 +249,7 @@ class atomActionWindow(wx.ScrolledWindow):
         tc.Destroy()
         delbt.Destroy()
         opbt.Destroy()
+        flbt.Destroy()
         gobt.Destroy()
         self.Layout()
         self.rowdata.Del(row)
