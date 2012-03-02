@@ -49,7 +49,7 @@ class BibListPanel(BaseListPanel):
             pieberry.pieutility.open_file(it.FileData_FullPath)
             it.stats_opened()
         elif it.WebData_Url:
-            pieberry.pieutility.open_url(it.WebData_Url)
+            pieberry.pieutility.open_web_file(it.WebData_Url)
             it.stats_opened()
         else:
             return
@@ -79,6 +79,7 @@ class BibListPanel(BaseListPanel):
             # menu.AppendItem(rcm_deletefile)
             # self.Bind(wx.EVT_MENU, self.onDeleteOnDisk, rcm_deletefile)
         if obj.has_aspect('saved'):
+            menu.AppendSeparator()
             rcm_editbibdata = wx.MenuItem(menu, 3, 
                                           _('Edit bibliographic information'))
             menu.AppendItem(rcm_editbibdata)
@@ -87,6 +88,7 @@ class BibListPanel(BaseListPanel):
                                         _('Edit notes on this item'))
             menu.AppendItem(rcm_editnotes)
             self.Bind(wx.EVT_MENU, self.onEditNotes, rcm_editnotes)
+            menu.AppendSeparator()
             rcm_flagfavourite = wx.MenuItem(menu, 19,
                                             _('Flag as important (star)'),
                                             kind=wx.ITEM_CHECK)
@@ -103,6 +105,7 @@ class BibListPanel(BaseListPanel):
             wx.EVT_MENU(menu, 20, self.onFlagFollowUp)
             # citations
         if obj.has_aspect('bibdata'):
+            menu.AppendSeparator()
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
                                                 _('Copy citation (plain text)'))
             rcm_copycitationplain.SetBitmap(

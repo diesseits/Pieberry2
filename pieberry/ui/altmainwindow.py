@@ -98,6 +98,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_toggle_context.SetCheckable(True)
         self.menu_view_recent = wx.MenuItem(
             viewMenu, -1, _('View most &recent documents\tCtrl-r'))
+        self.menu_view_flagged = wx.MenuItem(
+            viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-shift-r'))
 
         # BEGIN debug menu
         self.menu_debug_addwebpane = wx.MenuItem(
@@ -145,7 +147,9 @@ class BaseMainWindow(wx.Frame, PieActor):
         gatherMenu.AppendItem(self.menu_atom_process)
         gatherMenu.AppendItem(self.menu_import_bibtex)
         viewMenu.AppendItem(self.menu_toggle_context)
+        viewMenu.AppendSeparator()
         viewMenu.AppendItem(self.menu_view_recent)
+        viewMenu.AppendItem(self.menu_view_flagged)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -172,6 +176,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
+        self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 

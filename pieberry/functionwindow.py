@@ -497,9 +497,16 @@ class FunctionMainWindow(BaseMainWindow):
         '''Bring up a view of the most recently added db items'''
         self.OpenSearchPane(caption=_('Recent Documents'))
         pan = self.GetCurrentPane()
-        q = build_query_most_recent(
+        q = query_most_recent(
             session,
             PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
+        pan.AddObjects(q)
+
+    def OnViewFlagged(self, evt):
+        print 'wot ho'
+        self.OpenSearchPane(caption=_('Flagged Documents'))
+        pan = self.GetCurrentPane()
+        q = query_flagged(session)
         pan.AddObjects(q)
 
     def OnFlagChecked(self, evt):

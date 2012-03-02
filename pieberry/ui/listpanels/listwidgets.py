@@ -63,7 +63,6 @@ class BaseListCtrl(wx.ListCtrl,
         wx.ListCtrl.DeleteItem(self, ref)
 
     def DeleteItemByOstoreRef(self, ref):
-        print range(self.GetItemCount())
         for i in range(self.GetItemCount()):
             if self.GetItemData(i) == ref:
                 wx.ListCtrl.DeleteItem(self, i)
