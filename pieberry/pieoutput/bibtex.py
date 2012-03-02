@@ -56,7 +56,7 @@ def get_pybtex_object(obj, texify=False):
         elif btkey == 'url':
             pybtex_entry.fields[btkey] = f_(obj.Url())
             continue
-        elif btkey in ('type', 'pie_corpauthor'):
+        elif btkey in ('bttype', 'pie_corpauthor'):
             continue
         else:
             if not getattr(obj, objfield): continue

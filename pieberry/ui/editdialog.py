@@ -71,6 +71,8 @@ class PieFieldPanel(wx.ScrolledWindow):
                 raise Exception, 'Value in %s is inappropriate for BibTeX' % it
             if len(f.GetValue()) > 0:
                 ret[bibtexmap[it]] = f.GetValue()
+        pprint(ret)
+        print self.entry_type
         return self.entry_type, ret
 
     def setData(self, data):

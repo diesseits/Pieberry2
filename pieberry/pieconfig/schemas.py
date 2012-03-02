@@ -95,9 +95,13 @@ bibtexmap = {
     'volume': 'BibData_Volume',
     'pages': 'BibData_Pages',
     'series': 'BibData_Series',
-    'type': 'BibData_Type',
+    'bttype': 'BibData_Type',
     'number': 'BibData_Number',
+    'key': 'BibData_ThesisKey',
+    'type': 'BibData_ThesisType',
+    'school': 'BibData_School',
     'institution': 'BibData_Institution',
+    'booktitle': 'BibData_BookTitle',
     'chapter': 'BibData_Chapter',
     'address': 'BibData_Address',
     'publisher': 'BibData_Publisher',
@@ -118,17 +122,9 @@ bibtexfields = {
         ('editor', 'volume', 'number', 'series', 'address', 'edition', 
          'note', 'annote', 'url')
         ),
-    'misc': (
-        ('howpublished',), 
-        ('url', 'note', 'annote')
-        ),
     'booklet': (
         ('howpublished',), 
         ('note', 'annote', 'url')
-        ),
-    'online': (
-        ('howpublished', 'url'), 
-        ('note', 'annote')
         ),
     'inbook': (
         ('editor', 'chapter', 'publisher'),
@@ -140,6 +136,22 @@ bibtexfields = {
         ('pages', 'publisher', 'editor', 'volume', 'number', 'series', 
          'type', 'chapter', 'address', 'edition', 'note', 'annote', 'url'),
         ),
+    'mastersthesis': (
+        ('school',),
+        ('key', 'type', 'address', 'note', 'annote')
+        ),
+    'misc': (
+        ('howpublished',), 
+        ('url', 'note', 'annote')
+        ),
+    'online': (
+        ('howpublished', 'url'), 
+        ('note', 'annote')
+        ),
+    'phdthesis': (
+        ('school',),
+        ('key', 'type', 'address', 'note', 'annote')
+        ),
     'techreport': (
         ('institution',),
         ('type', 'number', 'address', 'note', 'annote', 'url')
@@ -147,7 +159,7 @@ bibtexfields = {
     'unpublished': (
         ('note',),
         ('annote', 'url')
-        )
+        ),
     }
 
 

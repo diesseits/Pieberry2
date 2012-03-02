@@ -57,21 +57,25 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     #detailed fields
 
-    BibData_Key = Column(Unicode)
+    BibData_Key = Column(Unicode(length=255))
     BibData_Type = Column(Unicode(length=20))
-    BibData_Editor = Column(Unicode)
-    BibData_Journal = Column(Unicode)
+    BibData_Editor = Column(Unicode(length=255))
+    BibData_Journal = Column(Unicode(length=255))
     BibData_Note = Column(Unicode)
     BibData_Annote = Column(Unicode)
-    BibData_Volume = Column(Unicode(length=10))
-    BibData_Pages = Column(Unicode)
+    BibData_Volume = Column(Unicode(length=20))
+    BibData_Pages = Column(Unicode(length=20))
     BibData_Series = Column(Unicode)
-    BibData_Number = Column(Unicode(length=10))
-    BibData_Institution = Column(Unicode)
-    BibData_Chapter = Column(Unicode)
+    BibData_Number = Column(Unicode(length=20))
+    BibData_Institution = Column(Unicode(length=255))
+    BibData_School = Column(Unicode(length=255))
+    BibData_ThesisKey = Column(Unicode(length=255))
+    BibData_ThesisType = Column(Unicode(length=255))
+    BibData_BookTitle = Column(Unicode)
+    BibData_Chapter = Column(Unicode(length=255))
     BibData_Address = Column(Unicode) 
-    BibData_Publisher = Column(Unicode)
-    BibData_HowPublished = Column(Unicode)
+    BibData_Publisher = Column(Unicode(length=255))
+    BibData_HowPublished = Column(Unicode(length=255))
     BibData_DatePublished = Column(DateTime)
 
     WebData_Url = Column(Unicode)
@@ -327,6 +331,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['bibdata'] = True
         for key, val in kwargs.items():
             if key in bibtexmap.values():
+                if key == 'BibData_Key': print 'Setting key'
                 setattr(self, key, val)
         if kwargs.has_key('WebData_Url'):
             # NOTE: Not sure about doing this. 
