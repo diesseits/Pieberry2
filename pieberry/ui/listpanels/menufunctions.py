@@ -3,7 +3,7 @@ import os, os.path, wx, sys
 import traceback
 
 from pieberry.ui.editdialog import PieBibEditDialog
-from pieberry.ui.events import EVT_PIE_BIB_EDIT
+from pieberry.ui.events import *
 from pieberry.ui.htmldataobject import HTMLDataObject
 
 from pieberry.pieconfig.identity import PIE_APPNAME
@@ -76,6 +76,16 @@ class MenuFunctionsMixin:
     def onEditNotes(self, evt):
         obj = self.GetSelectedItem()
         self.GetParent().GetParent().OpenNotesPane(obj=obj)
+
+    def onFlagFavourite(self, evt):
+        obj = self.GetSelectedItem()
+        newevt = PieFlagCheckedEvent(flagkey='StatData_Favourite',
+                                     flagval=evt.Checked(),
+                                     obj=obj)
+        wx.PostEvent(self, newevt)
+
+    def onFlagFollowUp(self, evt):
+        print dir(evt)
 
     def onCopyCitation_PlainText(self, evt):
         print 'onCopyCitiation_PlainText'

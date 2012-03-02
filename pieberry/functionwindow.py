@@ -501,6 +501,13 @@ class FunctionMainWindow(BaseMainWindow):
             session,
             PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
         pan.AddObjects(q)
-            
+
+    def OnFlagChecked(self, evt):
+        assert evt.flagkey in ('StatData_Favourite', 'StatData_FollowUp')
+        assert type(evt.flagval) == bool
+        setattr(evt.obj, evt.flagkey, evt.flagval)
+        session.commit()
+        pan = self.GetCurrentPane()
+        pan.UpdateObject(evt.obj)
             
         

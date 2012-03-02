@@ -49,3 +49,7 @@ PieBibEditEvent, EVT_PIE_BIB_EDIT =  wx.lib.newevent.NewEvent()
 # attributes: obj - the object in question
 PieRefreshWebListEvent, EVT_PIE_REFRESH_WEB_LIST = wx.lib.newevent.NewEvent()
 # attributes: types - type of objects to refresh with (documents, all)
+PieFlagCheckedEvent, EVT_PIE_FLAG_CHECKED = wx.lib.newevent.NewEvent()
+# attributes: flagkey - a pieobject boolean attribute
+#             flagval - boolean result
+#             obj - the object

@@ -330,6 +330,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         # if self.SearchPanel:
         tab = BibListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_FLAG_CHECKED, self.OnFlagChecked)
         self.TabBook.AddPage(
             tab, caption, select=True, 
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
@@ -354,6 +355,7 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_FLAG_CHECKED, self.OnFlagChecked)
         self.TabBook.AddPage(
             tab, caption, select=True,
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))

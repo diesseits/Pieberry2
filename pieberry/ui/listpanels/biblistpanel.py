@@ -87,6 +87,13 @@ class BibListPanel(BaseListPanel):
                                         _('Edit notes on this item'))
             menu.AppendItem(rcm_editnotes)
             self.Bind(wx.EVT_MENU, self.onEditNotes, rcm_editnotes)
+            rcm_flagfavourite = wx.MenuItem(menu, 19,
+                                            _('Flag as important (star)'),
+                                            kind=wx.ITEM_CHECK)
+            menu.AppendItem(rcm_flagfavourite)
+            if obj.StatData_Favourite:
+                menu.Check(rcm_flagfavourite.GetId(), True)
+            wx.EVT_MENU(menu, 19, self.onFlagFavourite)
             # citations
         if obj.has_aspect('bibdata'):
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
