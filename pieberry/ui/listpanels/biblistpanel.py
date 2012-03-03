@@ -9,6 +9,13 @@ from pieberry.ui.listpanels.listwidgets import *
 from pieberry.pieobject import *
 from pieberry.ui.listpanels.baselistpanel import BaseListPanel # <-- todo
 
+class SpoofEvt:
+    def __init__(self, checked):
+        self.reverse_checked = not checked
+    def Checked(self):
+        return self.reverse_checked
+    
+
 class BibListPanel(BaseListPanel):
     '''Class for displaying and working with bibliographic data'''
     paneltype = 'BibListPanel'
@@ -34,8 +41,20 @@ class BibListPanel(BaseListPanel):
                               self.onSelectionActivated)
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_SELECTED,
                               self.onSelectionChanged)
+        self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
         # self.DelButton.Bind(wx.EVT_BUTTON,
         #                     self.onDeleteItem)
+
+    def onKeyDown(self, evt):
+        keycode = evt.GetKeyCode()
+        print keycode
+        if keycode == ord('F'):
+            nevt = SpoofEvt(self.GetSelectedItem().StatData_FollowUpFlag)
+            self.onFlagFollowUp(nevt)
+        elif keycode == ord('I'):
+            nevt = SpoofEvt(self.GetSelectedItem().StatData_Favourite)
+            self.onFlagFavourite(nevt)
+        evt.Skip()
 
     def onDeleteItem(self, evt):
         print self.GetSelectedItem() 
@@ -90,14 +109,14 @@ class BibListPanel(BaseListPanel):
             self.Bind(wx.EVT_MENU, self.onEditNotes, rcm_editnotes)
             menu.AppendSeparator()
             rcm_flagfavourite = wx.MenuItem(menu, 19,
-                                            _('Flag as important (star)'),
+                                            _('Flag as important (star)\tI'),
                                             kind=wx.ITEM_CHECK)
             menu.AppendItem(rcm_flagfavourite)
             if obj.StatData_Favourite:
                 menu.Check(rcm_flagfavourite.GetId(), True)
             wx.EVT_MENU(menu, 19, self.onFlagFavourite)
             rcm_flagfollowup = wx.MenuItem(menu, 20,
-                                           _('Flag for review/follow-up'),
+                                           _('Flag for review/follow-up\tF'),
                                            kind=wx.ITEM_CHECK)
             menu.AppendItem(rcm_flagfollowup)
             if obj.StatData_FollowUpFlag:

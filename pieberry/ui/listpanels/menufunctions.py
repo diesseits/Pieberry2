@@ -77,19 +77,21 @@ class MenuFunctionsMixin:
         obj = self.GetSelectedItem()
         self.GetParent().GetParent().OpenNotesPane(obj=obj)
 
-    def onFlagFavourite(self, evt):
+    def onFlagFavourite(self, evt=0):
         obj = self.GetSelectedItem()
         newevt = PieFlagCheckedEvent(flagkey='StatData_Favourite',
                                      flagval=evt.Checked(),
                                      obj=obj)
         wx.PostEvent(self, newevt)
+        self.ListDisplay.SetFocus()
 
-    def onFlagFollowUp(self, evt):
+    def onFlagFollowUp(self, evt=0):
         obj = self.GetSelectedItem()
         newevt = PieFlagCheckedEvent(flagkey='StatData_FollowUpFlag',
                                      flagval=evt.Checked(),
                                      obj=obj)
         wx.PostEvent(self, newevt)
+        self.ListDisplay.SetFocus()
 
     def onCopyCitation_PlainText(self, evt):
         print 'onCopyCitiation_PlainText'
