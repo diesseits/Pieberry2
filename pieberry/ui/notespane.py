@@ -452,11 +452,11 @@ class NotesPane(wx.Panel):
                               shortHelpString="Indent Less"), self.OnIndentLess)
         doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-indent-more.png')),
                               shortHelpString="Indent More"), self.OnIndentMore)
-        # tbar.AddSeparator()
-        # doBind( tbar.AddTool(-1, images._rt_font.GetBitmap(),
-        #                       shortHelpString="Font"), self.OnFont)
-        # doBind( tbar.AddTool(-1, images._rt_colour.GetBitmap(),
-        #                       shortHelpString="Font Colour"), self.OnColour)
+        tbar.AddSeparator()
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-font.png')),
+                              shortHelpString="Font"), self.OnFont)
+        doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-text-color.png')),
+                              shortHelpString="Font Colour"), self.OnColour)
         tbar.Realize()
 
     
