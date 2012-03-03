@@ -231,11 +231,13 @@ class FunctionMainWindow(BaseMainWindow):
                 # if there's already a key in the db same as the user
                 # set key, query the user whether to proceed (the item
                 # may be a dupe).
-                if (bkey != obj.BibData_Key) and not (obj.BibData_Key == None):
+                if (bkey != obj.BibData_Key) and obj.BibData_Key:
                     dia = wx.MessageDialog(self, _('''A record with a BibTeX key of %s already exists. Change to %s? (If 'no', then the record won't be added).''' % (obj.BibData_Key, bkey)), style=wx.YES|wx.NO)
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
+                    obj.BibData_Key = bkey
+                elif (bkey != obj.BibData_Key) and not obj.BibData_Key:
                     obj.BibData_Key = bkey
             if obj.has_aspect('onweb'):
                 # test if this has been downloaded/referenced before
