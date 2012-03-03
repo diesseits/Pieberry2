@@ -55,6 +55,9 @@ class BaseMainWindow(wx.Frame, PieActor):
             fileMenu, -1, _('&Quit\tCtrl-q'), _('Quit'))
         self.menu_quit.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_QUIT, wx.ART_MENU))
+        self.menu_rescan = wx.MenuItem(
+            fileMenu, -1, _('&Index folders now'), 
+            _('Make Pieberry scan and index files and folders in your Pieberry directory'))
         self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Config'))
         self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About Pieberry'))
         # self.menu_pageref = wx.MenuItem(
@@ -102,38 +105,40 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-shift-r'))
 
         # BEGIN debug menu
-        self.menu_debug_addwebpane = wx.MenuItem(
-            debugMenu, -1, _('Add Web Pane'))
-        self.menu_debug_addbibpane = wx.MenuItem(
-            debugMenu, -1, _('Add Bib Pane'))
-        self.menu_debug_adddlpane = wx.MenuItem(
-            debugMenu, -1, _('Add Pane with dld items'))
-        self.menu_debug_addatompane = wx.MenuItem(
-            debugMenu, -1, _('Add Pane with desktop items'))
-        self.menu_debug_forcescan = wx.MenuItem(
-            debugMenu, -1, _('Force scan of folders'))
-        self.menu_debug_notespane = wx.MenuItem(
-            debugMenu, -1, 'Add notes pane')
-        debugMenu.AppendItem(self.menu_debug_addatompane)
-        debugMenu.AppendItem(self.menu_debug_adddlpane)
-        debugMenu.AppendItem(self.menu_debug_addwebpane)
-        debugMenu.AppendItem(self.menu_debug_addbibpane)
-        debugMenu.AppendItem(self.menu_debug_forcescan)
-        debugMenu.AppendItem(self.menu_debug_notespane)
-        self.Bind(wx.EVT_MENU, self.DebugAddNotesPane, self.menu_debug_notespane)
-        self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
-                  self.menu_debug_addatompane)
-        self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
-                  self.menu_debug_adddlpane)
-        self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
-        self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
-        self.Bind(wx.EVT_MENU, self.DebugForceScan, self.menu_debug_forcescan)
-        # END debug menu
+        if DEBUG:
+            self.menu_debug_addwebpane = wx.MenuItem(
+                debugMenu, -1, _('Add Web Pane'))
+            self.menu_debug_addbibpane = wx.MenuItem(
+                debugMenu, -1, _('Add Bib Pane'))
+            self.menu_debug_adddlpane = wx.MenuItem(
+                debugMenu, -1, _('Add Pane with dld items'))
+            self.menu_debug_addatompane = wx.MenuItem(
+                debugMenu, -1, _('Add Pane with desktop items'))
+            self.menu_debug_forcescan = wx.MenuItem(
+                debugMenu, -1, _('Force scan of folders'))
+            self.menu_debug_notespane = wx.MenuItem(
+                debugMenu, -1, 'Add notes pane')
+            debugMenu.AppendItem(self.menu_debug_addatompane)
+            debugMenu.AppendItem(self.menu_debug_adddlpane)
+            debugMenu.AppendItem(self.menu_debug_addwebpane)
+            debugMenu.AppendItem(self.menu_debug_addbibpane)
+            debugMenu.AppendItem(self.menu_debug_forcescan)
+            debugMenu.AppendItem(self.menu_debug_notespane)
+            self.Bind(wx.EVT_MENU, self.DebugAddNotesPane, self.menu_debug_notespane)
+            self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
+                      self.menu_debug_addatompane)
+            self.Bind(wx.EVT_MENU, self.DebugAddDownloadedPane, 
+                      self.menu_debug_adddlpane)
+            self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
+            self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
+            self.Bind(wx.EVT_MENU, self.DebugForceScan, self.menu_debug_forcescan)
+            # END debug menu
 
         fileMenu.AppendItem(self.menu_savebibs)
         # fileMenu.AppendItem(self.menu_discard)
         fileMenu.AppendItem(self.menu_config)
         # fileMenu.AppendItem(self.menu_atom_settings)
+        fileMenu.AppendItem(self.menu_rescan)
         fileMenu.AppendSeparator()
         fileMenu.AppendItem(self.menu_quit)
         helpMenu.AppendItem(self.menu_manual)
@@ -177,6 +182,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
+        self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 

@@ -307,8 +307,11 @@ class FunctionMainWindow(BaseMainWindow):
         print evt.obj.StatData_Favourite
         if evt.obj.has_aspect('saved'):
             session.commit()
-        pan = self.GetCurrentPane()
-        pan.UpdateObject(evt.obj)
+        try:
+            pan = self.GetCurrentPane()
+            pan.UpdateObject(evt.obj)
+        except:
+            print 'No panel to refer to'
 
     def OnNotesPaneUpdate(self, evt):
         evt.obj.notes = evt.htmlcontent
@@ -442,7 +445,7 @@ class FunctionMainWindow(BaseMainWindow):
         session.close()
         sys.exit()
 
-    def OnStartIndexer(self):
+    def OnStartIndexer(self, evt=0):
         '''Begin a threaded file indexer session'''
         indexer = piefiles.PieFileIndexer(self)
         self.Bind(EVT_PIE_FILE_INDEX, self.DisplayIndexerStatus)

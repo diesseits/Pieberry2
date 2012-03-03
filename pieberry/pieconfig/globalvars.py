@@ -3,7 +3,7 @@ from identity import *
 global TEST
 TEST = True
 global DEBUG
-DEBUG = True
+DEBUG = False
 global PY2EXE
 PY2EXE = False
 

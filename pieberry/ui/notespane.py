@@ -21,8 +21,13 @@ class NotesPane(wx.Panel):
         self.datelabel = wx.StaticText(self, -1, 'Date')
         self.rtc = rt.RichTextCtrl(
             self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
+
+        rtcfont = wx.Font(12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.rtc.SetFont(rtcfont)
+
         sizer.Add(self.titlelabel, 0, wx.EXPAND|wx.ALL, 5)
-        font = wx.Font(9, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+
+        font = wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
         self.titlelabel.SetFont(font)
 
         sizer.Add(self.authorlabel, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
