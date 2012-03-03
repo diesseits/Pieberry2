@@ -107,7 +107,8 @@ bibtexmap = {
     'publisher': 'BibData_Publisher',
     'howpublished': 'BibData_HowPublished',
     'pie_corpauthor': 'corpauthor', # non-BibTeX fields
-    'pie_datepublished': 'BibData_DatePublished'
+    'pie_datepublished': 'BibData_DatePublished',
+    'pie_bibdatakey': 'BibData_Key'
     }
 
 

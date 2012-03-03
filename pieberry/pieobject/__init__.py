@@ -59,7 +59,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     #detailed fields
 
-    BibData_Key = Column(Unicode(length=255))
+    BibData_Key = Column(Unicode(length=255), unique=True)
     BibData_Type = Column(Unicode(length=20))
     BibData_Editor = Column(Unicode(length=255))
     BibData_Journal = Column(Unicode(length=255))
@@ -340,7 +340,6 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             self.aspects['onweb'] = True
             # if not self.WebData_PageUrl:
             #     self.WebData_PageUrl = kwargs['WebData_Url']
-        pprint(kwargs)
 
     def flag_followup(self, flagstatus, duedate=None):
         '''Flag this object for review or follow up by the user.'''

@@ -5,6 +5,7 @@ import time
 import traceback
 import shutil, os, os.path
 
+from sqlalchemy.exc import IntegrityError
 
 from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
@@ -220,10 +221,22 @@ class FunctionMainWindow(BaseMainWindow):
         progress_dialog = wx.ProgressDialog( 
             'Committing to the database', 
             '________________________________________', maximum = len(ostore) )
-        counter = 1
-        for ref, obj in ostore.GetNext(): # move files - if no file, continue
+        counter = 0
+        for ref, obj in ostore.GetNext(): 
+            counter += 1
             progress_dialog.Update(counter, 'Adding: %s' % obj.Title())
-            if not obj.has_aspect('cached'): continue
+            # handle need to input a unique bibtex key:
+            if obj.has_aspect('bibdata'):
+                bkey = self._find_unique_key(obj)
+                # if there's already a key in the db same as the user
+                # set key, query the user whether to proceed (the item
+                # may be a dupe).
+                if (bkey != obj.BibData_Key) and not (obj.BibData_Key == None):
+                    dia = wx.MessageDialog(self, _('''A record with a BibTeX key of %s already exists. Change to %s? (If 'no', then the record won't be added).''' % (obj.BibData_Key, bkey)), style=wx.YES|wx.NO)
+                    ans = dia.ShowModal()
+                    if ans == wx.ID_NO:
+                        ostore.Del(ref)
+                    obj.BibData_Key = bkey
             if obj.has_aspect('onweb'):
                 # test if this has been downloaded/referenced before
                 no_dupes = session.query(PieObject).filter(
@@ -236,13 +249,17 @@ class FunctionMainWindow(BaseMainWindow):
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
+            # All activity past this point pertains to files 
+            if not obj.has_aspect('cached'): continue
             # Write metadata to file if possible
             if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
             dpath = suggest_path_store_fromweb(obj)
+            # I don't trust windows filesystems
             if sys.platform == 'win32':
                 dpath = dpath.encode('ascii', 'ignore')
+            # Ensure relevant directory exists
             if not os.path.isdir(os.path.dirname(dpath)):
                 os.makedirs(os.path.dirname(dpath))
             print 'COPYING: %s to %s' % (path, dpath)
@@ -251,7 +268,6 @@ class FunctionMainWindow(BaseMainWindow):
             shutil.move(path, dpath)
             # os.renames(path, dpath)
             obj.add_aspect_stored(dpath)
-            counter += 1
         # session = Session()
         ostore.set_aspect_saved()
         session.add_all(ostore)
@@ -270,7 +286,14 @@ class FunctionMainWindow(BaseMainWindow):
         print 'Edited', evt.obj
         # Recommit object if it's already in the db
         if evt.obj.has_aspect('saved'):
-            session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                # Probably means the key isn't unique - tell the user
+                # to fix the damn thing
+                wx.MessageBox(_('Database Integrity Error - You are probably trying to use a BibTeX key that is already in use. Changes made to this item have been rolled back. Apologies.'), style=wx.ICON_ERROR)
+                session.rollback()
+                return
         # Update the ui reflecting changes
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)
@@ -454,6 +477,19 @@ class FunctionMainWindow(BaseMainWindow):
         # create_directories()
         # self.StatusBar.SetStatusText(_("Changed Pieberry's storage location to %s" % newloc))
 
+    def _find_unique_key(self, obj, bibkey=None):
+        '''Set a valid unique BibTeX key for an object'''
+        if obj.BibData_Key and not bibkey:
+            bibkey = obj.BibData_Key
+        validkey = False
+        while validkey == False:
+            if not bibkey:
+                bibkey = autogen_bibtex_key(obj)
+            validkey = query_unique_key(session, bibkey)
+            if not validkey:
+                bibkey = increment_bibtex_key(bibkey)
+        return bibkey
+
     def OnImportBibtex(self, evt):
         fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
         res = fdia.ShowModal()
@@ -471,18 +507,7 @@ class FunctionMainWindow(BaseMainWindow):
         count = 0
         for bibkey, ent in ents.items():
             try:
-                if not bibkey:
-                    obj = pieinput.pybtex_to_pieberry('', ent)
-                    akey = autogen_bibtex_key(obj)
-                    obj.BibData_Key = akey
-                elif query_unique_key(session, bibkey):
-                    # try except etc.
-                    obj = pieinput.pybtex_to_pieberry(bibkey, ent)
-                    print 'adding %s with key: %s' % (obj, bibkey)
-                else:
-                    obj = pieinput.pybtex_to_pieberry('', ent)
-                    akey = autogen_bibtex_key(obj)
-                    obj.BibData_Key = akey
+                obj = pieinput.pybtex_to_pieberry(bibkey, ent)
                 pan.AddObject(obj)
                 count += 1
                 progress_dialog.UpdatePulse('%d items added' % count)

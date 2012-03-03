@@ -88,7 +88,7 @@ def query_favourites(session):
 
 def query_unique_key(session, key):
     '''Returns true if the bibtex key is unique within the session'''
-    q = session.query(PieObject).filter(PieObject.BibData_Key == key)
+    q = session.query(PieObject.BibData_Key).filter(PieObject.BibData_Key == key)
     count = q.count()
     if count == 0:
         return True
