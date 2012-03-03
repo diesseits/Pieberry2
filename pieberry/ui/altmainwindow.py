@@ -92,6 +92,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
         self.menu_google_books = wx.MenuItem(
             gatherMenu, -1, _('Search Google Books\tCtrl-g'), _('Search Google Books for relevant references'))
+        self.menu_google_books.SetBitmap(
+            wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_import_bibtex.SetBitmap(
@@ -391,10 +393,10 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenGBListPane(self, evt=0, ostore=None, caption=_('Google Books Results')):
         tab = GBListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
+        tab.Bind(EVT_PIE_DOWNLOAD, self.OnGBPaneReference)
         self.TabBook.AddPage(
             tab, caption, select=True,
-            bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
+            bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
 
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)

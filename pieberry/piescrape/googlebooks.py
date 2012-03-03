@@ -23,22 +23,23 @@ __nresults__ = 20
 def fmt_authors(authlist):
     if len(authlist) == 0: return _(u'None')
     elif len(authlist) == 1: return authlist[0]
-    elif len(authlist) == 2: return join(authlist, _(u'and'))
-    else: return join([join(authlist[:-1], ', '), authlist[-1]], _(u'and')) 
+    elif len(authlist) == 2: return join(authlist, _(u' and '))
+    else: return join([join(authlist[:-1], ', '), authlist[-1]], _(u' and ')) 
 
 def suggest_type(fmt, bd):
     '''Suggest a bibtex type based on google's format field and
     whether appropriate fields are filled'''
     if fmt.lower() in bibtexfields.keys():
-        canuse = True
-        for f in bibtexfields[fmt][0]:
-            if not f in bd.keys():
-                canuse = False
-                break
-        if canuse:
-            return fmt
-        else:
-            return PIE_CONFIG.get('Format', 'default_bibtex_entry_type')
+        # canuse = True
+        # for f in bibtexfields[fmt][0]:
+        #     if not f in bd.keys():
+        #         canuse = False
+        #         break
+        # if canuse:
+        #     return fmt
+        # else:
+        #     return PIE_CONFIG.get('Format', 'default_bibtex_entry_type')
+        return fmt
     else:
         return PIE_CONFIG.get('Format', 'default_bibtex_entry_type')
 
@@ -47,8 +48,16 @@ def pieberry_from_google(gdict, url):
     bd = {
         'author': fmt_authors(gdict['authors']),
         'title': gdict['title'],
-        'BibData_DatePublished': datetime.datetime.strptime(
-            gdict['date'], '%Y-%m-%d')}
+        }
+    try:
+        bd['BibData_DatePublished'] = datetime.datetime.strptime(
+            gdict['date'], '%Y-%m-%d')
+    except:
+        try:
+            bd['BibData_DatePublished'] = datetime.datetime.strptime(
+                gdict['date'], '%Y')
+        except:
+            bd['BibData_DatePublished'] = datetime.datetime.today()
     if gdict.has_key('description') and gdict['description']:
         bd['BibData_Annote'] = gdict['description']
     if gdict.has_key('publishers') and gdict['publishers']:
@@ -69,7 +78,7 @@ class GoogleBooksScraper(Thread):
         self.notify_window = notify_window
 
     def run(self):
-        feed = self.service.search(self.search_string)#, max_results=__nresults__)
+        feed = self.service.search(self.search_string, max_results='20')#, max_results=__nresults__)
         ostore = PieObjectStore()
         for item in feed.entry:
             obj = pieberry_from_google(item.to_dict(), item.GetHtmlLink().href)

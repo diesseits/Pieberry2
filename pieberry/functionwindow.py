@@ -117,6 +117,22 @@ class FunctionMainWindow(BaseMainWindow):
         else:
             self._not_threaded_reference(evt.ostore, self.GetCurrentPane())
 
+    def OnGBPaneReference(self, evt):
+        '''Cut down version of web pane download for google books'''
+        if len(evt.ostore) == 0:
+            wx.MessageBox(_('No items are selected'), style=wx.ICON_ERROR)
+            return
+        self.StatusBar.SetStatusText(_('Downloading files...'))
+        evt.ostore.set_session(get_session())
+        wx.CallAfter( #deletepage seems finicky about timing
+            self.TabBook.DeletePage,
+            self.TabBook.GetPageIndex(evt.pane)
+            )
+        self.CloseUtilityPanes()
+        self.OpenStagingPane()
+        self.GetCurrentPane().Disable() #don't let no stupids happen
+        self._not_threaded_reference(evt.ostore, self.GetCurrentPane())
+
     def _not_threaded_reference(self, ostore, notify_window):
         '''unthreaded method called by OnWebPaneDownload'''
         for obj in ostore:

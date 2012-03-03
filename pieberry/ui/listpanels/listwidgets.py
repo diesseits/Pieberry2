@@ -179,9 +179,9 @@ class BibListCtrl(BaseListCtrl):
                 self.SetItemTextColour(nexidx, 'purple')
             elif td.days > 6:
                 self.SetItemTextColour(nexidx, 'red')
-        self.itemDataMap[ref] = (obj.Author(), 
+        self.itemDataMap[ref] = [obj.Author(), 
                                  str(obj.ReferDate()),#.year),
-                                 obj.Title())
+                                 obj.Title()]
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
@@ -222,10 +222,10 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         # self.SetStringItem(nexidx, 1, obj.WebData_LinkText)
         # self.SetStringItem(nexidx, 2, obj.Url())
         self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = (checkstatus,
+        self.itemDataMap[ref] = [checkstatus,
                                  obj.Author(), 
                                  str(obj.ReferDate()),#.year),
-                                 obj.Title())
+                                 obj.Title()]
         # self.itemDataMap[ref] = [checkstatus,
         #                          obj.WebData_LinkText,
         #                          obj.Url()]
