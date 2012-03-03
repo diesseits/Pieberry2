@@ -241,6 +241,9 @@ class CleanerPanel(wx.Panel):
         # self.delDirBt = wx.Button(self, -1, label=_('Delete'))
         self.authorKwdTC = wx.TextCtrl(self, -1)
         self.titleKwdTC = wx.TextCtrl(self, -1)
+        self.RecFileTC = wx.TextCtrl(self, -1)
+        self.SecLevelCH = wx.Choice(self, -1, choices=SECURITY_CLASSES)
+        self.SecLevelCH.SetSelection(0)
         self._do_layout()
         self._do_bindings()
         self._set_properties()
@@ -256,29 +259,30 @@ class CleanerPanel(wx.Panel):
         currentfolder = get_project_folder_by_endname(self.currentitem)
         currentfolder.MatchTerms_Author = [i for i in self.authorKwdTC.GetValue().split(';') if len(i) > 0]
         currentfolder.MatchTerms_Title = [i for i in self.titleKwdTC.GetValue().split(';') if len(i) > 0]
+        currentfolder.SecurityLevel = self.SecLevelCH.GetSelection()
+        currentfolder.RecordFile = self.RecFileTC.GetValue()
+        currentfolder.write_header()
 
     def onListSelChanged(self, evt):
         '''Store filtering criteria for selected item and display it
         for the next'''
+        def fill_fields():
+            self.titleKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Title, ';'))
+            self.authorKwdTC.SetValue(
+                string.join(nextfolder.MatchTerms_Author, ';'))
+            self.RecFileTC.SetValue(nextfolder.RecordFile)
+            self.SecLevelCH.SetSelection(nextfolder.SecurityLevel)
         if type(evt) in (str, unicode):
             nextfolder = get_project_folder_by_endname(evt)
         else:
             nextfolder = get_project_folder_by_endname(evt.GetString())
         if nextfolder == None: return
         if not self.currentitem:
-            self.titleKwdTC.SetValue(
-                string.join(nextfolder.MatchTerms_Title, ';'))
-            self.authorKwdTC.SetValue(
-                string.join(nextfolder.MatchTerms_Author, ';'))
+            fill_fields()
         elif nextfolder.EndName != self.currentitem:
             self.Finalise()
-            self.titleKwdTC.SetValue(
-                string.join(nextfolder.MatchTerms_Title, ';'))
-            self.authorKwdTC.SetValue(
-                string.join(nextfolder.MatchTerms_Author, ';'))
-        print nextfolder
-        print nextfolder.MatchTerms_Author
-        print nextfolder.MatchTerms_Title
+            fill_fields()
         self.currentitem = nextfolder.EndName
 
     def onCreateNewDir(self, evt=1):
@@ -319,6 +323,12 @@ class CleanerPanel(wx.Panel):
         s1.Add(self.authorKwdTC, 0, wx.ALL|wx.EXPAND, 3)
         s1.Add(wx.StaticText(self, -1, _('Move files to directory with Title:')), 0, wx.ALL, 3)
         s1.Add(self.titleKwdTC, 0, wx.ALL|wx.EXPAND, 3)
+        sg1 = wx.GridSizer(2, 2, 0, 5)
+        sg1.Add(wx.StaticText(self, -1, _('Records system file name/number:')), 0, wx.ALL, 3)
+        sg1.Add(wx.StaticText(self, -1, _('Security level for folder contents')), 0, wx.ALL, 3)
+        sg1.Add(self.RecFileTC, 0, wx.ALL|wx.EXPAND, 3)
+        sg1.Add(self.SecLevelCH, 0, wx.ALL|wx.EXPAND, 3)
+        s1.Add(sg1, 0, wx.EXPAND)
         self.SetSizer(s1)
         self.Layout()
 

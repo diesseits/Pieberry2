@@ -6,7 +6,7 @@ import sys, os, os.path, datetime
 from pprint import pprint
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
 from sqlalchemy import and_
-
+from ConfigParser import SafeConfigParser
 from pieberry.piedb import SQLABase, session
 from pieberry.pieconfig.paths import ROOT_MAP
 from pieberry.pieconfig.globalvars import DEBUG
@@ -14,6 +14,16 @@ from pieberry.pieutility.decoding import *
 
 global FOLDER_LOOKUP
 FOLDER_LOOKUP = {}
+SECURITY_CLASSES = (
+    _("UNCLASSIFIED"),
+    _("IN-CONFIDENCE"),
+    _("RESTRICTED"),
+    _("PROTECTED"),
+    _("CONFIDENTIAL"),
+    _("HIGHLY-PROTECTED"),
+    _("SECRET"),
+    _("TOP-SECRET"))
+INFO_FNAME = '_Folder_Info.txt'
 
 for key, val in ROOT_MAP.items():
     FOLDER_LOOKUP[key] = []
@@ -53,7 +63,11 @@ def add_new_folder(rootname, foldername):
         raise Exception, 'Conflict: File with this name already exists on disk'
     newfolder = PieFolder(os.path.join(ROOT_MAP[rootname], foldername))
     if os.path.exists(folderpath) and os.path.isdir(folderpath):
-        pass
+        hfile = os.path.join(folderpath, _(INFO_FNAME))
+        if os.path.isfile(hfile):
+            hh = HeaderHandler(headerfile=hfile)
+            newfolder.SecurityLevel = hh.securitylevel
+            newfolder.RecordFile = hh.recordfile
     else:
         os.mkdir(newfolder.path())
     session.add(newfolder)
@@ -89,6 +103,39 @@ def commit_folders():
 def rollback_folders():
     session.rollback()
 
+class HeaderHandler(SafeConfigParser):
+    '''Class to write human readable folder info header files'''
+    def __init__(self, piefolder=None, headerfile=None):
+        SafeConfigParser.__init__(self)
+        assert piefolder or headerfile
+        assert type(piefolder) == PieFolder
+        assert piefolder.initialised == 1
+        if piefolder:
+            self.add_section(_('Folder Information'))
+            self.set(_('Folder Information'), 
+                     _('Name'), piefolder.EndName.encode('utf8'))
+            self.set(_('Folder Information'), 
+                     _('Area'), piefolder.Root.encode('utf8'))
+            self.set(_('Folder Information'), 
+                     _('Record System No.'), 
+                     piefolder.RecordFile.encode('utf8'))
+            self.set(_('Folder Information'), 
+                     _('Security Level'), 
+                     SECURITY_CLASSES[piefolder.SecurityLevel])
+            self.path = piefolder.path()
+        elif headerfile:
+            assert os.path.isfile(headerfile)
+            self.read(headerfile)
+        self.recordfile = self.get(_('Folder Information'), 
+                                   _('Record System No.'))
+        self.securitylevel = self.get(_('Folder Information'),
+                                      _('Security Level'))
+    
+    def write_header(self):
+        self.write(open(os.path.join(self.path, _(INFO_FNAME)), 'w'))
+
+                
+
 class PieFolder(SQLABase):
     '''A class for information about library and project folders'''
     __tablename__ = 'piefolders'
@@ -96,11 +143,17 @@ class PieFolder(SQLABase):
     id = Column(Integer, primary_key=True)
     initialised = Column(Integer)
 
-    EndName = Column(Unicode)
-    Root = Column(Unicode)
+    EndName = Column(Unicode(length=255))
+    Root = Column(Unicode(length=255))
     SubFolders = Column(PickleType)
-    RecordFile = Column(Unicode) # Corresponding records management file
-    
+    RecordFile = Column(Unicode(length=255)) # Corresponding records
+                                             # management file
+    SecurityLevel = Column(Integer) # Security classification of
+                                    # file/folder based on Aust Govt
+                                    # email classification
+                                    # system. (NB: These goggles do
+                                    # nothing security-wise ... it's
+                                    # just an fyi).
     MatchTerms_Author = Column(PickleType)
     MatchTerms_Title = Column(PickleType)
 
@@ -108,6 +161,8 @@ class PieFolder(SQLABase):
         self.initialised = 0
         self.MatchTerms_Author = []
         self.MatchTerms_Title = []
+        self.RecordFile = u''
+        self.SecurityLevel = 0
         if path: self.set_path(path)
 
     def __repr__(self):
@@ -146,6 +201,11 @@ class PieFolder(SQLABase):
         else:
             return os.path.join(*self.SubFolders)
 
+    def write_header(self):
+        '''write a human-readable header file for the folder
+        containing information on it.'''
+        p = HeaderHandler(piefolder=self)
+        p.write_header()
 
 #DEBUG STUFF
 

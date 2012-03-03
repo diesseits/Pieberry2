@@ -70,15 +70,15 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_emptyref.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_NEW, wx.ART_MENU))
         self.menu_manual = wx.MenuItem(helpMenu, -1, _('&Manual'))
-        self.menu_find = wx.MenuItem(
-            toolMenu, -1, _('&Find items in bibliography\tCtrl-f'), _('Search Pieberry\'s internal database'))
-        self.menu_find.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_atom_process = wx.MenuItem(
             atomMenu, -1, _('&Process files from desktop\tCtrl-m'), _('Get documents off your desktop and sort them into folders'))
         self.menu_atom_process.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
         # self.menu_atom_settings = wx.MenuItem(
         #     atomMenu, -1, _('Desktop cleaner settings'), 'Settings')
+        self.menu_find = wx.MenuItem(
+            toolMenu, -1, _('&Find items in bibliography\tCtrl-f'), _('Search Pieberry\'s internal database'))
+        self.menu_find.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_FIND, wx.ART_MENU))
         self.menu_find_in_folders = wx.MenuItem(
             toolMenu, -1, _('F&ind your files\tCtrl-shift-f'), _('Search database by file name'))
         self.menu_find_in_folders.SetBitmap(
