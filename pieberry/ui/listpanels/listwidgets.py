@@ -81,15 +81,15 @@ class BaseListCtrl(wx.ListCtrl,
 
 class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
     '''Control for displaying results in the download/scraping process'''
-    columnheads = (_('Download?'), _('Link'), _('Url'))
-    columnwidths = (150, 150, 150)
+    columnheads = ('', _('Link'), _('Url'))
+    columnwidths = (20, 250, 250)
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
         listmix.CheckListCtrlMixin.__init__(self)
 
     def AddObject(self, obj, ref, 
-                  statusmsg='Added', 
+                  statusmsg='', 
                   filtertext=None, 
                   checkstatus=False):
         '''Add an object, returning the item's current index in the ListCtrl'''
@@ -193,5 +193,53 @@ class BibListCtrl(BaseListCtrl):
                 return i
         raise ValueError, "ListCtrl does not have an item with reference %d" % ref
     
+class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
+    '''Control for displaying results in the download/scraping process'''
+    columnheads = ('', _('Author'), _('Date'), _('Title'))
+    columnwidths = (20, 160, 80, 240)
+
+    def __init__(self, parent):
+        BaseListCtrl.__init__(self, parent)
+        listmix.CheckListCtrlMixin.__init__(self)
+
+    def AddObject(self, obj, ref, 
+                  statusmsg='Added', 
+                  filtertext=None, 
+                  checkstatus=False):
+        '''Add an object, returning the item's current index in the ListCtrl'''
+        # print 'Adding:', obj
+        # print ' ... which should be checked:', checkstatus
+        if filterout(filtertext, 
+                     (obj.Author(), str(obj.ReferDate().year), obj.Title())):
+            return
+        nexidx = self.InsertStringItem(
+            self.currentitem, 
+            '')
+        self.SetStringItem(nexidx, 1, obj.Author())
+        self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        self.SetStringItem(nexidx, 3, obj.Title())
+        # nexidx = self.InsertStringItem(self.currentitem, statusmsg)
+        # self.SetStringItem(nexidx, 1, obj.WebData_LinkText)
+        # self.SetStringItem(nexidx, 2, obj.Url())
+        self.SetItemData(nexidx, ref)
+        self.itemDataMap[ref] = (checkstatus,
+                                 obj.Author(), 
+                                 str(obj.ReferDate()),#.year),
+                                 obj.Title())
+        # self.itemDataMap[ref] = [checkstatus,
+        #                          obj.WebData_LinkText,
+        #                          obj.Url()]
+        self.CheckItem(nexidx, checkstatus)
+        self.currentitem += 1
+        self.EnsureVisible(nexidx)
+        return nexidx
+
+    def OnCheckItem(self, idx, chk):
+        # print 'WebListCtrl: OnCheckItem:', idx, chk
+        self.itemDataMap[self.GetItemData(idx)][0] = chk
+
+    def GetCheckedList(self):
+        '''Give a tuple of indices of positively checked items'''
+        return tuple([ idx for idx in self.itemDataMap.keys() if self.itemDataMap[idx][0] == True ])
 
 

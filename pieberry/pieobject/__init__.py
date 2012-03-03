@@ -100,6 +100,10 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     PhysData_ISBN = Column(Unicode(length=50))
     PhysData_Accessed = Column(DateTime) # Borrowing/accession time
 
+    # Services utility fields
+    GoogleData = Column(PickleType)
+    AmazonData = Column(PickleType)
+
     def __init__(self, title='', author='', date=datetime.datetime.today(),
                  fileloc=None):
 

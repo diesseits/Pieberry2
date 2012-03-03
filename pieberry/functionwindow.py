@@ -336,6 +336,21 @@ class FunctionMainWindow(BaseMainWindow):
         obj = edwin.obj
         pan.AddObject(obj)
 
+    def DoGoogleSearch(self, evt):
+        from pieberry.piescrape.googlebooks import GoogleBooksScraper
+        wx.CallAfter(self.CloseUtilityPanes)
+        if len(evt.searchtext) < 4: return
+        self.OpenGBListPane()
+        pan = self.GetCurrentPane()
+        pan.Disable()
+        gbs = GoogleBooksScraper(evt.searchtext, pan)
+        pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
+        gbs.start()
+
+    def Callback_GoogleSearch(self, evt):
+        evt.notify_window.AddObjects(evt.ostore)
+        evt.notify_window.Enable()
+
     def DoSearch(self, evt):
         # print 'Actor: doSearch: %s' % evt.searchtext
         if len(evt.searchtext) < 3: return

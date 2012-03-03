@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieGoogleSearchEvent, EVT_PIE_GOOGLE_SEARCH = wx.lib.newevent.NewEvent()
+# attributes - ostore - object store
 PieLocationChangedEvent, EVT_PIE_LOCATION_CHANGED = wx.lib.newevent.NewEvent()
 # No attributes
 PieFileIndexFinishedEvent, EVT_PIE_FILE_INDEX_FINISHED = wx.lib.newevent.NewEvent()

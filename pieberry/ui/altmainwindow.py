@@ -90,6 +90,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             gatherMenu, -1, _('Scan &web page for documents\tCtrl-w'), _('Read and find links to documents on a given web page'))
         self.menu_scan_web_page.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
+        self.menu_google_books = wx.MenuItem(
+            gatherMenu, -1, _('Search Google Books\tCtrl-g'), _('Search Google Books for relevant references'))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_import_bibtex.SetBitmap(
@@ -151,6 +153,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         locateMenu.AppendItem(self.menu_filter)
         gatherMenu.AppendItem(self.menu_atom_process)
         gatherMenu.AppendItem(self.menu_import_bibtex)
+        gatherMenu.AppendItem(self.menu_google_books)
         viewMenu.AppendItem(self.menu_toggle_context)
         viewMenu.AppendSeparator()
         viewMenu.AppendItem(self.menu_view_recent)
@@ -183,6 +186,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
+        self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 
@@ -209,6 +213,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.SearchPanel = None
         self.WebPanel = None
         self.FilterPanel = None
+        self.GoogleSearchPanel = None
 
     def __do_layout(self):
         self._mgr.AddPane(
@@ -242,6 +247,7 @@ class BaseMainWindow(wx.Frame, PieActor):
                 self.ClearFiltering(event.OldSelection)
                 # that's probably too hackish
         if self.SearchPanel: self.ToggleSearchPanel()
+        if self.GoogleSearchPanel: self.ToggleGoogleSearchPanel()
 
     def onChangeTab(self, event):
         # print event.OldSelection
@@ -337,6 +343,25 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(EVT_PIE_PREFETCH_DONE, self.WebPanel.onPrefetchResult)
         self._mgr.Update()
 
+    def ToggleGoogleSearchPanel(self, evt=0):
+        if self.WebPanel: self.ToggleWebPanel()
+        if self.GoogleSearchPanel:
+            spinfo = self._mgr.GetPane(self.GoogleSearchPanel)
+            self._mgr.ClosePane(spinfo)
+            self._mgr.Update()
+            return
+        if self.FilterPanel:
+            spinfo = self._mgr.GetPane(self.FilterPanel)
+            self._mgr.ClosePane(spinfo)
+            self.ClearFiltering()
+        self.GoogleSearchPanel = PlainSearchPanel(self)
+        self._mgr.AddPane(
+            self.GoogleSearchPanel, 
+            wxaui.AuiPaneInfo().Top().MinSize((300,50)).Floatable(False).Caption(_('Search Google Books')).DestroyOnClose(True)
+            )
+        self._mgr.Update()
+        self.GoogleSearchPanel.Bind(EVT_PIE_SEARCH_EVENT, self.DoGoogleSearch)
+
     def OpenSearchPane(self, evt=0, ostore=None, caption=_('Search Result')):
         # if self.SearchPanel:
         tab = BibListPanel(self.TabBook)
@@ -359,6 +384,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
         tab.Bind(EVT_PIE_REFRESH_WEB_LIST, self.OnWebPaneRefresh)
+        self.TabBook.AddPage(
+            tab, caption, select=True,
+            bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
+
+    def OpenGBListPane(self, evt=0, ostore=None, caption=_('Google Books Results')):
+        tab = GBListPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_DOWNLOAD, self.OnWebPaneDownload)
         self.TabBook.AddPage(
             tab, caption, select=True,
             bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))

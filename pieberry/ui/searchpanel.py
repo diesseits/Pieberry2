@@ -22,6 +22,40 @@ searchable_fields = (
     )
 
 search_field_codes = ('main', 'all', 'filename', 'title', 'author', 'notes', 'website', 'journal')
+
+class PlainSearchPanel(wx.Panel):
+    '''Simple version of the search panel'''
+    def __init__(self, parent, searchlabel=_('Search:')):
+        wx.Panel.__init__(self, parent=parent, id=-1, style=wx.EXPAND|wx.TAB_TRAVERSAL)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        hsizer_top = wx.BoxSizer(wx.HORIZONTAL)
+        lbl = wx.StaticText(self, -1, searchlabel, style=wx.EXPAND)
+        self.searchctrl = wx.SearchCtrl(
+            self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
+        hsizer_top.Add(lbl, 0, wx.ALL, 5)
+        hsizer_top.Add(self.searchctrl, 1, wx.ALL, 5)
+        sizer.Add(hsizer_top, 1, wx.EXPAND, 0)
+        self.SetSizer(sizer)
+        self.Layout()
+        self.searchctrl.SetFocus()
+        self.searchctrl.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
+
+    def onTextUpdated(self, evt):
+        newevt = PieSearchEvent(searchtext=self.searchctrl.GetValue())
+        wx.PostEvent(self, newevt)
+
+    def keyTrap(self, evt):
+        if evt.GetKeyCode() == wx.WXK_ESCAPE:
+            newevt = PieCloseFilterPanelEvent()
+            self.GetParent().ToggleFilterPanel()
+
+    def OnSearch(self, evt):
+        newevt = PieSearchEvent(
+            searchtext=unicode(self.searchctrl.GetValue()),
+            origin='Google Books',
+            fields=None
+            )
+        wx.PostEvent(self, newevt)
    
 class FilterToolsPanel(wx.Panel):
     '''Simpler panel for filtering results'''
