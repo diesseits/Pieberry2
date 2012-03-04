@@ -1,6 +1,6 @@
 import sys, wx, datetime
 
-from string import join
+#from unicode import join
 from threading import Thread
 
 from pieberry.pieconfig.identity import *
@@ -20,10 +20,13 @@ __source__ = 'Raif Sarcich - %s - %s' % (PIE_APPNAME, PIE_VERSION)
 __nresults__ = 20
 
 def fmt_authors(authlist):
+    authlist = [unicode(a, 'utf8') for a in authlist]
     if len(authlist) == 0: return _(u'None')
     elif len(authlist) == 1: return authlist[0]
-    elif len(authlist) == 2: return join(authlist, _(u' and '))
-    else: return join([join(authlist[:-1], ', '), authlist[-1]], _(u' and ')) 
+    elif len(authlist) == 2: return u' and '.join(authlist)
+    else: return u' and '.join([u', '.join(authlist[:-1]), authlist[-1]])
+    # elif len(authlist) == 2: return join(authlist, _(u' and '))
+    # else: return join([join(authlist[:-1], ', '), authlist[-1]], _(u' and ')) 
 
 def suggest_type(fmt, bd):
     '''Suggest a bibtex type based on google's format field and
@@ -45,7 +48,7 @@ def suggest_type(fmt, bd):
 def pieberry_from_google(gdict, url):
     '''Take a google books dict and produce a PieObject'''
     bd = {
-        'title': gdict['title'],
+        'title': unicode(gdict['title'], 'utf8'),
         }
     if gdict.has_key('authors') and gdict['authors']:
         bd['author'] = fmt_authors(gdict['authors'])
@@ -59,9 +62,9 @@ def pieberry_from_google(gdict, url):
         except:
             bd['BibData_DatePublished'] = datetime.datetime.today()
     if gdict.has_key('description') and gdict['description']:
-        bd['BibData_Annote'] = gdict['description']
+        bd['BibData_Annote'] = unicode(gdict['description'], 'utf8')
     if gdict.has_key('publishers') and gdict['publishers']:
-        bd['BibData_Publisher'] = join(gdict['publishers'], ' - ')
+        bd['BibData_Publisher'] = u' - '.join([unicode(p, 'utf8') for p in gdict['publishers']])
     googlekey = ''
     for i, k in gdict['identifiers']:
         if i == 'ISBN': 

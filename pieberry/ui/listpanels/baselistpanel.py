@@ -44,7 +44,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         it_idx = self.ListDisplay.GetItemData(right_click_context)
         self._last_item_right_clicked
         obj = self.objectstore[it_idx]
-        print "## Object for popup menu:", obj
+        # print "## Object for popup menu:", obj
         self.MakeMenu(menu, obj)
         self.ListDisplay.PopupMenu( menu, evt.GetPoint() )
         menu.Destroy() # destroy to avoid mem leak
