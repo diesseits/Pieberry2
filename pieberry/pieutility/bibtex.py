@@ -38,14 +38,15 @@ def format_bibtex_entry(bibdict):
     return ent
 
 def autogen_bibtex_key(obj):
+    keyauthorcompact = u''
     keytitlecompact = string.join(
         [i[:3] for i in string.split(obj.Title().encode("utf-8").translate(string.maketrans("",""), string.punctuation)) if len(i) > 3], 
         '') #ouch ... this compacts the first three letters of each word in the title together, to make a dependably unique key
-    if obj.AuthorIsCorporate():
+    if obj.AuthorIsCorporate() and obj.Author():
         keyauthorcompact = string.join(
             [i[:1] for i in string.split(obj.Author().encode("utf-8").translate(string.maketrans("",""), string.punctuation))], 
             '') #same for authors, but just initials
-    else:
+    elif obj.Author():
         # print split_name_list(obj.Author())
         keyauthorcompact = string.split(obj.Author().encode('utf-8').translate(string.maketrans("",""), string.punctuation))[-1]
     key = "%s%s_%s" % (

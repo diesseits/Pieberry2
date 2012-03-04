@@ -48,7 +48,9 @@ def referable_website(url, sqsess=session):
     purposes - returns a PieWebsite which can be referred to.'''
     query = sqsess.query(PieWebsite).filter(
         PieWebsite.Domain == urlparse.urlsplit(validify_url(url))[1])
-    return query.first()
+    r = query.first()
+    r = sqsess.merge(r)
+    return r
 
 def add_website(url, 
                 defaultauthor,
@@ -88,8 +90,10 @@ def lookup_website(url):
     numrtd = session.query(
         PieWebsite).filter(PieWebsite.Domain==domain).count()
     if numrtd > 0:
-        print '_#_#_#_ Website found:', url, lookup[0]
-        return lookup[0]
+        # print '_#_#_#_ Website found:', url, lookup[0]
+        r = lookup[0]
+        r = session.merge(r)
+        return r
     else:
         return None
 

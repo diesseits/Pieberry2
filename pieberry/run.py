@@ -112,7 +112,7 @@ def main():
 
     print 'Init pieberry.pieobject'
     from pieberry.pieobject import PieObject
-    from pieberry.pieobject.tags import init_tags
+    from pieberry.pieobject.tags import init_tags, gen_tag_lookup
     from pieberry.pieobject.folder import generate_initial_project_folder_list
 
 
@@ -120,6 +120,7 @@ def main():
     SQLABase.metadata.create_all(engine)
     if PIE_CONFIG.getboolean('Internal', 'first_run') or dbstarting:
         init_tags()
+    gen_tag_lookup()
 
     print 'Generating initial folder list'
     generate_initial_project_folder_list()
