@@ -417,7 +417,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         if window_type == 'filewindow':
             if self.FileData_FileType == 'pdf':
                 return 'pdf'
-            else: return 'doc'
+            elif self.FileData_FileType == 'word_doc':
+                return 'doc'
+            else: return 'text'
         elif window_type == 'bibwindow':
             if self.StatData_FollowUpFlag and self.StatData_Favourite:
                 return 'flagstar'

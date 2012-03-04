@@ -3,7 +3,7 @@
 import datetime
 import os, os.path
 from pprint import pprint, pformat
-from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
@@ -23,15 +23,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     # Fundamental fields
     id = Column(Integer, primary_key=True)
-    title = Column(Unicode)
-    author = Column(Unicode)
+    title = Column(Unicode(length=1024))
+    author = Column(Unicode(length=1024))
     date = Column(DateTime)
     # tags = Column(PickleType)
 
-    collection = Column(Unicode) # i.e. 'category_phrase'
-    corpauthor = Column(Unicode)
+    collection = Column(Unicode(length=1024)) # i.e. 'category_phrase'
+    corpauthor = Column(Unicode(length=255))
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
+    notes = Column(Unicode)
 
     # User Stats
 
@@ -39,7 +40,10 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     StatData_OpenedCount = Column(Integer)
     StatData_LastOpened = Column(DateTime)
     StatData_LastSaved = Column(DateTime)
-    StatData_FollowUp = Column(DateTime)
+    StatData_FollowUpDate = Column(DateTime)
+    StatData_FollowUpDueDate = Column(DateTime)
+    StatData_FollowUpFlag = Column(Boolean)
+    StatData_Picture = Column(Binary)
 
     #relationships
 
@@ -56,21 +60,25 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     #detailed fields
 
-    BibData_Key = Column(Unicode)
+    BibData_Key = Column(Unicode(length=255), unique=True)
     BibData_Type = Column(Unicode(length=20))
-    BibData_Editor = Column(Unicode)
-    BibData_Journal = Column(Unicode)
+    BibData_Editor = Column(Unicode(length=255))
+    BibData_Journal = Column(Unicode(length=255))
     BibData_Note = Column(Unicode)
     BibData_Annote = Column(Unicode)
-    BibData_Volume = Column(Unicode(length=10))
-    BibData_Pages = Column(Unicode)
-    BibData_Series = Column(Unicode)
-    BibData_Number = Column(Unicode(length=10))
-    BibData_Institution = Column(Unicode)
-    BibData_Chapter = Column(Unicode)
-    BibData_Address = Column(Unicode) 
-    BibData_Publisher = Column(Unicode)
-    BibData_HowPublished = Column(Unicode)
+    BibData_Volume = Column(Unicode(length=20))
+    BibData_Pages = Column(Unicode(length=20))
+    BibData_Series = Column(Unicode(length=255))
+    BibData_Number = Column(Unicode(length=20))
+    BibData_Institution = Column(Unicode(length=255))
+    BibData_School = Column(Unicode(length=255))
+    BibData_ThesisKey = Column(Unicode(length=255))
+    BibData_ThesisType = Column(Unicode(length=255))
+    BibData_BookTitle = Column(Unicode(length=1025))
+    BibData_Chapter = Column(Unicode(length=255))
+    BibData_Address = Column(Unicode(length=1024)) 
+    BibData_Publisher = Column(Unicode(length=255))
+    BibData_HowPublished = Column(Unicode(length=255))
     BibData_DatePublished = Column(DateTime)
 
     WebData_Url = Column(Unicode)
@@ -78,20 +86,24 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     WebData_LinkText = Column(Unicode)
     WebData_DateDownloaded = Column(DateTime)
 
-    FileData_FileName = Column(Unicode)
-    FileData_Root = Column(Unicode)
+    FileData_FileName = Column(Unicode(length=1024))
+    FileData_Root = Column(Unicode(length=50))
     FileData_Folder = Column(PickleType)
-    FileData_FileType = Column(Unicode(length=6))
+    FileData_FileType = Column(Unicode(length=25))
     FileData_DateCreated = Column(DateTime)
     FileData_DateModified = Column(DateTime)
     FileData_Size = Column(Integer)
 
-    PhysData_StorageLoc = Column(Unicode) # Storage location
-    PhysData_StorageType = Column(Unicode) # Type of storage
+    PhysData_StorageLoc = Column(Unicode(length=255)) # Storage location
+    PhysData_StorageType = Column(Unicode(length=255)) # Type of storage
                                            # (e.g. personal, library)
     PhysData_Dewey = Column(Unicode(length=20)) 
     PhysData_ISBN = Column(Unicode(length=50))
     PhysData_Accessed = Column(DateTime) # Borrowing/accession time
+
+    # Services utility fields
+    GoogleData = Column(PickleType)
+    AmazonData = Column(PickleType)
 
     def __init__(self, title='', author='', date=datetime.datetime.today(),
                  fileloc=None):
@@ -243,7 +255,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     def add_aspect_onweb(self, url, pageurl, linktext='', defaultauthor='', 
                          category_phrase='', author_is_corporate=False,
-                         tags=None, inferred_filetype=None):
+                         tags=None, inferred_filetype=None, threaded=False):
         '''Add information gleaned from the document being on the web
         (in-situ)'''
         assert type(url) in (str, unicode)
@@ -263,7 +275,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.BibData_Type = PIE_CONFIG.get(
             'Format', 'default_bibtex_entry_type')
         if tags:
-            self.add_tags(tags)
+            self.add_tags(tags, threaded)
         if inferred_filetype:
             self.set_file_type(inferred_filetype)
         self.aspects['onweb']=True
@@ -326,13 +338,19 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.aspects['bibdata'] = True
         for key, val in kwargs.items():
             if key in bibtexmap.values():
+                if key == 'BibData_Key': print 'Setting key'
                 setattr(self, key, val)
         if kwargs.has_key('WebData_Url'):
             # NOTE: Not sure about doing this. 
             self.aspects['onweb'] = True
             # if not self.WebData_PageUrl:
             #     self.WebData_PageUrl = kwargs['WebData_Url']
-        pprint(kwargs)
+
+    def flag_followup(self, flagstatus, duedate=None):
+        '''Flag this object for review or follow up by the user.'''
+        assert type(flagstatus) == bool
+        self.StatData_FollowUpFlag = flagstatus
+        self.StatData_FollowUpDate = datetime.datetime.today()
         
     def set_session(self, sess):
         '''Mark a session flag for this object'''
@@ -401,7 +419,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return 'pdf'
             else: return 'doc'
         elif window_type == 'bibwindow':
-            if self.StatData_Favourite:
+            if self.StatData_FollowUpFlag and self.StatData_Favourite:
+                return 'flagstar'
+            elif self.StatData_FollowUpFlag:
+                return 'flag'
+            elif self.StatData_Favourite:
                 return 'star'
             else: return 'success'
     
