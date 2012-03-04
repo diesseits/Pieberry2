@@ -45,7 +45,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         debugMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
             fileMenu, -1, 
-            _('&Export Bibliography\tCtrl-shift-b')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
+            _('&Export Bibliography\tCtrl-shift-b'),
+            _('Export all starred items with bibliographic data to a BibTeX file'))
         self.menu_savebibs.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_MENU, (16, 16)))
         # self.menu_discard = wx.MenuItem(
@@ -58,7 +59,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_rescan = wx.MenuItem(
             fileMenu, -1, _('&Index folders now'), 
             _('Make Pieberry scan and index files and folders in your Pieberry directory'))
-        self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Config'))
+        self.menu_config = wx.MenuItem(fileMenu, -1, _('S&ettings'), _('Configure Pieberry'))
         self.menu_about = wx.MenuItem(helpMenu, -1, _('&About'), _('About Pieberry'))
         # self.menu_pageref = wx.MenuItem(
         #     toolMenu, 

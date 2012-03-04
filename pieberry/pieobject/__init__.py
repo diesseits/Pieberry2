@@ -3,7 +3,7 @@
 import datetime
 import os, os.path
 from pprint import pprint, pformat
-from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
 
@@ -23,13 +23,13 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     # Fundamental fields
     id = Column(Integer, primary_key=True)
-    title = Column(Unicode)
-    author = Column(Unicode)
+    title = Column(Unicode(length=1024))
+    author = Column(Unicode(length=1024))
     date = Column(DateTime)
     # tags = Column(PickleType)
 
-    collection = Column(Unicode) # i.e. 'category_phrase'
-    corpauthor = Column(Unicode)
+    collection = Column(Unicode(length=1024)) # i.e. 'category_phrase'
+    corpauthor = Column(Unicode(length=255))
     aspects = Column(PickleType)
     filemetadata = Column(PickleType)
     notes = Column(Unicode)
@@ -43,6 +43,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     StatData_FollowUpDate = Column(DateTime)
     StatData_FollowUpDueDate = Column(DateTime)
     StatData_FollowUpFlag = Column(Boolean)
+    StatData_Picture = Column(Binary)
 
     #relationships
 
@@ -67,15 +68,15 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     BibData_Annote = Column(Unicode)
     BibData_Volume = Column(Unicode(length=20))
     BibData_Pages = Column(Unicode(length=20))
-    BibData_Series = Column(Unicode)
+    BibData_Series = Column(Unicode(length=255))
     BibData_Number = Column(Unicode(length=20))
     BibData_Institution = Column(Unicode(length=255))
     BibData_School = Column(Unicode(length=255))
     BibData_ThesisKey = Column(Unicode(length=255))
     BibData_ThesisType = Column(Unicode(length=255))
-    BibData_BookTitle = Column(Unicode)
+    BibData_BookTitle = Column(Unicode(length=1025))
     BibData_Chapter = Column(Unicode(length=255))
-    BibData_Address = Column(Unicode) 
+    BibData_Address = Column(Unicode(length=1024)) 
     BibData_Publisher = Column(Unicode(length=255))
     BibData_HowPublished = Column(Unicode(length=255))
     BibData_DatePublished = Column(DateTime)
@@ -85,16 +86,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     WebData_LinkText = Column(Unicode)
     WebData_DateDownloaded = Column(DateTime)
 
-    FileData_FileName = Column(Unicode)
-    FileData_Root = Column(Unicode)
+    FileData_FileName = Column(Unicode(length=1024))
+    FileData_Root = Column(Unicode(length=50))
     FileData_Folder = Column(PickleType)
-    FileData_FileType = Column(Unicode(length=6))
+    FileData_FileType = Column(Unicode(length=25))
     FileData_DateCreated = Column(DateTime)
     FileData_DateModified = Column(DateTime)
     FileData_Size = Column(Integer)
 
-    PhysData_StorageLoc = Column(Unicode) # Storage location
-    PhysData_StorageType = Column(Unicode) # Type of storage
+    PhysData_StorageLoc = Column(Unicode(length=255)) # Storage location
+    PhysData_StorageType = Column(Unicode(length=255)) # Type of storage
                                            # (e.g. personal, library)
     PhysData_Dewey = Column(Unicode(length=20)) 
     PhysData_ISBN = Column(Unicode(length=50))

@@ -19,6 +19,8 @@ class ProfilePanel(wx.Panel):
                                        choices=PIE_CONFIG.get_profile_names())
         self.profileChoice.SetStringSelection(
             PIE_CONFIG.get('TheProfile', 'current_profile'))
+        tta = wx.ToolTip(_('A profile allows you to point Pieberry at different Pieberry directories and databases'))
+        self.profileChoice.SetToolTip(tta)
         self.profileaddbt = wx.Button(self, -1, _('Add'))
         self.rootdirctrl = wx.DirPickerCtrl(
             self, -1, 
@@ -34,6 +36,8 @@ class ProfilePanel(wx.Panel):
         self.bib_cb = wx.CheckBox(self, -1, 
                                   _('Export bibliography to pre-specified file'))
                                   # style=wx.ALIGN_RIGHT)
+        ttb = wx.ToolTip(_("Setting the bibliography here means that Pieberry won't prompt you for a bibliography file every time you export it."))
+        self.bib_cb.SetToolTip(ttb)
         self.bib_cb.SetValue(PIE_CONFIG.getboolean('Profile', 
                                                     'export_bibtex'))
         self.bibfilectrl = wx.FilePickerCtrl(
@@ -145,11 +149,16 @@ class FormatPanel(wx.Panel):
                                          choices=self.bibtexchoices.keys())
         self.defbibtexchoice.SetStringSelection(
             PIE_CONFIG.get('Format', 'default_bibtex_entry_type'))
+        tta = wx.ToolTip(_('Web pages and downloads will use this type by default'))
+        self.defbibtexchoice.SetToolTip(tta)
         self.howpublishedtext = wx.TextCtrl(self, -1, 
                                             validator=pieBibtexValidator(True))
+        ttb = wx.ToolTip(_('Web pages and downloads will use this text in the "howpublished" field by default'))     
         self.howpublishedtext.SetValue(
             PIE_CONFIG.get('Format', 'default_howpublished_text'))
         self.urlchoice = wx.Choice(self, -1, choices = self.uchz.keys())
+        ttc = wx.ToolTip(_("When referencing urls, should pieberry use the full URL, the page that referred to the full URL (where possible) or just the domain name of the site?"))
+        self.urlchoice.SetToolTip(ttc)
         self.urlchoice.SetStringSelection(
             self.uchz_rv[PIE_CONFIG.get('Format', 'url_level_represent')])
         self.plaintextfmtchoice = wx.Choice(self, -1, 
@@ -158,6 +167,8 @@ class FormatPanel(wx.Panel):
             self.ptxtfchz_rv[PIE_CONFIG.get('Format', 'plaintext_citation_format')])
         self.writepdf_cb = wx.CheckBox(self, -1, 
                                        _('Write PDF metadata when possible'))
+        ttd = wx.ToolTip(_('Pieberry will try to update PDF metadata fields to reflect the known bibliographic data. It doesn\'t always, however, work (but should fail safe)'))
+        self.writepdf_cb.SetToolTip(ttd)
         self.writepdf_cb.SetValue(
             PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'))
         self.fnlen_spinner = wx.SpinCtrl(self, -1, min=40, max=255)
@@ -240,9 +251,18 @@ class CleanerPanel(wx.Panel):
         self.createNewDirBt = wx.Button(self, -1, label=_('New project directory'))
         # self.delDirBt = wx.Button(self, -1, label=_('Delete'))
         self.authorKwdTC = wx.TextCtrl(self, -1)
+        tta = wx.ToolTip(_('List author names, separated by semicolons, that indicate documents should going to this directory'))
+        self.authorKwdTC.SetToolTip(tta)
         self.titleKwdTC = wx.TextCtrl(self, -1)
+        ttb = wx.ToolTip(_('List words, separated by semicolons, that indicate documents should be going to this directory'))
+        self.titleKwdTC.SetToolTip(ttb)
+        
         self.RecFileTC = wx.TextCtrl(self, -1)
+        ttc = wx.ToolTip(_('To assist you in dealing with records management, you can indicate a particular file/record for this folder here'))
+        self.RecFileTC.SetToolTip(ttc)
         self.SecLevelCH = wx.Choice(self, -1, choices=SECURITY_CLASSES)
+        ttd = wx.ToolTip(_('Warning: this does nothing, it is here just to remind you what type of documents you are holding'))
+        self.SecLevelCH.SetToolTip(ttd)
         self.SecLevelCH.SetSelection(0)
         self._do_layout()
         self._do_bindings()

@@ -62,13 +62,22 @@ def pieberry_from_google(gdict, url):
         bd['BibData_Annote'] = gdict['description']
     if gdict.has_key('publishers') and gdict['publishers']:
         bd['BibData_Publisher'] = join(gdict['publishers'], ' - ')
+    googlekey = ''
     for i, k in gdict['identifiers']:
         if i == 'ISBN': 
             bd['PhysData_ISBN'] = k
-            break
+        elif i == 'google_id':
+            googlekey = k
     bd['BibData_Type'] = suggest_type(gdict['format'], bd)
     bd['WebData_Url'] = url
     obj = PieObject()
+    obj.GoogleData = {'google_id': googlekey}
+    if gdict.has_key('subjects'):
+        obj.GoogleData['subjects'] = gdict['subjects']
+    if gdict.has_key('thumbnail'):
+        obj.GoogleData['thumbnail'] = gdict['thumbnail']
+    if gdict.has_key('summary'):
+        obj.GoogleData['summary'] = gdict['summary']
     obj.add_aspect_bibdata(**bd)
     return obj
 
@@ -85,7 +94,8 @@ class GoogleBooksScraper(Thread):
         feed = self.service.search(self.search_string, max_results='20')#, max_results=__nresults__)
         ostore = PieObjectStore()
         for item in feed.entry:
-            obj = pieberry_from_google(item.to_dict(), item.GetHtmlLink().href)
+            idict = item.to_dict()
+            obj = pieberry_from_google(idict, item.GetHtmlLink().href)
             ostore.Add(obj)
         newevt = PieGoogleSearchEvent(
             ostore=ostore,
