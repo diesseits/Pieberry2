@@ -475,10 +475,15 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
+        print 'Closing'
         self.indextimer.Stop()
         session.commit()
-        session.close()
-        sys.exit()
+        try:
+            piedb.close_piedb_engine()
+        except:
+            traceback.print_exc()
+        finally:
+            sys.exit()
 
     def OnStartIndexer(self, evt=0):
         '''Begin a threaded file indexer session'''

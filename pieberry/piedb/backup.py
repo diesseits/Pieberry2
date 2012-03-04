@@ -44,8 +44,10 @@ def backup_db(dbdir):
 
     db = sqlite3.connect ( dbfile )
     cur = db.cursor ()
-
-    cur.execute ( 'begin immediate' )
+    try:
+        cur.execute ( 'begin immediate' )
+    except:
+        print 'WARNING - cannot get exclusive access to database'
     try:
         shutil.copyfile ( dbfile, backupfile )
         print 'Successfully made new backup - %s' % backupfile

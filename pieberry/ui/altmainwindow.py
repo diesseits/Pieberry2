@@ -177,6 +177,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         # self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
         self.Bind(wx.EVT_MENU, self.onSaveBibs, self.menu_savebibs)
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)
+        wx.EVT_CLOSE(self, self.onClose)
         self.Bind(wx.EVT_MENU, self.onConfig, self.menu_config)
         self.Bind(wx.EVT_MENU, self.onAbout, self.menu_about)
         # self.Bind(wx.EVT_MENU, self.onDiscard, self.menu_discard)

@@ -85,6 +85,31 @@ def init_desktop_location(path):
     ROOT_MAP['desktopdir'] = DESKTOPDIR
 
 
+def clean_cache_path():
+    '''Cleans out crud in the cache. Call only after having
+    initialised CACHEDIR'''
+    dirs = [d for d in os.listdir(CACHEDIR) if os.path.isdir(os.path.join(CACHEDIR, d))]
+    webdirs = [os.path.join(CACHEDIR, d) for d in dirs if d[:2] == 'w_']
+    deskdirs = [os.path.join(CACHEDIR, d) for d in dirs if d[:2] == 'd_']
+    # delete all webdir caches - if the user didn't store'em last time
+    # then what's the use?
+    for w in webdirs:
+        try:
+            shutil.rmtree(w)
+            print 'deleting %s' % w
+        except:
+            print 'could not delete %s' % w
+    for d in deskdirs:
+        if len(os.listdir(d)) == 0:
+            try:
+                shutil.rmtree(d)
+                print 'deleting %s' % d
+            except:
+                print 'could not delete %s' % d
+
+    
+    
+
 # if PY2EXE:
 #     IMGDIR = os.getcwd()
 #     HELPDIR = os.path.join(os.getcwd(), 'pieberry')

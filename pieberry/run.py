@@ -85,6 +85,8 @@ def main():
     pieberry.pieconfig.paths.init_storage_location(PIE_CONFIG.get('Profile', 'rootdir'))
     pieberry.pieconfig.paths.create_directories()
     pieberry.pieconfig.paths.init_desktop_location(PIE_CONFIG.get('Profile', 'desktopdir'))
+    # clean up the cache
+    pieberry.pieconfig.paths.clean_cache_path()
 
 
     # backup database and clean up backup dir
@@ -92,7 +94,6 @@ def main():
     from pieberry.pieconfig.paths import DBDIR
     clean_backups()
     backup_db(DBDIR)
-    
 
     # init database
     print 'Init database'
