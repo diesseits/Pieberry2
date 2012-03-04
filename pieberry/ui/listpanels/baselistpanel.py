@@ -56,7 +56,10 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self.ListDisplay.DeleteAllItems()
         self.objectstore = ostore
         for ref, i in self.objectstore.GetNext():
-            self.ListDisplay.AddObject(i, ref)
+            try:
+                self.ListDisplay.AddObject(i, ref)
+            except:
+                print 'Had trouble here'
 
     def AddObject(self, obj, msgtype=None):
         '''Add an object into the panel. Returns the reference by which 

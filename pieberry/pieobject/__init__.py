@@ -80,6 +80,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     BibData_Publisher = Column(Unicode(length=255))
     BibData_HowPublished = Column(Unicode(length=255))
     BibData_DatePublished = Column(DateTime)
+    BibData_Abstract = Column(Unicode)
 
     WebData_Url = Column(Unicode)
     WebData_PageUrl = Column(Unicode)

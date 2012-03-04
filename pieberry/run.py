@@ -91,7 +91,10 @@ def main():
 
     # backup database and clean up backup dir
     from pieberry.piedb.backup import backup_db, clean_backups
+    from pieberry.piedb.dbname import DBNAME
     from pieberry.pieconfig.paths import DBDIR
+    if not os.path.exists(os.path.join(DBDIR, DBNAME)): dbstarting = True
+    else: dbstarting = False
     clean_backups()
     backup_db(DBDIR)
 
@@ -115,9 +118,8 @@ def main():
 
     print 'Init tables'
     SQLABase.metadata.create_all(engine)
-    if PIE_CONFIG.getboolean('Internal', 'first_run'):
+    if PIE_CONFIG.getboolean('Internal', 'first_run') or dbstarting:
         init_tags()
-
 
     print 'Generating initial folder list'
     generate_initial_project_folder_list()

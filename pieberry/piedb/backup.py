@@ -39,6 +39,7 @@ def backup_db(dbdir):
         raise Exception 
 
     dbfile = os.path.join(dbdir, DBNAME)
+    if not os.path.exists(dbfile): return
 
     backupfile = os.path.join ( BACKUPDIR, os.path.basename(dbfile) + datetime.datetime.today().strftime(".%Y%m%d-%H%M") )
 
