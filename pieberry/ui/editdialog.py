@@ -7,7 +7,7 @@ from pieberry.ui.events import PieBibEditEvent
 
 from pieberry.pieconfig.schemas import *
 from pieberry.pieconfig.config import PIE_CONFIG
-from pieberry.pieutility.date import wxdate2pydate
+from pieberry.pieutility.date import wxdate2pydate, pydate2wxdate
 from pieberry.pieutility.bibtex import *
 from pieberry.piedb import Session
 
@@ -241,8 +241,9 @@ class PieBibEditDialog(wx.Dialog):
         if obj.filemetadata.has_key('title'):
             if type(obj.filemetadata['title']) in (unicode, str):
                 self.titleAltCtrl.SetValue(obj.filemetadata['title'])
+        print obj.ReferDate().timetuple()
         self.datePicker.SetValue(
-            wx.DateTimeFromTimeT(time.mktime(obj.ReferDate().timetuple())))
+            pydate2wxdate(obj.ReferDate()))
         self.authorCtrl.SetFocus()
         
         bibdata = {}

@@ -53,7 +53,7 @@ def autogen_bibtex_key(obj):
         str(obj.ReferDate().year), 
         keytitlecompact
         )
-    return key
+    return unicode(key, 'utf8', 'ignore')
 
 
 def increment_bibtex_key(keytext):

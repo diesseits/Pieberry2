@@ -528,6 +528,7 @@ class FunctionMainWindow(BaseMainWindow):
         while validkey == False:
             if not bibkey:
                 bibkey = autogen_bibtex_key(obj)
+                assert type(bibkey) == unicode
             validkey = query_unique_key(session, bibkey)
             if not validkey:
                 bibkey = increment_bibtex_key(bibkey)
