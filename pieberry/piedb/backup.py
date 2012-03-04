@@ -46,8 +46,10 @@ def backup_db(dbdir):
     cur = db.cursor ()
 
     cur.execute ( 'begin immediate' )
-    shutil.copyfile ( dbfile, backupfile )
-    print 'Successfully made new backup - %s' % backupfile
-    db.close()
-    # cur.execute ( ' immediate' )
-    # cur.execute ( 'rollback' )
+    try:
+        shutil.copyfile ( dbfile, backupfile )
+        print 'Successfully made new backup - %s' % backupfile
+    except:
+        print 'WARNING - could not create backup - %s' % backupfile
+    finally:
+        db.close()

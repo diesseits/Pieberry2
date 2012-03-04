@@ -87,11 +87,11 @@ def main():
     pieberry.pieconfig.paths.init_desktop_location(PIE_CONFIG.get('Profile', 'desktopdir'))
 
 
-    # backup database
+    # backup database and clean up backup dir
     from pieberry.piedb.backup import backup_db, clean_backups
     from pieberry.pieconfig.paths import DBDIR
-    backup_db(DBDIR)
     clean_backups()
+    backup_db(DBDIR)
     
 
     # init database
