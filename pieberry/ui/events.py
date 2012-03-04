@@ -55,3 +55,4 @@ PieFlagCheckedEvent, EVT_PIE_FLAG_CHECKED = wx.lib.newevent.NewEvent()
 # attributes: flagkey - a pieobject boolean attribute
 #             flagval - boolean result
 #             obj - the object
+PieCloseFilterPanelEvent, EVT_PIE_CLOSE_FILTER = wx.lib.newevent.NewEvent()

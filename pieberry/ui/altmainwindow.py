@@ -45,7 +45,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         debugMenu = wx.Menu()
         self.menu_savebibs = wx.MenuItem(
             fileMenu, -1, 
-            _('&Export Bibliography')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
+            _('&Export Bibliography\tCtrl-shift-b')) # [%s]\tCtrl-s' % os.path.basename(config.get('PBoptions', 'default_bibliography')), 'Save')
         self.menu_savebibs.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_MENU, (16, 16)))
         # self.menu_discard = wx.MenuItem(
@@ -147,15 +147,17 @@ class BaseMainWindow(wx.Frame, PieActor):
         fileMenu.AppendItem(self.menu_quit)
         helpMenu.AppendItem(self.menu_manual)
         helpMenu.AppendItem(self.menu_about)
-        gatherMenu.AppendItem(self.menu_scan_web_page)
-        gatherMenu.AppendItem(self.menu_emptyref)
         # gatherMenu.AppendItem(self.menu_pageref)
         locateMenu.AppendItem(self.menu_find)
         locateMenu.AppendItem(self.menu_find_in_folders)
         locateMenu.AppendItem(self.menu_filter)
-        gatherMenu.AppendItem(self.menu_atom_process)
-        gatherMenu.AppendItem(self.menu_import_bibtex)
+        gatherMenu.AppendItem(self.menu_scan_web_page)
         gatherMenu.AppendItem(self.menu_google_books)
+        gatherMenu.AppendSeparator()
+        gatherMenu.AppendItem(self.menu_emptyref)
+        gatherMenu.AppendItem(self.menu_import_bibtex)
+        gatherMenu.AppendSeparator()
+        gatherMenu.AppendItem(self.menu_atom_process)
         viewMenu.AppendItem(self.menu_toggle_context)
         viewMenu.AppendSeparator()
         viewMenu.AppendItem(self.menu_view_recent)
@@ -298,7 +300,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             'FileListPanel', 
             'WebListPanel',
             'BibListPanel',
-            'StagingListPanel'):
+            'StagingListPanel',
+            'GBListPanel'):
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
@@ -414,13 +417,13 @@ class BaseMainWindow(wx.Frame, PieActor):
             tab, caption, select=True, 
             bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
 
-    def OpenNotesPane(self, obj, caption=_('Notes')):
+    def OpenNotesPane(self, obj=None, caption=_('Notes')):
         tab = NotesPane(self.TabBook, -1)
+        self.TabBook.AddPage(
+            tab, caption, select=True)
         if not obj: return
         tab.SetObject(obj)
         caption = 'Notes: %s' % obj.Title()[:15]
-        self.TabBook.AddPage(
-            tab, caption, select=True)
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
     def CloseAllPanes(self):

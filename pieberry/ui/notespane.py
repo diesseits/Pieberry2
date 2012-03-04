@@ -410,6 +410,7 @@ class NotesPane(wx.Panel):
         # The RichTextCtrl can handle menu and update events for undo,
         # redo, cut, copy, paste, delete, and select all, so just
         # forward the event to it.
+        print evt
         self.rtc.ProcessEvent(evt)
 
     def MakeToolBar(self):

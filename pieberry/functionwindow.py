@@ -359,11 +359,13 @@ class FunctionMainWindow(BaseMainWindow):
         self.OpenGBListPane()
         pan = self.GetCurrentPane()
         pan.Disable()
+        self.StatusBar.SetStatusText(_('Searching for books'))
         gbs = GoogleBooksScraper(evt.searchtext, pan)
         pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
         gbs.start()
 
     def Callback_GoogleSearch(self, evt):
+        self.StatusBar.SetStatusText('')
         evt.notify_window.AddObjects(evt.ostore)
         evt.notify_window.Enable()
 

@@ -14,7 +14,6 @@ from gdata import service
 import gdata.books.service
 import gdata.books
 
-
 __author__ = 'raifsarcich@gmail.com (Raif Sarcich)'
 __apikey__ = 'AIzaSyAUARZHHM23uSIDgBLGiM_GCJO7rRNobYk'
 __source__ = 'Raif Sarcich - %s - %s' % (PIE_APPNAME, PIE_VERSION)
@@ -46,9 +45,10 @@ def suggest_type(fmt, bd):
 def pieberry_from_google(gdict, url):
     '''Take a google books dict and produce a PieObject'''
     bd = {
-        'author': fmt_authors(gdict['authors']),
         'title': gdict['title'],
         }
+    if gdict.has_key('authors') and gdict['authors']:
+        bd['author'] = fmt_authors(gdict['authors'])
     try:
         bd['BibData_DatePublished'] = datetime.datetime.strptime(
             gdict['date'], '%Y-%m-%d')
@@ -62,6 +62,10 @@ def pieberry_from_google(gdict, url):
         bd['BibData_Annote'] = gdict['description']
     if gdict.has_key('publishers') and gdict['publishers']:
         bd['BibData_Publisher'] = join(gdict['publishers'], ' - ')
+    for i, k in gdict['identifiers']:
+        if i == 'ISBN': 
+            bd['PhysData_ISBN'] = k
+            break
     bd['BibData_Type'] = suggest_type(gdict['format'], bd)
     bd['WebData_Url'] = url
     obj = PieObject()
@@ -88,3 +92,22 @@ class GoogleBooksScraper(Thread):
             notify_window=self.notify_window)
         wx.PostEvent(self.notify_window, newevt)
 
+# feed.to_dict() Dict  will look something like this:
+
+# <gdata.books.service.BookService object at 0x116f4d0>
+# {'annotation': 'http://www.google.com/books/feeds/users/me/volumes',
+#  'authors': ['Franz Kafka'],
+#  'date': '1998-10-06',
+#  'description': 'The story of Karl Rossman who, after an embarrassing sexual misadventure with a servant girl, is banished to America by his parents.',
+#  'embeddability': 'not_embeddable',
+#  'format': 'book',
+#  'identifiers': [('google_id', 'VZoNdyYAweoC'),
+#                  ('ISBN', '0749399511'),
+#                  ('ISBN', '9780749399511')],
+#  'info': 'http://books.google.com/books?id=VZoNdyYAweoC&dq=Kafka+America&as_brr=0&ie=ISO-8859-1&source=gbs_gdata',
+#  'preview': 'http://books.google.com/books?id=VZoNdyYAweoC&dq=Kafka+America&as_brr=0&ie=ISO-8859-1&cd=1&source=gbs_gdata',
+#  'publishers': ['Vintage Classics'],
+#  'subjects': ['Literary Criticism'],
+#  'thumbnail': 'http://bks6.books.google.com/books?id=VZoNdyYAweoC&printsec=frontcover&img=1&zoom=5&source=gbs_gdata',
+#  'title': 'America',
+#  'viewability': 'view_no_pages'}

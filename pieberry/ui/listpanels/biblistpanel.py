@@ -8,6 +8,9 @@ from pieberry.ui.timers import SpinnyTimer
 from pieberry.ui.listpanels.listwidgets import *
 from pieberry.pieobject import *
 from pieberry.ui.listpanels.baselistpanel import BaseListPanel # <-- todo
+from pieberry.pieconfig.initsys import IMGDIR
+
+WEBBMP = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png'))
 
 class SpoofEvt:
     def __init__(self, checked):
@@ -54,6 +57,8 @@ class BibListPanel(BaseListPanel):
         elif keycode == ord('I'):
             nevt = SpoofEvt(self.GetSelectedItem().StatData_Favourite)
             self.onFlagFavourite(nevt)
+        elif keycode == ord('N'):
+            self.onEditNotes(0)
         evt.Skip()
 
     def onDeleteItem(self, evt):
@@ -78,11 +83,11 @@ class BibListPanel(BaseListPanel):
         copyMenu = wx.Menu()
         if obj.has_aspect('onweb'):
             rcm_openinbrowser = wx.MenuItem(menu, 0, _('Open in Browser'))
-            rcm_openinbrowser.SetBitmap(
-                wx.ArtProvider.GetBitmap(wx.ART_NORMAL_FILE, wx.ART_MENU))
+            rcm_openinbrowser.SetBitmap(WEBBMP)
             menu.AppendItem(rcm_openinbrowser)
             self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
             rcm_copyurl = wx.MenuItem(menu, 7, _('Copy web url'))
+            rcm_copyurl.SetBitmap(WEBBMP)
             copyMenu.AppendItem(rcm_copyurl)
             self.Bind(wx.EVT_MENU, self.onCopyUrl, rcm_copyurl)
         if obj.has_aspect('stored'):
@@ -104,7 +109,7 @@ class BibListPanel(BaseListPanel):
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
             rcm_editnotes = wx.MenuItem(menu, 18, 
-                                        _('Edit notes on this item'))
+                                        _('Edit notes on this item\tN'))
             menu.AppendItem(rcm_editnotes)
             self.Bind(wx.EVT_MENU, self.onEditNotes, rcm_editnotes)
             menu.AppendSeparator()

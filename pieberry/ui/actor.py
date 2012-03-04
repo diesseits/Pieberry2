@@ -41,6 +41,7 @@ class PieActor:
     def onAbout(self, evt):
         info = wx.AboutDialogInfo()
         info.AddDeveloper('Raif Sarcich')
+        # info.AddDeveloper('Various icons from openclipart.org and the open icon library')
         info.SetVersion(PIE_VERSION)
         info.SetCopyright('(c) 2012 Raif Sarcich et. al.')
         info.SetLicence(
