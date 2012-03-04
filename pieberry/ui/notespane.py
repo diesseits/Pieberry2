@@ -410,7 +410,6 @@ class NotesPane(wx.Panel):
         # The RichTextCtrl can handle menu and update events for undo,
         # redo, cut, copy, paste, delete, and select all, so just
         # forward the event to it.
-        print evt
         self.rtc.ProcessEvent(evt)
 
     def MakeToolBar(self):
@@ -425,8 +424,6 @@ class NotesPane(wx.Panel):
         tbar = self.toolbar
         # doBind( tbar.AddTool(-1, images._rt_open.GetBitmap(),
         #                       shortHelpString="Open"), self.OnFileOpen)
-        # doBind( tbar.AddTool(-1, images._rt_save.GetBitmap(),
-        #                       shortHelpString="Save"), self.OnFileSave)
         # tbar.AddSeparator()
         doBind( tbar.AddTool(wx.ID_CUT, wx.ArtProvider.GetBitmap(wx.ART_CUT, wx.ART_TOOLBAR),
                              shortHelpString="Cut"), self.ForwardEvent, self.ForwardEvent)
@@ -463,6 +460,9 @@ class NotesPane(wx.Panel):
                               shortHelpString="Font"), self.OnFont)
         doBind( tbar.AddTool(-1, wx.Bitmap(os.path.join(IMGDIR, 'format-text-color.png')),
                               shortHelpString="Font Colour"), self.OnColour)
+        tbar.AddSeparator()
+        doBind( tbar.AddTool(-1, wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR),
+                              shortHelpString="Save to File"), self.OnFileSaveAs)
         tbar.Realize()
 
     

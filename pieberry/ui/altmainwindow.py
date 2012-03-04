@@ -418,12 +418,13 @@ class BaseMainWindow(wx.Frame, PieActor):
             bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_broom16.png')))
 
     def OpenNotesPane(self, obj=None, caption=_('Notes')):
+        caption = 'Notes: %s' % obj.Title()[:20]
         tab = NotesPane(self.TabBook, -1)
         self.TabBook.AddPage(
-            tab, caption, select=True)
+            tab, caption, select=True,
+            bitmap = wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU))
         if not obj: return
         tab.SetObject(obj)
-        caption = 'Notes: %s' % obj.Title()[:15]
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
     def CloseAllPanes(self):
