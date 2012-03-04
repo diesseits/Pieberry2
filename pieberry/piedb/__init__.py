@@ -13,13 +13,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
+from pieberry.piedb.dbname import DBNAME
 
 def create_piedb_engine(rootpath):
     global SQLABase
     global engine
     global Session
     global session
-    engine = create_engine('sqlite:///%s/pieberry.db' % rootpath, echo=False, 
+    engine = create_engine('sqlite:///%s/%s' % (rootpath, DBNAME), echo=False, 
                        poolclass=NullPool)
     SQLABase = declarative_base(bind=engine)
     Session = sessionmaker(bind=engine)

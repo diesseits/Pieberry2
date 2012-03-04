@@ -37,7 +37,8 @@ def default_paths_relative_to_root(root):
         'projectdir': os.path.join(root, 'Projects'),
         'meetingpaperdir': os.path.join(root, 'Meeting Papers'),
         'recentdocsdir': os.path.join(root, 'Recent Documents'),
-        'cachedir': os.path.join(root, '.cache')
+        'cachedir': os.path.join(root, '.cache'),
+        'backupdir': os.path.join(root, '.backups')
         }
     return ret
 
@@ -54,11 +55,13 @@ def init_storage_location(path):
     global MEETINGPAPERDIR
     global RECENTDOCSDIR
     global CACHEDIR
+    global BACKUPDIR
     LIBRARYDIR = otherpaths['librarydir']
     PROJECTDIR = otherpaths['projectdir']
     MEETINGPAPERDIR = otherpaths['meetingpaperdir']
     RECENTDOCSDIR = otherpaths['recentdocsdir']
     CACHEDIR = otherpaths['cachedir']
+    BACKUPDIR = otherpaths['backupdir']
     print 'LIBRARYDIR =', LIBRARYDIR
     print 'PROJECTDIR =', PROJECTDIR
     print 'MEETINGPAPERDIR =', MEETINGPAPERDIR
@@ -70,6 +73,7 @@ def init_storage_location(path):
         'projectdir': PROJECTDIR,
         'meetingpaperdir': MEETINGPAPERDIR,
         'recentdocsdir': RECENTDOCSDIR,
+        'backupdir': BACKUPDIR
         }
 
 def init_desktop_location(path):
