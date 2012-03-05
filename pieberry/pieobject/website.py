@@ -49,7 +49,8 @@ def referable_website(url, sqsess=session):
     query = sqsess.query(PieWebsite).filter(
         PieWebsite.Domain == urlparse.urlsplit(validify_url(url))[1])
     r = query.first()
-    r = sqsess.merge(r)
+    if r:
+        r = sqsess.merge(r)
     return r
 
 def add_website(url, 
