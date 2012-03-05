@@ -107,6 +107,7 @@ def query_unique_key(session, key):
 def query_most_recent(session, number=50):
     '''Returns the most recently saved pieobjects in the database'''
     q = session.query(PieObject).order_by(desc(PieObject.StatData_LastSaved))[:number]
+    q.reverse()
     return PieObjectStore(q)
 
 def query_flagged(session):
