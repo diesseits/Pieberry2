@@ -439,9 +439,9 @@ class FunctionMainWindow(BaseMainWindow):
                 obj, 
                 evt.dest_folder,
                 evt.new_fn)
-        # this is a hack to make things more legible
-        if PIE_CONFIG.getboolean('Format', 'atom_title_hack'):
-            obj.title = "%s [%s]" % (obj.title, evt.new_fn)
+            # # this is a hack to make things more legible
+            # if PIE_CONFIG.getboolean('Format', 'atom_title_hack'):
+            #     obj.title = "%s [%s]" % (obj.title, evt.new_fn)
         os.renames(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
         obj.add_aspect_saved()

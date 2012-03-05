@@ -3,6 +3,10 @@ import wx.lib.mixins.listctrl as listmix
 from pprint import pprint
 
 from imagelist import PieImageList, MessageType
+from pieberry.pieconfig.config import PIE_CONFIG
+
+ATH = False
+if PIE_CONFIG.getboolean('Format', 'atom_title_hack'): ATH = True
 
 def filterout(filtertext, fields):
     '''determine whether to filter out a given term'''
@@ -169,7 +173,7 @@ class BibListCtrl(BaseListCtrl):
             MessageType[msgtype])
         self.SetStringItem(nexidx, 1, obj.Author())
         self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
-        self.SetStringItem(nexidx, 3, obj.Title())
+        self.SetStringItem(nexidx, 3, obj.Title(atom_title_hack=ATH))
         self.SetItemData(nexidx, ref)
         # colorise if flagged for follow up
         if obj.StatData_FollowUpFlag:

@@ -151,12 +151,15 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         else:
             raise AttributeError
 
-    def Title(self):
+    def Title(self, atom_title_hack=False):
         if not self.title:
             if self.WebData_LinkText:
                 return self.WebData_LinkText
             if self.FileData_FileName:
                 return self.FileData_FileName
+        if atom_title_hack and self.FileData_FileName:
+            if self.FileData_Root == 'projectdir':
+                return "%s [%s]" % (self.title, self.FileData_FileName)
         return self.title
 
     def Author(self, favour_corporate=False):
@@ -420,9 +423,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 if self.FileData_Root == 'librarydir':
                     return 'yellowball'
                 elif self.FileData_Root == 'projectdir':
-                    return 'redball'
-                elif self.FileData_Root == 'meetingpaperdir':
                     return 'greenball'
+                elif self.FileData_Root == 'meetingpaperdir':
+                    return 'redball'
             else:
                 return 'blueball'
         

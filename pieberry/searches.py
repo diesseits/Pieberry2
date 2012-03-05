@@ -13,7 +13,8 @@ def build_query_simple(origincode, text, fieldcode, session):
             PieObject.title.like('%' + t + '%'), 
             PieObject.author.like('%' + t + '%'), 
             PieObject.corpauthor.like('%' + t + '%'), 
-            PieObject.collection.like('%' + t + '%')
+            PieObject.collection.like('%' + t + '%'),
+            PieObject.FileData_FileName.like('%' + t + '%'),
             ))
     elif fieldcode == 'all':
         q = session.query(PieObject).filter(or_(
@@ -22,14 +23,17 @@ def build_query_simple(origincode, text, fieldcode, session):
             PieObject.corpauthor.like('%' + t + '%'), 
             PieObject.collection.like('%' + t + '%'),
             PieObject.notes.like('%' + t + '%'),
+            PieObject.BibData_Journal.like('%' + t + '%'),
             PieObject.FileData_FileName.like('%' + t + '%'),
             PieObject.WebData_Url.like('%' + t + '%'), 
             PieObject.WebData_LinkText.like('%' + t + '%'), 
             extract('year', PieObject.date) == t # useless approach but hey
             ))
     elif fieldcode == 'filename':
-        q = session.query(PieObject).filter(
-            PieObject.FileData_FileName.like('%' + t + '%'))
+        q = session.query(PieObject).filter(_or(
+            PieObject.title.like('%' + t + '%'), 
+            PieObject.FileData_FileName.like('%' + t + '%')
+            ))
     elif fieldcode == 'title':
         q = session.query(PieObject).filter(PieObject.title.like('%' + t + '%'))
     elif fieldcode == 'author':
