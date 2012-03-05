@@ -108,8 +108,9 @@ class HeaderHandler(SafeConfigParser):
     def __init__(self, piefolder=None, headerfile=None):
         SafeConfigParser.__init__(self)
         assert piefolder or headerfile
-        assert type(piefolder) == PieFolder
-        assert piefolder.initialised == 1
+        if piefolder:
+            assert type(piefolder) == PieFolder
+            assert piefolder.initialised == 1
         if piefolder:
             self.add_section(_('Folder Information'))
             self.set(_('Folder Information'), 

@@ -415,6 +415,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         'exclude' 'pdf' 'doc' 'star'
 
         Contexts may include 'filewindow', 'bibwindow', 'dlwindow'''
+        def xball():
+            if self.FileData_Root:
+                if self.FileData_Root == 'librarydir':
+                    return 'yellowball'
+                elif self.FileData_Root == 'projectdir':
+                    return 'greenball'
+                elif self.FileData_Root == 'meetingpaperdir':
+                    return 'redball'
+            else:
+                return 'blueball'
+        
         if window_type == 'filewindow':
             if self.FileData_FileType == 'pdf':
                 return 'pdf'
@@ -428,7 +439,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return 'flag'
             elif self.StatData_Favourite:
                 return 'star'
-            else: return 'success'
+            else: return xball()
     
     def stats_opened(self):
         self.StatData_LastOpened = date=datetime.datetime.today()
