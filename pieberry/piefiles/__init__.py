@@ -1,4 +1,4 @@
-import os, os.path, sys, wx, traceback, datetime, time
+import os, os.path, sys, wx, traceback, datetime, time, re
 import pieberry.piemeta as piemeta
 
 from threading import Thread
@@ -8,6 +8,12 @@ from pieberry.pieobject import PieObject, PieFolder
 from pieberry.piedb import Session
 from pieberry.pieobject.diagnostic import *
 from pieberry.pieconfig.paths import *
+
+IGNOREFILES = (
+    re.compile(r'^_Folder_Info.txt'),
+    re.compile(r'^[#~].*'),
+    re.compile(r'^Backup.*')
+    )
 
 class TooManyMatchesError(Exception):
     '''This Exception means too many matching files were found'''
@@ -142,10 +148,20 @@ class PieFileIndexer(Thread):
         return newpaths
 
     def AddNewFiles(self, newpaths):
+        '''Add any new files found to the database'''
+        def exclude(newpath):
+            '''Indicate exclusion based on matching an re in
+            IGNOREFILES'''
+            f = os.path.basename(newpath)
+            for re in IGNOREFILES:
+                if re.match(f): return True
+            return False
+
         count = len(newpaths)
         track = 0
         for fp in newpaths:
             track += 1
+            if exclude(fp): continue
             # Todo - check handle-able file types
             obj = piemeta.get_metadata_object(fp)
             obj.add_aspect_stored(fp)

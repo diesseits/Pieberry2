@@ -13,6 +13,7 @@ PIE_CONFIG_DEFAULTS = [
     ('Profile', 'rootdir', os.getcwd()),
     ('Format', 'default_bibtex_entry_type', 'Misc'),
     ('Format', 'default_howpublished_text', 'On The Web'),
+    ('Format', 'atom_title_hack', True),
     # ('Profile', 'default_bibtex_entry_style', '0'),
     # ('Profile', 'default_bibtex_url_handling', 'href_howpublished'),
     # ('Profile', 'export_tsv', 'false'),
