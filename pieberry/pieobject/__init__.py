@@ -420,9 +420,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 if self.FileData_Root == 'librarydir':
                     return 'yellowball'
                 elif self.FileData_Root == 'projectdir':
-                    return 'greenball'
-                elif self.FileData_Root == 'meetingpaperdir':
                     return 'redball'
+                elif self.FileData_Root == 'meetingpaperdir':
+                    return 'greenball'
             else:
                 return 'blueball'
         

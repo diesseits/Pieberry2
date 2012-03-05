@@ -148,8 +148,8 @@ class FileListCtrl(BaseListCtrl):
 
 class BibListCtrl(BaseListCtrl):
     '''Control for displaying richer bibliographic search data'''
-    columnheads = (_('Author'), _('Date'), _('Title'))
-    columnwidths = (160, 80, 240)
+    columnheads = ('', _('Author'), _('Date'), _('Title'))
+    columnwidths = (20, 160, 80, 240)
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
@@ -165,10 +165,11 @@ class BibListCtrl(BaseListCtrl):
             msgtype = obj.get_icon_code('bibwindow')
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
-            obj.Author(), 
+            '', 
             MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, str(obj.ReferDate().strftime('%Y-%m-%d')))
-        self.SetStringItem(nexidx, 2, obj.Title())
+        self.SetStringItem(nexidx, 1, obj.Author())
+        self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        self.SetStringItem(nexidx, 3, obj.Title())
         self.SetItemData(nexidx, ref)
         # colorise if flagged for follow up
         if obj.StatData_FollowUpFlag:
@@ -179,7 +180,8 @@ class BibListCtrl(BaseListCtrl):
                 self.SetItemTextColour(nexidx, 'purple')
             elif td.days > 6:
                 self.SetItemTextColour(nexidx, 'red')
-        self.itemDataMap[ref] = [obj.Author(), 
+        self.itemDataMap[ref] = [msgtype,
+                                 obj.Author(), 
                                  str(obj.ReferDate()),#.year),
                                  obj.Title()]
         self.currentitem += 1

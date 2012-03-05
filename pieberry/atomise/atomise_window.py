@@ -43,7 +43,13 @@ class atomBmpButton(wx.BitmapButton):
 
     def getRowId(self):
         return self.rowid
+
+class FlagBitmapButton(ThemedGenBitmapToggleButton):
+    image = os.path.join(IMGDIR, 'ic_flag16.png')
     
+    def __init__(self, parent, id):
+        theimage = wx.Image(self.image, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+        wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(self, parent, id, theimage)
 
 class atomActionWindow(wx.ScrolledWindow):
     '''a window with a dynamic scrolled layout to allow the
