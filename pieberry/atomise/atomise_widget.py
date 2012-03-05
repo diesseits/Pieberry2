@@ -122,8 +122,8 @@ class atomWidget(wx.Panel):
     def onOpenFile(self, rowid):
         pieberry.pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)
 
-    def onFlag(self, rowid):
-        self.atomDisplay.rowdata[rowid].flag_followup(True)
+    def onFlag(self, rowid, val):
+        self.atomDisplay.rowdata[rowid].flag_followup(val)
 
     def onFilterView(self, evt=0):
         '''Does nothing for this widget'''

@@ -6,6 +6,7 @@ import os, string, time, sys, datetime
 from pieberry.pieconfig.paths import IMGDIR
 from pieberry.pieobject import PieObjectStore
 from pieberry.ui.events import *
+from wx.lib.buttons import ThemedGenBitmapToggleButton 
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):
@@ -47,9 +48,14 @@ class atomBmpButton(wx.BitmapButton):
 class FlagBitmapButton(ThemedGenBitmapToggleButton):
     image = os.path.join(IMGDIR, 'ic_flag16.png')
     
-    def __init__(self, parent, id):
+    def __init__(self, parent, rowid, id=wx.ID_ANY, bitmap=None):
         theimage = wx.Image(self.image, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
-        wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(self, parent, id, theimage)
+        wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(
+            self, parent, id, theimage)
+        self.rowid  = rowid
+
+    def getRowId(self):
+        return self.rowid
 
 class atomActionWindow(wx.ScrolledWindow):
     '''a window with a dynamic scrolled layout to allow the
@@ -106,8 +112,9 @@ class atomActionWindow(wx.ScrolledWindow):
         ob = evt.GetEventObject()
         self.currentrow = ob.getRowId()
         bt = getattr(self, 'flagbutton%d' % self.currentrow)
-        bt.SetBackgroundColour('pink')
-        self.parent.onFlag(self.currentrow)
+        val = bt.GetValue()
+        # bt.SetBackgroundColour('pink')
+        self.parent.onFlag(self.currentrow, val)
 
     def onFileAll(self):
         pass
@@ -195,7 +202,7 @@ class atomActionWindow(wx.ScrolledWindow):
             atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, (16, 16)))
             )
         openbt = getattr(self, 'openbutton%d' % self.maxrow)
-        setattr(self, 'flagbutton%d' % self.maxrow, atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_flag16.png')))
+        setattr(self, 'flagbutton%d' % self.maxrow, FlagBitmapButton(self, self.maxrow, id=-1)#, bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_flag16.png')))
                 )
         flagbt = getattr(self, 'flagbutton%d' % self.maxrow)
         if obj.StatData_FollowUpFlag:
