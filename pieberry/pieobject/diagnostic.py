@@ -1,4 +1,5 @@
 import mimetypes
+from pieberry.pieconfig.schemas import FEXTENSIONS
 
 try:
     import magic
@@ -7,6 +8,9 @@ except:
     USE_MAGIC = False
 
 from pieberry.pieconfig.schemas import mime_map
+
+# def redo_fext_guess(fn):
+#     for 
 
 def determine_file_type(fn):
     mtype = None

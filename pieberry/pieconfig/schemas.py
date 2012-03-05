@@ -18,17 +18,6 @@ PROFILE_KEYS = (
     'default_bibtex_url_handling', 
     'export_tsv')
 
-AT_example_struct = {
-    'rpwg': {
-        'title': ['rpwg', 'necf', 'customer framework', 'energy customer'],
-        'author': [],
-        },
-    'npwg': {
-        'title': ['npwg', 'connections', 'connection framework'],
-        'author': []
-        }
-}
-
 
 #map file extensions to internal generic types
 FEXTENSIONS = {'pdf': ('.pdf',),
