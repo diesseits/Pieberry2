@@ -6,19 +6,13 @@ import traceback
 import wx
 import os
 import re
-import locale
-import cookielib
 #from BeautifulSoup import *
 from pieberry.pieconfig.paths import *
 from pieberry.pieobject import *
 from cms import *
 from pieberry.pieobject.website import add_website
 from pieberry.piescrape.execfn import suggest_title
-
-cj = cookielib.CookieJar()
-prefenc = locale.getpreferredencoding()
-user_agent = 'Mozilla/Linux'
-headers = { 'User-Agent' : user_agent }
+from pieberry.piescrape.resource import cj, prefenc, user_agent, headers
 
 class PieScraper:
     '''Functionality for scraping web pages'''
@@ -47,7 +41,7 @@ class PieScraper:
 
         # data = urllib.urlencode(params)
 
-        request = urllib2.Request(self._origin_url)#, data, headers)
+        request = urllib2.Request(self._origin_url, headers=headers)#, data, headers)
         response = urllib2.urlopen(request)
         cj.extract_cookies(response,request)
         cookie_handler= urllib2.HTTPCookieProcessor( cj )
