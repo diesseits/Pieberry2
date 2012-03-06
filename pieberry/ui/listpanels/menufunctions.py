@@ -38,21 +38,34 @@ class MenuFunctionsMixin:
         assert hasattr(obj, 'FileData_FullPath')
         pieberry.pieutility.open_file(obj.FileData_ContainingFolder)
 
-    def onDeleteOnDisk(self, evt):
+    def onDeleteObj(self, evt):
         # obj = self.objectstore[self._last_item_right_clicked]
         obj = self.GetSelectedItem()
-        assert hasattr(obj, 'FileData_FullPath')
-        print 'deleting', obj.FileData_FullPath
-        try:
-            os.remove(obj.FileData_FullPath)
-        except:
-            traceback.print_exc()
-            wx.MessageBox(_('Could not delete file - do you have it open?'), 
-                       style=wx.ICON_ERROR)
-            return
-        self.objectstore.Del(self.GetSelectedItemRef())
-        self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
-        #TODO implement deletion from database
+        if obj.has_aspect('hasfile') and obj.FileData_Root == 'librarydir':
+            islib = True
+            msg = _('Do you want to delete this document? The file on disk will be deleted but the database entry will not')
+        else:
+            islib = False
+            msg = _('Do you want to delete this document? Both the file on disk and the database entry will be deleted')
+        dia = wx.MessageDialog(self, msg, style=wx.YES|wx.NO)
+        ans = dia.ShowModal()
+        if ans == wx.ID_NO: return
+        if obj.has_aspect('hasfile'):
+            print 'deleting', obj.FileData_FullPath
+            try:
+                os.remove(obj.FileData_FullPath)
+                obj.clear_file()
+            except:
+                traceback.print_exc()
+                wx.MessageBox(_('Could not delete file - do you have it open?'), 
+                              style=wx.ICON_ERROR)
+                return
+        if not islib:
+            self.objectstore.Del(self.GetSelectedItemRef())
+            self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
+            from pieberry.functionwindow import session
+            session.delete(obj)
+            session.commit()
         
     def onNotImplemented(self, evt):
         wx.MessageBox(_('Function not implemented.'))

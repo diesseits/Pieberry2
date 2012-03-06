@@ -30,7 +30,7 @@ def build_query_simple(origincode, text, fieldcode, session):
             extract('year', PieObject.date) == t # useless approach but hey
             ))
     elif fieldcode == 'filename':
-        q = session.query(PieObject).filter(_or(
+        q = session.query(PieObject).filter(or_(
             PieObject.title.like('%' + t + '%'), 
             PieObject.FileData_FileName.like('%' + t + '%')
             ))

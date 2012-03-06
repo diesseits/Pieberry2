@@ -65,4 +65,9 @@ class FileListPanel(BaseListPanel):
                                           _('Edit bibliographic information'))
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
+            rcm_deleteobj = wx.MenuItem(menu, 16, 
+                                         _('Delete document\tDel'))
+            rcm_deleteobj.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
+            menu.AppendItem(rcm_deleteobj)
+            self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deleteobj)
 
