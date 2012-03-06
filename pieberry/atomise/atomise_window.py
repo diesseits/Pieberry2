@@ -48,10 +48,10 @@ class atomBmpButton(wx.BitmapButton):
 class FlagBitmapButton(ThemedGenBitmapToggleButton):
     image = os.path.join(IMGDIR, 'ic_flag16.png')
     
-    def __init__(self, parent, rowid, id=wx.ID_ANY, bitmap=None):
+    def __init__(self, parent, rowid, id=wx.ID_ANY, bitmap=None, *args, **kwds):
         theimage = wx.Image(self.image, wx.BITMAP_TYPE_ANY).ConvertToBitmap()
         wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(
-            self, parent, id, theimage)
+            self, parent, id, theimage, size=(25,25))
         self.rowid  = rowid
 
     def getRowId(self):

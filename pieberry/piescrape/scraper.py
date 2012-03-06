@@ -44,12 +44,22 @@ class PieScraper:
         happen as a consequence of threaded methods. Also updates the website
         memory with new details of the website being scraped.'''
         print 'PieScraper._further_init'
-        print 'Yeah defs'
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-        print 'Opening url'
-        self._urlopener = opener.open(self._origin_url, timeout=10)
+
+        # data = urllib.urlencode(params)
+
+        request = urllib2.Request(self._origin_url)#, data, headers)
+        response = urllib2.urlopen(request)
+        cj.extract_cookies(response,request)
+        cookie_handler= urllib2.HTTPCookieProcessor( cj )
+        redirect_handler= urllib2.HTTPRedirectHandler()
+        opener = urllib2.build_opener(redirect_handler,cookie_handler)
+
+        self._urlopener = opener.open(request)
+        
+        # print 'Opening url'
+        # self._urlopener = opener.open(self._origin_url, timeout=10)
         # self._urlopener = urllib2.urlopen(self._origin_url)
-        print 'Diagnosing cms'
+        # print 'Diagnosing cms'
         self._cmstype = DiagnoseCMS(self._urlopener)
 
     def set_context(self, 
