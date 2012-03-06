@@ -50,7 +50,7 @@ class BibListPanel(BaseListPanel):
 
     def onKeyDown(self, evt):
         keycode = evt.GetKeyCode()
-        print keycode
+        # print keycode
         if keycode == ord('F'):
             nevt = SpoofEvt(self.GetSelectedItem().StatData_FollowUpFlag)
             self.onFlagFollowUp(nevt)
@@ -59,6 +59,8 @@ class BibListPanel(BaseListPanel):
             self.onFlagFavourite(nevt)
         elif keycode == ord('N'):
             self.onEditNotes(0)
+        elif keycode == 127:
+            self.onDeleteObj(0)
         evt.Skip()
 
     def onDeleteItem(self, evt):
@@ -160,3 +162,9 @@ class BibListPanel(BaseListPanel):
         if obj.has_aspect('onweb') or obj.has_aspect('bibdata'):
             menu.AppendSeparator()
             menu.AppendMenu(20, _('Copy to clipboard ...'), copyMenu)
+        menu.AppendSeparator()
+        rcm_deleteobj = wx.MenuItem(menu, 16, 
+                                     _('Delete document\tDel'))
+        rcm_deleteobj.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
+        menu.AppendItem(rcm_deleteobj)
+        self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deleteobj)

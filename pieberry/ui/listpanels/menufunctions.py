@@ -39,14 +39,23 @@ class MenuFunctionsMixin:
         pieberry.pieutility.open_file(obj.FileData_ContainingFolder)
 
     def onDeleteObj(self, evt):
+        '''Delete an object. Special handling for library documents -
+        the first time delete is called on an object which has a file
+        in the library directory, only the file will be deleted, not
+        the database object. The user must delete it again to remove
+        the database object. This is because the user may still want
+        the bibliographic information for the deleted document.'''
         # obj = self.objectstore[self._last_item_right_clicked]
         obj = self.GetSelectedItem()
         if obj.has_aspect('hasfile') and obj.FileData_Root == 'librarydir':
             islib = True
-            msg = _('Do you want to delete this document? The file on disk will be deleted but the database entry will not')
+            msg = _('Do you want to delete this document? The file on disk will be deleted but the database entry will not.')
+        elif obj.has_aspect('hasfile'):
+            islib = False
+            msg = _('Do you want to delete this document? Both the file on disk and the database entry will be deleted.')
         else:
             islib = False
-            msg = _('Do you want to delete this document? Both the file on disk and the database entry will be deleted')
+            msg = _('Do you want to delete this document? The database entry will be deleted.')
         dia = wx.MessageDialog(self, msg, style=wx.YES|wx.NO)
         ans = dia.ShowModal()
         if ans == wx.ID_NO: return

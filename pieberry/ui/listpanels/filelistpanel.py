@@ -27,6 +27,23 @@ class FileListPanel(BaseListPanel):
                               self.onSelectionActivated)
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_SELECTED,
                               self.onSelectionChanged)
+        self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
+
+
+    def onKeyDown(self, evt):
+        keycode = evt.GetKeyCode()
+        # if keycode == ord('F'):
+        #     nevt = SpoofEvt(self.GetSelectedItem().StatData_FollowUpFlag)
+        #     self.onFlagFollowUp(nevt)
+        # elif keycode == ord('I'):
+        #     nevt = SpoofEvt(self.GetSelectedItem().StatData_Favourite)
+        #     self.onFlagFavourite(nevt)
+        # elif keycode == ord('N'):
+        #     self.onEditNotes(0)
+        if keycode == 127:
+            self.onDeleteObj(0)
+        evt.Skip()
+
 
     def onSelectionActivated(self, evt):
         it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
