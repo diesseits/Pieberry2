@@ -133,7 +133,10 @@ class HeaderHandler(SafeConfigParser):
                                       _('Security Level'))
     
     def write_header(self):
-        self.write(open(os.path.join(self.path, _(INFO_FNAME)), 'w'))
+        try:
+            self.write(open(os.path.join(self.path, _(INFO_FNAME)), 'w'))
+        except:
+            raise 'Couldn\'t write folder info header file'
 
                 
 

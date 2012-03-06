@@ -281,7 +281,10 @@ class CleanerPanel(wx.Panel):
         currentfolder.MatchTerms_Title = [i for i in self.titleKwdTC.GetValue().split(';') if len(i) > 0]
         currentfolder.SecurityLevel = self.SecLevelCH.GetSelection()
         currentfolder.RecordFile = self.RecFileTC.GetValue()
-        currentfolder.write_header()
+        try:
+            currentfolder.write_header()
+        except Exception, exc:
+            wx.MessageBox(unicode(exc), 'Warning', wx.ICON_WARNING)
 
     def onListSelChanged(self, evt):
         '''Store filtering criteria for selected item and display it
