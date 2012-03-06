@@ -50,7 +50,7 @@ class PieFileIndexer(Thread):
         self.session = Session()
         newpaths = []
         for rootdir in ROOT_MAP.keys():
-            if rootdir in ('cachedir', 'desktopdir'):
+            if rootdir in ('cachedir', 'desktopdir', 'backupdir'):
                 # We don't want to scan the cache or desktop
                 continue
             newpaths.extend(self.DoScanForNew(rootdir))
