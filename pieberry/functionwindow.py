@@ -400,21 +400,20 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnDesktopProcessGen(self, evt):
         '''Clean out desktop, move to cache dir, present results'''
-
-        
         self.StatusBar.SetStatusText(_('Scanning desktop'))
         self.OpenAtomisePane()
         atom_pane = self.GetCurrentPane()
         
         osession = get_session('desktop')
-        
-        progress_count = 0
-        for obj, maxi in scan_desktop_gen():
-            if progress_count == 0:
+        first_iter = True
+
+        for obj, maxi, progress_count in scan_desktop_gen():
+            if first_iter == True:
                 progress_dialog = wx.ProgressDialog(
                     _('Cleaning up desktop'),
                     '____________________________________________',
                     maximum = maxi)
+                first_iter = False
 
             # Keep track of the object 
             obj.set_session(osession)
@@ -427,7 +426,7 @@ class FunctionMainWindow(BaseMainWindow):
                 os.rename(obj.FileData_FullPath, storepath)
             except:
                 traceback.print_exc()
-                progress_count += 1
+                # progress_count += 1
                 progress_dialog.Update(progress_count, obj.FileData_FileName)
                 atom_pane.AddObject(obj)
                 continue
@@ -437,16 +436,15 @@ class FunctionMainWindow(BaseMainWindow):
             obj.remove_aspect('ondesktop')
             
             # Update ui
-            progress_count += 1
+            # progress_count += 1
             progress_dialog.Update(progress_count, obj.FileData_FileName)
             atom_pane.AddObject(obj)
-        
-        # Make a progress dialog even if no files on desktop
-        if progress_count == 0:
+
+        if first_iter == True:
             progress_dialog = wx.ProgressDialog(
                 _('Cleaning up desktop'),
                 '____________________________________________',
-                maximum = 1)
+                )
 
         progress_dialog.UpdatePulse(_('Fetching cached files'))
         

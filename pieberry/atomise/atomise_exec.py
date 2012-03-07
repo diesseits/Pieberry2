@@ -25,7 +25,9 @@ def scan_desktop_gen():
                  for fl in os.listdir(DESKTOPDIR) 
                  if os.path.isfile(os.path.join(DESKTOPDIR, fl))]
     nofiles = len(file_list)
+    progress = 0
     for fl in file_list:
+        progress += 1
         assert type(fl) == unicode
         try:
             d = pieberry.piemeta.get_metadata_object(fl)
@@ -35,7 +37,7 @@ def scan_desktop_gen():
             continue
         if d:
             d.add_aspect_ondesktop(fl)
-            yield d, nofiles
+            yield d, nofiles, progress
 
 def scan_desktop():
     '''Returns an object store of valid (handlable) file in the desktop 
