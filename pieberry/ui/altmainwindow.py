@@ -174,7 +174,7 @@ class BaseMainWindow(wx.Frame, PieActor):
 
         self.Bind(wx.EVT_MENU, self.onFind, self.menu_find)
         self.Bind(wx.EVT_MENU, self.onFindInFolders, self.menu_find_in_folders)
-        self.Bind(wx.EVT_MENU, self.OnDesktopProcess, self.menu_atom_process)
+        self.Bind(wx.EVT_MENU, self.OnDesktopProcessGen, self.menu_atom_process)
         # self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
         self.Bind(wx.EVT_MENU, self.onSaveBibs, self.menu_savebibs)
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)
