@@ -289,7 +289,7 @@ class FunctionMainWindow(BaseMainWindow):
         # session = Session()
         ostore.set_aspect_saved()
         session.add_all(ostore)
-        time.sleep(1)
+        # time.sleep(1)
         session.commit()
         progress_dialog.Destroy()
         self.CloseUtilityPanes()

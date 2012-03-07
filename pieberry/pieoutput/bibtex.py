@@ -1,4 +1,5 @@
 import datetime, os.path, shutil, traceback
+from pprint import pprint
 
 from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.pieconfig.schemas import bibtexmap
@@ -38,6 +39,8 @@ def get_pybtex_object(obj, texify=False):
     pybtex_entry = Entry(obj.BibData_Type.lower())
     
     for btkey, objfield in bibtexmap.items():
+        # if btkey == 'publisher':
+        #     print 'yes publisher:', getattr(obj, objfield)
         if btkey == 'author':
             if obj.AuthorIsCorporate():
                 pybtex_entry.add_person(Person('{%s}' % obj.Author()), btkey)
@@ -53,20 +56,29 @@ def get_pybtex_object(obj, texify=False):
         elif btkey == 'title':
             pybtex_entry.fields[btkey] = f_(obj.Title())
             continue
+        elif type(getattr(obj, objfield)) not in (str, unicode):
+            continue
+        elif len(getattr(obj, objfield)) == 0:
+            continue
         elif btkey == 'url':
             pybtex_entry.fields[btkey] = f_(obj.Url())
             continue
-        elif btkey in ('bttype', 'pie_corpauthor'):
+        elif btkey in ('bttype', 'pie_corpauthor',
+                       'pie_datepublished', 'pie_bibdatakey'):
             continue
+        # elif type(getattr(obj, objfield) == datetime.datetime):
+        #     continue
         else:
-            if not getattr(obj, objfield): continue
+            # if not getattr(obj, objfield): continue
             pybtex_entry.fields[btkey] = f_(getattr(obj, bibtexmap[btkey]))
+            if btkey == 'publisher': print 'PUBLISHER SET'
     if not (obj.ReferDate().day == 1 and obj.ReferDate().month == 1):
         # hacky hack - if publication date is supposedly 1 January,
         # then we disbelieve it and assume that only the year has been
         # set.
         pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
     pybtex_entry.fields['year'] = obj.ReferDate().strftime('%Y')
+    pprint(pybtex_entry.fields)
     return pybtex_entry
 
 
