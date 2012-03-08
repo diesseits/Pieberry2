@@ -8,7 +8,7 @@ def clean_backups():
     if len(os.listdir(BACKUPDIR)) > 25: # more than 25 backups is a bit silly
         files = [os.path.join(BACKUPDIR, i) for i in os.listdir(BACKUPDIR)]
         files.sort()
-        for f in files[len(files)-25]: 
+        for f in files[:len(files)-25]: 
             try:
                 os.remove(f)
                 print 'deleting old backup %s' % f
