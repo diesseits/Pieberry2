@@ -401,6 +401,7 @@ class FunctionMainWindow(BaseMainWindow):
     def OnDesktopProcessGen(self, evt):
         '''Clean out desktop, move to cache dir, present results'''
         self.StatusBar.SetStatusText(_('Scanning desktop'))
+        self.ClosePanesOfTypes('AtomPanel')
         self.OpenAtomisePane()
         atom_pane = self.GetCurrentPane()
         
