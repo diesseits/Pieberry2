@@ -1,7 +1,7 @@
 #GPLv3 Raif Sarcich 2011
 
 import datetime
-import os, os.path
+import os, os.path, traceback
 from pprint import pprint, pformat
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
 from sqlalchemy import ForeignKey
@@ -315,7 +315,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Add information pertaining to the storage of this item in
         the system'''
         if not final_fn == self.FileData_FullPath:
+            print 'SETTING IT', final_fn
             self.set_file(final_fn) #set filename if specified and different 
+            self.aspects['stored'] = True
             self.set_file_type()
         self.aspects['stored'] = True
         self.aspects['cached'] = False
@@ -381,14 +383,18 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 self.FileData_Folder = diry[len(pdir):].split(os.sep)
                 break
         if not fdroot: raise Exception, 'File stored outside pieberry domain'
+        print "DONE", self.FileData_Root, self.FileData_FileName
 
     def set_file_type(self, ft=None):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
             try:
+                print 'GENNINIG', self.FileData_FullPath
                 self.FileData_FileType = determine_file_type(
                     self.FileData_FullPath)
             except:
+                traceback.print_exc()
+                raise IOError, 'no'
                 # if examination of the file fails to determine its
                 # type, but the type has already been set, just return
                 # (assume the type hasn't changed).

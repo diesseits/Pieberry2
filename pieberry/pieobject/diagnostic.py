@@ -1,5 +1,7 @@
 import mimetypes
 from pieberry.pieconfig.schemas import FEXTENSIONS
+from hachoir_core.cmd_line import unicodeFilename
+from hachoir_core.i18n import getTerminalCharset, _
 
 try:
     import magic
@@ -13,6 +15,10 @@ from pieberry.pieconfig.schemas import mime_map
 #     for 
 
 def determine_file_type(fn):
+    print 'TYPE', type(fn)
+    assert type(fn) == unicode
+    # if type(fn) == unicode:
+    #     fn = fn.encode(getTerminalCharset())
     mtype = None
     if USE_MAGIC:
         m = magic.open(magic.MAGIC_MIME)
