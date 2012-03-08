@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieUpdateAtomChoicesEvent, EVT_PIE_UPDATE_ATOM_CHOICES = wx.lib.newevent.NewEvent()
+# attributes - dests - list of filesystem destinations
 PieGoogleSearchEvent, EVT_PIE_GOOGLE_SEARCH = wx.lib.newevent.NewEvent()
 # attributes - ostore - object store
 PieLocationChangedEvent, EVT_PIE_LOCATION_CHANGED = wx.lib.newevent.NewEvent()

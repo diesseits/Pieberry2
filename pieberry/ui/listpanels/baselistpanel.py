@@ -59,7 +59,8 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
             try:
                 self.ListDisplay.AddObject(i, ref)
             except:
-                print 'Had trouble here'
+                traceback.print_exc()
+                print 'Had trouble here:', ref, i
 
     def AddObject(self, obj, msgtype=None):
         '''Add an object into the panel. Returns the reference by which 

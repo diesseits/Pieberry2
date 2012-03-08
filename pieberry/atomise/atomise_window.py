@@ -291,6 +291,13 @@ class atomActionWindow(wx.ScrolledWindow):
         td = ['None']
         td.extend(dests)
         self.defaultchoices = td
+        if self.maxrow == -1: return
+        for i in range(0, self.maxrow + 1):
+            ch = getattr(self, 'choice%d' % i)
+            ch.Clear()
+            [ch.Append(j) for j in td]
+            ch.SetSelection(0)
+            
 
 if __name__ == "__main__":
     pass

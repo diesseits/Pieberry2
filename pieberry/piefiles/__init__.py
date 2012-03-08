@@ -125,6 +125,7 @@ class PieFileIndexer(Thread):
         # return missing
 
     def DoScanForNew(self, rootdir):
+        assert type(ROOT_MAP[rootdir]) == unicode
         newpaths = []
         for walk in os.walk(ROOT_MAP[rootdir]):
             print 'DoScanForNew:', walk[0]

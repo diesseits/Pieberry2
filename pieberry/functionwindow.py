@@ -560,6 +560,7 @@ class FunctionMainWindow(BaseMainWindow):
     def onConfig(self, evt):
         dia = PieSettingsDialog(self)
         dia.Bind(EVT_PIE_LOCATION_CHANGED, self.OnChangeLocation)
+        dia.Bind(EVT_PIE_UPDATE_ATOM_CHOICES, self.OnUpdateAtomChoices)
         dia.ShowModal()
         dia.Destroy()
 
@@ -624,17 +625,21 @@ class FunctionMainWindow(BaseMainWindow):
                 
     def OnViewMostRecent(self, evt):
         '''Bring up a view of the most recently added db items'''
+        self.ClosePanesOfTypes('RecentView')
         self.OpenSearchPane(caption=_('Recent Documents'))
         pan = self.GetCurrentPane()
+        pan.paneltype = 'RecentView'
         q = query_most_recent(
             session,
             PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
         pan.AddObjects(q)
 
     def OnViewFlagged(self, evt):
-        print 'wot ho'
+        '''Bring up a view of the recently flagged documents'''
+        self.ClosePanesOfTypes('FlaggedView')
         self.OpenSearchPane(caption=_('Flagged Documents'))
         pan = self.GetCurrentPane()
+        pan.paneltype = 'FlaggedView'
         q = query_flagged(session)
         pan.AddObjects(q)
 

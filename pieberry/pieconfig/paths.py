@@ -33,12 +33,12 @@ def create_directories():
 def default_paths_relative_to_root(root):
     ret = {
         'rootdir': root,
-        'librarydir': os.path.join(root, 'Library'),
-        'projectdir': os.path.join(root, 'Projects'),
-        'meetingpaperdir': os.path.join(root, 'Meeting Papers'),
-        'recentdocsdir': os.path.join(root, 'Recent Documents'),
-        'cachedir': os.path.join(root, '.cache'),
-        'backupdir': os.path.join(root, '.backups')
+        'librarydir': os.path.join(root, u'Library'),
+        'projectdir': os.path.join(root, u'Projects'),
+        'meetingpaperdir': os.path.join(root, u'Meeting Papers'),
+        'recentdocsdir': os.path.join(root, u'Recent Documents'),
+        'cachedir': os.path.join(root, u'.cache'),
+        'backupdir': os.path.join(root, u'.backups')
         }
     return ret
 
@@ -47,6 +47,7 @@ def init_storage_location(path):
     which should or will contain a pieberry database, and a series of
     subfolders containing the library, project dir, etc.'''
     assert os.path.isdir(path)
+    assert type(path) == unicode
     global DBDIR
     DBDIR = path
     otherpaths = default_paths_relative_to_root(path)

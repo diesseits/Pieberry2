@@ -426,6 +426,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                     return 'greenball'
                 elif self.FileData_Root == 'meetingpaperdir':
                     return 'redball'
+                else: return 'blueball'
             else:
                 return 'blueball'
         

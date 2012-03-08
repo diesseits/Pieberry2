@@ -241,9 +241,29 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.ContextPane.Bind(EVT_PIE_CONTEXT_PANEL_UPDATE, 
                               self.OnContextPanelUpdate)
 
+    def GetPaneIdxOfType(self, panetype):
+        '''Get the indexes of all panes with a certain paneltype'''
+        paneidxs = range(self.TabBook.GetPageCount())
+        ret = []
+        for i in paneidxs:
+            p = self.TabBook.GetPage(i)
+            if p.paneltype == panetype:
+                ret.append(i)
+        return ret
+
+    def ClosePanesOfTypes(self, *panetypes):
+        '''Closes panes which .paneltypes match arbitrary args'''
+        for ptype in panetypes:
+            [ self.TabBook.DeletePage(i) for i in self.GetPaneIdxOfType(ptype) ]
+
     def CloseCurrentPane(self, evt=None):
         panid = self.TabBook.GetSelection()
         self.TabBook.DeletePage(panid)
+
+    def CloseAllPanes(self):
+        paneidxs = range(self.TabBook.GetPageCount())
+        for i in paneidxs:
+            self.TabBook.DeletePage(i)
 
     def CloseUtilityPanes(self, event=None):
         '''close the search and filter panels'''
@@ -303,7 +323,9 @@ class BaseMainWindow(wx.Frame, PieActor):
             'WebListPanel',
             'BibListPanel',
             'StagingListPanel',
-            'GBListPanel'):
+            'GBListPanel',
+            'RecentView',
+            'FlaggedView'):
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
@@ -429,11 +451,6 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.SetObject(obj)
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
-    def CloseAllPanes(self):
-        paneidxs = range(self.TabBook.GetPageCount())
-        for i in paneidxs:
-            self.TabBook.DeletePage(i)
-
     def DoSearch(self, evt):
         '''stub'''
         print 'altmainwindow.DoSearch'
@@ -453,6 +470,10 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OnPrefetch(self, evt):
         '''happens when the webpanel wants to prefetch something'''
         print 'altmainwindow.OnPrefetch'
+
+    def OnUpdateAtomChoices(self, evt):
+        apanes = self.GetPaneIdxOfType('AtomPanel')
+        [ self.TabBook.GetPage(p).OnSetDestinations(evt) for p in apanes ]
 
 # end of class GladeMainWindow
 

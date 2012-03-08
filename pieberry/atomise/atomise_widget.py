@@ -24,7 +24,8 @@ class atomWidget(wx.Panel):
         wx.Panel.__init__(self, *args, **kwargs)
         self.__do_layout()
         # self.donebt.Bind(wx.EVT_BUTTON, self.onCloseSelf)
-        self.SetDestinations([f.name() for f in FOLDER_LOOKUP['projectdir']])
+        self.atomDisplay.setDestinations(
+            [f.name() for f in FOLDER_LOOKUP['projectdir']])
     
     def __do_layout(self):
         self.atomDisplay = atomActionWindow(self, -1)
@@ -55,8 +56,10 @@ class atomWidget(wx.Panel):
             recommended_dir=recfol,
             suggested_fn=suggest_initial_fn(obj))
 
-    def SetDestinations(self, dests):
-        return self.atomDisplay.setDestinations(dests)
+    def OnSetDestinations(self, evt):
+        '''Event handler for when we want to refresh the choices in
+        the various wx.Choice destination controls'''
+        self.atomDisplay.setDestinations(evt.dests)
 
     def AddObjects(self, ostore):
         self.atomDisplay.clearAll()

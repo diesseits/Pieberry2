@@ -1,6 +1,6 @@
 import wx, os.path, os
 from pieberry.ui.validators import pieBibtexValidator
-from pieberry.ui.events import PieLocationChangedEvent
+from pieberry.ui.events import PieLocationChangedEvent, PieUpdateAtomChoicesEvent
 from pieberry.pieobject.folder import *
 
 if __name__ == '__main__':
@@ -434,6 +434,10 @@ class PieSettingsDialog(wx.Dialog):
             # tell the system if the root directory has changed
             newevt = PieLocationChangedEvent()
             wx.PostEvent(self, newevt)
+        # tell the system that the folder choices should be updated
+        aevt = PieUpdateAtomChoicesEvent(
+            dests=[f.EndName for f in FOLDER_LOOKUP['projectdir']])
+        wx.PostEvent(self, aevt)
         self.EndModal(wx.ID_OK)
 
     def onCancel(self, evt=1):

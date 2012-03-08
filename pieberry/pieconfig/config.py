@@ -13,6 +13,13 @@ class PieConfig(SafeConfigParser):
     def __init__(self, *args, **kwargs):
         SafeConfigParser.__init__(self)
 
+    def get(self, section, name):
+        '''Overriding to hack up a unicoding return for some things'''
+        val = SafeConfigParser.get(self, section, name)
+        if name in ('rootdir', 'desktopdir'):
+            return val.decode('utf8')
+        else: return val
+
     def get_profile_names(self):
         print PROFILES.keys()
         return PROFILES.keys()
