@@ -293,8 +293,11 @@ class atomActionWindow(wx.ScrolledWindow):
         self.defaultchoices = td
         if self.maxrow == -1: return
         for i in range(0, self.maxrow + 1):
-            ch = getattr(self, 'choice%d' % i)
-            ch.Clear()
+            try:
+                ch = getattr(self, 'choice%d' % i)
+                ch.Clear()
+            except:
+                continue
             [ch.Append(j) for j in td]
             ch.SetSelection(0)
             
