@@ -197,6 +197,12 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnPrefetch(self, evt):
         '''happens when the webpanel wants to prefetch something'''
+        if website.is_search_engine(evt.url):
+            newevt = PiePrefetchDoneEvent(success=True, tag=None, 
+                                          auth=None, iscorp=None,
+                                          tagbehav=None)
+            wx.PostEvent(self, newevt)
+            return
         self.StatusBar.SetStatusText('Pre-fetching website information...')
         ws = website.lookup_website(evt.url)
         thread.start_new_thread(self._thread_prefetch, (evt.url, ws))
@@ -408,6 +414,19 @@ class FunctionMainWindow(BaseMainWindow):
         osession = get_session('desktop')
         first_iter = True
 
+        progress_dialog = wx.ProgressDialog(
+            _('Cleaning up desktop'),
+            '____________________________________________',
+            )
+
+        progress_dialog.UpdatePulse(_('Fetching cached files'))
+        
+        for obj in scan_previous_desktops_gen():
+            atom_pane.AddObject(obj)
+            progress_dialog.Pulse()
+        
+        progress_dialog.Destroy()
+
         for obj, maxi, progress_count in scan_desktop_gen():
             if first_iter == True:
                 progress_dialog = wx.ProgressDialog(
@@ -441,18 +460,6 @@ class FunctionMainWindow(BaseMainWindow):
             progress_dialog.Update(progress_count, obj.FileData_FileName)
             atom_pane.AddObject(obj)
 
-        if first_iter == True:
-            progress_dialog = wx.ProgressDialog(
-                _('Cleaning up desktop'),
-                '____________________________________________',
-                )
-
-        progress_dialog.UpdatePulse(_('Fetching cached files'))
-        
-        for obj in scan_previous_desktops_gen():
-            atom_pane.AddObject(obj)
-            progress_dialog.Pulse()
-        
         progress_dialog.Destroy()
         self.StatusBar.SetStatusText('')
 
@@ -500,7 +507,9 @@ class FunctionMainWindow(BaseMainWindow):
             # # this is a hack to make things more legible
             # if PIE_CONFIG.getboolean('Format', 'atom_title_hack'):
             #     obj.title = "%s [%s]" % (obj.title, evt.new_fn)
-        os.renames(obj.FileData_FullPath, storepath)
+        if not os.path.exists(os.path.dirname(storepath)):
+            os.makedirs(os.path.dirname(storepath))
+        os.rename(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
         obj.add_aspect_saved()
         session.add(obj)

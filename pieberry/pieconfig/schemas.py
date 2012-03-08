@@ -164,6 +164,10 @@ bibtexfields = {
         ('note',),
         ('annote', 'url')
         ),
+    'inproceedings': (
+        (),
+        ('key', 'booktitle', 'pages', 'editor', 'volume', 'number', 'series', 'address', 'institution', 'publisher', 'note', 'annote')
+        )
     }
 
 

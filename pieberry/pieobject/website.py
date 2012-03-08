@@ -98,6 +98,20 @@ def lookup_website(url):
     else:
         return None
 
+def is_search_engine(url):
+    '''Return true if this is a url from a common search engine'''
+    s = urlparse.urlsplit(validify_url(url))
+    if s[1] in (
+        'www.google.com',
+        'www.google.com.au',
+        'www.google.co.uk',
+        'www.bing.com',
+        'www.yahoo.com'
+        ):
+        return True
+    else:
+        return False
+
 def get_authorlist():
     '''Get list of default authors known to the database'''
     # session = Session()
