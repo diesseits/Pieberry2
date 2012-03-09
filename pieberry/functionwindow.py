@@ -448,7 +448,6 @@ class FunctionMainWindow(BaseMainWindow):
                 traceback.print_exc()
                 # progress_count += 1
                 progress_dialog.Update(progress_count, obj.FileData_FileName)
-                atom_pane.AddObject(obj)
                 continue
 
             # Update object aspects
@@ -545,6 +544,9 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
+        dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
+        ans = dia.ShowModal()
+        if ans == wx.ID_NO: return
         print 'Closing'
         self.indextimer.Stop()
         session.commit()
