@@ -28,9 +28,11 @@ def fmt_authors(authlist):
     # elif len(authlist) == 2: return join(authlist, _(u' and '))
     # else: return join([join(authlist[:-1], ', '), authlist[-1]], _(u' and ')) 
 
-def suggest_type(fmt, bd):
+def suggest_type(gd, bd):
     '''Suggest a bibtex type based on google's format field and
     whether appropriate fields are filled'''
+    if gd.has_key('format'): fmt = gd['format']
+    else: return PIE_CONFIG.get('Format', 'default_bibtex_entry_type')
     if fmt.lower() in bibtexfields.keys():
         # canuse = True
         # for f in bibtexfields[fmt][0]:
@@ -71,7 +73,7 @@ def pieberry_from_google(gdict, url):
             bd['PhysData_ISBN'] = k
         elif i == 'google_id':
             googlekey = k
-    bd['BibData_Type'] = suggest_type(gdict['format'], bd)
+    bd['BibData_Type'] = suggest_type(gdict, bd)
     bd['WebData_Url'] = url
     obj = PieObject()
     obj.GoogleData = {'google_id': googlekey}
