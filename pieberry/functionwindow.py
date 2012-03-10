@@ -341,7 +341,8 @@ class FunctionMainWindow(BaseMainWindow):
         evt.obj.notes = evt.htmlcontent
         if evt.obj.has_aspect('saved'):
             session.commit()
-        wx.CallAfter(self.CloseCurrentPane)
+        if evt.closewindow == True:
+            wx.CallAfter(self.CloseCurrentPane)
 
     def OnCreateNewBibObj(self, evt):
         '''Handle creation of a new user-created bibliography entry
