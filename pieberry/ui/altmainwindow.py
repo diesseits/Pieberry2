@@ -322,6 +322,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             'FileListPanel', 
             'WebListPanel',
             'BibListPanel',
+            'BibImpPanel',
             'StagingListPanel',
             'GBListPanel',
             'RecentView',

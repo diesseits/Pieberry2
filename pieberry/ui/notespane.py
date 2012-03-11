@@ -2,7 +2,9 @@ import sys, wx
 import wx.richtext as rt
 from pieberry.pieconfig.initsys import *
 from pieberry.pieconfig.paths import CACHEDIR
+from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.ui.events import PieNotesPaneUpdateEvent
+from pieberry.ui.timers import PeriodicSaveTimer
 
 class NotesPane(wx.Panel):
     paneltype = 'notespanel'
@@ -47,7 +49,14 @@ class NotesPane(wx.Panel):
         self.SetSizer(sizer)
         self.Layout()
         self._do_bindings()
+
+        self.savetimer = PeriodicSaveTimer(self)
+        self.savetimer.Start(PIE_CONFIG.getint('Internal', 'minutes_between_save_notes') * 60 * 1000)
         wx.CallAfter(self.rtc.SetFocus)
+
+    def Destroy(self):
+        self.savetimer.Stop()
+        wx.Panel.Destroy(self)
 
     def _do_bindings(self):
         
@@ -74,6 +83,7 @@ class NotesPane(wx.Panel):
     def OnSave(self, evt):
         print 'OnSave'
         if not self._obj: raise 'No object set for this pane'
+        if not self.savebt.IsEnabled(): return
         newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetXMLContent(),
                                          obj=self._obj,
                                          closewindow=False)

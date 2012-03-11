@@ -25,6 +25,7 @@ PIE_CONFIG_DEFAULTS = [
     ('Format', 'filesystem_length_limit', 255),
     ('Format', 'write_pdf_metadata', True),
     ('Internal', 'minutes_between_file_indexes', 30),
+    ('Internal', 'minutes_between_save_notes', 5),
     ('Internal', 'minutes_between_backups', 45),
     ('Internal', 'first_run', True),
     ('Internal', 'number_new_docs_to_show', 50),
