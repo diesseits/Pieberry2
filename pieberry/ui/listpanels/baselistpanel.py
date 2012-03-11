@@ -105,11 +105,22 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
             pieobject=self.objectstore[ref])
         wx.PostEvent(self, newevt)
 
+    # def onSelectionActivated(self, evt):
+        # print 'BaseListPanel.onSelectionActivated'
+        # print 'Item index from list event:', evt.GetIndex()
+        # print 'Item data (reference stored against list):', self.ListDisplay.GetItemData(evt.GetIndex())
+        # print 'Object in objectstore by index:', self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
+
     def onSelectionActivated(self, evt):
-        print 'BaseListPanel.onSelectionActivated'
-        print 'Item index from list event:', evt.GetIndex()
-        print 'Item data (reference stored against list):', self.ListDisplay.GetItemData(evt.GetIndex())
-        print 'Object in objectstore by index:', self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
+        it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
+        if it.FileData_FullPath:
+            pieberry.pieutility.open_file(it.FileData_FullPath)
+            it.stats_opened()
+        elif it.WebData_Url:
+            pieberry.pieutility.open_url(it.WebData_Url)
+            it.stats_opened()
+        else:
+            return
 
     def onFilterView(self, evt):
         print evt.searchtext
@@ -168,3 +179,4 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         '''Clear everthing including object store and list view'''
         self.objectstore = {}
         self.ListDisplay.DeleteAllItems()
+

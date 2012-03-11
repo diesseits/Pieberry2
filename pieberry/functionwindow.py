@@ -640,7 +640,7 @@ class FunctionMainWindow(BaseMainWindow):
     def OnViewMostRecent(self, evt):
         '''Bring up a view of the most recently added db items'''
         self.ClosePanesOfTypes('RecentView')
-        self.OpenSearchPane(caption=_('Recent Documents'))
+        self.OpenSearchPane(caption=_('Recent Added Documents'))
         pan = self.GetCurrentPane()
         pan.paneltype = 'RecentView'
         q = query_most_recent(
@@ -655,6 +655,17 @@ class FunctionMainWindow(BaseMainWindow):
         pan = self.GetCurrentPane()
         pan.paneltype = 'FlaggedView'
         q = query_flagged(session)
+        pan.AddObjects(q)
+
+    def OnViewRecentlyInteracted(self, evt):
+        '''Bring up a view of the most recently interacted-with documents'''
+        self.ClosePanesOfTypes('RecentActView')
+        self.OpenSearchPane(caption=_('Recently Used Documents'))
+        pan = self.GetCurrentPane()
+        pan.paneltype = 'RecentActView'
+        q = query_recently_interacted(
+            session,
+            PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
         pan.AddObjects(q)
 
     def OnFlagChecked(self, evt):

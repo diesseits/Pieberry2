@@ -98,6 +98,7 @@ class MenuFunctionsMixin:
 
     def onEditNotes(self, evt):
         obj = self.GetSelectedItem()
+        obj.stats_opened()
         self.GetParent().GetParent().OpenNotesPane(obj=obj)
 
     def onFlagFavourite(self, evt=0):

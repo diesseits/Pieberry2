@@ -110,6 +110,12 @@ def query_most_recent(session, number=50):
     q.reverse()
     return PieObjectStore(q)
 
+def query_recently_interacted(session, number=25):
+    '''Recently interacted-with (opened/notes edited) objects'''
+    q = session.query(PieObject).order_by(desc(PieObject.StatData_LastOpened))[:number]
+    q.reverse()
+    return PieObjectStore(q)
+
 def query_flagged(session):
     print 'wot'
     q = session.query(PieObject).filter(

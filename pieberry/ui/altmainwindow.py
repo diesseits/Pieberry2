@@ -108,6 +108,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('View most &recent documents\tCtrl-r'))
         self.menu_view_flagged = wx.MenuItem(
             viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-shift-r'))
+        self.menu_view_recentact = wx.MenuItem(
+            viewMenu, -1, _('View most recently opened documents'))
 
         # BEGIN debug menu
         if DEBUG:
@@ -163,6 +165,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         viewMenu.AppendSeparator()
         viewMenu.AppendItem(self.menu_view_recent)
         viewMenu.AppendItem(self.menu_view_flagged)
+        viewMenu.AppendItem(self.menu_view_recentact)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -191,6 +194,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
+        self.Bind(wx.EVT_MENU, self.OnViewRecentlyInteracted, self.menu_view_recentact)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         # self.menu_savebibs.Enable(False)
@@ -327,6 +331,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             'GBListPanel',
             'RecentView',
             'FlaggedView'):
+            if evt: evt.Skip()
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
