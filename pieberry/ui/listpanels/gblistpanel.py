@@ -91,5 +91,11 @@ class GBListPanel(BaseListPanel):
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         menu.AppendItem(rcm_openinbrowser)
         self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
+        if not obj.has_aspect('hasfile'):
+            rcm_attachfile = wx.MenuItem(menu, 23, _('Attach File'))
+            rcm_attachfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+            menu.AppendItem(rcm_attachfile)
+            self.Bind(wx.EVT_MENU, self.onAttachFile, rcm_attachfile)
 
 

@@ -60,11 +60,22 @@ def suggest_path_cache_fromdesktop(obj):
         raise IOError, 'File already exists. TODO - auto-fix'
     return proposal
 
+def suggest_path_cache_fromother(obj, fn):
+    if not hasattr(obj, 'session'): 
+        raise AttributeError, 'No session flag for this object - illegal'
+    proposal = os.path.join(CACHEDIR, obj.session, 
+                            os.path.basename(fn))
+    proposal = trim_filename(proposal)
+    if os.path.exists(proposal):
+        raise IOError, 'File already exists. TODO - auto-fix'
+    return proposal
+    
+
 def suggest_path_store_fromweb(obj):
     assert obj.has_aspect('cached')
     root = LIBRARYDIR
     auth = obj.Author(favour_corporate=True)
-    subd = obj.collection
+    subd = obj.collection if obj.collection else ''
     if obj.tags: tsubd = unicode(obj.tags[0])
     else: tsubd = ''
     print 'suggest_path_store_fromweb: ____'
