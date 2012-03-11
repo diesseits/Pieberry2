@@ -1,4 +1,5 @@
 from sqlalchemy import or_, extract, desc
+import sys
 
 from pieberry.pieobject import PieObject, PieWebsite, PieObjectStore
 
@@ -107,19 +108,24 @@ def query_unique_key(session, key):
 def query_most_recent(session, number=50):
     '''Returns the most recently saved pieobjects in the database'''
     q = session.query(PieObject).order_by(desc(PieObject.StatData_LastSaved))[:number]
-    q.reverse()
+    if sys.platform == 'win32': #HACK
+        q.reverse()
     return PieObjectStore(q)
 
 def query_recently_interacted(session, number=25):
     '''Recently interacted-with (opened/notes edited) objects'''
     q = session.query(PieObject).order_by(desc(PieObject.StatData_LastOpened))[:number]
-    q.reverse()
+    if sys.platform == 'win32': #HACK
+        q.reverse()
     return PieObjectStore(q)
 
 def query_flagged(session):
-    print 'wot'
     q = session.query(PieObject).filter(
         PieObject.StatData_FollowUpFlag == True).order_by(PieObject.StatData_FollowUpDate)
-    print 'hello'
-    print q.all()
     return PieObjectStore(q.all())
+
+def query_starred(session):
+    q = session.query(PieObject).filter(
+        PieObject.StatData_Favourite == True)
+    return PieObjectStore(q.all())
+    

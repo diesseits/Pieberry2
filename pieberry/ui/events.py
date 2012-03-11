@@ -1,6 +1,7 @@
 import wx
 import wx.lib.newevent
 
+
 PieUpdateAtomChoicesEvent, EVT_PIE_UPDATE_ATOM_CHOICES = wx.lib.newevent.NewEvent()
 # attributes - dests - list of filesystem destinations
 PieGoogleSearchEvent, EVT_PIE_GOOGLE_SEARCH = wx.lib.newevent.NewEvent()
@@ -14,6 +15,9 @@ PieFileIndexEvent, EVT_PIE_FILE_INDEX = wx.lib.newevent.NewEvent()
 #             track (where we're up to in the above)
 #             message (activity being conducted)
 PieNotesPaneUpdateEvent, EVT_PIE_NOTES_PANE_UPDATE = wx.lib.newevent.NewEvent()
+PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD = wx.lib.newevent.NewEvent()
+# attributes:  objattr  - the object attribute to modify
+#              objattrval - the value to assign to the above
 PieContextPanelUpdateEvent, EVT_PIE_CONTEXT_PANEL_UPDATE = wx.lib.newevent.NewEvent()
 # attributes:  favourite (boolean)
 PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()

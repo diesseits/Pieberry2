@@ -104,12 +104,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_toggle_context = wx.MenuItem(
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)
-        self.menu_view_recent = wx.MenuItem(
-            viewMenu, -1, _('View most &recent documents\tCtrl-r'))
+        self.menu_view_starred = wx.MenuItem(
+            viewMenu, -1, _('View &important documents\tCtrl-1'))
         self.menu_view_flagged = wx.MenuItem(
-            viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-shift-r'))
+            viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-2'))
         self.menu_view_recentact = wx.MenuItem(
-            viewMenu, -1, _('View most recently opened documents'))
+            viewMenu, -1, _('View most r&ecently opened documents\tCtrl-3'))
+        self.menu_view_recent = wx.MenuItem(
+            viewMenu, -1, _('View most &recently added documents\tCtrl-4'))
 
         # BEGIN debug menu
         if DEBUG:
@@ -163,9 +165,10 @@ class BaseMainWindow(wx.Frame, PieActor):
         gatherMenu.AppendItem(self.menu_atom_process)
         viewMenu.AppendItem(self.menu_toggle_context)
         viewMenu.AppendSeparator()
-        viewMenu.AppendItem(self.menu_view_recent)
+        viewMenu.AppendItem(self.menu_view_starred)
         viewMenu.AppendItem(self.menu_view_flagged)
         viewMenu.AppendItem(self.menu_view_recentact)
+        viewMenu.AppendItem(self.menu_view_recent)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -195,6 +198,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
         self.Bind(wx.EVT_MENU, self.OnViewRecentlyInteracted, self.menu_view_recentact)
+        self.Bind(wx.EVT_MENU, self.OnViewStarred, self.menu_view_starred)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         # self.menu_savebibs.Enable(False)
@@ -330,6 +334,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             'StagingListPanel',
             'GBListPanel',
             'RecentView',
+            'RecentActView',
+            'StarredView',
             'FlaggedView'):
             if evt: evt.Skip()
             return
