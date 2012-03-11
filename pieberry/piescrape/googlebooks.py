@@ -96,16 +96,20 @@ class GoogleBooksScraper(Thread):
         self.notify_window = notify_window
 
     def run(self):
+        print 'Running google books scraper'
         feed = self.service.search(self.search_string, max_results='20')#, max_results=__nresults__)
+        print 'Feed obtained'
         ostore = PieObjectStore()
         for item in feed.entry:
             idict = item.to_dict()
             obj = pieberry_from_google(idict, item.GetHtmlLink().href)
             ostore.Add(obj)
+        print 'Feed parsed into objects'
         newevt = PieGoogleSearchEvent(
             ostore=ostore,
             notify_window=self.notify_window)
         wx.PostEvent(self.notify_window, newevt)
+        print 'Objects posted'
 
 # feed.to_dict() Dict  will look something like this:
 

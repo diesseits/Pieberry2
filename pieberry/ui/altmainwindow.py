@@ -425,6 +425,14 @@ class BaseMainWindow(wx.Frame, PieActor):
             tab, caption, select=True,
             bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
 
+    def OpenBibImpPane(self, evt=0, ostore=None, caption=_('BibTeX Import')):
+        tab = BibImpPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_COMMIT_STAGED, self.OnCommitStaged)
+        self.TabBook.AddPage(tab, caption, select=True)
+        if ostore:
+            tab.AddObjects(ostore)
+
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)

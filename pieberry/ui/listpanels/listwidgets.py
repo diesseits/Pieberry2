@@ -211,7 +211,8 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
     def AddObject(self, obj, ref, 
                   statusmsg='Added', 
                   filtertext=None, 
-                  checkstatus=False):
+                  checkstatus=False,
+                  msgtype=None):
         '''Add an object, returning the item's current index in the ListCtrl'''
         # print 'Adding:', obj
         # print ' ... which should be checked:', checkstatus

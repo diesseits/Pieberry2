@@ -46,7 +46,7 @@ class DirListCtrl(BaseListCtrl):
 class BreadCrumbTrail(wx.Panel):
     '''A breadcrumb trail display'''
     def __init__(self, parent, initlvl=None, *args, **kwargs):
-        wx.Panel.__init__(self, parent, *args, **kwargs)
+        wx.Panel.__init__(self, parent, root, *args, **kwargs)
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.SetSizer(self.sizer)
         self.Layout()
