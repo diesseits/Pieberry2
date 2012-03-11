@@ -264,6 +264,9 @@ class EditableText(wx.Panel):
     def SetFont(self, font):
         self.stext.SetFont(font)
 
+    def SetMinSize(self, size):
+        self.dtext.SetMinSize(size)
+
     def _exit_edit(self):
         self.dtext.Hide()
         self.stext.Show()
@@ -294,7 +297,7 @@ class FundInfoPanel(wx.Panel):
         self.bigparent = bigparent
         self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
-        self.sizer0.Add(self.favpanel, 0)
+        self.sizer0.Add(self.favpanel, 0, wx.EXPAND)
         
         self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
         self.fgsizer.AddGrowableCol(1)
@@ -323,10 +326,10 @@ class FundInfoPanel(wx.Panel):
     def SetObject(self, obj):
         self.auth_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.favpanel.SetValue(obj.StatData_Favourite)
-        if sys.platform == 'win32':
-            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
-        else:
-            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
+        # if sys.platform == 'win32':
+        #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
+        # else:
+        #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
         self.favpanel.SetTitle(obj.Title())
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
@@ -389,33 +392,27 @@ class FavBitmapButton(ThemedGenBitmapToggleButton):
         self.SetBitmapSelected(imagedown)
 
 
+
+
+
 class FBBPanel(wx.Panel):
     '''Panel to mount the favourite button on'''
     def __init__(self, parent, id, bigparent):
         wx.Panel.__init__(self, parent, id)
         self.bigparent = bigparent
-        self.topsizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizer = wx.FlexGridSizer(0, 2, 3, 3)
+        self.sizer.AddGrowableCol(1)
         self.BMB = FavBitmapButton(self, -1)
         self.sizer.Add(self.BMB, 0, wx.ALL, 5)
-        self.title = wx.StaticText(self, -1, '')
-        self.titleedit = wx.TextCtrl(self, -1, '', style=wx.TE_MULTILINE)
-        # self.title = wx.TextCtrl(self, -1, style=wx.TE_READONLY)
-        # self.title = wx.WindowDC(self)
-        if not sys.platform == 'win32':
-            font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
-            self.title.SetFont(font)
+        self.title = EditableText(self, -1, '', objattr='title')
+        self.title.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+        # if not sys.platform == 'win32':
+        #     font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
+        #     self.title.SetFont(font)
         self.sizer.Add(self.title, 1, wx.EXPAND)
-        self.sizer.Add(self.titleedit, 1, wx.EXPAND)
-        self.titleedit.Hide()
-        # self.sizer.Add((22,22), 1)
         self.SetSizer(self.sizer)
         self.Layout()
-        self.w = 80
         self.BMB.Bind(wx.EVT_BUTTON, self.bigparent.EmitUpdate)
-        self.title.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
-        self.titleedit.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
-        self.titleedit.Bind(wx.EVT_KILL_FOCUS, self.OnTtlKillFocus)
 
     def GetValue(self):
         return self.BMB.GetValue()
@@ -423,35 +420,9 @@ class FBBPanel(wx.Panel):
     def SetValue(self, val):
         return self.BMB.SetValue(val)
     
-    def SetTitleWidth(self, w):
-        self.w = w
-
     def SetTitle(self, ttl):
-        # self.title.SetLabel(ttl)
-        dc = wx.WindowDC(self.title)
-        self.title.SetLabel(wordwrap.wordwrap(ttl, self.w, dc))
-        self.titleedit.SetValue(ttl)
+        self.title.SetWrapWidth(self.sizer.GetColWidths()[1])
+        self.title.SetMinSize((self.sizer.GetColWidths()[1], -1))
+        self.title.SetValue(ttl)
 
-    def OnLeftUp(self, evt):
-        self.title.Hide()
-        self.titleedit.Show()
-        self.titleedit.SetFocus()
-        self.Layout()
-
-    def OnKeyUp(self, evt): 
-        if evt.GetKeyCode() in (wx.WXK_ESCAPE, wx.WXK_RETURN): 
-            self._exit_titleedit()
-        else: 
-            evt.Skip() 
-
-    def OnTtlKillFocus(self, evt):
-        self._exit_titleedit()
-
-    def _exit_titleedit(self):
-        self.titleedit.Hide()
-        self.title.Show() 
-        self.SetTitle(self.titleedit.GetValue())
-        self.Layout() 
-        self.GetParent().Layout()
-        self.bigparent.EmitUpdate(ttltext = self.titleedit.GetValue())
         
