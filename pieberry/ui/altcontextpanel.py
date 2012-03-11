@@ -82,11 +82,15 @@ class BetterContextPanel(wx.Panel):
         self.bib_win.SetObject(obj)
         self.file_win.SetObject(obj)
 
-    def EmitUpdate(self, evt=0, ttltext=None):
+    def OnFieldEdit(self, evt):
+        self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))
+
+    def EmitUpdate(self, evt=0, ttltext=None, otherargs=()):
         newevt = PieContextPanelUpdateEvent(
             obj=self.obj,
             favourite=self.fund_win.GetFavourite(),
             ttltext=ttltext)
+        [ setattr(newevt, attrname, attrval) for attrname, attrval in otherargs ] 
         wx.PostEvent(self, newevt)
 
 bibhtml = _('''
@@ -201,7 +205,7 @@ class WebInfoPanel(wx.Panel):
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 
-from pieberry.ui.events import PieContextPanelFieldEvent
+from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
 
 # class StaticWrapText(wx.PyControl):
 #     def __init__(self, parent, id=wx.ID_ANY, label='', pos=wx.DefaultPosition,
@@ -228,7 +232,7 @@ class EditableText(wx.Panel):
     def __init__(self, parent, id, label, objattr, *args, **kwargs):
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.stext = wx.StaticText(self, -1, label)
-        self.dtext = wx.TextCtrl(self, -1, label, size=(120,50), style=wx.TE_MULTILINE|wx.EXPAND)
+        self.dtext = wx.TextCtrl(self, -1, label, size=(110,-1))#, style=wx.TE_MULTILINE|wx.EXPAND)
     
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.sizer.Add(self.stext, 1, wx.EXPAND)
@@ -304,6 +308,8 @@ class FundInfoPanel(wx.Panel):
         self.date_ct = wx.StaticText(self, -1, '')
         self.date_ct.SetFont(normalfont)
         
+        self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+
         self.fgsizer.Add(self.auth_lb)
         self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND)
         self.fgsizer.Add(self.date_lb)

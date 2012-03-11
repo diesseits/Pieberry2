@@ -329,6 +329,8 @@ class FunctionMainWindow(BaseMainWindow):
         '''Handle update of metadata from context panel'''
         evt.obj.StatData_Favourite = evt.favourite
         if evt.ttltext: evt.obj.title = evt.ttltext
+        if hasattr(evt, 'author'):
+            evt.obj.author = evt.author
         print evt.obj.StatData_Favourite
         if evt.obj.has_aspect('saved'):
             session.commit()
