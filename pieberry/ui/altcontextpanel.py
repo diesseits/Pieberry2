@@ -280,12 +280,14 @@ class EditableText(wx.Panel):
         wx.PostEvent(self, newevt)
 
     def SetValue(self, txt):
+        print 'MYSIZE', self.GetSize()
         dc = wx.WindowDC(self.stext)
         self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
         # self.stext.SetLabel(txt)
         self.dtext.SetValue(txt)
 
     def SetWrapWidth(self, w):
+        if sys.platform == 'win32': w = w * 1.4
         self.w = w
 
     def GetValue(self):
@@ -297,12 +299,14 @@ class FundInfoPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.bigparent = bigparent
         self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
-        self.sizer0 = wx.BoxSizer(wx.VERTICAL)
-        self.sizer0.Add(self.favpanel, 0, wx.EXPAND)
+        # self.sizer0 = wx.BoxSizer(wx.VERTICAL)
+        # self.sizer0.Add(self.favpanel, 0, wx.EXPAND)
         
         self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
         self.fgsizer.AddGrowableCol(1)
 
+        self.title_ct = EditableText(self, -1, '', objattr='title')
+        # self.title_ct.SetFont(boldfont)
         self.auth_lb = wx.StaticText(self, -1, _('Author:'))
         self.auth_lb.SetFont(boldfont)
         self.auth_ct = EditableText(self, -1, '', objattr='author')
@@ -313,30 +317,39 @@ class FundInfoPanel(wx.Panel):
         self.date_ct.SetFont(normalfont)
         
         self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+        self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
 
+        self.fgsizer.Add(self.favpanel)
+        self.fgsizer.Add(self.title_ct)
         self.fgsizer.Add(self.auth_lb)
         self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND)
         self.fgsizer.Add(self.date_lb)
         self.fgsizer.Add(self.date_ct)
 
-        self.sizer0.Add((5,5))
-        self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
-        self.SetSizer(self.sizer0)
+        # self.sizer0.Add((5,5))
+        # self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
+        # self.SetSizer(self.sizer0)
+        self.SetSizer(self.fgsizer)
         self.Layout()
 
     def SetObject(self, obj):
+        print 'COLWIDTHS', self.fgsizer.GetColWidths()
         self.auth_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
+        self.title_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.favpanel.SetValue(obj.StatData_Favourite)
         # if sys.platform == 'win32':
         #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
         # else:
         #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
-        self.favpanel.SetTitle(obj.Title())
+        print 'Setting title'
+        self.title_ct.SetValue(obj.Title())
+        # self.favpanel.SetTitle(obj.Title())
+        print 'Setting author'
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
         self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
         self.fgsizer.Layout()
-        self.sizer0.Layout()
+        # self.sizer0.Layout()
         self.Layout()
 
     def GetFavourite(self):
@@ -401,16 +414,17 @@ class FBBPanel(wx.Panel):
     def __init__(self, parent, id, bigparent):
         wx.Panel.__init__(self, parent, id)
         self.bigparent = bigparent
-        self.sizer = wx.FlexGridSizer(0, 2, 3, 3)
-        self.sizer.AddGrowableCol(1)
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        # self.sizer = wx.FlexGridSizer(0, 2, 3, 3)
+        # self.sizer.AddGrowableCol(1)
         self.BMB = FavBitmapButton(self, -1)
         self.sizer.Add(self.BMB, 0, wx.ALL, 5)
-        self.title = EditableText(self, -1, '', objattr='title')
-        self.title.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+        # self.title = EditableText(self, -1, '', objattr='title')
+        # self.title.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         # if not sys.platform == 'win32':
         #     font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
         #     self.title.SetFont(font)
-        self.sizer.Add(self.title, 1, wx.EXPAND)
+        # self.sizer.Add(self.title, 1, wx.EXPAND)
         self.SetSizer(self.sizer)
         self.Layout()
         self.BMB.Bind(wx.EVT_BUTTON, self.bigparent.EmitUpdate)
@@ -421,9 +435,11 @@ class FBBPanel(wx.Panel):
     def SetValue(self, val):
         return self.BMB.SetValue(val)
     
-    def SetTitle(self, ttl):
-        self.title.SetWrapWidth(self.sizer.GetColWidths()[1])
-        self.title.SetMinSize((self.sizer.GetColWidths()[1], -1))
-        self.title.SetValue(ttl)
+    # def SetTitle(self, ttl):
+    #     print 'Setting title wrapwidth', self.sizer.GetColWidths()[1]
+    #     print self.sizer.GetColWidths()
+    #     self.title.SetWrapWidth(self.sizer.GetColWidths()[1])
+    #     self.title.SetMinSize((self.sizer.GetColWidths()[1], -1))
+    #     self.title.SetValue(ttl)
 
         
