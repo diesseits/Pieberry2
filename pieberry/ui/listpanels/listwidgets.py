@@ -211,7 +211,8 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
     def AddObject(self, obj, ref, 
                   statusmsg='Added', 
                   filtertext=None, 
-                  checkstatus=False):
+                  checkstatus=False,
+                  msgtype=None):
         '''Add an object, returning the item's current index in the ListCtrl'''
         # print 'Adding:', obj
         # print ' ... which should be checked:', checkstatus
@@ -248,4 +249,32 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         '''Give a tuple of indices of positively checked items'''
         return tuple([ idx for idx in self.itemDataMap.keys() if self.itemDataMap[idx][0] == True ])
 
+class DirListCtrl(BaseListCtrl):
+    '''File search/browsing control'''
+    columnheads = (_('Title'), _('Location'), _('File'))
+    columnwidths = (150, 150, 150)
+
+    def __init__(self, parent):
+        BaseListCtrl.__init__(self, parent)
+        self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
+
+    def AddObject(self, obj, ref, statusmsg=None, 
+                  msgtype='success', filtertext=None):
+        # print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
+        if filterout(filtertext, (obj.FileData_FileName, obj.FileData_Root)):
+            return
+        nexidx = self.InsertImageStringItem(
+            self.currentitem, 
+            obj.Title(), 
+            MessageType[obj.get_icon_code(window_type='filewindow')])
+            # MessageType[msgtype])
+        self.SetStringItem(nexidx, 1, obj.FileData_ContainingFolder)
+        self.SetStringItem(nexidx, 2, obj.FileData_FileName)
+        self.SetItemData(nexidx, ref)
+        self.itemDataMap[ref] = (obj.Title(), 
+                                 obj.FileData_ContainingFolder,
+                                 obj.FileData_FileName)
+        self.currentitem += 1
+        self.EnsureVisible(nexidx)
+        return nexidx
 

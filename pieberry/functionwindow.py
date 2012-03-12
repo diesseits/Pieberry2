@@ -328,6 +328,10 @@ class FunctionMainWindow(BaseMainWindow):
     def OnContextPanelUpdate(self, evt):
         '''Handle update of metadata from context panel'''
         evt.obj.StatData_Favourite = evt.favourite
+        if hasattr(evt, 'title'):
+            evt.obj.title = evt.title
+        if hasattr(evt, 'author'):
+            evt.obj.author = evt.author
         print evt.obj.StatData_Favourite
         if evt.obj.has_aspect('saved'):
             session.commit()
@@ -341,7 +345,8 @@ class FunctionMainWindow(BaseMainWindow):
         evt.obj.notes = evt.htmlcontent
         if evt.obj.has_aspect('saved'):
             session.commit()
-        wx.CallAfter(self.CloseCurrentPane)
+        if evt.closewindow == True:
+            wx.CallAfter(self.CloseCurrentPane)
 
     def OnCreateNewBibObj(self, evt):
         '''Handle creation of a new user-created bibliography entry
@@ -448,7 +453,6 @@ class FunctionMainWindow(BaseMainWindow):
                 traceback.print_exc()
                 # progress_count += 1
                 progress_dialog.Update(progress_count, obj.FileData_FileName)
-                atom_pane.AddObject(obj)
                 continue
 
             # Update object aspects
@@ -545,6 +549,9 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
+        dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
+        ans = dia.ShowModal()
+        if ans == wx.ID_NO: return
         print 'Closing'
         self.indextimer.Stop()
         session.commit()
@@ -617,7 +624,8 @@ class FunctionMainWindow(BaseMainWindow):
             _('Reading %s' % bibfilepath), maximum = 1)
         progress_dialog.Pulse()
         ents = pieinput.pybtex_entries_from_file(bibfilepath)
-        self.OpenStagingPane()
+        self.OpenBibImpPane()
+        # self.OpenStagingPane()
         pan = self.GetCurrentPane()
         count = 0
         for bibkey, ent in ents.items():
@@ -632,26 +640,36 @@ class FunctionMainWindow(BaseMainWindow):
         progress_dialog.Destroy()
         self.StatusBar.SetStatusText(
             _('Imported %d items from %s.' % (count, bibfilepath)))
+
+    def _on_view_generic(self, paneltype, caption, q):
+        self.ClosePanesOfTypes(paneltype)
+        self.OpenSearchPane(caption=caption)
+        pan = self.GetCurrentPane()
+        pan.paneltype = paneltype
+        pan.AddObjects(q)
                 
     def OnViewMostRecent(self, evt):
         '''Bring up a view of the most recently added db items'''
-        self.ClosePanesOfTypes('RecentView')
-        self.OpenSearchPane(caption=_('Recent Documents'))
-        pan = self.GetCurrentPane()
-        pan.paneltype = 'RecentView'
         q = query_most_recent(
             session,
             PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
-        pan.AddObjects(q)
+        self._on_view_generic('RecentView', _('Recent Added Documents'), q)
 
     def OnViewFlagged(self, evt):
         '''Bring up a view of the recently flagged documents'''
-        self.ClosePanesOfTypes('FlaggedView')
-        self.OpenSearchPane(caption=_('Flagged Documents'))
-        pan = self.GetCurrentPane()
-        pan.paneltype = 'FlaggedView'
         q = query_flagged(session)
-        pan.AddObjects(q)
+        self._on_view_generic('FlaggedView', _('Flagged Documents'), q)
+
+    def OnViewRecentlyInteracted(self, evt):
+        '''Bring up a view of the most recently interacted-with documents'''
+        q = query_recently_interacted(
+            session,
+            PIE_CONFIG.getint('Internal', 'number_new_docs_to_show'))
+        self._on_view_generic('RecentActView', _('Recently Used Documents'), q)
+
+    def OnViewStarred(self, evt):
+        q = query_starred(session)
+        self._on_view_generic('StarredView', _('Important Documents'), q)
 
     def OnFlagChecked(self, evt):
         assert evt.flagkey in ('StatData_Favourite', 'StatData_FollowUpFlag')

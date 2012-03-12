@@ -125,6 +125,13 @@ class StagingListPanel(BaseListPanel):
                 wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
             menu.AppendItem(rcm_deletefile)
             self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deletefile)
+        elif not obj.has_aspect('hasfile'):
+            rcm_attachfile = wx.MenuItem(menu, 23, _('Attach File'))
+            rcm_attachfile.SetBitmap(
+                wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+            menu.AppendItem(rcm_attachfile)
+            self.Bind(wx.EVT_MENU, self.onAttachFile, rcm_attachfile)
+            
 
         rcm_editbibdata = wx.MenuItem(menu, 3, 
                                       _('Edit bibliographic information'))

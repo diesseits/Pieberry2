@@ -306,7 +306,10 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.set_file(temp_location)
         self.set_file_type()
         self.date = datetime.datetime.today()
- 
+
+    def add_aspect_cached(self, temp_location):
+        self.add_aspect_cached_from_desktop(temp_location)
+
     def add_aspect_failed_download(self):
         '''Flag this as a failed download'''
         self.aspects['failed_dl'] = True
@@ -314,12 +317,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def add_aspect_stored(self, final_fn=None):
         '''Add information pertaining to the storage of this item in
         the system'''
+        self.aspects['stored'] = True
         if not final_fn == self.FileData_FullPath:
             print 'SETTING IT', final_fn
             self.set_file(final_fn) #set filename if specified and different 
             self.aspects['stored'] = True
             self.set_file_type()
-        self.aspects['stored'] = True
         self.aspects['cached'] = False
 
     def flag_aspect_stored(self):

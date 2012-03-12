@@ -44,18 +44,6 @@ class FileListPanel(BaseListPanel):
             self.onDeleteObj(0)
         evt.Skip()
 
-
-    def onSelectionActivated(self, evt):
-        it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
-        if it.FileData_FullPath:
-            pieberry.pieutility.open_file(it.FileData_FullPath)
-            it.stats_opened()
-        elif it.WebData_Url:
-            pieberry.pieutility.open_url(it.WebData_Url)
-            it.stats_opened()
-        else:
-            return
-
     def onDeleteItem(self, evt):
         print self.GetSelectedItem() 
         print 'not implemented'

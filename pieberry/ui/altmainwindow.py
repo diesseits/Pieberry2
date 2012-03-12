@@ -12,6 +12,7 @@ from pieberry.ui.listpanels import *
 from pieberry.ui.actor import PieActor
 from pieberry.pieconfig.globalvars import *
 from pieberry.pieconfig.paths import IMGDIR
+from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.atomise.atomise_widget import atomWidget
 from pieberry.ui.notespane import NotesPane
 
@@ -26,7 +27,9 @@ class BaseMainWindow(wx.Frame, PieActor):
 
         # self.TabPane = NBPanel(self)
         # self.TabBook = self.TabPane.nb
-        self.TabBook = wxaui.AuiNotebook(self, -1)
+        self.TabBook = wxauip.AuiNotebook(self, -1)
+        if PIE_CONFIG.get('Internal', 'tab_art') == 'simple':
+            self.TabBook.SetArtProvider(wxauip.AuiSimpleTabArt())
         # self.TabBook.SetMinSize((500,500))
         # self.TabBook = fnb.FlatNotebook(self, -1)
         self.StatusBar = wx.StatusBar(self, -1)
@@ -104,10 +107,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_toggle_context = wx.MenuItem(
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)
-        self.menu_view_recent = wx.MenuItem(
-            viewMenu, -1, _('View most &recent documents\tCtrl-r'))
+        self.menu_view_starred = wx.MenuItem(
+            viewMenu, -1, _('View &important documents\tCtrl-1'))
         self.menu_view_flagged = wx.MenuItem(
-            viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-shift-r'))
+            viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-2'))
+        self.menu_view_recentact = wx.MenuItem(
+            viewMenu, -1, _('View most r&ecently opened documents\tCtrl-3'))
+        self.menu_view_recent = wx.MenuItem(
+            viewMenu, -1, _('View most &recently added documents\tCtrl-4'))
 
         # BEGIN debug menu
         if DEBUG:
@@ -161,8 +168,10 @@ class BaseMainWindow(wx.Frame, PieActor):
         gatherMenu.AppendItem(self.menu_atom_process)
         viewMenu.AppendItem(self.menu_toggle_context)
         viewMenu.AppendSeparator()
-        viewMenu.AppendItem(self.menu_view_recent)
+        viewMenu.AppendItem(self.menu_view_starred)
         viewMenu.AppendItem(self.menu_view_flagged)
+        viewMenu.AppendItem(self.menu_view_recentact)
+        viewMenu.AppendItem(self.menu_view_recent)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -191,6 +200,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
+        self.Bind(wx.EVT_MENU, self.OnViewRecentlyInteracted, self.menu_view_recentact)
+        self.Bind(wx.EVT_MENU, self.OnViewStarred, self.menu_view_starred)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         # self.menu_savebibs.Enable(False)
@@ -322,10 +333,14 @@ class BaseMainWindow(wx.Frame, PieActor):
             'FileListPanel', 
             'WebListPanel',
             'BibListPanel',
+            'BibImpPanel',
             'StagingListPanel',
             'GBListPanel',
             'RecentView',
+            'RecentActView',
+            'StarredView',
             'FlaggedView'):
+            if evt: evt.Skip()
             return
         if self.SearchPanel:
             spinfo = self._mgr.GetPane(self.SearchPanel)
@@ -425,6 +440,14 @@ class BaseMainWindow(wx.Frame, PieActor):
             tab, caption, select=True,
             bitmap = wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
 
+    def OpenBibImpPane(self, evt=0, ostore=None, caption=_('BibTeX Import')):
+        tab = BibImpPanel(self.TabBook)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_COMMIT_STAGED, self.OnCommitStaged)
+        self.TabBook.AddPage(tab, caption, select=True)
+        if ostore:
+            tab.AddObjects(ostore)
+
     def OpenFilePane(self, evt=0, ostore=None, caption=_('Files')):
         tab = FileListPanel(self.TabBook)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
@@ -449,6 +472,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU))
         if not obj: return
         tab.SetObject(obj)
+        # tab.Bind(wxauip.EVT_AUINOTEBOOK_PAGE_CLOSED, tab.OnDone)
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
     def DoSearch(self, evt):

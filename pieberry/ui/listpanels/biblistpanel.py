@@ -69,17 +69,6 @@ class BibListPanel(BaseListPanel):
         # self.objectstore.Del(self.GetSelectedItemRef())
         # self.ListDisplay.DeleteItem(self.ListDisplay.currentitem)
 
-    def onSelectionActivated(self, evt):
-        it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
-        if it.FileData_FullPath:
-            pieberry.pieutility.open_file(it.FileData_FullPath)
-            it.stats_opened()
-        elif it.WebData_Url:
-            pieberry.pieutility.open_web_file(it.WebData_Url)
-            it.stats_opened()
-        else:
-            return
-        
     def MakeMenu(self, menu, obj):
         '''Function to construct a particular context menu'''
         copyMenu = wx.Menu()

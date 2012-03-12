@@ -68,7 +68,7 @@ class BetterContextPanel(wx.Panel):
         self.bar.Collapse(self.bib_fp)
         self.bar.Collapse(self.file_fp)
 
-        # self.ResizeFPB()
+        self.ResizeFPB()
 
     def SetMode(self, mode='default'):
         '''Set the context view mode'''
@@ -81,11 +81,17 @@ class BetterContextPanel(wx.Panel):
         self.web_win.SetObject(obj)
         self.bib_win.SetObject(obj)
         self.file_win.SetObject(obj)
+        # self.bar.RedisplayFoldPanelItems()
 
-    def EmitUpdate(self, evt=0):
+    def OnFieldEdit(self, evt):
+        self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))
+
+    def EmitUpdate(self, evt=0, ttltext=None, otherargs=()):
         newevt = PieContextPanelUpdateEvent(
             obj=self.obj,
-            favourite=self.fund_win.GetFavourite())
+            favourite=self.fund_win.GetFavourite(),
+            ttltext=ttltext)
+        [ setattr(newevt, attrname, attrval) for attrname, attrval in otherargs ] 
         wx.PostEvent(self, newevt)
 
 bibhtml = _('''
@@ -196,7 +202,148 @@ class WebInfoPanel(wx.Panel):
             self.urlDisplay.SetLabel(_('From %s') % urlsplit(obj.Url())[1])
         self.urlDisplay.Refresh()
 
+
+boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+
+from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
+
+# class StaticWrapText(wx.PyControl):
+#     def __init__(self, parent, id=wx.ID_ANY, label='', pos=wx.DefaultPosition,
+#                  size=wx.DefaultSize, style=wx.NO_BORDER,
+#                  validator=wx.DefaultValidator, name='StaticWrapText'):
+#         wx.PyControl.__init__(self, parent, id, pos, size, style, validator, name)
+#         self.statictext = wx.StaticText(self, wx.ID_ANY, label, style=style)
+#         self.wraplabel = label
+#       #self.wrap()
+#     def wrap(self):
+#         self.Freeze()
+#         self.statictext.SetLabel(self.wraplabel)
+#         self.statictext.Wrap(self.GetSize().width)
+#         self.Thaw()
+#     def DoGetBestSize(self):
+#         self.wrap()
+#       #print self.statictext.GetSize()
+#         self.SetSize(self.statictext.GetSize())
+#         return self.GetSize()
+
+class EditableText(wx.Panel):
+    '''A thing that will flip from a static text to a textctrl on a
+    mouse click to allow editing of a displayed field'''
+    def __init__(self, parent, id, label, objattr, *args, **kwargs):
+        wx.Panel.__init__(self, parent, id, *args, **kwargs)
+        self.stext = wx.StaticText(self, -1, label)
+        self.dtext = wx.TextCtrl(self, -1, label, size=(110,-1))#, style=wx.TE_MULTILINE|wx.EXPAND)
+    
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizer.Add(self.stext, 1, wx.EXPAND)
+        self.sizer.Add(self.dtext, 1, wx.EXPAND)
+        self.dtext.Hide()
+
+        self.stext.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
+        self.dtext.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
+        self.dtext.Bind(wx.EVT_KILL_FOCUS, self.OnLoseFocus)
+
+        self._objattr = objattr
+
+    def OnLeftUp(self, evt):
+        self.stext.Hide()
+        self.dtext.Show()
+        self.dtext.SetFocus()
+        self.Layout()
+        self.GetParent().Layout()
+
+    def OnKeyUp(self, evt):
+        if evt.GetKeyCode() in (wx.WXK_ESCAPE, wx.WXK_RETURN): 
+            self._exit_edit()
+        else: 
+            evt.Skip() 
+
+    def OnLoseFocus(self, evt):
+        self._exit_edit()
+
+    def SetFont(self, font):
+        self.stext.SetFont(font)
+
+    def SetMinSize(self, size):
+        self.dtext.SetMinSize(size)
+
+    def _exit_edit(self):
+        self.dtext.Hide()
+        self.stext.Show()
+        self.SetValue(self.dtext.GetValue())
+        self.Layout()
+        self.GetParent().Layout()
+        newevt = PieContextPanelFieldEvent(
+            objattr=self._objattr,
+            objattrval=self.GetValue())
+        wx.PostEvent(self, newevt)
+
+    def SetValue(self, txt):
+        dc = wx.WindowDC(self.stext)
+        self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
+        # self.stext.SetLabel(txt)
+        self.dtext.SetValue(txt)
+
+    def SetWrapWidth(self, w):
+        self.w = w
+
+    def GetValue(self):
+        return self.dtext.GetValue()
+
 class FundInfoPanel(wx.Panel):
+    def __init__(self, parent, id, bigparent, *args, **kwargs):
+        kwargs['size'] = (80,140)
+        wx.Panel.__init__(self, parent, id, *args, **kwargs)
+        self.bigparent = bigparent
+        self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
+        self.sizer0 = wx.BoxSizer(wx.VERTICAL)
+        self.sizer0.Add(self.favpanel, 0, wx.EXPAND)
+        
+        self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
+        self.fgsizer.AddGrowableCol(1)
+
+        self.auth_lb = wx.StaticText(self, -1, _('Author:'))
+        self.auth_lb.SetFont(boldfont)
+        self.auth_ct = EditableText(self, -1, '', objattr='author')
+        self.auth_ct.SetFont(normalfont)
+        self.date_lb = wx.StaticText(self, -1, _('Date:'))
+        self.date_lb.SetFont(boldfont)
+        self.date_ct = wx.StaticText(self, -1, '')
+        self.date_ct.SetFont(normalfont)
+        
+        self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+
+        self.fgsizer.Add(self.auth_lb)
+        self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND)
+        self.fgsizer.Add(self.date_lb)
+        self.fgsizer.Add(self.date_ct)
+
+        self.sizer0.Add((5,5))
+        self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
+        self.SetSizer(self.sizer0)
+        self.Layout()
+
+    def SetObject(self, obj):
+        self.auth_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
+        self.favpanel.SetValue(obj.StatData_Favourite)
+        # if sys.platform == 'win32':
+        #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
+        # else:
+        #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
+        self.favpanel.SetTitle(obj.Title())
+        self.auth_ct.SetValue(obj.Author())
+        # self.auth_ct.SetLabel(obj.Author())
+        self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
+        self.fgsizer.Layout()
+        self.sizer0.Layout()
+        self.Layout()
+
+    def GetFavourite(self):
+        return self.favpanel.BMB.GetValue()
+
+
+class OldFundInfoPanel(wx.Panel):
     def __init__(self, parent, id, bigparent, *args, **kwargs):
         kwargs['size'] = (80,140)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
@@ -246,25 +393,26 @@ class FavBitmapButton(ThemedGenBitmapToggleButton):
         self.SetBitmapSelected(imagedown)
 
 
+
+
+
 class FBBPanel(wx.Panel):
     '''Panel to mount the favourite button on'''
     def __init__(self, parent, id, bigparent):
         wx.Panel.__init__(self, parent, id)
         self.bigparent = bigparent
-        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
+        self.sizer = wx.FlexGridSizer(0, 2, 3, 3)
+        self.sizer.AddGrowableCol(1)
         self.BMB = FavBitmapButton(self, -1)
         self.sizer.Add(self.BMB, 0, wx.ALL, 5)
-        self.title = wx.StaticText(self, -1, '')
-        # self.title = wx.TextCtrl(self, -1, style=wx.TE_READONLY)
-        # self.title = wx.WindowDC(self)
-        if not sys.platform == 'win32':
-            font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
-            self.title.SetFont(font)
+        self.title = EditableText(self, -1, '', objattr='title')
+        self.title.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+        # if not sys.platform == 'win32':
+        #     font = wx.Font(10, wx.FONTFAMILY_ROMAN, -1, wx.FONTWEIGHT_BOLD)
+        #     self.title.SetFont(font)
         self.sizer.Add(self.title, 1, wx.EXPAND)
-        # self.sizer.Add((22,22), 1)
         self.SetSizer(self.sizer)
         self.Layout()
-        self.w = 80
         self.BMB.Bind(wx.EVT_BUTTON, self.bigparent.EmitUpdate)
 
     def GetValue(self):
@@ -273,10 +421,9 @@ class FBBPanel(wx.Panel):
     def SetValue(self, val):
         return self.BMB.SetValue(val)
     
-    def SetTitleWidth(self, w):
-        self.w = w
-
     def SetTitle(self, ttl):
-        # self.title.SetLabel(ttl)
-        dc = wx.WindowDC(self.title)
-        self.title.SetLabel(wordwrap.wordwrap(ttl, self.w, dc))
+        self.title.SetWrapWidth(self.sizer.GetColWidths()[1])
+        self.title.SetMinSize((self.sizer.GetColWidths()[1], -1))
+        self.title.SetValue(ttl)
+
+        

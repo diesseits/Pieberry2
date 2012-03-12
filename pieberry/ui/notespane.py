@@ -2,7 +2,9 @@ import sys, wx
 import wx.richtext as rt
 from pieberry.pieconfig.initsys import *
 from pieberry.pieconfig.paths import CACHEDIR
+from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.ui.events import PieNotesPaneUpdateEvent
+from pieberry.ui.timers import PeriodicSaveTimer
 
 class NotesPane(wx.Panel):
     paneltype = 'notespanel'
@@ -35,23 +37,32 @@ class NotesPane(wx.Panel):
         sizer.Add(self.toolbar, 0, wx.EXPAND)
         sizer.Add(self.rtc, 1, wx.ALL|wx.EXPAND, 0)
 
-
-        self.donebt = wx.Button(self, -1, _('Done'))
+        self.savebt = wx.Button(self, -1, _('Save'))
+        self.donebt = wx.Button(self, -1, _('Save and Close'))
         lsizer = wx.BoxSizer(wx.HORIZONTAL)
         lsizer.Add((20,20), 1)
-        lsizer.Add(self.donebt, 0, wx.ALL, 5)
+        lsizer.Add(self.savebt, 0, wx.ALL, 3)
+        lsizer.Add(self.donebt, 0, wx.ALL, 3)
         
         sizer.Add(lsizer, 0, wx.EXPAND)
 
         self.SetSizer(sizer)
         self.Layout()
         self._do_bindings()
+
+        self.savetimer = PeriodicSaveTimer(self)
+        self.savetimer.Start(PIE_CONFIG.getint('Internal', 'minutes_between_save_notes') * 60 * 1000)
         wx.CallAfter(self.rtc.SetFocus)
+
+    def Destroy(self):
+        self.savetimer.Stop()
+        wx.Panel.Destroy(self)
 
     def _do_bindings(self):
         
         self.rtc.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.donebt.Bind(wx.EVT_BUTTON, self.OnDone)
+        self.savebt.Bind(wx.EVT_BUTTON, self.OnSave)
 
     def SetObject(self, obj):
         self._obj = obj
@@ -59,15 +70,30 @@ class NotesPane(wx.Panel):
         self.authorlabel.SetLabel(obj.Author())
         self.datelabel.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
         if obj.notes:
-            self.SetHtmlContent(obj.notes)
+            self.SetXMLContent(obj.notes)
+        self.savebt.Enable(False)
         
     def OnDone(self, evt):
+        print 'notespane.OnDone'
+        self.savetimer.Stop()
         if not self._obj: raise 'No object set for this pane'
-        newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetHtmlContent(),
-                                         obj=self._obj)
+        newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetXMLContent(),
+                                         obj=self._obj,
+                                         closewindow=True)
         wx.PostEvent(self, newevt)
 
-    def GetHtmlContent(self):
+    def OnSave(self, evt):
+        print 'OnSave'
+        if not self._obj: raise 'No object set for this pane'
+        if not self.savebt.IsEnabled(): return
+        newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetXMLContent(),
+                                         obj=self._obj,
+                                         closewindow=False)
+        wx.PostEvent(self, newevt)
+        wx.CallAfter(self.savebt.Disable)
+
+
+    def GetXMLContent(self):
         handler = rt.RichTextXMLHandler()
         # handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)
         # handler.SetFontSizeMapping([7,9,11,12,14,22,100])
@@ -79,8 +105,8 @@ class NotesPane(wx.Panel):
   
         return stream.getvalue()
 
-    def SetHtmlContent(self, content):
-        print content
+    def SetXMLContent(self, content):
+        # print content
         from cStringIO import StringIO
         out = StringIO()
         handler = wx.richtext.RichTextXMLHandler()
@@ -89,7 +115,7 @@ class NotesPane(wx.Panel):
         out.write(content)
         out.seek(0)
         handler.LoadStream(buffer, out)
-        print out.read()
+        # print out.read()
         self.rtc.Refresh()
 
     def OnKeyDown(self, evt):
@@ -101,6 +127,10 @@ class NotesPane(wx.Panel):
                 self.rtc.ApplyItalicToSelection()
             elif (keycode == ord('U')):
                 self.rtc.ApplyUnderlineToSelection()
+            elif (keycode == ord('S')):
+                self.OnSave(0)
+        if keycode < 128:
+            self.savebt.Enable(True)
         evt.Skip()
 
     def OnURL(self, evt):

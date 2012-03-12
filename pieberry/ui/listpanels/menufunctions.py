@@ -1,7 +1,8 @@
 import pieberry.pieutility
-import os, os.path, wx, sys
+import os, os.path, wx, sys, shutil
 import traceback
 
+from pieberry.pieobject.paths import *
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import *
 from pieberry.ui.htmldataobject import HTMLDataObject
@@ -97,6 +98,7 @@ class MenuFunctionsMixin:
 
     def onEditNotes(self, evt):
         obj = self.GetSelectedItem()
+        obj.stats_opened()
         self.GetParent().GetParent().OpenNotesPane(obj=obj)
 
     def onFlagFavourite(self, evt=0):
@@ -212,5 +214,26 @@ class MenuFunctionsMixin:
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(clipdata)
         wx.TheClipboard.Close()
-        
+
+    def onAttachFile(self, evt):
+        '''Attach a file to a record (at the staging point)'''
+        obj = self.GetSelectedItem()
+        if obj.has_aspect('hasfile'):
+            print 'Warning: object already has a file'
+            return
+        fdia = wx.FileDialog(self, message="Select file to attach to record", wildcard="Known file types (*.pdf;*.doc;*.docx;*.txt;*.xls;*.xlsx;*.ppt;*.pptx;*.odf;*.ods;*.odp)|*.pdf;*.doc;*.docx;*.txt;*.xls;*.xlsx;*.ppt;*.pptx;*.odf;*.ods;*.odp|All files (*.*)|*.*", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+        res = fdia.ShowModal()
+        if res == wx.ID_CANCEL: return
+        fpath = fdia.GetPath()
+        assert os.path.exists(fpath)
+        if not hasattr(obj, 'session'):
+            obj.set_session(get_session())
+        dpath = suggest_path_cache_fromother(obj, fpath)
+        if not os.path.exists(os.path.dirname(dpath)):
+            os.makedirs(os.path.dirname(dpath))
+        shutil.copyfile(fpath, dpath)
+        obj.add_aspect_cached(dpath)
+        print obj.FileData_FullPath
+        print obj.aspects
+        print 'onAttachFile: success'
 

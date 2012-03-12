@@ -41,3 +41,10 @@ class FileIndexTimer(wx.Timer):
     def Notify(self):
         self._f.OnStartIndexer()
         
+class PeriodicSaveTimer(wx.Timer):
+    def __init__(self, parent, *args, **kwargs):
+        wx.Timer.__init__(self, *args, **kwargs)
+        self._f = parent
+
+    def Notify(self):
+        self._f.OnSave(0)
