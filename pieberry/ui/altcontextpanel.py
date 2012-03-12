@@ -68,7 +68,7 @@ class BetterContextPanel(wx.Panel):
         self.bar.Collapse(self.bib_fp)
         self.bar.Collapse(self.file_fp)
 
-        # self.ResizeFPB()
+        self.ResizeFPB()
 
     def SetMode(self, mode='default'):
         '''Set the context view mode'''
@@ -81,6 +81,7 @@ class BetterContextPanel(wx.Panel):
         self.web_win.SetObject(obj)
         self.bib_win.SetObject(obj)
         self.file_win.SetObject(obj)
+        # self.bar.RedisplayFoldPanelItems()
 
     def OnFieldEdit(self, evt):
         self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))

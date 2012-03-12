@@ -9,6 +9,9 @@ from pieberry.ui.timers import SpinnyTimer
 from pieberry.ui.listpanels.listwidgets import *
 from pieberry.pieobject import *
 from pieberry.ui.listpanels.baselistpanel import BaseListPanel # <-- todo
+from pieberry.pieconfig.initsys import IMGDIR
+
+WEBBMP = wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png'))
 
 class WebListPanel(BaseListPanel):
     '''Class for working with web scrapes'''
@@ -95,8 +98,7 @@ class WebListPanel(BaseListPanel):
     def MakeMenu(self, menu, obj):
         '''Function to construct a particular context menu'''
         rcm_openinbrowser = wx.MenuItem(menu, 0, _('Open in Browser'))
-        rcm_openinbrowser.SetBitmap(
-            wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
+        rcm_openinbrowser.SetBitmap(WEBBMP)
         menu.AppendItem(rcm_openinbrowser)
         self.Bind(wx.EVT_MENU, self.onOpenInBrowser, rcm_openinbrowser)
 

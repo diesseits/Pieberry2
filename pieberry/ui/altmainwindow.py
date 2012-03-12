@@ -12,6 +12,7 @@ from pieberry.ui.listpanels import *
 from pieberry.ui.actor import PieActor
 from pieberry.pieconfig.globalvars import *
 from pieberry.pieconfig.paths import IMGDIR
+from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.atomise.atomise_widget import atomWidget
 from pieberry.ui.notespane import NotesPane
 
@@ -27,6 +28,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         # self.TabPane = NBPanel(self)
         # self.TabBook = self.TabPane.nb
         self.TabBook = wxauip.AuiNotebook(self, -1)
+        if PIE_CONFIG.get('Internal', 'tab_art') == 'simple':
+            self.TabBook.SetArtProvider(wxauip.AuiSimpleTabArt())
         # self.TabBook.SetMinSize((500,500))
         # self.TabBook = fnb.FlatNotebook(self, -1)
         self.StatusBar = wx.StatusBar(self, -1)
@@ -469,6 +472,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_INFORMATION, wx.ART_MENU))
         if not obj: return
         tab.SetObject(obj)
+        # tab.Bind(wxauip.EVT_AUINOTEBOOK_PAGE_CLOSED, tab.OnDone)
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
 
     def DoSearch(self, evt):

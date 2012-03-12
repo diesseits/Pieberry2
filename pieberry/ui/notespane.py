@@ -74,6 +74,8 @@ class NotesPane(wx.Panel):
         self.savebt.Enable(False)
         
     def OnDone(self, evt):
+        print 'notespane.OnDone'
+        self.savetimer.Stop()
         if not self._obj: raise 'No object set for this pane'
         newevt = PieNotesPaneUpdateEvent(htmlcontent=self.GetXMLContent(),
                                          obj=self._obj,
