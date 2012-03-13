@@ -287,7 +287,7 @@ class EditableText(wx.Panel):
         self.dtext.SetValue(txt)
 
     def SetWrapWidth(self, w):
-        if sys.platform == 'win32': w = w * 1.4
+        if sys.platform == 'win32': w = w * 1.3
         self.w = w
 
     def GetValue(self):

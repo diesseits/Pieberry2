@@ -21,7 +21,7 @@ PROFILE_KEYS = (
 
 #map file extensions to internal generic types
 FEXTENSIONS = {'pdf': ('.pdf',),
-               'word_doc': ('.doc', '.docx', '.rtf', '.xls', '.xlsx', '.xlsm'),
+               'word_doc': ('.doc', '.docx', '.docm', '.rtf', '.xls', '.xlsx', '.xlsm', '.ppt', '.pptx', '.pptm'),
                'html': ('.htm', '.html'),
                'plaintext': ('.txt', '.org'),
                'hachoir_other': ('.zip',)

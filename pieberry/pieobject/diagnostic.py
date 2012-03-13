@@ -31,8 +31,10 @@ def determine_file_type(fn):
         mtype = mimetypes.guess_type(fn)[0]
     if not mtype:
         # this is to override the fact that python's mimetype library
-        # can't seem to find the correct type for docx files
-        pass
+        # can't seem to find the correct type for docx files. it is a
+        # hack. get over it.
+        if os.path.splitext(fn)[1] in FEXTENSIONS['word_doc']:
+            mtype = 'application/msword'
     if not mtype:
         raise Exception, "Could not determine mime type of file"
     print 'File: %s' % fn
