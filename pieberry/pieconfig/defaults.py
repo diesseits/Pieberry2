@@ -30,7 +30,9 @@ PIE_CONFIG_DEFAULTS = [
     ('Internal', 'first_run', True),
     ('Internal', 'number_new_docs_to_show', 50),
     ('Internal', 'delete_backups_after_days', 25),
-    ('Internal', 'tab_art', 'default')
+    ('Internal', 'tab_art', 'default'),
+    ('Internal', 'flagged_purpleafter', 2),
+    ('Internal', 'flagged_redafter', 6)
     ]
 
 PIE_PROFILE_KEYS = [y for x, y, z in PIE_CONFIG_DEFAULTS if x == 'Profile']

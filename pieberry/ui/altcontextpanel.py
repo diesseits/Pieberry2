@@ -205,7 +205,7 @@ class WebInfoPanel(wx.Panel):
 
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-
+itfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
 from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
 
 # class StaticWrapText(wx.PyControl):
@@ -306,7 +306,7 @@ class FundInfoPanel(wx.Panel):
         self.fgsizer.AddGrowableCol(1)
 
         self.title_ct = EditableText(self, -1, '', objattr='title')
-        # self.title_ct.SetFont(boldfont)
+        # self.title_ct.SetFont(itfont)
         self.auth_lb = wx.StaticText(self, -1, _('Author:'))
         self.auth_lb.SetFont(boldfont)
         self.auth_ct = EditableText(self, -1, '', objattr='author')
@@ -320,11 +320,11 @@ class FundInfoPanel(wx.Panel):
         self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
 
         self.fgsizer.Add(self.favpanel)
-        self.fgsizer.Add(self.title_ct)
-        self.fgsizer.Add(self.auth_lb)
-        self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND)
-        self.fgsizer.Add(self.date_lb)
-        self.fgsizer.Add(self.date_ct)
+        self.fgsizer.Add(self.title_ct, 1, wx.ALL, 3)
+        self.fgsizer.Add(self.auth_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.date_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.date_ct, 0, wx.LEFT|wx.RIGHT, 3)
 
         # self.sizer0.Add((5,5))
         # self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)

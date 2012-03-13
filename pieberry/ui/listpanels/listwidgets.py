@@ -178,12 +178,12 @@ class BibListCtrl(BaseListCtrl):
         # colorise if flagged for follow up
         if obj.StatData_FollowUpFlag:
             td = datetime.datetime.today() - obj.StatData_FollowUpDate
-            if td.days == 0:
+            if td.days < PIE_CONFIG.getint('Internal', 'flagged_purpleafter'):
                 self.SetItemTextColour(nexidx, 'blue')
-            elif td.days < 4:
-                self.SetItemTextColour(nexidx, 'purple')
-            elif td.days > 6:
+            elif td.days > PIE_CONFIG.getint('Internal', 'flagged_redafter'):
                 self.SetItemTextColour(nexidx, 'red')
+            else:
+                self.SetItemTextColour(nexidx, 'purple')
         self.itemDataMap[ref] = [msgtype,
                                  obj.Author(), 
                                  str(obj.ReferDate()),#.year),
