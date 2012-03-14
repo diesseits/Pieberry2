@@ -6,6 +6,8 @@ from pieberry.pieconfig.config import *
 from pieberry.spoofgeneration import *
 from pieberry.ui.settingsdialog import PieSettingsDialog
 
+import pieberry.ui.stdlines as stdlines
+
 class PieActor:
     '''Class containing basic action-directing functions of the main window'''
     
@@ -44,21 +46,9 @@ class PieActor:
         # info.AddDeveloper('Various icons from openclipart.org and the open icon library')
         info.SetVersion(PIE_VERSION)
         info.SetCopyright('(c) 2012 Raif Sarcich et. al.')
-        info.SetLicence(
-    '''This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.''')
-        info.SetDescription(_('The swiss army knife of the public servant. A program encompassing web scraping, cataloguing, filing, search, citation, organisation and archival functions.'))
-        info.SetName(_('Pieberry (...for your library)'))
+        info.SetLicence(stdlines.LICENCE)
+        info.SetDescription(stdlines.DESCRIPTION)
+        info.SetName(stdlines.SLOGAN)
         info.SetWebSite('http://members.iinet.net.au/~raifsarcich/pieberry/')
         _icon = wx.EmptyIcon()
         _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pie_48.png')))

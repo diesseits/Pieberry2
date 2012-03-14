@@ -103,7 +103,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_import_bibtex.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         self.menu_filter = wx.MenuItem(
-            locateMenu, -1, _('Fi&lter\tCtrl-i'), _('Filter the items in the current view'))
+            locateMenu, -1, _('Fi&lter\tCtrl-shift-i'), _('Filter the items in the current view'))
         self.menu_toggle_context = wx.MenuItem(
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)
@@ -245,6 +245,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.ContextPane.Bind(wxaui.EVT_AUI_PANE_CLOSE, self.menu_toggle_context.Toggle)
         self._mgr.Update()
         # self.TabBook.SetMinSize(self.TabPane.sizer.GetSize())
+        self.OpenIntroPane()
         
 
     def _do_bindings(self):
@@ -474,6 +475,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.SetObject(obj)
         # tab.Bind(wxauip.EVT_AUINOTEBOOK_PAGE_CLOSED, tab.OnDone)
         tab.Bind(EVT_PIE_NOTES_PANE_UPDATE, self.OnNotesPaneUpdate)
+
+    def OpenIntroPane(self):
+        caption = _('Welcome to Pieberry')
+        tab = IntroPanel(self.TabBook, -1)
+        self.TabBook.AddPage(
+            tab, caption, select=True,
+            bitmap = wx.Bitmap(os.path.join(IMGDIR, 'pie_16.png'))
+            )
 
     def DoSearch(self, evt):
         '''stub'''

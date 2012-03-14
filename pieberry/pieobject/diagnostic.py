@@ -1,4 +1,4 @@
-import mimetypes
+import mimetypes, os, os.path
 from pieberry.pieconfig.schemas import FEXTENSIONS
 from hachoir_core.cmd_line import unicodeFilename
 from hachoir_core.i18n import getTerminalCharset, _
@@ -29,7 +29,7 @@ def determine_file_type(fn):
     # mtype = mime.from_file(self.FileData_FullPath)
     if not mtype:
         mtype = mimetypes.guess_type(fn)[0]
-    if not mtype:
+    if (not mtype) or (mtype == 'application/zip'):
         # this is to override the fact that python's mimetype library
         # can't seem to find the correct type for docx files. it is a
         # hack. get over it.

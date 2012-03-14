@@ -280,7 +280,7 @@ class EditableText(wx.Panel):
         wx.PostEvent(self, newevt)
 
     def SetValue(self, txt):
-        print 'MYSIZE', self.GetSize()
+        # print 'MYSIZE', self.GetSize()
         dc = wx.WindowDC(self.stext)
         self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
         # self.stext.SetLabel(txt)
@@ -333,7 +333,7 @@ class FundInfoPanel(wx.Panel):
         self.Layout()
 
     def SetObject(self, obj):
-        print 'COLWIDTHS', self.fgsizer.GetColWidths()
+        # print 'COLWIDTHS', self.fgsizer.GetColWidths()
         self.auth_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.title_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.favpanel.SetValue(obj.StatData_Favourite)
@@ -341,10 +341,10 @@ class FundInfoPanel(wx.Panel):
         #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
         # else:
         #     self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
-        print 'Setting title'
+        # print 'Setting title'
         self.title_ct.SetValue(obj.Title())
         # self.favpanel.SetTitle(obj.Title())
-        print 'Setting author'
+        # print 'Setting author'
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
         self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
