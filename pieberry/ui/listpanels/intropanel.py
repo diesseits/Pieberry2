@@ -12,6 +12,7 @@ bigfont = wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_
 
 class IntroPanel(wx.Panel):
     '''Intro panel so that new users don't boot up a blank screen'''
+    paneltype = 'IntroPanel'
 
     def __init__(self, parent, id=-1, style=wx.EXPAND):
         wx.Panel.__init__(self, parent, id=id, style=style)

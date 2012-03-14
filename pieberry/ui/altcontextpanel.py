@@ -243,6 +243,7 @@ class EditableText(wx.Panel):
         self.stext.Bind(wx.EVT_LEFT_UP, self.OnLeftUp)
         self.dtext.Bind(wx.EVT_KEY_UP, self.OnKeyUp)
         self.dtext.Bind(wx.EVT_KILL_FOCUS, self.OnLoseFocus)
+        self.settext = None
 
         self._objattr = objattr
 
@@ -271,6 +272,9 @@ class EditableText(wx.Panel):
     def _exit_edit(self):
         self.dtext.Hide()
         self.stext.Show()
+        if self.dtext.GetValue() == self.settext: 
+            self.Layout()
+            return
         self.SetValue(self.dtext.GetValue())
         self.Layout()
         self.GetParent().Layout()
@@ -278,20 +282,26 @@ class EditableText(wx.Panel):
             objattr=self._objattr,
             objattrval=self.GetValue())
         wx.PostEvent(self, newevt)
+        print 'EditableText._exit_edit : event emitted'
 
     def SetValue(self, txt):
         # print 'MYSIZE', self.GetSize()
+        # print type(txt), ':', len(txt), ':', txt
+        if len(txt) == 0: txt = _(u'[click to edit]')
         dc = wx.WindowDC(self.stext)
         self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
         # self.stext.SetLabel(txt)
         self.dtext.SetValue(txt)
+        self.settext = txt
 
     def SetWrapWidth(self, w):
         if sys.platform == 'win32': w = w * 1.3
         self.w = w
 
     def GetValue(self):
-        return self.dtext.GetValue()
+        r = self.dtext.GetValue()
+        if r == _('[click to edit]'): r = u''
+        return r
 
 class FundInfoPanel(wx.Panel):
     def __init__(self, parent, id, bigparent, *args, **kwargs):
