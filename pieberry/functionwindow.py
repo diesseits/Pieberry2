@@ -526,7 +526,7 @@ class FunctionMainWindow(BaseMainWindow):
         # handle time-of-use export file selection
         bibfilepath = PIE_CONFIG.get('Profile', 'bibliography_file')
         if not PIE_CONFIG.getboolean('Profile', 'export_bibtex'):
-            fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_SAVE)
+            fdia = wx.FileDialog(self, wildcard="*.bib|*.bibtex", style=wx.FD_SAVE)
             res = fdia.ShowModal()
             if res == wx.ID_CANCEL: return
             bibfilepath = fdia.GetPath()
@@ -613,7 +613,7 @@ class FunctionMainWindow(BaseMainWindow):
         return bibkey
 
     def OnImportBibtex(self, evt):
-        fdia = wx.FileDialog(self, wildcard="*.bib", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+        fdia = wx.FileDialog(self, wildcard="BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
         res = fdia.ShowModal()
         if res == wx.ID_CANCEL: return
         self.StatusBar.SetStatusText(_('Importing from file'))

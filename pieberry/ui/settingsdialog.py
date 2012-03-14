@@ -42,7 +42,7 @@ class ProfilePanel(wx.Panel):
                                                     'export_bibtex'))
         self.bibfilectrl = wx.FilePickerCtrl(
             self, -1,
-            wildcard = "*.bib",
+            wildcard = "BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex",
             style = wx.FLP_USE_TEXTCTRL|wx.FLP_SAVE)
         if PIE_CONFIG.getboolean('Profile', 'export_bibtex') == True: 
             self.bibfilectrl.Enable(True)

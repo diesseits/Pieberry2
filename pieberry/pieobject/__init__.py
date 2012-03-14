@@ -392,12 +392,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
             try:
-                print 'GENNINIG', self.FileData_FullPath
+                # print 'GENNINIG', self.FileData_FullPath
                 self.FileData_FileType = determine_file_type(
                     self.FileData_FullPath)
             except:
                 traceback.print_exc()
-                raise IOError, 'no'
                 # if examination of the file fails to determine its
                 # type, but the type has already been set, just return
                 # (assume the type hasn't changed).
