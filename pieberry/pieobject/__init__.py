@@ -317,7 +317,6 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def add_aspect_stored(self, final_fn=None):
         '''Add information pertaining to the storage of this item in
         the system'''
-        self.aspects['stored'] = True
         if not final_fn == self.FileData_FullPath:
             print 'SETTING IT', final_fn
             self.set_file(final_fn) #set filename if specified and different 

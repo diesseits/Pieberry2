@@ -21,14 +21,15 @@ PROFILE_KEYS = (
 
 #map file extensions to internal generic types
 FEXTENSIONS = {'pdf': ('.pdf',),
-               'word_doc': ('.doc', '.docx', '.docm', '.rtf', '.xls', '.xlsx', '.xlsm', '.ppt', '.pptx', '.pptm'),
+               'word_doc': ('.doc', '.rtf', '.xls', '.ppt'),
+               'oxml_doc': ('.docx', '.docm', '.xlsx', '.xlsm', '.pptx', '.pptm'),
                'html': ('.htm', '.html'),
                'plaintext': ('.txt', '.org'),
                'hachoir_other': ('.zip',)
                }
 
-PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc')
-PIE_TYPES_ALL = ('pdf', 'word_doc', 'html', 'plaintext', 'hachoir_other')
+PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc', 'oxml_doc')
+PIE_TYPES_ALL = ('pdf', 'word_doc', 'html', 'plaintext', 'hachoir_other', 'oxml_doc')
 
 #map mime types to internal generic types
 MIMEMAP = {'application/pdf': 'pdf',
@@ -40,16 +41,16 @@ MIMEMAP = {'application/pdf': 'pdf',
            'application/vnd.sun.xml.calc': 'word_doc',
            'application/vnd.sun.xml.writer': 'word_doc',
            'application/vnd.sun.xml.impress': 'word_doc',
-           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'word_doc',
-           'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'word_doc',
-           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'word_doc',
-           'application/vnd.ms-word.document.12': 'word_doc',
-           'application/vnd.ms-word.document.macroEnabled.12': 'word_doc',
-           'application/vnd.ms-excel.sheet.macroEnabled.12': 'word_doc',
+           'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'oxml_doc',
+           'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'oxml_doc',
+           'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'oxml_doc',
+           'application/vnd.ms-word.document.12': 'oxml_doc',
+           'application/vnd.ms-word.document.macroEnabled.12': 'oxml_doc',
+           'application/vnd.ms-excel.sheet.macroEnabled.12': 'oxml_doc',
            'application/vnd.ms-excel': 'word_doc',
-           'application/vnd.ms-excel.12': 'word_doc',
+           'application/vnd.ms-excel.12': 'oxml_doc',
            'application/vnd.ms-powerpoint': 'word_doc',
-           'application/vnd.ms-powerpoint.12': 'word_doc',
+           'application/vnd.ms-powerpoint.12': 'oxml_doc',
            'application/x-mspowerpoint': 'word_doc',
            'application/rtf': 'word_doc',
            'text/html': 'html',

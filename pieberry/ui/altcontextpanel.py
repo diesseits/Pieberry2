@@ -272,12 +272,11 @@ class EditableText(wx.Panel):
     def _exit_edit(self):
         self.dtext.Hide()
         self.stext.Show()
-        if self.dtext.GetValue() == self.settext: 
-            self.Layout()
-            return
-        self.SetValue(self.dtext.GetValue())
         self.Layout()
         self.GetParent().Layout()
+        if self.dtext.GetValue() == self.settext: 
+            return
+        self.SetValue(self.dtext.GetValue())
         newevt = PieContextPanelFieldEvent(
             objattr=self._objattr,
             objattrval=self.GetValue())
@@ -285,12 +284,9 @@ class EditableText(wx.Panel):
         print 'EditableText._exit_edit : event emitted'
 
     def SetValue(self, txt):
-        # print 'MYSIZE', self.GetSize()
-        # print type(txt), ':', len(txt), ':', txt
         if len(txt) == 0: txt = _(u'[click to edit]')
         dc = wx.WindowDC(self.stext)
         self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
-        # self.stext.SetLabel(txt)
         self.dtext.SetValue(txt)
         self.settext = txt
 
