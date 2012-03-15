@@ -135,7 +135,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.StatData_OpenedCount = 0
 
     def __repr__(self):
-        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10], self.Author(), str(self.ReferDate()))
+        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10].encode('ascii', 'ignore'), self.Author().encode('ascii', 'ignore'), str(self.ReferDate()))
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath': 
