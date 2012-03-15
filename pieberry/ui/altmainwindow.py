@@ -112,7 +112,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_view_flagged = wx.MenuItem(
             viewMenu, -1, _('View documents &flagged for review/follow-up\tCtrl-2'))
         self.menu_view_recentact = wx.MenuItem(
-            viewMenu, -1, _('View most r&ecently opened documents\tCtrl-3'))
+            viewMenu, -1, _('View most r&ecently used documents\tCtrl-3'))
         self.menu_view_recent = wx.MenuItem(
             viewMenu, -1, _('View most &recently added documents\tCtrl-4'))
 

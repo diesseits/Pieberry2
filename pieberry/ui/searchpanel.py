@@ -97,7 +97,7 @@ class SearchToolsPanel(wx.Panel):
         self.originchoice = wx.Choice(self, -1, choices=origin_choices)
         self.originchoice.SetSelection(0)
         self.searchctrl = wx.SearchCtrl(
-            self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND)
+            self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND|wx.WANTS_CHARS)
         self.fieldchoice = wx.Choice(self, -1, choices=searchable_fields)
         self.fieldchoice.SetSelection(0)
         # self.closebutton = wx.BitmapButton(
@@ -118,6 +118,7 @@ class SearchToolsPanel(wx.Panel):
 
         self.searchctrl.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch)
         self.searchctrl.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
+        self.searchctrl.Bind(wx.EVT_KEY_UP, self.OnChar)
         # self.closebutton.Bind(wx.EVT_BUTTON, self.OnClose)
         if origin:
             assert origin in origin_choice_codes
@@ -148,3 +149,41 @@ class SearchToolsPanel(wx.Panel):
 
     def OnClose(self, evt):
         print "OnClose"
+
+    def OnChar(self, evt):
+        keycode = evt.GetKeyCode()
+        if evt.AltDown() and not evt.ShiftDown():
+            if keycode == ord('A'):
+                self.originchoice.SetSelection(0)
+            elif keycode == ord('I'):
+                self.originchoice.SetSelection(1)
+            elif keycode == ord('P'):
+                self.originchoice.SetSelection(2)
+            elif keycode == ord('M'):
+                self.originchoice.SetSelection(3)
+        elif evt.AltDown() and evt.ShiftDown():
+            if keycode == ord('M'):
+                self.fieldchoice.SetSelection(0)
+            elif keycode == ord('A'):
+                self.fieldchoice.SetSelection(1)
+            elif keycode == ord('F'):
+                self.fieldchoice.SetSelection(2)
+            elif keycode == ord('T'):
+                self.fieldchoice.SetSelection(3)
+            elif keycode == ord('U'):
+                self.fieldchoice.SetSelection(4)
+            elif keycode == ord('N'):
+                self.fieldchoice.SetSelection(5)
+            elif keycode == ord('W'):
+                self.fieldchoice.SetSelection(6)
+            elif keycode == ord('J'):
+                self.fieldchoice.SetSelection(7)
+        evt.Skip()
+                             
+                             
+                             
+                             
+                
+                
+
+

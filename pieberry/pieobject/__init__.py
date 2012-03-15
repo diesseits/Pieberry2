@@ -135,7 +135,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.StatData_OpenedCount = 0
 
     def __repr__(self):
-        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10], self.Author(), str(self.ReferDate()))
+        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10].encode('ascii', 'ignore'), self.Author().encode('ascii', 'ignore'), str(self.ReferDate()))
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath': 
@@ -158,7 +158,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             if self.FileData_FileName:
                 return self.FileData_FileName
         if atom_title_hack and self.FileData_FileName:
-            if self.FileData_Root == 'projectdir':
+            if self.FileData_Root in ('projectdir', 'meetingpaperdir'):
                 return "%s [%s]" % (self.title, self.FileData_FileName)
         return self.title
 
@@ -317,7 +317,6 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def add_aspect_stored(self, final_fn=None):
         '''Add information pertaining to the storage of this item in
         the system'''
-        self.aspects['stored'] = True
         if not final_fn == self.FileData_FullPath:
             print 'SETTING IT', final_fn
             self.set_file(final_fn) #set filename if specified and different 

@@ -18,6 +18,16 @@ from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
 from pieberry.pieobject.folder import recommend_folder
 
+IGNOREFILES = (
+    re.compile(r'^_Folder_Info.txt'),
+    re.compile(r'^[#~].*'),
+    re.compile(r'^Backup.*')
+    )
+
+def should_ignore(fl):
+    for re in IGNOREFILES:
+        if re.match(os.path.basename(fl)): return True
+    return False
 
 def scan_desktop_gen():
     '''Generator based version of scan_desktop()'''
@@ -27,6 +37,8 @@ def scan_desktop_gen():
     nofiles = len(file_list)
     progress = 0
     for fl in file_list:
+        if should_ignore(fl): continue
+        print 'ignore %s:' % fl, should_ignore(fl)
         progress += 1
         assert type(fl) == unicode
         try:

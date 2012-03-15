@@ -5,3 +5,4 @@ hachoir_metadata
 hachoir_core
 hachoir_parser
 sqlalchemy
+python-docx

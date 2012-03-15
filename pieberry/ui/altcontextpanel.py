@@ -272,12 +272,11 @@ class EditableText(wx.Panel):
     def _exit_edit(self):
         self.dtext.Hide()
         self.stext.Show()
-        if self.dtext.GetValue() == self.settext: 
-            self.Layout()
-            return
-        self.SetValue(self.dtext.GetValue())
         self.Layout()
         self.GetParent().Layout()
+        if self.dtext.GetValue() == self.settext: 
+            return
+        self.SetValue(self.dtext.GetValue())
         newevt = PieContextPanelFieldEvent(
             objattr=self._objattr,
             objattrval=self.GetValue())
@@ -285,12 +284,9 @@ class EditableText(wx.Panel):
         print 'EditableText._exit_edit : event emitted'
 
     def SetValue(self, txt):
-        # print 'MYSIZE', self.GetSize()
-        # print type(txt), ':', len(txt), ':', txt
         if len(txt) == 0: txt = _(u'[click to edit]')
         dc = wx.WindowDC(self.stext)
         self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
-        # self.stext.SetLabel(txt)
         self.dtext.SetValue(txt)
         self.settext = txt
 
@@ -302,6 +298,13 @@ class EditableText(wx.Panel):
         r = self.dtext.GetValue()
         if r == _('[click to edit]'): r = u''
         return r
+
+MAP_LOCNS = {
+    'cachedir': _('Cached'),
+    'meetingpaperdir': _('Meeting Papers'),
+    'librarydir': _('Library'),
+    'projectdir': _('Projects')
+    }
 
 class FundInfoPanel(wx.Panel):
     def __init__(self, parent, id, bigparent, *args, **kwargs):
@@ -325,6 +328,10 @@ class FundInfoPanel(wx.Panel):
         self.date_lb.SetFont(boldfont)
         self.date_ct = wx.StaticText(self, -1, '')
         self.date_ct.SetFont(normalfont)
+        self.locn_lb = wx.StaticText(self, -1, _('Location:'))
+        self.locn_lb.SetFont(boldfont)
+        self.locn_ct = wx.StaticText(self, -1, '')
+        self.locn_ct.SetFont(normalfont)
         
         self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
@@ -335,6 +342,8 @@ class FundInfoPanel(wx.Panel):
         self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.date_lb, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.date_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.locn_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.locn_ct, 0, wx.LEFT|wx.RIGHT, 3)
 
         # self.sizer0.Add((5,5))
         # self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
@@ -358,6 +367,10 @@ class FundInfoPanel(wx.Panel):
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
         self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
+        if obj.FileData_Root in MAP_LOCNS.keys():
+            self.locn_ct.SetLabel(MAP_LOCNS[obj.FileData_Root])
+        else:
+            self.locn_ct.SetLabel(_('Library'))
         self.fgsizer.Layout()
         # self.sizer0.Layout()
         self.Layout()
