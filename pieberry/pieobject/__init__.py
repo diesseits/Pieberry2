@@ -158,7 +158,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             if self.FileData_FileName:
                 return self.FileData_FileName
         if atom_title_hack and self.FileData_FileName:
-            if self.FileData_Root == 'projectdir':
+            if self.FileData_Root in ('projectdir', 'meetingpaperdir'):
                 return "%s [%s]" % (self.title, self.FileData_FileName)
         return self.title
 
