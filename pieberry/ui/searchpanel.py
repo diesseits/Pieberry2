@@ -93,24 +93,15 @@ class SearchToolsPanel(wx.Panel):
         sizer = wx.BoxSizer(wx.VERTICAL)
         hsizer_top = wx.BoxSizer(wx.HORIZONTAL)
 
-        # lbl = wx.StaticText(self, -1, _("Search:"), style=wx.EXPAND)
         self.originchoice = wx.Choice(self, -1, choices=origin_choices)
         self.originchoice.SetSelection(0)
         self.searchctrl = wx.SearchCtrl(
             self, -1, style = wx.TE_PROCESS_ENTER|wx.EXPAND|wx.WANTS_CHARS)
         self.fieldchoice = wx.Choice(self, -1, choices=searchable_fields)
         self.fieldchoice.SetSelection(0)
-        # self.closebutton = wx.BitmapButton(
-        #     self, -1, 
-        #     wx.ArtProvider.GetBitmap(wx.ART_CROSS_MARK, 
-        #                              wx.ART_TOOLBAR, (16, 16)), 
-        #     style=wx.NO_BORDER)
-
-        # hsizer_top.Add(lbl, 0, wx.ALL, 5)
         hsizer_top.Add(self.originchoice, 0, wx.ALL, 5)
         hsizer_top.Add(self.searchctrl, 1, wx.ALL, 5)
         hsizer_top.Add(self.fieldchoice, 0, wx.ALL, 5)
-        # hsizer_top.Add(self.closebutton, 0, wx.ALL, 5)
 
         sizer.Add(hsizer_top, 1, wx.EXPAND, 0)
         self.SetSizer(sizer)
@@ -119,7 +110,7 @@ class SearchToolsPanel(wx.Panel):
         self.searchctrl.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.OnSearch)
         self.searchctrl.Bind(wx.EVT_TEXT_ENTER, self.OnSearch)
         self.searchctrl.Bind(wx.EVT_KEY_UP, self.OnChar)
-        # self.closebutton.Bind(wx.EVT_BUTTON, self.OnClose)
+        # self.Bind(wx.EVT_CHAR_HOOK, self.OnChar)
         if origin:
             assert origin in origin_choice_codes
             self.originchoice.SetSelection(origin_choice_codes.index(origin))

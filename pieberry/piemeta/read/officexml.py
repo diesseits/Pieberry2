@@ -1,6 +1,6 @@
 # Metadata extraction from office xml data formats
 
-import zipfile, BeautifulSoup, os, os.path, sys, re, datetime
+import zipfile, BeautifulSoup, os, os.path, sys, re, datetime, traceback
 from pprint import pprint
 from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieobject.paths import auto_increment_fn
@@ -11,7 +11,7 @@ def get_oxml_metadata(fn):
     r = {}
     unzipped = zipfile.ZipFile(fn)
     bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'docProps/core.xml'))
-    r['title'] = bs.find(u'dc:title').text
+    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
     r['author'] = bs.find(u'dc:creator').text
     r['creation_date'] = datetime.datetime.strptime(
         bs.find('dcterms:created').text, "%Y-%m-%dT%H:%M:%SZ")
@@ -33,6 +33,7 @@ def get_oxml_metadata_object(fn):
     try:
         d = get_oxml_metadata(fn)
     except:
+        traceback.print_exc()
         print 'Parsing oxml document %s failed' % fn
         return obj
     obj.author = d['author']
