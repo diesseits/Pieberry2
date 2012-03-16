@@ -1,5 +1,9 @@
 from pieberry.pieconfig.globalvars import DEBUG
-from pdfrw import PdfWriter, PdfReader
+import sys
+if sys.platform in ('linux2', 'linux3'):
+    from pieberry.pdfrw import PdfWriter, PdfReader
+else:
+    from pdfrw import PdfWriter, PdfReader
 import os.path
 
 def write_pdf_metadata(obj):

@@ -4,7 +4,10 @@ from pieberry.pieobject import PieObject
 
 from pieberry.pieobject.paths import auto_increment_fn
 from pieberry.pieconfig.paths import CACHEDIR
-from pdfrw import PdfReader
+if sys.platform in ('linux2', 'linux3'):
+    from pieberry.pdfrw import PdfReader
+else:
+    from pdfrw import PdfReader
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 def pdfrw_object(fn):

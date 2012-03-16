@@ -19,6 +19,8 @@ def GetAppdir():
     return retval
 
 def main():
+    print '__file__ =', __file__
+    
     frozen = getattr(sys, 'frozen', '')
 
     if not frozen:
