@@ -318,6 +318,12 @@ class FunctionMainWindow(BaseMainWindow):
                 wx.MessageBox(_('Database Integrity Error - You are probably trying to use a BibTeX key that is already in use. Changes made to this item have been rolled back. Apologies.'), style=wx.ICON_ERROR)
                 session.rollback()
                 return
+        if (evt.obj.has_aspect('hasfile') 
+            and evt.obj.FileData_FileType == 'pdf'
+            and PIE_CONFIG.getboolean('Format', 'write_pdf_metadata')):
+            success = piemeta.write_metadata_to_object(evt.obj)
+            st = _('Updated pdf metadata') if success else _('Didn\'t update pdf metadata')
+            self.StatusBar.SetStatusText(st)
         # Update the ui reflecting changes
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)
