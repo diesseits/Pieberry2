@@ -1,4 +1,4 @@
-# Metadata extraction from office xml data formats
+# Metadata extraction from Open Document Foundation data formats
 
 import zipfile, BeautifulSoup, os, os.path, sys, re, datetime, traceback
 from pprint import pprint
@@ -7,24 +7,24 @@ from pieberry.pieobject.paths import auto_increment_fn
 from pieberry.pieconfig.globalvars import DEBUG
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
-def get_oxml_metadata(fn):
+def get_odf_metadata(fn):
     r = {}
     unzipped = zipfile.ZipFile(fn)
-    bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'docProps/core.xml'))
+    bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'meta.xml'))
     r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
     r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else ''
     r['description'] = bs.find(u'dc:description') if bs.find(u'dc:description') else None
     r['subject'] = bs.find(u'dc:subject') if bs.find(u'dc:subject') else None
     r['creation_date'] = datetime.datetime.strptime(
-        bs.find('dcterms:created').text[:19], "%Y-%m-%dT%H:%M:%S")
+        bs.find('meta:creation-date').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['modification_date'] = datetime.datetime.strptime(
-        bs.find('dcterms:modified').text[:19], "%Y-%m-%dT%H:%M:%S")
+        bs.find('dc:date').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['creation_date_guessed'] = False
     r['metadata_is_replaceable'] = False
     unzipped.close()
     return r
 
-def get_oxml_metadata_object(fn):
+def get_odf_metadata_object(fn):
     # if sys.platform == 'win32':
     #     newfn = os.path.join(CACHEDIR, 'Workaround', os.path.basename(fn))
     #     if os.path.isfile(newfn):
@@ -33,7 +33,7 @@ def get_oxml_metadata_object(fn):
     #     fn = newfn
     obj = get_fake_metadata_object(fn)
     try:
-        d = get_oxml_metadata(fn)
+        d = get_odf_metadata(fn)
     except:
         traceback.print_exc()
         print 'Parsing oxml document %s failed' % fn
@@ -46,8 +46,8 @@ def get_oxml_metadata_object(fn):
     if d['description']: obj.BibData_Annote = d['description']
     return obj
 
-def get_oxml_metadata_for_aspect(obj):
-    return get_oxml_metadata(obj.FileData_FullPath)
+def get_odf_metadata_for_aspect(obj):
+    return get_odf_metadata(obj.FileData_FullPath)
 
 if __name__ == '__main__':
     pprint(get_oxml_metadata('test.docx'))

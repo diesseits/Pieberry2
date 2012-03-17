@@ -24,6 +24,8 @@ def get_metadata_object(fn, fakeonly=False):
         return get_pdf_metadata_object(fn)
     if ft == 'oxml_doc':
         return get_oxml_metadata_object(fn)
+    if ft == 'odf_doc':
+        return get_odf_metadata_object(fn)
     if ft in ('word_doc', 'hachoir_other'):
         return get_real_metadata_object(fn)
     return get_fake_metadata_object(fn)
@@ -42,6 +44,8 @@ def get_metadata_for_aspect(obj):
         return get_pdf_metadata_for_aspect(obj)
     if ft == 'oxml_doc':
         return get_oxml_metadata_for_aspect(obj)
+    if ft == 'odf_doc':
+        return get_odf_metadata_for_aspect(obj)
     if ft in ('word_doc', 'hachoir_other'):
         return get_real_metadata_for_aspect(obj)
     return get_fake_metadata_for_aspect(obj)

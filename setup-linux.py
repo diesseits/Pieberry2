@@ -49,5 +49,5 @@ setup(name='pieberry-library-assistant',
       package_data = {
         'pieberry.ui': ['*.png', '*.ico'],
         },
-      scripts = ['runpieberry',],
+      scripts = ['runpieberry', 'pieberry-library-assistant'],
       )

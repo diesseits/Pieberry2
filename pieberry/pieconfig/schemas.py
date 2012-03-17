@@ -23,24 +23,25 @@ PROFILE_KEYS = (
 FEXTENSIONS = {'pdf': ('.pdf',),
                'word_doc': ('.doc', '.rtf', '.xls', '.ppt'),
                'oxml_doc': ('.docx', '.docm', '.xlsx', '.xlsm', '.pptx', '.pptm'),
+               'odf_doc': ('.odt', '.odf', '.ods', '.odp'),
                'html': ('.htm', '.html'),
                'plaintext': ('.txt', '.org'),
                'hachoir_other': ('.zip',)
                }
 
-PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc', 'oxml_doc')
+PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc', 'oxml_doc', 'odf_doc')
 PIE_TYPES_ALL = ('pdf', 'word_doc', 'html', 'plaintext', 'hachoir_other', 'oxml_doc')
 
 #map mime types to internal generic types
 MIMEMAP = {'application/pdf': 'pdf',
            'application/msword': 'word_doc',
            'application/vnd.ms-office': 'word_doc',
-           'application/vnd.oasis.opendocument.presentation': 'word_doc',
-           'application/vnd.oasis.opendocument.text': 'word_doc',
-           'application/vnd.oasis.opendocument.spreadsheet': 'word_doc',
-           'application/vnd.sun.xml.calc': 'word_doc',
-           'application/vnd.sun.xml.writer': 'word_doc',
-           'application/vnd.sun.xml.impress': 'word_doc',
+           'application/vnd.oasis.opendocument.presentation': 'odf_doc',
+           'application/vnd.oasis.opendocument.text': 'odf_doc',
+           'application/vnd.oasis.opendocument.spreadsheet': 'odf_doc',
+           'application/vnd.sun.xml.calc': 'odf_doc',
+           'application/vnd.sun.xml.writer': 'odf_doc',
+           'application/vnd.sun.xml.impress': 'odf_doc',
            'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'oxml_doc',
            'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'oxml_doc',
            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'oxml_doc',
