@@ -129,9 +129,11 @@ class atomActionWindow(wx.ScrolledWindow):
         if self.mouseoverbmp == rowid:
             obj = self.rowdata[rowid]
             ttdata = string.join([
-                    'Author: %s' % obj.Author(),
-                    'Title: %s' % obj.Title(),
-                    'Date: %s' % obj.ReferDate().ctime()
+                    u'Author: %s' % obj.Author(),
+                    u'Title: %s' % obj.Title(),
+                    u'Date: %s' % obj.ReferDate().ctime(),
+                    u'File type: %s' % obj.FileData_FileType,
+                    u'File size: %dkb' % (obj.FileData_Size / 1000),
                     ], u'\n')
             self.tw = wx.TipWindow(self, ttdata, maxLength=300)
     
