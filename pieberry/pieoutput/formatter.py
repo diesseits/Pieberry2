@@ -121,8 +121,39 @@ class Formatter(FormatterBase):
     def format_Misc(self, e):
         return self.format_booklet(e)
 
+    def format_online(self, e):
+        return self.format_booklet(e)
+
     def format_other(self, e):
         return self.format_booklet(e)
+
+    def format_mastersthesis(self, e):
+        template = toplevel [
+            sentence [self.format_names('author')],
+            sentence [tag('emph') [field('title')]],
+            sentence [
+                'Masters Thesis',
+                field('school'),
+                optional_field('address'),
+                date,
+                optional_field('note')
+                ]
+            ]
+        return template.format_data(e)
+
+    def format_phdthesis(self, e):
+        template = toplevel [
+            sentence [self.format_names('author')],
+            sentence [tag('emph') [field('title')]],
+            sentence [
+                'PhD Thesis',
+                field('school'),
+                optional_field('address'),
+                date,
+                optional_field('note')
+                ]
+            ]
+        return template.format_data(e)
 
     def format_booklet_with_url(self, e):
         template = toplevel [
@@ -177,6 +208,26 @@ class Formatter(FormatterBase):
         ]
         return template.format_data(e)
 
+    def format_techreport(self, e):
+        template = toplevel [
+            sentence [self.format_names('author')],
+            self.format_title(e, 'title'),
+            sentence [
+                words[
+                    first_of [
+                        optional_field('type'),
+                        'Technical Report',
+                    ],
+                    optional_field('number'),
+                ],
+                field('institution'),
+                optional_field('address'),
+                date,
+            ],
+            sentence(capfirst=False) [ optional_field('note') ],
+        ]
+        return template.format_data(e)
+
 
     def format_inbook(self, e):
         template = toplevel [
@@ -195,5 +246,61 @@ class Formatter(FormatterBase):
                 date,
                 optional_field('note'),
             ]
+        ]
+        return template.format_data(e)
+
+    def format_unpublished(self, e):
+        template = toplevel [
+            sentence [self.format_names('author')],
+            self.format_title(e, 'title'),
+            sentence(capfirst=False) [
+                field('note'),
+                optional[ date ]
+            ],
+        ]
+        return template.format_data(e)
+
+    def format_inproceedings(self, e):
+        template = toplevel [
+            sentence [self.format_names('author')],
+            self.format_title(e, 'title'),
+            words [
+                'In',
+                sentence(capfirst=False) [
+                    optional[ self.format_editor(e, as_sentence=False) ],
+                    self.format_btitle(e, 'booktitle', as_sentence=False),
+                    self.format_volume_and_series(e, as_sentence=False),
+                    optional[ pages ],
+                ],
+                self.format_address_organization_publisher_date(e),
+            ],
+            sentence(capfirst=False) [ optional_field('note') ],
+        ]
+        return template.format_data(e)
+
+    def format_proceedings(self, e):
+        template = toplevel [
+            first_of [
+                # there are editors
+                optional [
+                    join(' ')[
+                        self.format_editor(e),
+                        sentence [
+                            self.format_btitle(e, 'title', as_sentence=False),
+                            self.format_volume_and_series(e, as_sentence=False),
+                            self.format_address_organization_publisher_date(e),
+                        ],
+                    ],
+                ],
+                # there is no editor
+                optional_field('organization'),
+                sentence [
+                    self.format_btitle(e, 'title', as_sentence=False),
+                    self.format_volume_and_series(e, as_sentence=False),
+                    self.format_address_organization_publisher_date(
+                        e, include_organization=False),
+                ],
+            ],
+            sentence(capfirst=False) [ optional_field('note') ],
         ]
         return template.format_data(e)
