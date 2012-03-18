@@ -37,7 +37,7 @@ def pybtex_to_pieberry(key, ent):
             person.text = unicode(person)
     formatter = Formatter()
     formatted_names = formatter.format_people(ent)
-    rendered_names = formatted_names.render(plaintext.Writer()).rstrip('.')
+    rendered_names = formatted_names.render(plaintext.Backend()).rstrip('.')
     corpnamehere = re_corpname.match(rendered_names)
     if not ent.fields.has_key('year'):
         raise Exception, "No valid date for this item"

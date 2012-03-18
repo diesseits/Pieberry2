@@ -6,10 +6,12 @@ from pieberry.pieconfig.schemas import bibtexmap
 
 from pieberry.pieutility.latex import escape_bad_latex_chars as eblc
 from pieberry.pieutility.latex import unescape_bad_latex_chars as ublc
+from pieberry.pieutility.latex import protect_caps
 from pieberry.pieutility.bibtex import *
 
-from pieberry.pieoutput.formatter import Formatter
+# from pieberry.pieoutput.formatter import Formatter
 
+from pybtex.style.formatting.unsrt import Style as Formatter
 from pybtex.richtext import Text, Tag
 from pybtex.backends import latex, html, plaintext
 from pybtex.bibtex.utils import split_name_list
@@ -22,12 +24,12 @@ re_href = re.compile(r'\\href\{(.+?)\}\{(.+?)\}')
 re_corpname = re.compile(r'^\{(.+?)\}(.*)')
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
-def get_pybtex_object(obj, texify=False):
+def get_pybtex_object(obj, texify=True):
     '''convert from PieObject to a pybtex Entry'''
     def f_(text):
         if type(text) in (str, unicode):
             if texify:
-                return eblc(text)
+                return eblc(protect_caps(text, True))
             else:
                 return text
         else: #this ain't text, don't touch it
@@ -37,6 +39,7 @@ def get_pybtex_object(obj, texify=False):
         raise KeyError, 'Necessary fields missing - BibTeX type'
 
     pybtex_entry = Entry(obj.BibData_Type.lower())
+    key_set = False
     
     for btkey, objfield in bibtexmap.items():
         # if btkey == 'publisher':
@@ -63,8 +66,11 @@ def get_pybtex_object(obj, texify=False):
         elif btkey == 'url':
             pybtex_entry.fields[btkey] = f_(obj.Url())
             continue
+        elif btkey == 'pie_bibdatakey':
+            pybtex_entry.key = getattr(obj, objfield) 
+            key_set = True
         elif btkey in ('bttype', 'pie_corpauthor',
-                       'pie_datepublished', 'pie_bibdatakey'):
+                       'pie_datepublished'):
             continue
         # elif type(getattr(obj, objfield) == datetime.datetime):
         #     continue
@@ -77,6 +83,7 @@ def get_pybtex_object(obj, texify=False):
         # then we disbelieve it and assume that only the year has been
         # set.
         pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
+    if not key_set: pybtex_entry.key = 'nominal_key'
     pybtex_entry.fields['year'] = obj.ReferDate().strftime('%Y')
     pprint(pybtex_entry.fields)
     return pybtex_entry
@@ -86,13 +93,14 @@ def get_formatted_citation(e, key='k', format='html'):
     '''Return a string containing a formatted citation for a given
     _PybTeX_ entry (not a PieObject)'''
     formatter = Formatter()
-    ents = ((key, e),)
+    # ents = ((key, e),)
+    ents = (e,)
     formatted_data = formatter.format_entries(ents)
     for d in formatted_data:
         if format == 'html':
-            rendered_data = d.text.render(html.Writer())
+            rendered_data = d.text.render(html.Backend())
         else:
-            rendered_data = d.text.render(plaintext.Writer())
+            rendered_data = d.text.render(plaintext.Backend())
     # get hrefs in order
     href_search = re_href.search(rendered_data)
     output_data = None
