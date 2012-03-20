@@ -17,6 +17,7 @@ from pieberry.pieobject.website import PieWebsite, referable_website, validify_d
 from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.pieconfig.paths import ROOT_MAP
 from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
+from pieberry.pieutility.latex import untexify
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
@@ -151,16 +152,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         else:
             raise AttributeError
 
-    def Title(self, atom_title_hack=False):
+    def Title(self, atom_title_hack=False, texstuff=False):
         if not self.title:
             if self.WebData_LinkText:
                 return self.WebData_LinkText
             if self.FileData_FileName:
                 return self.FileData_FileName
+        ttl = untexify(self.title) if not texstuff else self.title
         if atom_title_hack and self.FileData_FileName:
             if self.FileData_Root in ('projectdir', 'meetingpaperdir'):
-                return "%s [%s]" % (self.title, self.FileData_FileName)
-        return self.title
+                return "%s [%s]" % (ttl, self.FileData_FileName)
+        return ttl
 
     def Author(self, favour_corporate=False):
         if favour_corporate and self.corpauthor:

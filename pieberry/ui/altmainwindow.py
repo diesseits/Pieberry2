@@ -103,7 +103,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_import_bibtex.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         self.menu_filter = wx.MenuItem(
-            locateMenu, -1, _('Fi&lter\tCtrl-shift-i'), _('Filter the items in the current view'))
+            locateMenu, -1, _('Fil&ter\tCtrl-t'), _('Filter the items in the current view'))
         self.menu_toggle_context = wx.MenuItem(
             viewMenu, -1, _('&Toggle context panel'))
         self.menu_toggle_context.SetCheckable(True)

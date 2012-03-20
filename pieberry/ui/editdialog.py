@@ -237,7 +237,7 @@ class PieBibEditDialog(wx.Dialog):
         if obj.filemetadata.has_key('author'):
             if type(obj.filemetadata['author']) in (unicode, str):
                 self.authorAltCtrl.SetValue(obj.filemetadata['author'])
-        self.titleCtrl.SetValue(obj.Title())
+        self.titleCtrl.SetValue(obj.Title(texstuff=True))
         if obj.filemetadata.has_key('title'):
             if type(obj.filemetadata['title']) in (unicode, str):
                 self.titleAltCtrl.SetValue(obj.filemetadata['title'])

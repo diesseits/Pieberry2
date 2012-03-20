@@ -117,7 +117,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
             pieberry.pieutility.open_file(it.FileData_FullPath)
             it.stats_opened()
         elif it.WebData_Url:
-            pieberry.pieutility.open_url(it.WebData_Url)
+            pieberry.pieutility.open_web_file(it.WebData_Url)
             it.stats_opened()
         else:
             return

@@ -428,10 +428,6 @@ class FavBitmapButton(ThemedGenBitmapToggleButton):
         wx.lib.buttons.ThemedGenBitmapToggleButton.__init__(self, parent, id, imageup)
         self.SetBitmapSelected(imagedown)
 
-
-
-
-
 class FBBPanel(wx.Panel):
     '''Panel to mount the favourite button on'''
     def __init__(self, parent, id, bigparent):

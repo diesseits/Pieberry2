@@ -107,10 +107,10 @@ class AwareChar:
                 return True
             else: return False
         if self.following_char in ignorers:
-            print self.char, 'returning true because next char in ignorers'
+            # print self.char, 'returning true because next char in ignorers'
             return True
         if self.following_char.isspace(): 
-            print self.char, 'returning true because next char is whitespace'
+            # print self.char, 'returning true because next char is whitespace'
             return True
         return False
 
@@ -159,7 +159,7 @@ def protect_caps(plainstring, save_all=False):
             # if there's a contiguous set of caps, assess if it looks
             # like an acronym and append it to the preservation list
             if pa_end > pa_st:
-                if awarestr[pa_end].endsword() or save_all:
+                if (ch.startsword() and awarestr[pa_end].endsword()) or save_all:
                     # print awarestr[pa_end].char, 'ENDS WORD'
                     preserves.append((pa_st, pa_end))
             elif save_all: preserves.append((ch.idx, ch.idx))
@@ -179,7 +179,7 @@ def protect_caps(plainstring, save_all=False):
     return r
 
 if __name__ == '__main__':
-    thestr = u'The QUICK Brown fOx "Jumped" 0Over the LAzI2000 d0G'
+    thestr = u'The {QUICK} Brown fOx "Jumped" ov{ERZ} {t}he LAzI2000 d0G'
     print thestr
     print protect_caps(thestr, False)
 

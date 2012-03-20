@@ -29,7 +29,7 @@ def get_pybtex_object(obj, texify=True):
     def f_(text):
         if type(text) in (str, unicode):
             if texify:
-                return eblc(protect_caps(text, True))
+                return eblc(protect_caps(text, False))
             else:
                 return text
         else: #this ain't text, don't touch it
@@ -57,7 +57,7 @@ def get_pybtex_object(obj, texify=True):
                 pybtex_entry.add_person(Person(name), btkey)
             continue 
         elif btkey == 'title':
-            pybtex_entry.fields[btkey] = f_(obj.Title())
+            pybtex_entry.fields[btkey] = f_(obj.Title(texstuff=True))
             continue
         elif type(getattr(obj, objfield)) not in (str, unicode):
             continue

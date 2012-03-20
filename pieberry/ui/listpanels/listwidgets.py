@@ -223,7 +223,11 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
             self.currentitem, 
             '')
         self.SetStringItem(nexidx, 1, obj.Author())
-        self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        # BUG: datetime has a hissy for strftimes before 1900
+        if obj.ReferDate().year <= 1900:
+            self.SetStringItem(nexidx, 2, str(obj.ReferDate().year))
+        else:
+            self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
         self.SetStringItem(nexidx, 3, obj.Title())
         # nexidx = self.InsertStringItem(self.currentitem, statusmsg)
         # self.SetStringItem(nexidx, 1, obj.WebData_LinkText)

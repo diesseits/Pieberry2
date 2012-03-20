@@ -51,6 +51,9 @@ class BibListPanel(BaseListPanel):
     def onKeyDown(self, evt):
         keycode = evt.GetKeyCode()
         # print keycode
+        if evt.HasModifiers():
+            evt.Skip()
+            return
         if keycode == ord('F'):
             nevt = SpoofEvt(self.GetSelectedItem().StatData_FollowUpFlag)
             self.onFlagFollowUp(nevt)
