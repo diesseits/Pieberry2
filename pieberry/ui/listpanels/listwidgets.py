@@ -171,7 +171,7 @@ class BibListCtrl(BaseListCtrl):
             self.currentitem, 
             '', 
             MessageType[msgtype])
-        if obj.notes: self.SetStringItem(nexidx, 1, u'\u270D')
+        if obj.notes: self.SetStringItem(nexidx, 1, u'\u270D') # writing pen
         else: self.SetStringItem(nexidx, 1, '')
         self.SetStringItem(nexidx, 2, obj.Author())
         self.SetStringItem(nexidx, 3, str(obj.ReferDate().strftime('%Y-%m-%d')))
@@ -189,7 +189,7 @@ class BibListCtrl(BaseListCtrl):
         self.itemDataMap[ref] = [msgtype,
                                  1 if obj.notes else 0,
                                  obj.Author(), 
-                                 str(obj.ReferDate()),#.year),
+                                 str(obj.ReferDate()),
                                  obj.Title()]
         self.currentitem += 1
         self.EnsureVisible(nexidx)

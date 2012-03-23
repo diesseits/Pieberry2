@@ -11,7 +11,7 @@ from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
 from pieberry.piescrape import *
 from pieberry.piescrape.execfn import download_file
-from pieberry.ui.altmainwindow import BaseMainWindow 
+from pieberry.ui.mainwindow import BaseMainWindow 
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import *
 from pieberry.ui.timers import FileIndexTimer
