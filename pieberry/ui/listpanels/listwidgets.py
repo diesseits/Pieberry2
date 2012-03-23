@@ -219,6 +219,7 @@ class BibListCtrl(BaseListCtrl):
                 self.SetItemTextColour(idx, 'red')
             else:
                 self.SetItemTextColour(idx, 'purple')
+        else: self.SetItemTextColour(idx, wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
 
     def _set_itemdata(self, idx, ref, obj):
         '''Set relevant data in the listctrl's data stores: for row:

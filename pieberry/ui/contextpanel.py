@@ -83,7 +83,8 @@ class BetterContextPanel(wx.Panel):
         self.web_win.SetObject(obj)
         self.bib_win.SetObject(obj)
         self.file_win.SetObject(obj)
-        # self.bar.RedisplayFoldPanelItems()
+        self.bar.RedisplayFoldPanelItems()
+        self.bar.RefreshPanelsFrom(self.fund_fp)
 
     def OnFieldEdit(self, evt):
         self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))
@@ -290,7 +291,7 @@ MAP_LOCNS = {
 
 class FundInfoPanel(wx.Panel):
     def __init__(self, parent, id, bigparent, *args, **kwargs):
-        kwargs['size'] = (80,140)
+        # kwargs['size'] = (80,140)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.bigparent = bigparent
         self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
@@ -329,12 +330,14 @@ class FundInfoPanel(wx.Panel):
         self.fgsizer.Add(self.date_ct, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.locn_lb, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.locn_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add((5,5))
 
         # self.sizer0.Add((5,5))
         # self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
         # self.SetSizer(self.sizer0)
         self.SetSizer(self.fgsizer)
         self.Layout()
+        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
 
     def SetObject(self, obj):
         # print 'COLWIDTHS', self.fgsizer.GetColWidths()
@@ -359,8 +362,9 @@ class FundInfoPanel(wx.Panel):
         else:
             self.locn_ct.SetLabel(_('Library'))
         self.fgsizer.Layout()
+        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
         # self.sizer0.Layout()
-        self.Layout()
+        # self.Layout()
 
     def GetFavourite(self):
         return self.favpanel.BMB.GetValue()
