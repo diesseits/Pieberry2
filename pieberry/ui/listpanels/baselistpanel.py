@@ -10,6 +10,15 @@ from pieberry.ui.listpanels.listwidgets import *
 from pieberry.pieobject import *
 from pieberry.ui.listpanels.menufunctions import *
 
+class BaseSpoofEvt:
+    '''Spoof a mouse right click event'''
+    def __init__(self, idx):
+        self.idx = idx
+    def GetIndex(self):
+        return self.idx
+    def GetPoint(self):
+        return 5, 5
+
 class BaseListPanel(wx.Panel, MenuFunctionsMixin):
     '''Basic class for displaying and working with "results"'''
 
@@ -33,6 +42,17 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
     def __do_base_bindings(self):
         wx.EVT_LIST_ITEM_RIGHT_CLICK(self.ListDisplay, -1, self._makemenu)
         self.ListDisplay.Bind(wx.EVT_LIST_BEGIN_DRAG, self.onLeftDown)
+        self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self._base_key_down)
+
+    def _base_key_down(self, evt):
+        keycode = evt.GetKeyCode()
+        if evt.HasModifiers():
+            evt.Skip()
+            return
+        if keycode == 309: # if menu key pressed
+            newevt = BaseSpoofEvt(self.ListDisplay.currentitem)
+            self._makemenu(newevt)
+        evt.Skip()
 
     def _makemenu(self, evt):
         '''Prepare to create and display a context menu. Calls a

@@ -114,7 +114,7 @@ class BibInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
         kwargs['size'] = (80,80)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
-        self.Html = wx.html.HtmlWindow(self, -1)
+        self.Html = wx.html.HtmlWindow(self, -1, size=(80,80))
         self._do_layout()
 
     def _do_layout(self):
@@ -122,6 +122,7 @@ class BibInfoPanel(wx.Panel):
         self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
         self.SetSizer(self.sizer)
         self.Layout()
+        # wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
     def SetObject(self, obj):
         self.sizer.Remove(self.Html)
@@ -136,6 +137,10 @@ class BibInfoPanel(wx.Panel):
             info['date'] = obj.BibData_DatePublished.strftime('%d %B %Y') if obj.BibData_DatePublished.year >= 1900 else fmtdate(obj.BibData_DatePublished)
         else: info['date'] = 'None'
         self.Html.AppendToPage(bibhtml % info)
+        self.Layout()
+        # wx.Panel.SetSize(self, self.sizer.GetMinSize())
+
+
 
 filehtml = _('''
 <body bgcolor="%(color)s">
@@ -150,7 +155,6 @@ filehtml = _('''
 
 class FileInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
-        kwargs['size'] = (80,160)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.locte = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_CHARWRAP)
         self.Html = wx.html.HtmlWindow(self, -1)
@@ -163,6 +167,7 @@ class FileInfoPanel(wx.Panel):
         self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
         self.SetSizer(self.sizer)
         self.Layout()
+        wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
     def SetObject(self, obj):
         self.locte.SetValue(unicode(obj.FileData_FullPath))
@@ -178,10 +183,10 @@ class FileInfoPanel(wx.Panel):
         info['type'] = unicode(obj.FileData_FileType)
         info['size'] = fsize
         self.Html.AppendToPage(filehtml % info)
+        wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
 class WebInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
-        kwargs['size'] = (80,30)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
 
         self.urlDisplay = wx.HyperlinkCtrl(self, -1, 'empty', 'empty')
@@ -192,6 +197,7 @@ class WebInfoPanel(wx.Panel):
         self.sizer.Add(self.urlDisplay, 0, wx.ALL|wx.EXPAND, 5)
         self.SetSizer(self.sizer)
         self.Layout()
+        wx.Panel.SetSize(self, self.sizer.GetMinSize())
         
     def SetObject(self, obj):
         if not obj.Url():
@@ -204,7 +210,7 @@ class WebInfoPanel(wx.Panel):
         else:
             self.urlDisplay.SetLabel(_('From %s') % urlsplit(obj.Url())[1])
         self.urlDisplay.Refresh()
-
+        wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
