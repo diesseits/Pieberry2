@@ -301,6 +301,7 @@ class FundInfoPanel(wx.Panel):
 
         self.title_ct = EditableText(self, -1, '', objattr='title')
         # self.title_ct.SetFont(itfont)
+        self.dings_ct = wx.StaticText(self, -1, u'')
         self.auth_lb = wx.StaticText(self, -1, _('Author:'))
         self.auth_lb.SetFont(boldfont)
         self.auth_ct = EditableText(self, -1, '', objattr='author')
@@ -319,6 +320,8 @@ class FundInfoPanel(wx.Panel):
 
         self.fgsizer.Add(self.favpanel)
         self.fgsizer.Add(self.title_ct, 1, wx.ALL, 3)
+        self.fgsizer.Add((5,5))
+        self.fgsizer.Add(self.dings_ct, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.auth_lb, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.auth_ct, 1, wx.EXPAND|wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.date_lb, 0, wx.LEFT|wx.RIGHT, 3)
@@ -345,6 +348,7 @@ class FundInfoPanel(wx.Panel):
         self.title_ct.SetValue(obj.Title())
         # self.favpanel.SetTitle(obj.Title())
         # print 'Setting author'
+        self.dings_ct.SetLabel(compile_infostring(obj))
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
         self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
@@ -358,7 +362,36 @@ class FundInfoPanel(wx.Panel):
 
     def GetFavourite(self):
         return self.favpanel.BMB.GetValue()
+    
+aspectmap = {
+    'onweb': u'\u2706',
+    'ondesktop': u'',
+    'cached': u'',
+    'saved': u'',
+    'stored': u'',
+    'hasfile': u'\u2707',
+    'failed_dl': u'',
+    'bibdata': u'\u2711',
+    'physical': u'\u267E'
+    }
 
+othermap = {
+    'notes': u'\u270D',
+    'encrypted': u'\u26BF',
+    'flagged': u'\u2691',
+    'starred': u'\u2729',
+    }
+
+def compile_infostring(obj):
+    '''Compile a string of dingbats indicating info about the
+    shown item'''
+    rs = u''
+    for asp in aspectmap.keys():
+        if obj.has_aspect(asp): rs = rs + aspectmap[asp]
+    if obj.notes: rs = rs + othermap['notes']
+    if obj.StatData_FollowUpFlag: rs = rs + othermap['flagged']
+    if obj.StatData_Favourite: rs = rs + othermap['starred']
+    return rs
         
 class FavBitmapButton(ThemedGenBitmapToggleButton):
     image_up = os.path.join(IMGDIR, 'ic_silverstar22.png')
