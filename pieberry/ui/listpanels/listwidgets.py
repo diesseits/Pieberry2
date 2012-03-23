@@ -48,6 +48,16 @@ class BaseListCtrl(wx.ListCtrl,
         give also a reference to position in objectstore'''
         print 'BaseListCtrl: not implemented: AddObject'
 
+    def _set_columndata(self, idx, obj):
+        '''Set relevant data to the column at row: idx'''
+        pass
+
+    def _set_itemdata(self, idx, ref, obj):
+        '''Set relevant data in the listctrl's data stores: for row:
+        idx; using ref: the reference number for the ostore; using
+        obj: the object in question.'''
+        pass
+
     def onResize(self, evt):
         '''Resize columns on widget resize'''
         print 'BaseListCtrl: not implemented: onResize'
@@ -70,6 +80,18 @@ class BaseListCtrl(wx.ListCtrl,
         for i in range(self.GetItemCount()):
             if self.GetItemData(i) == ref:
                 wx.ListCtrl.DeleteItem(self, i)
+                break
+
+    def UpdateItem(self, ref):
+        self._set_itemdata(ref)
+
+    def UpdateItemByOstoreRef(self, ref, obj=None):
+        print 'UpdateItemByOstoreRef'
+        if not obj: obj = self.GetParent().objectstore[ref]
+        for idx in range(self.GetItemCount()):
+            if self.GetItemData(idx) == ref:
+                self._set_columndata(idx, obj)
+                self._set_itemdata(idx, ref, obj)
                 break
 
     # TODO: Functionality yet to come for tip windows
@@ -129,6 +151,21 @@ class FileListCtrl(BaseListCtrl):
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
+
+    def _set_columndata(self, idx, obj):
+        self.SetImageStringItem(
+            idx, 
+            obj.Title(), 
+            MessageType[obj.get_icon_code(window_type='filewindow')])
+            # MessageType[msgtype])
+        self.SetStringItem(idx, 1, obj.FileData_ContainingFolder)
+        self.SetStringItem(idx, 2, obj.FileData_FileName)
+
+    def _set_itemdata(self, idx, ref, obj):
+        self.SetItemData(idx, ref)
+        self.itemDataMap[ref] = (obj.Title(), 
+                                 obj.FileData_ContainingFolder,
+                                 obj.FileData_FileName)
         
     def AddObject(self, obj, ref, statusmsg=None, 
                   msgtype='success', filtertext=None):
@@ -158,6 +195,41 @@ class BibListCtrl(BaseListCtrl):
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
+
+    def _set_columndata(self, idx, obj, msgtype=None):
+        '''Set relevant data to the column at row: idx'''
+        if not msgtype:
+            msgtype = obj.get_icon_code('bibwindow')
+        # self.SetImageStringItem(
+        #     idx, 
+        #     '', 
+        #     MessageType[msgtype])
+        self.SetItemImage(idx, MessageType[msgtype])
+        # self.SetItemText(idx, '')
+        if obj.notes: self.SetStringItem(idx, 1, u'\u270D') # writing pen
+        else: self.SetStringItem(idx, 1, '')
+        self.SetStringItem(idx, 2, obj.Author())
+        self.SetStringItem(idx, 3, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        self.SetStringItem(idx, 4, obj.Title(atom_title_hack=ATH))
+        if obj.StatData_FollowUpFlag:
+            td = datetime.datetime.today() - obj.StatData_FollowUpDate
+            if td.days < PIE_CONFIG.getint('Internal', 'flagged_purpleafter'):
+                self.SetItemTextColour(nexidx, 'blue')
+            elif td.days > PIE_CONFIG.getint('Internal', 'flagged_redafter'):
+                self.SetItemTextColour(nexidx, 'red')
+            else:
+                self.SetItemTextColour(nexidx, 'purple')
+
+    def _set_itemdata(self, idx, ref, obj):
+        '''Set relevant data in the listctrl's data stores: for row:
+        idx; using ref: the reference number for the ostore; using
+        obj: the object in question.'''
+        self.SetItemData(idx, ref)
+        self.itemDataMap[ref] = [obj.get_icon_code('bibwindow'),
+                                 1 if obj.notes else 0,
+                                 obj.Author(), 
+                                 str(obj.ReferDate()),
+                                 obj.Title()]
     
     def AddObject(self, obj, ref, filtertext=None, msgtype=None):
         # print 'BibListCtrl.AddObject at %d, %s' % (self.currentitem, obj)

@@ -20,6 +20,10 @@ PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD = wx.lib.newevent.NewEven
 #              objattrval - the value to assign to the above
 PieContextPanelUpdateEvent, EVT_PIE_CONTEXT_PANEL_UPDATE = wx.lib.newevent.NewEvent()
 # attributes:  favourite (boolean)
+PieGeneralUpdateEvent, EVT_PIE_GENERAL_UPDATE = wx.lib.newevent.NewEvent()
+# all purpose update ui with new obj data event
+# attributes:  obj - the object
+#              notify_window - a listpanel to update
 PieListSelectionEvent, EVT_PIE_LIST_SELECTION_EVENT = wx.lib.newevent.NewEvent()
 # use 'ref' for objectstore reference, 'pieobject' for selected object
 PieSearchEvent, EVT_PIE_SEARCH_EVENT = wx.lib.newevent.NewEvent()

@@ -75,4 +75,8 @@ class FileListPanel(BaseListPanel):
             rcm_deleteobj.SetBitmap(wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_MENU))
             menu.AppendItem(rcm_deleteobj)
             self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deleteobj)
+        if obj.has_aspect('hasfile'):
+            rcm_renamefile = wx.MenuItem(menu, 27, _('Rename file'))
+            menu.AppendItem(rcm_renamefile)
+            self.Bind(wx.EVT_MENU, self.onRenameFile, rcm_renamefile)
 

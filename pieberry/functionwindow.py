@@ -345,7 +345,23 @@ class FunctionMainWindow(BaseMainWindow):
             pan = self.GetCurrentPane()
             pan.UpdateObject(evt.obj)
         except:
-            print 'No panel to refer to'
+            traceback.print_exc()
+
+    def HandleUpdate_Context(self, evt):
+        '''Handle a request to update the context panel - event must
+        have attribute obj'''
+        if self.ContextPane:
+            self.ContextPane.SetObject(evt.obj)
+
+    def HandleUpdate_ListPanel(self, evt):
+        '''Handle a request to update a list panel'''
+        pass
+
+    def HandleUpdate_ListPanelContext(self, evt):
+        '''Handle a request to update both a list panel and the
+        context panel'''
+        self.HandleUpdate_Context(evt)
+        self.HandleUpdate_ListPanelContext(evt)
 
     def OnNotesPaneUpdate(self, evt):
         evt.obj.notes = evt.htmlcontent

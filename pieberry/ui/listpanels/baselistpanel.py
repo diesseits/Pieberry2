@@ -90,8 +90,9 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         only work for saved objects'''
         for stidx, stobj in self.objectstore.GetNext():
             if obj == stobj:
-                self.ListDisplay.DeleteItemByOstoreRef(stidx)
-                self.ListDisplay.AddObject(obj, stidx)
+                self.ListDisplay.UpdateItemByOstoreRef(stidx, obj)
+                # self.ListDisplay.DeleteItemByOstoreRef(stidx)
+                # self.ListDisplay.AddObject(obj, stidx)
 
     def onSelectionChanged(self, evt):
         # print 'BibListPanel.onSelectionChanged'
