@@ -7,6 +7,7 @@ from pieberry.pieconfig.paths import IMGDIR
 from string import join
 from pieberry.ui.events import PieContextPanelUpdateEvent
 from urlparse import urlsplit
+from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
 
 html_fundamental = _('''
 <body bgcolor="%(color)s">
@@ -206,26 +207,6 @@ class WebInfoPanel(wx.Panel):
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
 itfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
-from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
-
-# class StaticWrapText(wx.PyControl):
-#     def __init__(self, parent, id=wx.ID_ANY, label='', pos=wx.DefaultPosition,
-#                  size=wx.DefaultSize, style=wx.NO_BORDER,
-#                  validator=wx.DefaultValidator, name='StaticWrapText'):
-#         wx.PyControl.__init__(self, parent, id, pos, size, style, validator, name)
-#         self.statictext = wx.StaticText(self, wx.ID_ANY, label, style=style)
-#         self.wraplabel = label
-#       #self.wrap()
-#     def wrap(self):
-#         self.Freeze()
-#         self.statictext.SetLabel(self.wraplabel)
-#         self.statictext.Wrap(self.GetSize().width)
-#         self.Thaw()
-#     def DoGetBestSize(self):
-#         self.wrap()
-#       #print self.statictext.GetSize()
-#         self.SetSize(self.statictext.GetSize())
-#         return self.GetSize()
 
 class EditableText(wx.Panel):
     '''A thing that will flip from a static text to a textctrl on a
@@ -378,44 +359,6 @@ class FundInfoPanel(wx.Panel):
     def GetFavourite(self):
         return self.favpanel.BMB.GetValue()
 
-
-class OldFundInfoPanel(wx.Panel):
-    def __init__(self, parent, id, bigparent, *args, **kwargs):
-        kwargs['size'] = (80,140)
-        wx.Panel.__init__(self, parent, id, *args, **kwargs)
-        self.bigparent = bigparent
-        self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
-        self.sizer0 = wx.BoxSizer(wx.VERTICAL)
-        self.sizer0.Add(self.favpanel, 0)
-        self.fundHtml = wx.html.HtmlWindow(self, -1)
-        self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 0)
-        # self.favpanel.BMB.Bind(wx.EVT_BUTTON, self.GetParent().GetParent().EmitUpdate)
-        self.SetSizer(self.sizer0)
-        self.Layout()
-
-    def SetObject(self, obj):
-        self.favpanel.SetValue(obj.StatData_Favourite)
-        if sys.platform == 'win32':
-            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 1))
-        else:
-            self.favpanel.SetTitleWidth(int(self.GetSize()[0] * 0.66))
-        self.favpanel.SetTitle(obj.Title())
-        self.sizer0.Remove(self.fundHtml)
-        self.fundHtml.Destroy()
-        self.fundHtml = wx.html.HtmlWindow(self, -1)
-        self.sizer0.Add(self.fundHtml, 1, wx.EXPAND|wx.ALL, 0)
-        self.fundHtml.AppendToPage(html_fundamental % {
-                'author': obj.Author(),
-                'title': obj.Title(),
-                'date': obj.ReferDate().strftime('%d %B %Y'),
-                'color': html_colors['kde'],
-                'tags': join([unicode(t) for t in obj.tags], ' | ')
-                })
-        # self.SetClientSize(self.sizer0.GetMinSizeTuple())
-        self.Layout()
-
-    def GetFavourite(self):
-        return self.favpanel.BMB.GetValue()
         
 class FavBitmapButton(ThemedGenBitmapToggleButton):
     image_up = os.path.join(IMGDIR, 'ic_silverstar22.png')

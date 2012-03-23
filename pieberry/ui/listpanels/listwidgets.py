@@ -152,8 +152,8 @@ class FileListCtrl(BaseListCtrl):
 
 class BibListCtrl(BaseListCtrl):
     '''Control for displaying richer bibliographic search data'''
-    columnheads = ('', _('Author'), _('Date'), _('Title'))
-    columnwidths = (20, 160, 80, 240)
+    columnheads = ('', '', _('Author'), _('Date'), _('Title'))
+    columnwidths = (20, 16, 160, 80, 240)
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
@@ -171,9 +171,11 @@ class BibListCtrl(BaseListCtrl):
             self.currentitem, 
             '', 
             MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, obj.Author())
-        self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
-        self.SetStringItem(nexidx, 3, obj.Title(atom_title_hack=ATH))
+        if obj.notes: self.SetStringItem(nexidx, 1, u'\u270D')
+        else: self.SetStringItem(nexidx, 1, '')
+        self.SetStringItem(nexidx, 2, obj.Author())
+        self.SetStringItem(nexidx, 3, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        self.SetStringItem(nexidx, 4, obj.Title(atom_title_hack=ATH))
         self.SetItemData(nexidx, ref)
         # colorise if flagged for follow up
         if obj.StatData_FollowUpFlag:
@@ -185,6 +187,7 @@ class BibListCtrl(BaseListCtrl):
             else:
                 self.SetItemTextColour(nexidx, 'purple')
         self.itemDataMap[ref] = [msgtype,
+                                 1 if obj.notes else 0,
                                  obj.Author(), 
                                  str(obj.ReferDate()),#.year),
                                  obj.Title()]
