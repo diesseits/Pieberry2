@@ -49,7 +49,7 @@ def translate_non_alphanumerics(to_translate, translate_to=u'_', strict=False):
     if strict:
         not_letters_or_digits = u'!"#%\'()*+,-./:;<=>?@[\]^_`{|}~\\.'
     else:
-        not_letters_or_digits = u'/\\?%*:|"<>.'
+        not_letters_or_digits = u'/\\?%*:|"<>'
     if isinstance(to_translate, unicode):
         translate_table = dict((ord(char), unicode(translate_to))
                                for char in not_letters_or_digits)

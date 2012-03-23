@@ -6,11 +6,13 @@ from pieberry.pieobject.paths import *
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import *
 from pieberry.ui.htmldataobject import HTMLDataObject
+from pieberry.ui.validators import PiePlainTextValidator
 
 from pieberry.pieconfig.identity import PIE_APPNAME
 from pieberry.pieconfig.paths import IMGDIR
 from pieberry.pieconfig.globalvars import PYNOTIFY
 from pieberry.pieoutput.bibtex import *
+from pieberry.pieutility.decoding import translate_non_alphanumerics
 
 if PYNOTIFY:
     import pynotify
@@ -76,6 +78,25 @@ class MenuFunctionsMixin:
             from pieberry.functionwindow import session
             session.delete(obj)
             session.commit()
+
+    def onRenameFile(self, evt):
+        obj = self.GetSelectedItem()
+        fn = obj.FileData_FileName
+        dia = wx.TextEntryDialog(
+            self, _('New filename:'), _('Rename file'), defaultValue=fn)
+        # txtCtrl = dia.FindWindowById(3000) # text entry dialog id
+        # txtCtrl.Validator = PiePlainTextValidator()
+        ans = dia.ShowModal()
+        if ans == wx.ID_CANCEL: return
+        newpath = os.path.join(
+            obj.FileData_ContainingFolder, 
+            translate_non_alphanumerics(dia.GetValue()))
+        try: 
+            os.rename(obj.FileData_FullPath, newpath)
+        except Exception, exc:
+            wx.MessageBox(unicode(exc), 'Error')
+            return
+        obj.set_file(newpath)
         
     def onNotImplemented(self, evt):
         wx.MessageBox(_('Function not implemented.'))

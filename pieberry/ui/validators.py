@@ -66,13 +66,13 @@ class pieUrlValidator(wx.PyValidator):
          """
          return True # Prevent wxDialog from complaining.
 
-class piePlainTextValidator(wx.PyValidator):
+class PiePlainTextValidator(wx.PyValidator):
      def __init__(self):
          wx.PyValidator.__init__(self)
          self.invalidchars = (':', ';', '/', '\\', '>', '<', '|', '@', '!', '*', '^', '`')
 
      def Clone(self):
-         return piePlainTextValidator()
+         return PiePlainTextValidator()
 
      def Validate(self, win=None):
          """ Validate the contents of the given text control.
@@ -95,6 +95,8 @@ class piePlainTextValidator(wx.PyValidator):
      def TransferFromWindow(self):
          return True # Prevent wxDialog from complaining.
 
+     def OnChar(self, evt):
+          pass
 
 class pieBibtexValidator(wx.PyValidator):
      def __init__(self, compulsory=False):
