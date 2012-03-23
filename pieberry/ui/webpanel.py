@@ -35,7 +35,7 @@ class WebScrapePanel(wx.Panel):
         
         self.authorField = wx.ComboBox(
             self, -1, size=self._DEF_WIDTH, choices=authorlist, 
-            validator=piePlainTextValidator(), 
+            validator=PiePlainTextValidator(), 
             style=wx.EXPAND|wx.CB_DROPDOWN)
         tt2 = wx.ToolTip(
             '''Generic "author" to use for downloaded documents. 
@@ -51,7 +51,7 @@ subdirectory in which to store these documents.''')
 
         self.tagField = wx.TextCtrl(
             self, -1, size=self._DEF_WIDTH, 
-            validator=piePlainTextValidator(), style=wx.EXPAND
+            validator=PiePlainTextValidator(), style=wx.EXPAND
             )
         tt3 = wx.ToolTip(_('Category tag and second level subdirectory for downloaded documents.'))
         self.tagField.SetToolTip(tt3)

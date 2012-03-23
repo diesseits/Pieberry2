@@ -42,6 +42,8 @@ class FileListPanel(BaseListPanel):
         #     self.onEditNotes(0)
         if keycode == 127:
             self.onDeleteObj(0)
+        elif keycode == 341:
+            self.onRenameFile(0)
         evt.Skip()
 
     def onDeleteItem(self, evt):
@@ -76,7 +78,7 @@ class FileListPanel(BaseListPanel):
             menu.AppendItem(rcm_deleteobj)
             self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deleteobj)
         if obj.has_aspect('hasfile'):
-            rcm_renamefile = wx.MenuItem(menu, 27, _('Rename file'))
+            rcm_renamefile = wx.MenuItem(menu, 27, _('Rename file\tF2'))
             menu.AppendItem(rcm_renamefile)
             self.Bind(wx.EVT_MENU, self.onRenameFile, rcm_renamefile)
 

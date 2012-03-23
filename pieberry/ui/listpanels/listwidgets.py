@@ -4,6 +4,7 @@ from pprint import pprint
 
 from imagelist import PieImageList, MessageType
 from pieberry.pieconfig.config import PIE_CONFIG
+from pieberry.pieutility.date import fmtdate
 
 ATH = False
 if PIE_CONFIG.getboolean('Format', 'atom_title_hack'): ATH = True
@@ -114,6 +115,20 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         BaseListCtrl.__init__(self, parent)
         listmix.CheckListCtrlMixin.__init__(self)
 
+    def _set_columndata(self, idx, obj):
+        '''Set relevant data to the column at row: idx'''
+        self.SetStringItem(idx, 1, obj.WebData_LinkText)
+        self.SetStringItem(idx, 2, obj.Url())
+
+    def _set_itemdata(self, idx, ref, obj, checkstatus=False):
+        '''Set relevant data in the listctrl's data stores: for row:
+        idx; using ref: the reference number for the ostore; using
+        obj: the object in question.'''
+        self.SetItemData(idx, ref)
+        self.itemDataMap[ref] = [checkstatus,
+                                 obj.WebData_LinkText,
+                                 obj.Url()]
+
     def AddObject(self, obj, ref, 
                   statusmsg='', 
                   filtertext=None, 
@@ -124,12 +139,8 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         if filterout(filtertext, (obj.WebData_LinkText, obj.Url())):
             return
         nexidx = self.InsertStringItem(self.currentitem, statusmsg)
-        self.SetStringItem(nexidx, 1, obj.WebData_LinkText)
-        self.SetStringItem(nexidx, 2, obj.Url())
-        self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = [checkstatus,
-                                 obj.WebData_LinkText,
-                                 obj.Url()]
+        self._set_columndata(nexidx, obj)
+        self._set_itemdata(nexidx, ref, obj, checkstatus)
         self.CheckItem(nexidx, checkstatus)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
@@ -153,11 +164,8 @@ class FileListCtrl(BaseListCtrl):
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
 
     def _set_columndata(self, idx, obj):
-        self.SetImageStringItem(
-            idx, 
-            obj.Title(), 
-            MessageType[obj.get_icon_code(window_type='filewindow')])
-            # MessageType[msgtype])
+        self.SetItemImage(idx, MessageType[obj.get_icon_code(window_type='filewindow')])
+        self.SetItemText(idx, obj.Title())
         self.SetStringItem(idx, 1, obj.FileData_ContainingFolder)
         self.SetStringItem(idx, 2, obj.FileData_FileName)
 
@@ -172,17 +180,9 @@ class FileListCtrl(BaseListCtrl):
         # print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
         if filterout(filtertext, (obj.FileData_FileName, obj.FileData_Root)):
             return
-        nexidx = self.InsertImageStringItem(
-            self.currentitem, 
-            obj.Title(), 
-            MessageType[obj.get_icon_code(window_type='filewindow')])
-            # MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, obj.FileData_ContainingFolder)
-        self.SetStringItem(nexidx, 2, obj.FileData_FileName)
-        self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = (obj.Title(), 
-                                 obj.FileData_ContainingFolder,
-                                 obj.FileData_FileName)
+        nexidx = self.InsertImageStringItem(self.currentitem, '', 0)
+        self._set_columndata(nexidx, obj)
+        self._set_itemdata(nexidx, ref, obj)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
@@ -209,16 +209,16 @@ class BibListCtrl(BaseListCtrl):
         if obj.notes: self.SetStringItem(idx, 1, u'\u270D') # writing pen
         else: self.SetStringItem(idx, 1, '')
         self.SetStringItem(idx, 2, obj.Author())
-        self.SetStringItem(idx, 3, str(obj.ReferDate().strftime('%Y-%m-%d')))
+        self.SetStringItem(idx, 3, fmtdate(obj.ReferDate()))
         self.SetStringItem(idx, 4, obj.Title(atom_title_hack=ATH))
         if obj.StatData_FollowUpFlag:
             td = datetime.datetime.today() - obj.StatData_FollowUpDate
             if td.days < PIE_CONFIG.getint('Internal', 'flagged_purpleafter'):
-                self.SetItemTextColour(nexidx, 'blue')
+                self.SetItemTextColour(idx, 'blue')
             elif td.days > PIE_CONFIG.getint('Internal', 'flagged_redafter'):
-                self.SetItemTextColour(nexidx, 'red')
+                self.SetItemTextColour(idx, 'red')
             else:
-                self.SetItemTextColour(nexidx, 'purple')
+                self.SetItemTextColour(idx, 'purple')
 
     def _set_itemdata(self, idx, ref, obj):
         '''Set relevant data in the listctrl's data stores: for row:
@@ -237,32 +237,12 @@ class BibListCtrl(BaseListCtrl):
                      (obj.Author(), str(obj.ReferDate().year), obj.Title())):
             # print 'Filtered out - returning'
             return
-        if not msgtype:
-            msgtype = obj.get_icon_code('bibwindow')
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
             '', 
-            MessageType[msgtype])
-        if obj.notes: self.SetStringItem(nexidx, 1, u'\u270D') # writing pen
-        else: self.SetStringItem(nexidx, 1, '')
-        self.SetStringItem(nexidx, 2, obj.Author())
-        self.SetStringItem(nexidx, 3, str(obj.ReferDate().strftime('%Y-%m-%d')))
-        self.SetStringItem(nexidx, 4, obj.Title(atom_title_hack=ATH))
-        self.SetItemData(nexidx, ref)
-        # colorise if flagged for follow up
-        if obj.StatData_FollowUpFlag:
-            td = datetime.datetime.today() - obj.StatData_FollowUpDate
-            if td.days < PIE_CONFIG.getint('Internal', 'flagged_purpleafter'):
-                self.SetItemTextColour(nexidx, 'blue')
-            elif td.days > PIE_CONFIG.getint('Internal', 'flagged_redafter'):
-                self.SetItemTextColour(nexidx, 'red')
-            else:
-                self.SetItemTextColour(nexidx, 'purple')
-        self.itemDataMap[ref] = [msgtype,
-                                 1 if obj.notes else 0,
-                                 obj.Author(), 
-                                 str(obj.ReferDate()),
-                                 obj.Title()]
+            0)
+        self._set_columndata(nexidx, obj)
+        self._set_itemdata(nexidx, ref, obj)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
@@ -283,6 +263,22 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         BaseListCtrl.__init__(self, parent)
         listmix.CheckListCtrlMixin.__init__(self)
 
+    def _set_columndata(self, idx, obj):
+        '''Set relevant data to the column at row: idx'''
+        self.SetStringItem(idx, 1, obj.Author())
+        self.SetStringItem(idx, 2, fmtdate(obj.ReferDate()))
+        self.SetStringItem(idx, 3, obj.Title())
+
+    def _set_itemdata(self, idx, ref, obj, checkstatus=False):
+        '''Set relevant data in the listctrl's data stores: for row:
+        idx; using ref: the reference number for the ostore; using
+        obj: the object in question.'''
+        self.SetItemData(idx, ref)
+        self.itemDataMap[ref] = [checkstatus,
+                                 obj.Author(), 
+                                 str(obj.ReferDate()),#.year),
+                                 obj.Title()]
+
     def AddObject(self, obj, ref, 
                   statusmsg='Added', 
                   filtertext=None, 
@@ -297,24 +293,8 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         nexidx = self.InsertStringItem(
             self.currentitem, 
             '')
-        self.SetStringItem(nexidx, 1, obj.Author())
-        # BUG: datetime has a hissy for strftimes before 1900
-        if obj.ReferDate().year <= 1900:
-            self.SetStringItem(nexidx, 2, str(obj.ReferDate().year))
-        else:
-            self.SetStringItem(nexidx, 2, str(obj.ReferDate().strftime('%Y-%m-%d')))
-        self.SetStringItem(nexidx, 3, obj.Title())
-        # nexidx = self.InsertStringItem(self.currentitem, statusmsg)
-        # self.SetStringItem(nexidx, 1, obj.WebData_LinkText)
-        # self.SetStringItem(nexidx, 2, obj.Url())
-        self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = [checkstatus,
-                                 obj.Author(), 
-                                 str(obj.ReferDate()),#.year),
-                                 obj.Title()]
-        # self.itemDataMap[ref] = [checkstatus,
-        #                          obj.WebData_LinkText,
-        #                          obj.Url()]
+        self._set_columndata(nexidx, obj)
+        self._set_itemdata(nexidx, ref, obj, checkstatus)
         self.CheckItem(nexidx, checkstatus)
         self.currentitem += 1
         self.EnsureVisible(nexidx)

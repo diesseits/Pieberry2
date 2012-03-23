@@ -8,6 +8,7 @@ from string import join
 from pieberry.ui.events import PieContextPanelUpdateEvent
 from urlparse import urlsplit
 from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
+from pieberry.pieutility.date import fmtdate
 
 html_fundamental = _('''
 <body bgcolor="%(color)s">
@@ -131,7 +132,7 @@ class BibInfoPanel(wx.Panel):
         info['bibtex_type'] = unicode(obj.BibData_Type)
         info['bibtex_key'] = unicode(obj.BibData_Key)
         if obj.BibData_DatePublished:
-            info['date'] = obj.BibData_DatePublished.strftime('%d %B %Y')
+            info['date'] = obj.BibData_DatePublished.strftime('%d %B %Y') if obj.BibData_DatePublished.year >= 1900 else fmtdate(obj.BibData_DatePublished)
         else: info['date'] = 'None'
         self.Html.AppendToPage(bibhtml % info)
 
@@ -351,7 +352,8 @@ class FundInfoPanel(wx.Panel):
         self.dings_ct.SetLabel(compile_infostring(obj))
         self.auth_ct.SetValue(obj.Author())
         # self.auth_ct.SetLabel(obj.Author())
-        self.date_ct.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
+        self.date_ct.SetLabel(
+            obj.ReferDate().strftime('%d %B %Y') if obj.ReferDate().year >= 1900 else fmtdate(obj.ReferDate()))
         if obj.FileData_Root in MAP_LOCNS.keys():
             self.locn_ct.SetLabel(MAP_LOCNS[obj.FileData_Root])
         else:

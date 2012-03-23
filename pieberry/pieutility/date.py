@@ -13,3 +13,11 @@ def pydate2wxdate(date):
      tt = date.timetuple()
      dmy = (tt[2], tt[1]-1, tt[0])
      return wx.DateTimeFromDMY(*dmy) 
+
+def fmtdate(date):
+    '''Hack for ui - work around the fact that datetime's strftime
+    shits itself at dates prior to 1900'''
+    d = str(date.day) if date.day > 9 else '0%d' % date.day
+    m = str(date.month) if date.month > 9 else '0%d' % date.month
+    return '%d-%s-%s' % (date.year, m, d)
+

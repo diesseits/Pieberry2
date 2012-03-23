@@ -97,6 +97,7 @@ class MenuFunctionsMixin:
             wx.MessageBox(unicode(exc), 'Error')
             return
         obj.set_file(newpath)
+        self.UpdateObject(obj)
         
     def onNotImplemented(self, evt):
         wx.MessageBox(_('Function not implemented.'))
