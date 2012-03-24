@@ -117,7 +117,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('View most &recently added documents\tCtrl-4'))
 
         # BEGIN debug menu
-        if DEBUG:
+        if PIE_CONFIG.getboolean('Internal', 'show_debug_ui'):
             self.menu_debug_addwebpane = wx.MenuItem(
                 debugMenu, -1, _('Add Web Pane'))
             self.menu_debug_addbibpane = wx.MenuItem(
@@ -130,12 +130,16 @@ class BaseMainWindow(wx.Frame, PieActor):
                 debugMenu, -1, _('Force scan of folders'))
             self.menu_debug_notespane = wx.MenuItem(
                 debugMenu, -1, 'Add notes pane')
+            self.menu_debug_rectifyobjectrels = wx.MenuItem(
+                debugMenu, -1, 'Rectify object relationships'
+                )
             debugMenu.AppendItem(self.menu_debug_addatompane)
             debugMenu.AppendItem(self.menu_debug_adddlpane)
             debugMenu.AppendItem(self.menu_debug_addwebpane)
             debugMenu.AppendItem(self.menu_debug_addbibpane)
             debugMenu.AppendItem(self.menu_debug_forcescan)
             debugMenu.AppendItem(self.menu_debug_notespane)
+            debugMenu.AppendItem(self.menu_debug_rectifyobjectrels)
             self.Bind(wx.EVT_MENU, self.DebugAddNotesPane, self.menu_debug_notespane)
             self.Bind(wx.EVT_MENU, self.DebugAddAtomisePane, 
                       self.menu_debug_addatompane)
@@ -144,6 +148,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             self.Bind(wx.EVT_MENU, self.DebugAddWebPane, self.menu_debug_addwebpane)
             self.Bind(wx.EVT_MENU, self.DebugAddBibPane, self.menu_debug_addbibpane)
             self.Bind(wx.EVT_MENU, self.DebugForceScan, self.menu_debug_forcescan)
+            self.Bind(wx.EVT_MENU, self.DebugRectifyObjectRels, self.menu_debug_rectifyobjectrels)
             # END debug menu
 
         fileMenu.AppendItem(self.menu_savebibs)
@@ -177,7 +182,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         menuBar.Append(locateMenu, _('&Locate'))
         menuBar.Append(viewMenu, _('&View'))
         menuBar.Append(helpMenu, _('&Help'))
-        if DEBUG: menuBar.Append(debugMenu, _('&Debug'))
+        if PIE_CONFIG.getboolean('Internal', 'show_debug_ui'): menuBar.Append(debugMenu, _('&Debug'))
         self.SetMenuBar(menuBar)
         self.SetAutoLayout(True)
 

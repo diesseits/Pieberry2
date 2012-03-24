@@ -55,7 +55,7 @@ def main():
 
 
     # use gettext
-    from pieberry.pieconfig.identity import PIE_APPNAME
+    from pieberry.pieconfig.identity import PIE_APPNAME, PIE_VERSION
     import gettext
     gettext.install(PIE_APPNAME)
 
@@ -124,6 +124,10 @@ def main():
         init_tags()
     gen_tag_lookup()
 
+    print 'Establish internals'
+    from pieberry.pieobject import PIE_INTERNALS
+    PIE_INTERNALS.establish()
+
     print 'Generating initial folder list'
     generate_folder_list()
 
@@ -135,6 +139,10 @@ def main():
     frame_1.Show()
     PIE_CONFIG.set('Internal', 'first_run', 'False')
     PIE_CONFIG.write_pieconfig()
+    if PIE_INTERNALS.getboolean('Identity', 'Hitherto_unset'):
+        print 'Need to rectify object relationships'
+        frame_1.DebugRectifyObjectRels(1)
+        PIE_INTERNALS.set('Identity', 'Hitherto_unset', False)
     app.MainLoop()
 
 if __name__ == '__main__':

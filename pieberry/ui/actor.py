@@ -110,5 +110,20 @@ class PieActor:
         # print evt.message
         # print '%d of %d' % (evt.track, evt.count)
 
+    def DebugRectifyObjectRels(self, evt):
+        from pieberry.pieobject import reconcile_object_folder_gen
+        from pieberry.piedb import session
+        from pieberry.pieobject import PieObject
+        progress_dialog = wx.ProgressDialog(
+            _('Rectifying object relationships'),
+            '___________________________________________', maximum = session.query(PieObject).filter(PieObject.FileData_FileName != None).count() )
+        counter = 0
+        for obj in reconcile_object_folder_gen():
+            counter += 1
+            progress_dialog.Update(counter, unicode(obj))
+        progress_dialog.Destroy()
+        # session.commit()
+            
+
     def OnIndexerFinished(self, evt):
         pass

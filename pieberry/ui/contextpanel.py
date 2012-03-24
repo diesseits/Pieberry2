@@ -9,6 +9,7 @@ from pieberry.ui.events import PieContextPanelUpdateEvent
 from urlparse import urlsplit
 from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
 from pieberry.pieutility.date import fmtdate
+from pieberry.pieobject.folder import SECURITY_CLASSES
 
 html_fundamental = _('''
 <body bgcolor="%(color)s">
@@ -142,16 +143,19 @@ class BibInfoPanel(wx.Panel):
 
 
 
-filehtml = _('''
+filehtml = _(u'''
 <body bgcolor="%(color)s">
 <font size=-1>
 <p>
 <b>Type:</b> %(type)s<br>
 <b>Size:</b> %(size)s<br>
+<b>Record:</b> %(record)s<br>
+<b>Security:</b> %(security)s<br>
 </p>
 </font>
 </body>
 ''')
+
 
 class FileInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
@@ -182,6 +186,8 @@ class FileInfoPanel(wx.Panel):
         info['path'] = unicode(obj.FileData_FullPath)
         info['type'] = unicode(obj.FileData_FileType)
         info['size'] = fsize
+        info['record'] = obj.FileData_FolderAdv.RecordFile if obj.FileData_FolderAdv else ''
+        info['security'] = SECURITY_CLASSES[obj.FileData_FolderAdv.SecurityLevel] if obj.FileData_FolderAdv else _('N/A')
         self.Html.AppendToPage(filehtml % info)
         wx.Panel.SetSize(self, self.sizer.GetMinSize())
 

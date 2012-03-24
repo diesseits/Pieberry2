@@ -6,6 +6,7 @@ from pprint import pprint, pformat
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy import and_
 
 from pieberry.piedb import *
 from pieberry.pieobject.tags import TagHandler, PieTag, pieobject_tags
@@ -14,6 +15,7 @@ from pieberry.pieobject.objectstore import PieObjectStore
 from pieberry.pieobject.diagnostic import *
 from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
 from pieberry.pieobject.website import PieWebsite, referable_website, validify_domain
+from pieberry.pieobject.internals import PIE_INTERNALS
 from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.pieconfig.paths import ROOT_MAP
 from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
@@ -462,3 +464,19 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
 # metadata = SQLABase.metadata
 # metadata.create_all(engine)
+
+
+def reconcile_object_folder_gen():
+    '''Generator function to serve file-bearing objects which are
+    ex-post linked to their folders'''
+    for obj in session.query(PieObject):
+        if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
+            qf = session.query(PieFolder).filter(and_(
+                    PieFolder.Root == obj.FileData_Root,
+                    PieFolder.SubFolders == obj.FileData_Folder
+                    )).first()
+            if qf:
+                print 'linking', obj.FileData_FullPath, 'to', qf
+                obj.FileData_FolderAdv = qf
+                yield obj
+                # don't forget to commit the session in the calling fn

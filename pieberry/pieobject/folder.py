@@ -148,22 +148,6 @@ def generate_folder_list():
                         FOLDER_LOOKUP['projectdir'].append(exisf)
                     print 'found folder:', exisf
 
-def reconcile_object_folder_gen():
-    '''Generator function to serve file-bearing objects which are
-    ex-post linked to their folders'''
-    for obj in session.query(PieObject):
-        if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
-            qf = session.query(PieFolder).filter(and_(
-                    PieFolder.Root == obj.FileData_Root,
-                    PieFolder.SubFolders == obj.FileData_Folder
-                    )).first()
-            if qf:
-                print 'linking', obj.FileData_FullPath, 'to', qf
-                obj.FileData_FolderAdv = qf
-                yield obj
-                # don't forget to commit the session in the calling fn
-
-    
 def commit_folders():
     session.commit()
 
