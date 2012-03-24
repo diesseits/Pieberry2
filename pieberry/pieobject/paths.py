@@ -49,7 +49,7 @@ def suggest_path_cache_fromweb(obj):
     proposal = os.path.join(CACHEDIR, obj.session, fname)
     proposal = trim_filename(proposal)
     proposal = auto_increment_fn(proposal)
-    return proposal
+    return proposal, ('cachedir', [obj.session,], os.path.basename(proposal))
 
 def suggest_path_cache_fromdesktop(obj):
     if not hasattr(obj, 'session'): 
@@ -58,7 +58,7 @@ def suggest_path_cache_fromdesktop(obj):
     proposal = trim_filename(proposal)
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
-    return proposal
+    return proposal, ('cachedir', [obj.session,], os.path.basename(proposal))
 
 def suggest_path_cache_fromother(obj, fn):
     if not hasattr(obj, 'session'): 
@@ -68,8 +68,7 @@ def suggest_path_cache_fromother(obj, fn):
     proposal = trim_filename(proposal)
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
-    return proposal
-    
+    return proposal, ('cachedir', [obj.session,], os.path.basename(proposal))
 
 def suggest_path_store_fromweb(obj):
     assert obj.has_aspect('cached')
@@ -102,7 +101,10 @@ def suggest_path_store_fromweb(obj):
     print 'SUGGESTING:', proposal, 'OF LENGTH = ', len(proposal)
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
-    return proposal
+    return proposal, ('librarydir', 
+                      [i for i in (auth, subd, tsubd) if i], 
+                      os.path.basename(proposal)
+                      )
 
 def suggest_path_store_with_bibdata(obj):
     assert obj.has_aspect('cached')
@@ -134,7 +136,9 @@ def suggest_path_store_with_bibdata(obj):
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists. TODO - auto-fix'
-    return proposal
+    return proposal, ('librarydir',
+                      [i for i in (auth, subd) if i],
+                      os.path.basename(proposal))
     
 
 def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
@@ -149,7 +153,7 @@ def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
     print 'SUGGESTING:', proposal
     if os.path.exists(proposal):
         raise IOError, 'File already exists.'
-    return proposal
+    return proposal, ('projectdir', [folder,], os.path.basename(proposal))
 
 def suggest_path_rehome(obj):
     pass

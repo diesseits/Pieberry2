@@ -3,6 +3,7 @@ import os, os.path, wx, sys, shutil
 import traceback
 
 from pieberry.pieobject.paths import *
+from pieberry.pieobject.folder import contribute_folder
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import *
 from pieberry.ui.htmldataobject import HTMLDataObject
@@ -250,9 +251,8 @@ class MenuFunctionsMixin:
         assert os.path.exists(fpath)
         if not hasattr(obj, 'session'):
             obj.set_session(get_session())
-        dpath = suggest_path_cache_fromother(obj, fpath)
-        if not os.path.exists(os.path.dirname(dpath)):
-            os.makedirs(os.path.dirname(dpath))
+        dpath, components = suggest_path_cache_fromother(obj, fpath)
+        contribute_folder(os.path.dirname(dpath), components)
         shutil.copyfile(fpath, dpath)
         obj.add_aspect_cached(dpath)
         print obj.FileData_FullPath

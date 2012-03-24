@@ -9,6 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
+from pieberry.pieobject.folder import contribute_folder
 from pieberry.piescrape import *
 from pieberry.piescrape.execfn import download_file
 from pieberry.ui.mainwindow import BaseMainWindow 
@@ -147,7 +148,7 @@ class FunctionMainWindow(BaseMainWindow):
     def _thread_downloads(self, ostore, notify_window):
         '''threaded method called by OnWebPaneDownload'''
         for obj in ostore:
-            storepath = suggest_path_cache_fromweb(obj)
+            storepath, components = suggest_path_cache_fromweb(obj)
             newevt = PieDownloadNotifyEvent(
                 msgtype='start', 
                 obj=obj, 
@@ -279,13 +280,12 @@ class FunctionMainWindow(BaseMainWindow):
             if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
-            dpath = suggest_path_store_fromweb(obj)
+            dpath, components = suggest_path_store_fromweb(obj)
             # I don't trust windows filesystems
             if sys.platform == 'win32':
                 dpath = dpath.encode('ascii', 'ignore')
             # Ensure relevant directory exists
-            if not os.path.isdir(os.path.dirname(dpath)):
-                os.makedirs(os.path.dirname(dpath))
+            contribute_folder(os.path.dirname(dpath), components)
             print 'COPYING: %s to %s' % (path, dpath)
             assert os.path.exists(path)
             assert os.path.exists(os.path.dirname(dpath))
@@ -466,9 +466,8 @@ class FunctionMainWindow(BaseMainWindow):
             obj.set_session(osession)
 
             # Do the file movement stuff
-            storepath = suggest_path_cache_fromdesktop(obj)
-            if not os.path.isdir(os.path.dirname(storepath)):
-                os.makedirs(os.path.dirname(storepath))
+            storepath, components = suggest_path_cache_fromdesktop(obj)
+            contribute_folder(os.path.dirname(storepath), components)
             try:
                 os.rename(obj.FileData_FullPath, storepath)
             except:
@@ -499,10 +498,9 @@ class FunctionMainWindow(BaseMainWindow):
         ostore = scan_desktop()
         ostore.set_session(session)
         for idx, obj in ostore.GetNext():
-            storepath = suggest_path_cache_fromdesktop(obj)
+            storepath, components = suggest_path_cache_fromdesktop(obj)
             #can't use os.renames - it'll delete the desktop directory
-            if not os.path.isdir(os.path.dirname(storepath)):
-                os.makedirs(os.path.dirname(storepath))
+            contribute_folder(os.path.dirname(storepath), components)
             try:
                 os.rename(obj.FileData_FullPath, storepath)
             except:
@@ -522,21 +520,24 @@ class FunctionMainWindow(BaseMainWindow):
         obj = evt.obj
         # session = Session()
         if obj.has_aspect('bibdata'):
-            storepath = suggest_path_store_with_bibdata(obj)
+            storepath, components = suggest_path_store_with_bibdata(obj)
             if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
                 piemeta.write_metadata_to_object(obj)
         else:
-            storepath = suggest_path_store_fromdesktop(
+            storepath, components = suggest_path_store_fromdesktop(
                 obj, 
                 evt.dest_folder,
                 evt.new_fn)
             # # this is a hack to make things more legible
             # if PIE_CONFIG.getboolean('Format', 'atom_title_hack'):
             #     obj.title = "%s [%s]" % (obj.title, evt.new_fn)
-        if not os.path.exists(os.path.dirname(storepath)):
-            os.makedirs(os.path.dirname(storepath))
+        contribute_folder(os.path.dirname(storepath), components)
         os.rename(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
+        print object
+        print obj.FileData_FullPath
+        print obj.FileData_FolderAdv
+        print obj.FileData_FolderAdv.SecurityLevel
         obj.add_aspect_saved()
         session.add(obj)
         session.commit()

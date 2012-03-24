@@ -151,10 +151,13 @@ def generate_folder_list():
                     print 'found folder:', exisf
 
 def referable_folder_byobj(obj, sqsess=session):
+    print 'Getting referable object'
+    print 'Using:', obj.FileData_Root, obj.FileData_Folder
     qf = sqsess.query(PieFolder).filter(and_(
             PieFolder.Root == obj.FileData_Root,
-            PieFolder.SubFolders == obj.FileData_Folder
+            PieFolder.SubFolders == [i for i in obj.FileData_Folder if i]
             )).first()
+    print 'Found:', qf
     return qf
 
 def referable_folder_bypath(root, path, sqsess=session):
@@ -165,10 +168,32 @@ def referable_folder_bypath(root, path, sqsess=session):
             )).first()
     return qf
 
-def contribute_folder(path, components=None):
+def contribute_folder(path, components):
     '''Establish - if necessary a new folder on disk and a
     corresponding PieFolder entry in the database'''
-    pass
+    root, subfolders, fn = components
+    if os.path.exists(path) and not os.path.isdir(path):
+        raise ValueError, 'Conflict: a file with this path exists: %s' % path
+    if os.path.isdir(path):
+        return True # return if the folder exists
+    else:
+        os.makedirs(path)
+    # don't do db stuff for things not in proper storage directories
+    if root not in ('projectdir', 
+                    'librarydir',
+                    'meetingpaperdir',
+                    'recentdocsdir'):
+        return True
+    # ensure we don't duplicate any dormant PieFolders
+    existpf = session.query(PieFolder).filter(and_(
+            PieFolder.Root == root,
+            PieFolder.SubFolders == subfolders)).first()
+    if not existpf:
+        newpf = PieFolder()
+        newpf.set_path_precut(root, subfolders)
+        session.add(newpf)
+        session.commit()
+        print 'CREATED', newpf
     
 def commit_folders():
     session.commit()
@@ -265,8 +290,9 @@ class PieFolder(SQLABase):
         '''Set the path, when we already have chopped up the path -
         more efficient'''
         assert root in ROOT_MAP.keys()
+        assert type(subfolders) == list
         self.Root = root
-        self.SubFolders = subfolders
+        self.SubFolders = [i for i in subfolders if i]
         self.EndName = self.SubFolders[-1]
         self.initialised = 1
 
@@ -276,8 +302,7 @@ class PieFolder(SQLABase):
 
     def set_project_path(self, foldername):
         '''convenience function to set a path in the projects tree'''
-        newpath = os.path.join(ROOT_MAP['projectdir'], foldername)
-        self.set_path(newpath)
+        self.set_path_precut('projectdir', [foldername,])
 
     def name(self):
         if not self.initialised == 1:
