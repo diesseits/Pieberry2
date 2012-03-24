@@ -1,8 +1,12 @@
 import os.path, os, traceback, urllib, urllib2
-from urlparse import urlparse
+from urlparse import urlparse, urlunparse
 from pieberry.pieconfig.globalvars import U_ERROR_BEHAV, DEBUG
 from pieberry.piescrape.resource import *
 
+def safequote(url):
+    parse = [i for i in urlparse(url)]
+    parse[2] = urllib2.quote(parse[2])
+    return urlunparse(parse)
 
 def download_file(
     url, # the url
@@ -19,8 +23,8 @@ def download_file(
             os.makedirs(os.path.dirname(suggested_path))
         if os.path.exists(suggested_path):
             raise 'download_file: File already exists!'
-
-        request = urllib2.Request(url, headers=headers)#, data, headers)
+        
+        request = urllib2.Request(safequote(url), headers=headers)
         response = urllib2.urlopen(request)
         cj.extract_cookies(response,request)
         cookie_handler= urllib2.HTTPCookieProcessor( cj )

@@ -242,7 +242,7 @@ class BibListCtrl(BaseListCtrl):
             self.currentitem, 
             '', 
             0)
-        self._set_columndata(nexidx, obj)
+        self._set_columndata(nexidx, obj, msgtype=msgtype)
         self._set_itemdata(nexidx, ref, obj)
         self.currentitem += 1
         self.EnsureVisible(nexidx)

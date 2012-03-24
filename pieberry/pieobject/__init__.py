@@ -376,7 +376,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                                   'librarydir',
                                   'meetingpaperdir',
                                   'recentdocsdir'):
-            self.FileData_FolderAdv = referable_folder_byobj(self, sqsess=sqsess)
+            try:
+                self.FileData_FolderAdv = referable_folder_byobj(self, sqsess=sqsess)
+            except:
+                traceback.print_exc()
+                print 'Warning: Could not link file to its folder'
     
     def set_file(self, loc, sqsess=session):
         '''Set all kinds of data associated with this being a local file.
