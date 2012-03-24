@@ -9,4 +9,11 @@ class PieFolderIndexer:
     def __init__(self, notify_window):
         self.nwin = notify_window
 
-    
+    def start(self):
+        pass
+
+    def DoScanForMissing(self, rootdir):
+        pass
+
+    def DoScanForNew(self, rootdir):
+        pass
