@@ -24,7 +24,7 @@ PIE_CONFIG_DEFAULTS = [
     ('Format', 'richtext_citation_format', 'html'),
     ('Format', 'filesystem_length_limit', 255),
     ('Format', 'write_pdf_metadata', True),
-    ('Internal', 'webcam_device', '/dev/video0')
+    ('Internal', 'webcam_device', '/dev/video0'),
     ('Internal', 'show_debug_ui', False),
     ('Internal', 'minutes_between_file_indexes', 30),
     ('Internal', 'minutes_between_save_notes', 5),

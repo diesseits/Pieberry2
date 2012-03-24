@@ -115,7 +115,7 @@ def main():
     print 'Init pieberry.pieobject'
     from pieberry.pieobject import PieObject
     from pieberry.pieobject.tags import init_tags, gen_tag_lookup
-    from pieberry.pieobject.folder import generate_initial_project_folder_list
+    from pieberry.pieobject.folder import generate_folder_list
 
 
     print 'Init tables'
@@ -125,7 +125,7 @@ def main():
     gen_tag_lookup()
 
     print 'Generating initial folder list'
-    generate_initial_project_folder_list()
+    generate_folder_list()
 
 
     print 'Init PIEBERRY.UI'

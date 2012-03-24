@@ -82,6 +82,8 @@ def get_project_folder_by_endname(endname):
         return fldr
     return None
 
+
+# Deprecated
 def generate_initial_project_folder_list():
     '''Do a filesystem sweep and return a list of the existing folders'''
     FOLDER_LOOKUP['projectdir'] = []
@@ -96,6 +98,71 @@ def generate_initial_project_folder_list():
             newf = add_new_folder('projectdir', diry)
             print 'Note: new unmapped project folder %s added' % os.path.join(
                 ROOT_MAP['projectdir'], diry)
+
+def generate_folder_list():
+    '''Walk through the pieberry filesystem and ensure that all
+    folders are indexed'''
+    def gen_subfolders(root_key, curr_dir, sub_dir):
+        '''cut up the path'''
+        ds = curr_dir[len(ROOT_MAP[root_key]):].split(os.sep)
+        ds.append(sub_dir)
+        return ds
+
+    def contribute_projectfolder(piefolder):
+        '''init new primary project folder'''
+        hh = HeaderHandler(piefolder=piefolder)
+        hh.write_header()
+        FOLDER_LOOKUP['projectdir'].append(piefolder)
+    
+    def verify_existing():
+        for qf in session.query(PieFolder):
+            if not os.path.isdir(qf.path()):
+                print 'nonexistant folder -', qf
+                session.delete(qf)
+        session.commit()
+
+    verify_existing()
+
+    FOLDER_LOOKUP['projectdir'] = []
+    for root_key in ROOT_MAP.keys():
+        if root_key in ('cachedir', 'backupdir', 'desktopdir'): continue
+        for curr_dir, subdirs, files in os.walk(ROOT_MAP[root_key]):
+            for subdir in subdirs:
+                cut_subdirs = gen_subfolders(root_key, curr_dir, subdir)
+                # is there an existing piefolder in the db for this?
+                exisf = session.query(PieFolder).filter(and_(
+                        PieFolder.Root == root_key,
+                        PieFolder.SubFolders == cut_subdirs,
+                        )).first()
+                if not exisf: # if the folder isn't already in the db
+                    print 'creating:', os.path.join(curr_dir, subdir)
+                    # create a new piefolder object
+                    n_piefolder = PieFolder()
+                    n_piefolder.set_path_precut(root_key, cut_subdirs)
+                    session.add(n_piefolder)
+                    if curr_dir == ROOT_MAP['projectdir']:
+                        contribute_projectfolder(n_piefolder)
+                    print n_piefolder
+                else:  
+                    if curr_dir == ROOT_MAP['projectdir']:
+                        FOLDER_LOOKUP['projectdir'].append(exisf)
+                    print 'found folder:', exisf
+
+def reconcile_object_folder_gen():
+    '''Generator function to serve file-bearing objects which are
+    ex-post linked to their folders'''
+    for obj in session.query(PieObject):
+        if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
+            qf = session.query(PieFolder).filter(and_(
+                    PieFolder.Root == obj.FileData_Root,
+                    PieFolder.SubFolders == obj.FileData_Folder
+                    )).first()
+            if qf:
+                print 'linking', obj.FileData_FullPath, 'to', qf
+                obj.FileData_FolderAdv = qf
+                yield obj
+                # don't forget to commit the session in the calling fn
+
     
 def commit_folders():
     session.commit()
@@ -187,6 +254,15 @@ class PieFolder(SQLABase):
         if not fdroot: raise Exception, 'Folder outside pieberry domain'
         self.initialised = 1
         print 'initialised:', self
+
+    def set_path_precut(self, root, subfolders):
+        '''Set the path, when we already have chopped up the path -
+        more efficient'''
+        assert root in ROOT_MAP.keys()
+        self.Root = root
+        self.SubFolders = subfolders
+        self.EndName = self.SubFolders[-1]
+        self.initialised = 1
 
     def path(self):
         pathlist = [ROOT_MAP[self.Root],] + self.SubFolders
