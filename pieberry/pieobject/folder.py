@@ -99,9 +99,11 @@ def generate_initial_project_folder_list():
             print 'Note: new unmapped project folder %s added' % os.path.join(
                 ROOT_MAP['projectdir'], diry)
 
+
 def generate_folder_list():
     '''Walk through the pieberry filesystem and ensure that all
     folders are indexed'''
+
     def gen_subfolders(root_key, curr_dir, sub_dir):
         '''cut up the path'''
         ds = curr_dir[len(ROOT_MAP[root_key]):].split(os.sep)
@@ -148,6 +150,26 @@ def generate_folder_list():
                         FOLDER_LOOKUP['projectdir'].append(exisf)
                     print 'found folder:', exisf
 
+def referable_folder_byobj(obj, sqsess=session):
+    qf = sqsess.query(PieFolder).filter(and_(
+            PieFolder.Root == obj.FileData_Root,
+            PieFolder.SubFolders == obj.FileData_Folder
+            )).first()
+    return qf
+
+def referable_folder_bypath(root, path, sqsess=session):
+    subdirs = path[len(ROOT_MAP[root]):].split(os.sep)
+    qf = sqsess.query(PieFolder).filter(and_(
+            PieFolder.Root == root,
+            PieFolder.SubFolders == subdirs
+            )).first()
+    return qf
+
+def contribute_folder(path, components=None):
+    '''Establish - if necessary a new folder on disk and a
+    corresponding PieFolder entry in the database'''
+    pass
+    
 def commit_folders():
     session.commit()
 

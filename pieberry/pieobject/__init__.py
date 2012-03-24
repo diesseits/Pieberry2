@@ -13,7 +13,7 @@ from pieberry.pieobject.tags import TagHandler, PieTag, pieobject_tags
 from pieberry.pieobject.biblio import BiblioHandler
 from pieberry.pieobject.objectstore import PieObjectStore
 from pieberry.pieobject.diagnostic import *
-from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
+from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder, referable_folder_byobj
 from pieberry.pieobject.website import PieWebsite, referable_website, validify_domain
 from pieberry.pieobject.internals import PIE_INTERNALS
 from pieberry.pieconfig.config import PIE_CONFIG
@@ -318,12 +318,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Flag this as a failed download'''
         self.aspects['failed_dl'] = True
 
-    def add_aspect_stored(self, final_fn=None):
+    def add_aspect_stored(self, final_fn=None, sqsess=session):
         '''Add information pertaining to the storage of this item in
         the system'''
         if not final_fn == self.FileData_FullPath:
             print 'SETTING IT', final_fn
-            self.set_file(final_fn) #set filename if specified and different 
+            self.set_file(final_fn, sqsess=sqsess) #set filename if specified and different 
             self.aspects['stored'] = True
             self.set_file_type()
         self.aspects['cached'] = False
@@ -368,7 +368,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Mark a session flag for this object'''
         self.session = sess
 
-    def set_file(self, loc):
+    def est_folder_rel(self, sqsess=session):
+        '''Establish a relationship with a folder'''
+        # Only if this is going in the real storage dirs
+        # We're assuming this isn't being done in a thread
+        if self.FileData_Root in ('projectdir', 
+                                  'librarydir',
+                                  'meetingpaperdir',
+                                  'recentdocsdir'):
+            self.FileData_FolderAdv = referable_folder_byobj(self, sqsess=sqsess)
+    
+    def set_file(self, loc, sqsess=session):
         '''Set all kinds of data associated with this being a local file.
         Should have full absolute path given to it.'''
         if not os.path.exists(loc):
@@ -387,6 +397,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 fdroot = key
                 self.FileData_Root = key
                 self.FileData_Folder = diry[len(pdir):].split(os.sep)
+                self.est_folder_rel(sqsess=sqsess)
                 break
         if not fdroot: raise Exception, 'File stored outside pieberry domain'
         print "DONE", self.FileData_Root, self.FileData_FileName

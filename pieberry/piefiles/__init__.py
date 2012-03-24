@@ -66,7 +66,7 @@ class PieFileIndexer(Thread):
                     print 'Changing file for the following object', f
                     print 'From: %s\n To: %s' % (f.FileData_FullPath, match)
                     try:
-                        f.set_file(match)
+                        f.set_file(match, sqsess=self.session)
                         print 'Verifying set:', f.FileData_FullPath
                     except Exception, exc:
                         print "An error occurred setting file", exc
@@ -166,7 +166,7 @@ class PieFileIndexer(Thread):
             # Todo - check handle-able file types
             obj = piemeta.get_metadata_object(fp)
             print 'DOING', obj, fp
-            obj.add_aspect_stored(fp)
+            obj.add_aspect_stored(fp, sqsess=self.session)
             obj.add_aspect_saved()
             self.session.add(obj)
             newevt = PieFileIndexEvent(

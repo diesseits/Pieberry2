@@ -66,8 +66,11 @@ class PieInternalsHandler:
 
     def getboolean(self, section, key):
         val = self.get(section, key)
+        print 'VAL =', val
         if val.lower() == 'true': return True
+        elif val == '1': return True
         elif val.lower() == 'false': return False
+        elif val == '0': return False
         else: raise ValueError, 'This setting is not boolean'
             
 PIE_INTERNALS = PieInternalsHandler()
