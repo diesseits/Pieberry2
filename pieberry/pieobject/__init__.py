@@ -21,6 +21,11 @@ from pieberry.pieconfig.paths import ROOT_MAP
 from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
 from pieberry.pieutility.latex import untexify
 
+# Encryption states
+EC_FALSE = 0
+EC_TRUE_UNOPENED = 1
+EC_TRUE_OPENED = 2
+
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
 
@@ -133,7 +138,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'failed_dl': False,
             'bibdata': False,
             'physical': False,
-            'encrypted': False
+            'encrypted': EC_FALSE
             }
 
         self.StatData_OpenedCount = 0
@@ -494,8 +499,9 @@ def reconcile_object_folder_gen():
             session.delete(fobj)
     # link folders to objects
     for obj in session.query(PieObject):
+        # prepare for encryptability
         if not obj.aspects.has_key('encrypted'):
-            obj.aspects['encrypted'] = False
+            obj.aspects['encrypted'] = EC_FALSE
         if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
             # fix up null subdirs in the pieobject
             obj.FileData_Folder = [i for i in obj.FileData_Folder if i]
