@@ -111,6 +111,8 @@ class PieActor:
         # print '%d of %d' % (evt.track, evt.count)
 
     def DebugRectifyObjectRels(self, evt):
+        '''Fix up objects and relationships - it's a version upgrade
+        thing'''
         from pieberry.pieobject import reconcile_object_folder_gen
         from pieberry.piedb import session
         from pieberry.pieobject import PieObject
@@ -122,7 +124,7 @@ class PieActor:
             counter += 1
             progress_dialog.Update(counter, unicode(obj))
         progress_dialog.Destroy()
-        # session.commit()
+        session.commit()
             
 
     def OnIndexerFinished(self, evt):

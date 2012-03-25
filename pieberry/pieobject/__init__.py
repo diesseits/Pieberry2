@@ -132,7 +132,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'stored': False,
             'failed_dl': False,
             'bibdata': False,
-            'physical': False
+            'physical': False,
+            'encrypted': False
             }
 
         self.StatData_OpenedCount = 0
@@ -480,6 +481,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 # metadata = SQLABase.metadata
 # metadata.create_all(engine)
 
+# TODO - create a general version upgrade process and module
 
 def reconcile_object_folder_gen():
     '''Generator function to serve file-bearing objects which are
@@ -492,6 +494,8 @@ def reconcile_object_folder_gen():
             session.delete(fobj)
     # link folders to objects
     for obj in session.query(PieObject):
+        if not obj.aspects.has_key('encrypted'):
+            obj.aspects['encrypted'] = False
         if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
             # fix up null subdirs in the pieobject
             obj.FileData_Folder = [i for i in obj.FileData_Folder if i]
