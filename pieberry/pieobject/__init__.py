@@ -483,9 +483,19 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
 def reconcile_object_folder_gen():
     '''Generator function to serve file-bearing objects which are
-    ex-post linked to their folders'''
+    ex-post linked to their folders, aslo some sanity checks needed
+    post beta3'''
+    # sift out folders that have a bug (null subdirectory)
+    for fobj in session.query(PieFolder):
+        if [ True for i in fobj.SubFolders if i == u'' ]:
+            print 'sanity check deleting', fobj
+            session.delete(fobj)
+    # link folders to objects
     for obj in session.query(PieObject):
         if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
+            # fix up null subdirs in the pieobject
+            obj.FileData_Folder = [i for i in obj.FileData_Folder if i]
+            # query whether our folder exists
             qf = session.query(PieFolder).filter(and_(
                     PieFolder.Root == obj.FileData_Root,
                     PieFolder.SubFolders == obj.FileData_Folder
@@ -494,4 +504,6 @@ def reconcile_object_folder_gen():
                 print 'linking', obj.FileData_FullPath, 'to', qf
                 obj.FileData_FolderAdv = qf
                 yield obj
+            else:
+                print 'no link to be made', obj.FileData_FullPath
                 # don't forget to commit the session in the calling fn
