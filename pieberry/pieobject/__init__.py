@@ -501,9 +501,9 @@ def reconcile_object_folder_gen():
                     PieFolder.SubFolders == obj.FileData_Folder
                     )).first()
             if qf:
-                print 'linking', obj.FileData_FullPath, 'to', qf
+                print 'linking', obj, 'to', qf
                 obj.FileData_FolderAdv = qf
                 yield obj
             else:
-                print 'no link to be made', obj.FileData_FullPath
+                print 'no link to be made', obj
                 # don't forget to commit the session in the calling fn
