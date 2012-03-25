@@ -108,7 +108,7 @@ def generate_folder_list():
         '''cut up the path'''
         ds = curr_dir[len(ROOT_MAP[root_key]):].split(os.sep)
         ds.append(sub_dir)
-        return ds
+        return [i for i in ds if i]
 
     def contribute_projectfolder(piefolder):
         '''init new primary project folder'''
@@ -138,6 +138,7 @@ def generate_folder_list():
                         )).first()
                 if not exisf: # if the folder isn't already in the db
                     print 'creating:', os.path.join(curr_dir, subdir)
+                    print 'vars:', cut_subdirs, root_key
                     # create a new piefolder object
                     n_piefolder = PieFolder()
                     n_piefolder.set_path_precut(root_key, cut_subdirs)
@@ -164,7 +165,7 @@ def referable_folder_bypath(root, path, sqsess=session):
     subdirs = path[len(ROOT_MAP[root]):].split(os.sep)
     qf = sqsess.query(PieFolder).filter(and_(
             PieFolder.Root == root,
-            PieFolder.SubFolders == subdirs
+            PieFolder.SubFolders == [ i for i in subdirs if i ]
             )).first()
     return qf
 
@@ -278,10 +279,11 @@ class PieFolder(SQLABase):
             if path[:len(pdir)] == pdir:
                 fdroot = key
                 self.Root = key
-                self.SubFolders = path[len(pdir):].split(os.sep)
-        if not self.SubFolders: 
-            raise Exception, 'Folder is a root folder'
-        self.EndName = self.SubFolders[-1]
+                self.SubFolders=[i for i in path[len(pdir):].split(os.sep) if i]
+        if self.SubFolders: 
+            self.EndName = self.SubFolders[-1]
+        else:
+            self.EndName == ROOT_MAP[fdkey].split(os.sep)[-1]
         if not fdroot: raise Exception, 'Folder outside pieberry domain'
         self.initialised = 1
         print 'initialised:', self
@@ -293,7 +295,10 @@ class PieFolder(SQLABase):
         assert type(subfolders) == list
         self.Root = root
         self.SubFolders = [i for i in subfolders if i]
-        self.EndName = self.SubFolders[-1]
+        if self.SubFolders: 
+            self.EndName = self.SubFolders[-1]
+        else:
+            self.EndName == ROOT_MAP[fdkey].split(os.sep)[-1]
         self.initialised = 1
 
     def path(self):
