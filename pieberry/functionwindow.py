@@ -572,9 +572,6 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
-        a = session.query(PieFolder)
-        for i in a: print i
-        
         dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
         ans = dia.ShowModal()
         if ans == wx.ID_NO: return

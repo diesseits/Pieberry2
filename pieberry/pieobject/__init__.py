@@ -506,4 +506,5 @@ def reconcile_object_folder_gen():
                 yield obj
             else:
                 print 'no link to be made', obj
+                yield obj
                 # don't forget to commit the session in the calling fn
