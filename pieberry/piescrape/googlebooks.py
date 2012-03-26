@@ -86,6 +86,7 @@ def pieberry_from_google(gdict, url):
     obj.add_aspect_bibdata(**bd)
     return obj
 
+
 class GoogleBooksScraper(Thread):
     '''A class to scrape Google Books for relevant titles to a search string'''
     def __init__(self, search_string, notify_window):
@@ -99,6 +100,9 @@ class GoogleBooksScraper(Thread):
         print 'Running google books scraper'
         feed = self.service.search(self.search_string, max_results='20')#, max_results=__nresults__)
         print 'Feed obtained'
+        self.proc_results(feed)
+
+    def proc_results(self, feed):
         ostore = PieObjectStore()
         for item in feed.entry:
             idict = item.to_dict()
@@ -110,6 +114,18 @@ class GoogleBooksScraper(Thread):
             notify_window=self.notify_window)
         wx.PostEvent(self.notify_window, newevt)
         print 'Objects posted'
+
+class GoogleBooksISBNScraper(GoogleBooksScraper):
+    '''Subclassed GoogleBooksScraper to deal specifically with ISBN
+    searches, for the benefit of the zbar functionality'''
+    def __init__(self, isbn, notify_window):
+        self.isbn = isbn
+        GoogleBooksScraper.__init__(self, None, notify_window)
+
+    def run(self):
+        feed = self.service.search_by_keyword(isbn=self.isbn)
+        self.proc_results(feed)
+
 
 # feed.to_dict() Dict  will look something like this:
 

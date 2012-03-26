@@ -1,5 +1,6 @@
 import sys, os, os.path, datetime
 from pieberry.pieconfig.globalvars import ZBAR
+from pieberry.piescrape.googlebooks import *
 
 if ZBAR:
     import zbar
@@ -55,11 +56,13 @@ class PieZbarScanner:
     def EndScan(self):
         self.loop = False
 
-    def GetBook(self):
-        pass
+    def ShutDown(self):
+        self.proc.visible = False
 
 if __name__ == '__main__':
     zbs = PieZbarScanner()
     for i in zbs.DoScan(): 
         print i
     print 'done'
+
+example_scanresult = 'decoded UPCE symbol "08242224"'

@@ -15,6 +15,7 @@ from pieberry.pieconfig.paths import IMGDIR
 from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.atomise.atomise_widget import atomWidget
 from pieberry.ui.notespane import NotesPane
+from pieberry.pieconfig.globalvars import ZBAR
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -95,9 +96,12 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.menu_scan_web_page.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_globe16.png')))
         self.menu_google_books = wx.MenuItem(
-            gatherMenu, -1, _('Search Google Books\tCtrl-g'), _('Search Google Books for relevant references'))
+            gatherMenu, -1, _('Search &Google Books\tCtrl-g'), _('Search Google Books for relevant references'))
         self.menu_google_books.SetBitmap(
             wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
+        if ZBAR:
+            self.menu_scan_barcode = wx.MenuItem(
+                gatherMenu, -1, _('Scan ISBN &barcode\tCtrl-shift-b'), _('Scan a book\'s barcode containing its ISBN and look it up in Google Books'))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_import_bibtex.SetBitmap(
@@ -166,6 +170,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         locateMenu.AppendItem(self.menu_filter)
         gatherMenu.AppendItem(self.menu_scan_web_page)
         gatherMenu.AppendItem(self.menu_google_books)
+        if ZBAR:
+            gatherMenu.AppendItem(self.menu_scan_barcode)
         gatherMenu.AppendSeparator()
         gatherMenu.AppendItem(self.menu_emptyref)
         gatherMenu.AppendItem(self.menu_import_bibtex)
@@ -209,6 +215,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnViewStarred, self.menu_view_starred)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
+        if ZBAR:
+            self.Bind(wx.EVT_MENU, self.OnScanBarcode, self.menu_scan_barcode)
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 

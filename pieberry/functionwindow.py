@@ -401,6 +401,7 @@ class FunctionMainWindow(BaseMainWindow):
         self.StatusBar.SetStatusText('')
         evt.notify_window.AddObjects(evt.ostore)
         evt.notify_window.Enable()
+        self.StatusBar.SetStatusText(_('Found %d books' % len(evt.ostore)))
 
     def DoSearch(self, evt):
         # print 'Actor: doSearch: %s' % evt.searchtext
@@ -705,4 +706,29 @@ class FunctionMainWindow(BaseMainWindow):
         pan = self.GetCurrentPane()
         pan.UpdateObject(evt.obj)
             
+    def OnScanBarcode(self, evt):
+        '''Scan a barcode using zbar'''
+        from pieberry.pieinput.zbarread import PieZbarScanner
+        from pieberry.piescrape.googlebooks import GoogleBooksISBNScraper
+        zbs = PieZbarScanner()
+        self.StatusBar.SetStatusText(_('Scanning barcode'))
+        for scanresult in zbs.DoScan():
+            dia = wx.MessageDialog(self, _('ISBN: %s - ok?' % scanresult),
+                                   _('Scan result'), style=wx.YES_NO|wx.CANCEL)
+            ans = dia.ShowModal()
+            if ans == wx.ID_YES: break
+            if ans == wx.ID_CANCEL: 
+                zbs.EndScan()
+                return
+        zbs.EndScan()
+        self.StatusBar.SetStatusText(_('Looking up book in Google Books'))
+        # scanresult = zbs.DoScan()
+        # scanresult = "1848448635" # 0202748138
+        self.OpenGBListPane()
+        pan = self.GetCurrentPane()
+        pan.Disable()
+        gbs = GoogleBooksISBNScraper(scanresult, pan)
+        pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
+        gbs.start()
+        
         
