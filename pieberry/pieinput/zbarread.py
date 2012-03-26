@@ -1,5 +1,8 @@
 import sys, os, os.path, datetime
-import zbar
+from pieberry.pieconfig.globalvars import ZBAR
+
+if ZBAR:
+    import zbar
 # from threading import Thread
 
 if __name__ == '__main__': 

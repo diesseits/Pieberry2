@@ -23,5 +23,12 @@ try:
 except:
     PYNOTIFY = False
 
+try: 
+    import zbar
+    ZBAR = True
+except:
+    ZBAR = False
+
+
 def _dbg(t):
     print t

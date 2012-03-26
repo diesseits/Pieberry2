@@ -2,6 +2,7 @@ import pieberry.pieutility
 import os, os.path, wx, sys, shutil
 import traceback
 
+from pieberry.pieobject import EC_FALSE, EC_TRUE_UNOPENED, EC_TRUE_OPENED
 from pieberry.pieobject.paths import *
 from pieberry.pieobject.folder import contribute_folder
 from pieberry.ui.editdialog import PieBibEditDialog
