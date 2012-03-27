@@ -189,12 +189,14 @@ def contribute_folder(path, components):
     existpf = session.query(PieFolder).filter(and_(
             PieFolder.Root == root,
             PieFolder.SubFolders == subfolders)).first()
-    if not existpf:
+    if existpf: return existpf
+    else:
         newpf = PieFolder()
         newpf.set_path_precut(root, subfolders)
         session.add(newpf)
         session.commit()
         print 'CREATED', newpf
+        return newpf
     
 def commit_folders():
     session.commit()

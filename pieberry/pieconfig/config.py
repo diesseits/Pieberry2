@@ -19,7 +19,7 @@ class PieConfig(SafeConfigParser):
         '''Overriding to hack up a unicoding return for some things'''
         if section == 'Profile' and name == 'file_key':
             k = keyring.get_password(u'Pieberry', getpass.getuser())
-            if k == None return k
+            if k == None: return k
             r = hashlib.md5()
             r.update(k)
             return r.hexdigest()
@@ -72,7 +72,7 @@ def setup_config(inipath):
     return config
 
 def make_config():
-    PIE_CONFIG = setup_config(PIE_CONFIG_LOCATION)
     global PIE_CONFIG
+    PIE_CONFIG = setup_config(PIE_CONFIG_LOCATION)
 
 

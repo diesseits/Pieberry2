@@ -529,16 +529,29 @@ class FunctionMainWindow(BaseMainWindow):
                 obj, 
                 evt.dest_folder,
                 evt.new_fn)
-            # # this is a hack to make things more legible
-            # if PIE_CONFIG.getboolean('Format', 'atom_title_hack'):
-            #     obj.title = "%s [%s]" % (obj.title, evt.new_fn)
-        contribute_folder(os.path.dirname(storepath), components)
-        os.rename(obj.FileData_FullPath, storepath)
+
+        folder = contribute_folder(os.path.dirname(storepath), components)
+        # encryption stuff
+        defcon = PIE_INTERNALS.getint('Security', 'EncryptAfterSecurityLevel')
+        if folder.SecurityLevel > defcon:
+            # bother only if the security level of the folder is appropriate
+            key = PIE_CONFIG.get('Profile', 'file_key')
+            # make sure the key is right
+            if not PIE_INTERNALS.verify_encryption_hash(key):
+                wx.MessageBox(
+                    _('Could not verify password - cannot encrypt this file'))
+                return
+            storepath = storepath + u'.enc'
+            encrypt_file(key, obj.FileData_FullPath, storepath)
+            os.remove(obj.FileData_FullPath)
+            obj.aspects['encrypted'] = EC_TRUE_LOCKED
+        else:
+            os.rename(obj.FileData_FullPath, storepath)
         obj.add_aspect_stored(storepath)
-        print object
-        print obj.FileData_FullPath
-        print obj.FileData_FolderAdv
-        print obj.FileData_FolderAdv.SecurityLevel
+        # print object
+        # print obj.FileData_FullPath
+        # print obj.FileData_FolderAdv
+        # print obj.FileData_FolderAdv.SecurityLevel
         obj.add_aspect_saved()
         session.add(obj)
         session.commit()

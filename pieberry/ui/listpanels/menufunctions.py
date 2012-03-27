@@ -2,9 +2,10 @@ import pieberry.pieutility
 import os, os.path, wx, sys, shutil
 import traceback
 
-from pieberry.pieobject import EC_FALSE, EC_TRUE_UNOPENED, EC_TRUE_OPENED
+from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
 from pieberry.pieobject.folder import contribute_folder
+from pieberry.piefiles.encryption import *
 from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.ui.events import *
 from pieberry.ui.htmldataobject import HTMLDataObject
@@ -35,8 +36,52 @@ class MenuFunctionsMixin:
         obj = self.GetSelectedItem()
         # obj = self.objectstore[self._last_item_right_clicked]
         assert hasattr(obj, 'FileData_FullPath')
-        pieberry.pieutility.open_file(obj.FileData_FullPath)
+        if obj.aspects['encrypted'] == EC_TRUE_LOCKED:
+            # get md5 hash of user password from config
+            enckey = PIE_CONFIG.get('Profile', 'file_key')
+            if enckey == None: 
+                wx.MessageBox(_('You have not set a password yet'), _('Error'))
+                return
+            # test whether that's the correct key for this Pieberry archive
+            if not PIE_INTERNALS.verify_encryption_hash(enckey):
+                wx.MessageBox(_("You don't have the right password"), _('Error'))
+                return
+            decrypt_file(
+                key,
+                obj.FileData_FullPath,
+                decrypted_path(obj))
+            self.ListDisplay.UpdateObject(obj)
+            fp = decrypted_path(obj)
+            obj.aspects['encrypted'] = EC_TRUE_UNLOCKED
+        elif obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+            fp = decrypted_path(obj)
+        else:
+            fp = obj.FileData_FullPath
+        pieberry.pieutility.open_file(fp)
         obj.stats_opened()
+
+    def onReEncrypt(self, evt):
+        '''Re-encrypt (lock) a file that is encrypted but opened
+        (decrypted) in the decrypted files cache'''
+        obj.GetSelectedItem()
+        tmpfile = os.path.join(obj.FileData_ContainingFolder,
+                               u're-enc.tmp')
+        # get md5 hash of user password from config
+        enckey = PIE_CONFIG.get('Profile', 'file_key')
+        if enckey == None: 
+            wx.MessageBox(_('You have not set a password yet'), _('Error'))
+            return
+        # test whether that's the correct key for this Pieberry archive
+        if not PIE_INTERNALS.verify_encryption_hash(enckey):
+            wx.MessageBox(_("You don't have the right password"), _('Error'))
+            return
+        encrypt_file(key, 
+                     decrypted_path(obj),
+                     tmpfile)
+        os.remove(obj.FileData_FullPath)
+        os.rename(tmpfile, obj.FileData_FullPath)
+        obj.aspects['encrypted'] = EC_TRUE_LOCKED
+        self.ListDisplay.UpdateObject(obj)
 
     def onOpenContainingFolder(self, evt):
         obj = self.GetSelectedItem()

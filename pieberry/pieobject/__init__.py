@@ -23,8 +23,8 @@ from pieberry.pieutility.latex import untexify
 
 # Encryption states
 EC_FALSE = 0
-EC_TRUE_UNOPENED = 1
-EC_TRUE_OPENED = 2
+EC_TRUE_LOCKED = 1
+EC_TRUE_UNLOCKED = 2
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
@@ -455,6 +455,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 if self.FileData_Root == 'librarydir':
                     return 'yellowball'
                 elif self.FileData_Root == 'projectdir':
+                    if self.FileData_FolderAdv:
+                        defcon = PIE_INTERNALS.getint(
+                            'Security', 
+                            'EncryptAfterSecurityLevel')
+                        if self.FileData_FolderAdv.SecurityLevel > defcon:
+                            if self.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+                                return 'unlocked'
+                            elif self.aspects['encrypted'] == EC_TRUE_LOCKED:
+                                return 'locked'
+                            else: return 'neverlocked'
                     return 'greenball'
                 elif self.FileData_Root == 'meetingpaperdir':
                     return 'redball'
