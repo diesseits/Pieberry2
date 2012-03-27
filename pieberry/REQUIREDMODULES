@@ -1,8 +1,17 @@
-libmagic
-pdfrw
-wx
-hachoir_metadata
-hachoir_core
-hachoir_parser
-sqlalchemy
-python-docx
+Required modules:
+
+pypdf (Metadata reading)
+pdfrw - http://www.google.com/url?q=http://code.google.com/p/pdfrw/&sa=U&ei=cXNxT7SfK4OhiQen7dTkDw&ved=0CBEQFjAA&usg=AFQjCNGxIS2MNhkUfAMm7DGxwyrdoQNS4A (Metadata reading and writing)
+wx (UI)
+pybtex - BibTeX functionality
+hachoir_metadata (Metadata reading)
+hachoir_core (Metadata reading)
+hachoir_parser (Metadata reading)
+sqlalchemy (Database ORM)
+gdata (Google Data)
+
+Optional modules:
+
+python-magic & corresponding binary library (Mimetype diagnosis)
+zbar & corresponding binary library - http://pypi.python.org/pypi/zbar (Barcode scanning)
+pynotify (User notifications on Linux)

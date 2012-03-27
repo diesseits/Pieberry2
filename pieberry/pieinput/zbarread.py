@@ -55,8 +55,6 @@ class PieZbarScanner:
 
     def EndScan(self):
         self.loop = False
-
-    def ShutDown(self):
         self.proc.visible = False
 
 if __name__ == '__main__':
