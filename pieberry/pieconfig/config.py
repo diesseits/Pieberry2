@@ -7,6 +7,8 @@ from identity import *
 from defaults import *
 from profiles import *
 
+import keyring, getpass, hashlib
+
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and
     manipulation of various config profiles'''
@@ -15,6 +17,12 @@ class PieConfig(SafeConfigParser):
 
     def get(self, section, name):
         '''Overriding to hack up a unicoding return for some things'''
+        if section == 'Profile' and name == 'file_key':
+            k = keyring.get_password(u'Pieberry', getpass.getuser())
+            if k == None return k
+            r = hashlib.md5()
+            r.update(k)
+            return r.hexdigest()
         val = SafeConfigParser.get(self, section, name)
         if name in ('rootdir', 'desktopdir'):
             return val.decode('utf8')
@@ -40,6 +48,12 @@ class PieConfig(SafeConfigParser):
 
     def write_pieconfig(self):
         self.write(open(PIE_CONFIG_LOCATION, 'w'))
+
+    def set(self, section, name, value):
+        if section == 'Profile' and name == 'file_key':
+            keyring.set(u'Pieberry', getpass.getuser(), value)
+        else:
+            SafeConfigParser.set(self, section, name, value)
 
 def refresh_paths():
     '''Reset the various path global variables'''
