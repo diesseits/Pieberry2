@@ -48,7 +48,10 @@ class PieZbarScanner:
         if init_res == False: yield False
         self.loop = True
         while self.loop:
-            data = self._do_scan()
+            try:
+                data = self._do_scan()
+            except zbar.WindowClosed:
+                return
             if data:
                 print data
                 yield data

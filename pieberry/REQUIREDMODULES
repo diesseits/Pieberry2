@@ -9,6 +9,8 @@ hachoir_core (Metadata reading)
 hachoir_parser (Metadata reading)
 sqlalchemy (Database ORM)
 gdata (Google Data)
+keyring - (Encryption)
+pycrypto - (Encryption)
 
 Optional modules:
 

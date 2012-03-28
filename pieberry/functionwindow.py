@@ -738,6 +738,7 @@ class FunctionMainWindow(BaseMainWindow):
         from pieberry.piescrape.googlebooks import GoogleBooksISBNScraper
         zbs = PieZbarScanner()
         self.StatusBar.SetStatusText(_('Scanning barcode'))
+        scanresult = None
         for scanresult in zbs.DoScan():
             dia = wx.MessageDialog(self, _('ISBN: %s - ok?' % scanresult),
                                    _('Scan result'), style=wx.YES_NO|wx.CANCEL)
@@ -747,6 +748,7 @@ class FunctionMainWindow(BaseMainWindow):
                 zbs.EndScan()
                 return
         zbs.EndScan()
+        if scanresult == None: return
         self.StatusBar.SetStatusText(_('Looking up book in Google Books'))
         # scanresult = zbs.DoScan()
         # scanresult = "1848448635" # 0202748138
