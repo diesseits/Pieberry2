@@ -134,9 +134,8 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
 
     def onSelectionActivated(self, evt):
         it = self.objectstore[self.ListDisplay.GetItemData(evt.GetIndex())]
-        if it.FileData_FullPath:
-            pieberry.pieutility.open_file(it.FileData_FullPath)
-            it.stats_opened()
+        if it.has_aspect('hasfile'):
+            self.onOpenFile(evt)
         elif it.WebData_Url:
             pieberry.pieutility.open_web_file(it.WebData_Url)
             it.stats_opened()
@@ -186,7 +185,14 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
             return
 
         do = wx.FileDataObject()
-        do.AddFile(obj.FileData_FullPath)
+        if obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+            fp = decrypted_path(obj)
+        elif obj.aspects['encrypted'] == EC_TRUE_LOCKED:
+            self.isdragging = False
+            return
+        else:
+            fp = obj.FileData_FullPath
+        do.AddFile(fp)
         dropsource = wx.DropSource(self.ListDisplay)
         dropsource.SetData(do)
 

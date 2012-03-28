@@ -38,7 +38,7 @@ class MenuFunctionsMixin:
         assert hasattr(obj, 'FileData_FullPath')
         if obj.aspects['encrypted'] == EC_TRUE_LOCKED:
             # get md5 hash of user password from config
-            enckey = PIE_CONFIG.get('Profile', 'file_key')
+            enckey = PIE_CONFIG.get('Security', 'file_key')
             if enckey == None: 
                 wx.MessageBox(_('You have not set a password yet'), _('Error'))
                 return
@@ -47,12 +47,12 @@ class MenuFunctionsMixin:
                 wx.MessageBox(_("You don't have the right password"), _('Error'))
                 return
             decrypt_file(
-                key,
+                enckey,
                 obj.FileData_FullPath,
                 decrypted_path(obj))
-            self.ListDisplay.UpdateObject(obj)
             fp = decrypted_path(obj)
             obj.aspects['encrypted'] = EC_TRUE_UNLOCKED
+            self.UpdateObject(obj)
         elif obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
             fp = decrypted_path(obj)
         else:
@@ -63,11 +63,11 @@ class MenuFunctionsMixin:
     def onReEncrypt(self, evt):
         '''Re-encrypt (lock) a file that is encrypted but opened
         (decrypted) in the decrypted files cache'''
-        obj.GetSelectedItem()
+        obj = self.GetSelectedItem()
         tmpfile = os.path.join(obj.FileData_ContainingFolder,
                                u're-enc.tmp')
         # get md5 hash of user password from config
-        enckey = PIE_CONFIG.get('Profile', 'file_key')
+        enckey = PIE_CONFIG.get('Security', 'file_key')
         if enckey == None: 
             wx.MessageBox(_('You have not set a password yet'), _('Error'))
             return
@@ -75,13 +75,21 @@ class MenuFunctionsMixin:
         if not PIE_INTERNALS.verify_encryption_hash(enckey):
             wx.MessageBox(_("You don't have the right password"), _('Error'))
             return
-        encrypt_file(key, 
-                     decrypted_path(obj),
-                     tmpfile)
-        os.remove(obj.FileData_FullPath)
-        os.rename(tmpfile, obj.FileData_FullPath)
+        try:
+            encrypt_file(enckey, 
+                         decrypted_path(obj),
+                         tmpfile)
+            os.remove(obj.FileData_FullPath)
+            os.rename(tmpfile, obj.FileData_FullPath)
+            os.remove(decrypted_path(obj))
+        except Exception, exc:
+            wx.MessageBox(unicode(exc), _('Error'))
+            try:
+                os.remove(tmpfile)
+            except: pass
+            return
         obj.aspects['encrypted'] = EC_TRUE_LOCKED
-        self.ListDisplay.UpdateObject(obj)
+        self.UpdateObject(obj)
 
     def onOpenContainingFolder(self, evt):
         obj = self.GetSelectedItem()
@@ -112,6 +120,8 @@ class MenuFunctionsMixin:
         if obj.has_aspect('hasfile'):
             print 'deleting', obj.FileData_FullPath
             try:
+                if obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+                    os.remove(decrypted_path(obj))
                 os.remove(obj.FileData_FullPath)
                 obj.clear_file()
             except:

@@ -28,6 +28,9 @@ def create_directories():
     for dr in ROOT_MAP.values():
         if not os.path.exists(dr):
             os.makedirs(dr)
+    # create decryption directory
+    if not os.path.exists(os.path.join(CACHEDIR, u'.decrypted')):
+        os.makedirs(os.path.join(CACHEDIR, u'.decrypted'))
     return True
 
 def default_paths_relative_to_root(root):

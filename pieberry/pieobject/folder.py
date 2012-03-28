@@ -175,7 +175,7 @@ def contribute_folder(path, components):
     root, subfolders, fn = components
     if os.path.exists(path) and not os.path.isdir(path):
         raise ValueError, 'Conflict: a file with this path exists: %s' % path
-    if os.path.isdir(path):
+    if not os.path.isdir(path):
         return True # return if the folder exists
     else:
         os.makedirs(path)
@@ -184,7 +184,7 @@ def contribute_folder(path, components):
                     'librarydir',
                     'meetingpaperdir',
                     'recentdocsdir'):
-        return True
+        return 
     # ensure we don't duplicate any dormant PieFolders
     existpf = session.query(PieFolder).filter(and_(
             PieFolder.Root == root,
@@ -197,6 +197,27 @@ def contribute_folder(path, components):
         session.commit()
         print 'CREATED', newpf
         return newpf
+
+def contribute_and_get_folder(path, components):
+    '''Like contribute_folder, but be sure to return the folder that
+    was contributed (more DB intensive)'''
+    root, subfolders, fn = components
+    if os.path.exists(path) and not os.path.isdir(path):
+        raise Exception, 'Conflict: a file with this path exists: %s' % path
+    if not os.path.isdir(path):
+        os.makedirs(path)
+    existpf = session.query(PieFolder).filter(and_(
+            PieFolder.Root == root,
+            PieFolder.SubFolders == subfolders)).first()
+    if existpf: return existpf
+    else:
+        newpf = PieFolder()
+        newpf.set_path_precut(root, subfolders)
+        session.add(newpf)
+        session.commit()
+        print 'CREATED', newpf
+        return newpf
+    
     
 def commit_folders():
     session.commit()

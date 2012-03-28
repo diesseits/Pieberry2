@@ -17,12 +17,14 @@ class PieConfig(SafeConfigParser):
 
     def get(self, section, name):
         '''Overriding to hack up a unicoding return for some things'''
-        if section == 'Profile' and name == 'file_key':
+        if section == 'Security' and name == 'file_key':
             k = keyring.get_password(u'Pieberry', getpass.getuser())
             if k == None: return k
             r = hashlib.md5()
             r.update(k)
             return r.hexdigest()
+        if section == 'Security' and name == 'file_key_unhashed':
+            return keyring.get_password(u'Pieberry', getpass.getuser())
         val = SafeConfigParser.get(self, section, name)
         if name in ('rootdir', 'desktopdir'):
             return val.decode('utf8')
@@ -50,8 +52,8 @@ class PieConfig(SafeConfigParser):
         self.write(open(PIE_CONFIG_LOCATION, 'w'))
 
     def set(self, section, name, value):
-        if section == 'Profile' and name == 'file_key':
-            keyring.set(u'Pieberry', getpass.getuser(), value)
+        if section == 'Security' and name == 'file_key':
+            keyring.set_password(u'Pieberry', getpass.getuser(), value)
         else:
             SafeConfigParser.set(self, section, name, value)
 

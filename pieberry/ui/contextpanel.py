@@ -409,6 +409,7 @@ def compile_infostring(obj):
     if obj.notes: rs = rs + othermap['notes']
     if obj.StatData_FollowUpFlag: rs = rs + othermap['flagged']
     if obj.StatData_Favourite: rs = rs + othermap['starred']
+    if obj.aspects['encrypted'] > 0: rs = rs + othermap['encrypted']
     return rs
         
 class FavBitmapButton(ThemedGenBitmapToggleButton):

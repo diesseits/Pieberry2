@@ -2,6 +2,7 @@ import wx, os.path, os
 from pieberry.ui.validators import pieBibtexValidator
 from pieberry.ui.events import PieLocationChangedEvent, PieUpdateAtomChoicesEvent
 from pieberry.pieobject.folder import *
+from pieberry.pieobject.internals import PIE_INTERNALS
 
 if __name__ == '__main__':
     import sys
@@ -360,6 +361,70 @@ class CleanerPanel(wx.Panel):
         self.createNewDirBt.Bind(wx.EVT_BUTTON, self.onCreateNewDir)
         # self.delDirBt.Bind(wx.EVT_BUTTON, self.onDeleteDir)
 
+class SecurityPanel(wx.Panel):
+    def __init__(self, *args, **kwds):
+        wx.Panel.__init__(self, *args, **kwds)
+        self.mainsizer = wx.BoxSizer(wx.VERTICAL)
+        self.mainsizer.Add(
+            wx.StaticText(self, -1, _('Security settings')), 0, wx.ALL, 5)
+        self.mainsizer.Add(
+            wx.StaticLine(self, -1), 0, wx.EXPAND)
+        self.mainsizer.Add((20,20),1)
+        self.setpwdbt = wx.Button(self, -1, "Set password")
+        self.mainsizer.Add(self.setpwdbt, 0, wx.ALL, 5)
+        self.mainsizer.Add(
+            wx.StaticText(
+                self, -1,
+                _('''This password will enable the encryption of files 
+that are placed in project folders with a security 
+level set at or above PROTECTED. The password will be 
+stored in a local safe storage location which is accessible
+only from your current login. 
+
+If you are storing files on a portable device, then you 
+will be able to decrypt them from another installation of 
+Pieberry but only if you have set the same password there. 
+The password is not stored anywhere in the Pieberry database.''')),
+            0, wx.ALL, 5)
+        self.mainsizer.Add((20,20),1)
+        self.SetSizer(self.mainsizer)
+        self.Layout()
+        self.setpwdbt.Bind(wx.EVT_BUTTON, self.OnSetPassword)
+    
+    def OnSetPassword(self, evt):
+        existpwd = PIE_CONFIG.get('Security', 'file_key_unhashed')
+        if existpwd:
+            dia0 = wx.MessageDialog(self, _('There already appears to be a password set.\nChanging it now will mean that any files you have already\nencrypted will become UNREADABLE.\nChanging your password should NOT be necessary, but you can\nproceed if you wish.'), _('Warning'), style=wx.OK|wx.CANCEL)
+            ans = dia0.ShowModal()
+            if ans == wx.ID_CANCEL: return
+            dia0a = wx.PasswordEntryDialog(self, _('Enter existing password'))
+            ans = dia0a.ShowModal()
+            if ans == wx.ID_CANCEL: return
+            pwd0 = dia0a.GetValue()
+            dia0a.Destroy()
+            if pwd0 != existpwd: 
+                wx.MessageBox(_('That is not your current password'), _('Error'))
+                return
+        dia1 = wx.PasswordEntryDialog(self,  _('Enter password'))
+        ans = dia1.ShowModal()
+        if ans == wx.ID_CANCEL: return
+        pwd1 = dia1.GetValue()
+        dia1.Destroy()
+        dia2 = wx.PasswordEntryDialog(self,  _('Confirm password'))
+        ans = dia2.ShowModal()
+        if ans == wx.ID_CANCEL: return
+        pwd2 = dia2.GetValue()
+        dia2.Destroy()
+        if pwd1 != pwd2: 
+            wx.MessageBox(_('The passwords did not match.'), _('Error'))
+            return
+        if len(pwd1) < 4:
+            wx.MessageBox(_('This password seems a bit short. Try another'))
+            return
+        PIE_CONFIG.set('Security', 'file_key', pwd1)
+        PIE_INTERNALS.set_encryption_hash(PIE_CONFIG.get('Security', 'file_key'))
+        
+
 class SimplePanel(wx.Panel):
     def __init__(self, *args, **kwds):
         wx.Panel.__init__(self, *args, **kwds)
@@ -384,6 +449,7 @@ class PieSettingsDialog(wx.Dialog):
         self.profilepanel = ProfilePanel(self.listbook, -1)
         self.formatpanel = FormatPanel(self.listbook, -1)
         self.cleanerpanel = CleanerPanel(self.listbook, -1)
+        self.securitypanel = SecurityPanel(self.listbook, -1)
 
         self.okBt = wx.Button(self, wx.ID_OK, "Ok")
         self.cancelBt = wx.Button(self, wx.ID_CANCEL, "Cancel")
@@ -397,6 +463,7 @@ class PieSettingsDialog(wx.Dialog):
         self.listbook.AddPage(self.profilepanel, _('Profile'), True, 0)
         self.listbook.AddPage(self.formatpanel, _('Format'), False, 1)
         self.listbook.AddPage(self.cleanerpanel, _('Desktop Cleaner'), False, 2)
+        self.listbook.AddPage(self.securitypanel, _('Security'), False, 3)
 
         sizer_3 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_3.Add((20, 20), 3, 0, 0)
@@ -455,6 +522,7 @@ SettingsImageList = wx.ImageList(32, 32)
 SettingsImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_profile32.png')))
 SettingsImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_format32.png')))
 SettingsImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_broom32.png')))
+SettingsImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_padlock32.png')))
 
 if __name__ == '__main__':
     dialog_1 = PieSettingsDialog(None)

@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from pieberry.pieobject import *
 from pieberry.pieobject.paths import *
-from pieberry.pieobject.folder import contribute_folder
+from pieberry.pieobject.folder import *
 from pieberry.piescrape import *
 from pieberry.piescrape.execfn import download_file
 from pieberry.ui.mainwindow import BaseMainWindow 
@@ -31,6 +31,7 @@ import pieberry.pieinput as pieinput
 if PYNOTIFY: import pynotify
 
 import pieberry.pieobject.website as website
+from pieberry.piefiles.encryption import *
 
 class FunctionMainWindow(BaseMainWindow):
     '''The main window with the actual programmatic functionality added. 
@@ -530,29 +531,41 @@ class FunctionMainWindow(BaseMainWindow):
                 evt.dest_folder,
                 evt.new_fn)
 
-        folder = contribute_folder(os.path.dirname(storepath), components)
-        # encryption stuff
+        folder = contribute_and_get_folder(
+            os.path.dirname(storepath), components)
+
+        # ===== ENCRYPTION STUFF (TODO: Make more functional) ===============
         defcon = PIE_INTERNALS.getint('Security', 'EncryptAfterSecurityLevel')
         if folder.SecurityLevel > defcon:
             # bother only if the security level of the folder is appropriate
-            key = PIE_CONFIG.get('Profile', 'file_key')
+            key = PIE_CONFIG.get('Security', 'file_key')
+            if not key:
+                wx.MessageBox(_('You have not set a password for file encryption: go to File -> Settings -> Security.'))
+                return
             # make sure the key is right
+            if not PIE_INTERNALS.has_setting('Security', 'Hash'):
+                # Going to make the assumption we should use the
+                # existing user-set password to encrypt this
+                # (presumably) new and different archive that they
+                # have connected to, that thus far has no key.
+                PIE_INTERNALS.set_encryption_hash(key)
+            # Verify that all is well with the key we're using
             if not PIE_INTERNALS.verify_encryption_hash(key):
                 wx.MessageBox(
-                    _('Could not verify password - cannot encrypt this file'))
+                    _('Could not verify password - cannot encrypt this file'),
+                    _('Error'))
                 return
-            storepath = storepath + u'.enc'
+            # storepath = storepath + u'.enc'
             encrypt_file(key, obj.FileData_FullPath, storepath)
             os.remove(obj.FileData_FullPath)
             obj.aspects['encrypted'] = EC_TRUE_LOCKED
         else:
             os.rename(obj.FileData_FullPath, storepath)
+        # ============= END ENCRYPTION STUFF ================================
+
         obj.add_aspect_stored(storepath)
-        # print object
-        # print obj.FileData_FullPath
-        # print obj.FileData_FolderAdv
-        # print obj.FileData_FolderAdv.SecurityLevel
         obj.add_aspect_saved()
+
         session.add(obj)
         session.commit()
         wx.CallAfter(evt.notify_window.Callback_onGoFile, evt.rowid)
