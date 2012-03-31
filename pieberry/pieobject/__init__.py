@@ -26,33 +26,33 @@ EC_FALSE = 0
 EC_TRUE_LOCKED = 1
 EC_TRUE_UNLOCKED = 2
 
-from sqlalchemy.ext.mutable import Mutable
+# from sqlalchemy.ext.mutable import Mutable
 
-class MutationDict(Mutable, dict):
-    @classmethod
-    def coerce(cls, key, value):
-        "Convert plain dictionaries to MutationDict."
+# class MutationDict(Mutable, dict):
+#     @classmethod
+#     def coerce(cls, key, value):
+#         "Convert plain dictionaries to MutationDict."
 
-        if not isinstance(value, MutationDict):
-            if isinstance(value, dict):
-                return MutationDict(value)
+#         if not isinstance(value, MutationDict):
+#             if isinstance(value, dict):
+#                 return MutationDict(value)
 
-            # this call will raise ValueError
-            return Mutable.coerce(key, value)
-        else:
-            return value
+#             # this call will raise ValueError
+#             return Mutable.coerce(key, value)
+#         else:
+#             return value
 
-    def __setitem__(self, key, value):
-        "Detect dictionary set events and emit change events."
+#     def __setitem__(self, key, value):
+#         "Detect dictionary set events and emit change events."
 
-        dict.__setitem__(self, key, value)
-        self.changed()
+#         dict.__setitem__(self, key, value)
+#         self.changed()
 
-    def __delitem__(self, key):
-        "Detect dictionary del events and emit change events."
+#     def __delitem__(self, key):
+#         "Detect dictionary del events and emit change events."
 
-        dict.__delitem__(self, key)
-        self.changed()
+#         dict.__delitem__(self, key)
+#         self.changed()
 
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
