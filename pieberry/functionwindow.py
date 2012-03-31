@@ -278,7 +278,7 @@ class FunctionMainWindow(BaseMainWindow):
             # All activity past this point pertains to files 
             if not obj.has_aspect('cached'): continue
             # Write metadata to file if possible
-            if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
+            if PIE_CONFIG.getboolean('Format', 'write_file_metadata'):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
             dpath, components = suggest_path_store_fromweb(obj)
@@ -320,8 +320,7 @@ class FunctionMainWindow(BaseMainWindow):
                 session.rollback()
                 return
         if (evt.obj.has_aspect('hasfile') 
-            and evt.obj.FileData_FileType == 'pdf'
-            and PIE_CONFIG.getboolean('Format', 'write_pdf_metadata')):
+            and PIE_CONFIG.getboolean('Format', 'write_file_metadata')):
             success = piemeta.write_metadata_to_object(evt.obj)
             st = _('Updated pdf metadata') if success else _('Didn\'t update pdf metadata')
             self.StatusBar.SetStatusText(st)
@@ -523,7 +522,7 @@ class FunctionMainWindow(BaseMainWindow):
         # session = Session()
         if obj.has_aspect('bibdata'):
             storepath, components = suggest_path_store_with_bibdata(obj)
-            if PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'):
+            if PIE_CONFIG.getboolean('Format', 'write_file_metadata'):
                 piemeta.write_metadata_to_object(obj)
         else:
             storepath, components = suggest_path_store_fromdesktop(

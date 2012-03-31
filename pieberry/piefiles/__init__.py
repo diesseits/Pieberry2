@@ -164,7 +164,9 @@ class PieFileIndexer(Thread):
             track += 1
             if exclude(fp): continue
             # Todo - check handle-able file types
+            print 'DOING', fp
             obj = piemeta.get_metadata_object(fp)
+            print type(obj.title), obj.title
             print 'DOING', obj, fp
             obj.add_aspect_stored(fp, sqsess=self.session)
             obj.add_aspect_saved()

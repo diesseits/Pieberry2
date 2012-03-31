@@ -167,11 +167,15 @@ class FormatPanel(wx.Panel):
         self.plaintextfmtchoice.SetStringSelection(
             self.ptxtfchz_rv[PIE_CONFIG.get('Format', 'plaintext_citation_format')])
         self.writepdf_cb = wx.CheckBox(self, -1, 
-                                       _('Write PDF metadata when possible'))
-        ttd = wx.ToolTip(_('Pieberry will try to update PDF metadata fields to reflect the known bibliographic data. It doesn\'t always, however, work (but should fail safe)'))
+                                       _('Write file metadata when possible'))
+        ttd = wx.ToolTip(_('''
+Pieberry will try to update metadata fields of pdf, office-xml and open
+document files to reflect the known bibliographic data to a limited extent
+(generally just the title and author). It doesn\'t always, however, work 
+(but should fail safe)'''))
         self.writepdf_cb.SetToolTip(ttd)
         self.writepdf_cb.SetValue(
-            PIE_CONFIG.getboolean('Format', 'write_pdf_metadata'))
+            PIE_CONFIG.getboolean('Format', 'write_file_metadata'))
         self.fnlen_spinner = wx.SpinCtrl(self, -1, min=40, max=255)
         self.fnlen_spinner.SetValue(
             PIE_CONFIG.getint('Format', 'filesystem_length_limit'))
@@ -185,7 +189,7 @@ class FormatPanel(wx.Panel):
                 'default_howpublished_text': self.howpublishedtext.GetValue(),
                 'url_level_represent': self.uchz[self.urlchoice.GetStringSelection()],
                 'plaintext_citation_format': self.ptxtfchz[self.plaintextfmtchoice.GetStringSelection()],
-                'write_pdf_metadata': self.writepdf_cb.GetValue(),
+                'write_file_metadata': self.writepdf_cb.GetValue(),
                 'filesystem_length_limit': self.fnlen_spinner.GetValue()
                 })
         return retdata

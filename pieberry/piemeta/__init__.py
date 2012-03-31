@@ -52,15 +52,21 @@ def get_metadata_for_aspect(obj):
 
 def write_metadata_to_object(obj, **metadata):
     '''You have an object, you want to write metadata to its
-    file. (only going to work for pdfs for the forseeable future'''
+    file. (works for pdfs, oxml and odf types)'''
     try:
         ft = obj.FileData_FileType
     except AttributeError:
         ft = determine_file_type(obj.FileData_FullPath)
-    if not ft == 'pdf':
+    if not ft in ('pdf', 'odf_doc'):#, 'oxml_doc'):
         return False
     try:
-        return write_pdf_metadata(obj)
+        if ft == 'pdf':
+            return write_pdf_metadata(obj)
+        # OXML disabled as BeautifulSoup changes case of tags - bugger
+        # elif ft == 'oxml_doc':
+        #     return write_oxml_metadata(obj)
+        elif ft == 'odf_doc':
+            return write_odf_metadata(obj)
     except:
         traceback.print_exc()
         return False

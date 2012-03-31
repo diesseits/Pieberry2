@@ -11,10 +11,10 @@ def get_oxml_metadata(fn):
     r = {}
     unzipped = zipfile.ZipFile(fn)
     bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'docProps/core.xml'))
-    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
-    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else ''
-    r['description'] = bs.find(u'dc:description') if bs.find(u'dc:description') else None
-    r['subject'] = bs.find(u'dc:subject') if bs.find(u'dc:subject') else None
+    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else u''
+    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else u''
+    r['description'] = bs.find(u'dc:description').text if bs.find(u'dc:description') else None
+    r['subject'] = bs.find(u'dc:subject').text if bs.find(u'dc:subject') else None
     r['creation_date'] = datetime.datetime.strptime(
         bs.find('dcterms:created').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['modification_date'] = datetime.datetime.strptime(

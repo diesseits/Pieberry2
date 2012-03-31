@@ -2,10 +2,11 @@
 
 import zipfile, BeautifulSoup, os, os.path, sys, re, datetime, traceback
 from pprint import pprint
-from pieberry.pieconfig.paths import CACHEDIR
-from pieberry.pieobject.paths import auto_increment_fn
-from pieberry.pieconfig.globalvars import DEBUG
-from pieberry.piemeta.read.fake import get_fake_metadata_object
+# from pieberry.pieconfig.paths import CACHEDIR
+# from pieberry.pieobject.paths import auto_increment_fn
+# from pieberry.pieconfig.globalvars import DEBUG
+if __name__ != "__main__":
+    from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 def get_odf_metadata(fn):
     r = {}
@@ -13,8 +14,8 @@ def get_odf_metadata(fn):
     bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'meta.xml'))
     r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
     r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else ''
-    r['description'] = bs.find(u'dc:description') if bs.find(u'dc:description') else None
-    r['subject'] = bs.find(u'dc:subject') if bs.find(u'dc:subject') else None
+    r['description'] = bs.find(u'dc:description').text if bs.find(u'dc:description') else None
+    r['subject'] = bs.find(u'dc:subject').text if bs.find(u'dc:subject') else None
     r['creation_date'] = datetime.datetime.strptime(
         bs.find('meta:creation-date').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['modification_date'] = datetime.datetime.strptime(
@@ -50,4 +51,9 @@ def get_odf_metadata_for_aspect(obj):
     return get_odf_metadata(obj.FileData_FullPath)
 
 if __name__ == '__main__':
-    pprint(get_oxml_metadata('test.docx'))
+    # md = get_odf_metadata('test.odt')
+    # pprint(md)
+    # print type(md['subject'])
+    write_odf_metadata('test.odt')
+    
+
