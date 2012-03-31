@@ -734,6 +734,7 @@ class FunctionMainWindow(BaseMainWindow):
             
     def OnScanBarcode(self, evt):
         '''Scan a barcode using zbar'''
+        wx.MessageBox(_('A webcam window will pop up in a few seconds.\n\nPlace the barcode, in focus, close to the webcam and wait for the scanner dots to flash green. Then, close the window.'))
         from pieberry.pieinput.zbarread import PieZbarScanner
         self.zbs = PieZbarScanner(self)
         self.StatusBar.SetStatusText(_('Scanning barcode'))
