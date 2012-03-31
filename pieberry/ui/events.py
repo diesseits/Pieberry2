@@ -1,7 +1,9 @@
 import wx
 import wx.lib.newevent
 
-
+PieBarcodeEvent, EVT_PIE_BARCODE = wx.lib.newevent.NewEvent()
+# attributes - btype - the barcode type
+#            - bcode - the barcode data
 PieUpdateAtomChoicesEvent, EVT_PIE_UPDATE_ATOM_CHOICES = wx.lib.newevent.NewEvent()
 # attributes - dests - list of filesystem destinations
 PieGoogleSearchEvent, EVT_PIE_GOOGLE_SEARCH = wx.lib.newevent.NewEvent()

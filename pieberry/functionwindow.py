@@ -735,27 +735,31 @@ class FunctionMainWindow(BaseMainWindow):
     def OnScanBarcode(self, evt):
         '''Scan a barcode using zbar'''
         from pieberry.pieinput.zbarread import PieZbarScanner
-        from pieberry.piescrape.googlebooks import GoogleBooksISBNScraper
-        zbs = PieZbarScanner()
+        self.zbs = PieZbarScanner(self)
         self.StatusBar.SetStatusText(_('Scanning barcode'))
-        scanresult = None
-        for scanresult in zbs.DoScan():
-            dia = wx.MessageDialog(self, _('ISBN: %s - ok?' % scanresult),
-                                   _('Scan result'), style=wx.YES_NO|wx.CANCEL)
-            ans = dia.ShowModal()
-            if ans == wx.ID_YES: break
-            if ans == wx.ID_CANCEL: 
-                zbs.EndScan()
-                return
-        zbs.EndScan()
-        if scanresult == None: return
+        self.Bind(EVT_PIE_BARCODE, self.Callback_ScanBarcode)
+        self.zbs.start()
+        # scanresult = None
+        # for scanresult in zbs.DoScan():
+        #     dia = wx.MessageDialog(self, _('ISBN: %s - ok?' % scanresult),
+        #                            _('Scan result'), style=wx.YES_NO|wx.CANCEL)
+        #     ans = dia.ShowModal()
+        #     if ans == wx.ID_YES: break
+        #     if ans == wx.ID_CANCEL: 
+        #         zbs.EndScan()
+        #         return
+        # zbs.EndScan()
+        # if scanresult == None: return
+
+    def Callback_ScanBarcode(self, evt):
+        self.zbs.EndScan()
+        from pieberry.piescrape.googlebooks import GoogleBooksISBNScraper
+        print 'Callback_ScanBarcode'
         self.StatusBar.SetStatusText(_('Looking up book in Google Books'))
-        # scanresult = zbs.DoScan()
-        # scanresult = "1848448635" # 0202748138
         self.OpenGBListPane()
         pan = self.GetCurrentPane()
         pan.Disable()
-        gbs = GoogleBooksISBNScraper(scanresult, pan)
+        gbs = GoogleBooksISBNScraper(evt.bcode, pan)
         pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
         gbs.start()
         
