@@ -13,6 +13,9 @@ def salted_hash(salt, firsthash):
     md5.update(salt)
     return md5.hexdigest()
 
+def generate_salt():
+    return u''.join(random.choice(string.digits) for i in xrange(16))    
+
 class PieInternal(SQLABase):
     '''A class to hold internal settings and metadata for the Pieberry store'''
     __tablename__ = 'pieinternals'
@@ -43,7 +46,7 @@ class PieInternalsHandler:
             self.set('Identity', 'Version', PIE_VERSION)
         if not self.has_setting('Security', 'Salt'):
             self.set('Security', 'Salt', 
-                     ''.join(random.choice(string.letters) for i in xrange(16)))
+                     generate_salt())
         if not self.has_setting('Security', 'EncryptAfterSecurityLevel'):
             self.set('Security', 'EncryptAfterSecurityLevel', 2)
 

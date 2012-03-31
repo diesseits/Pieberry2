@@ -121,6 +121,12 @@ class PieActor:
             '___________________________________________', maximum = session.query(PieObject).filter(PieObject.FileData_FileName != None).count() )
         counter = 0
         for obj in reconcile_object_folder_gen():
+            # print 'assert st 1'
+            # assert obj.aspects.has_key('encrypted')
+            # session.add(obj)
+            # session.flush()
+            # print 'assert st 2'
+            # assert obj.aspects.has_key('encrypted')
             counter += 1
             progress_dialog.Update(counter, unicode(obj))
         progress_dialog.Destroy()

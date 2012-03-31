@@ -6,17 +6,25 @@ from pprint import pprint, pformat
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy import and_
 
 from pieberry.piedb import *
 from pieberry.pieobject.tags import TagHandler, PieTag, pieobject_tags
 from pieberry.pieobject.biblio import BiblioHandler
 from pieberry.pieobject.objectstore import PieObjectStore
 from pieberry.pieobject.diagnostic import *
-from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
+from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder, referable_folder_byobj
 from pieberry.pieobject.website import PieWebsite, referable_website, validify_domain
+from pieberry.pieobject.internals import PIE_INTERNALS
 from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.pieconfig.paths import ROOT_MAP
 from pieberry.pieconfig.schemas import bibtexfields, bibtexmap
+from pieberry.pieutility.latex import untexify
+
+# Encryption states
+EC_FALSE = 0
+EC_TRUE_LOCKED = 1
+EC_TRUE_UNLOCKED = 2
 
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
@@ -129,13 +137,14 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             'stored': False,
             'failed_dl': False,
             'bibdata': False,
-            'physical': False
+            'physical': False,
+            'encrypted': EC_FALSE
             }
 
         self.StatData_OpenedCount = 0
 
     def __repr__(self):
-        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10], self.Author(), str(self.ReferDate()))
+        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10].encode('ascii', 'ignore'), self.Author().encode('ascii', 'ignore'), str(self.ReferDate()))
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath': 
@@ -151,16 +160,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         else:
             raise AttributeError
 
-    def Title(self, atom_title_hack=False):
+    def Title(self, atom_title_hack=False, texstuff=False):
         if not self.title:
             if self.WebData_LinkText:
                 return self.WebData_LinkText
             if self.FileData_FileName:
                 return self.FileData_FileName
+        ttl = untexify(self.title) if not texstuff else self.title
         if atom_title_hack and self.FileData_FileName:
-            if self.FileData_Root == 'projectdir':
-                return "%s [%s]" % (self.title, self.FileData_FileName)
-        return self.title
+            if self.FileData_Root in ('projectdir', 'meetingpaperdir'):
+                return "%s [%s]" % (ttl, self.FileData_FileName)
+        return ttl
 
     def Author(self, favour_corporate=False):
         if favour_corporate and self.corpauthor:
@@ -314,13 +324,12 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Flag this as a failed download'''
         self.aspects['failed_dl'] = True
 
-    def add_aspect_stored(self, final_fn=None):
+    def add_aspect_stored(self, final_fn=None, sqsess=session):
         '''Add information pertaining to the storage of this item in
         the system'''
-        self.aspects['stored'] = True
         if not final_fn == self.FileData_FullPath:
             print 'SETTING IT', final_fn
-            self.set_file(final_fn) #set filename if specified and different 
+            self.set_file(final_fn, sqsess=sqsess) #set filename if specified and different 
             self.aspects['stored'] = True
             self.set_file_type()
         self.aspects['cached'] = False
@@ -365,7 +374,21 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Mark a session flag for this object'''
         self.session = sess
 
-    def set_file(self, loc):
+    def est_folder_rel(self, sqsess=session):
+        '''Establish a relationship with a folder'''
+        # Only if this is going in the real storage dirs
+        # We're assuming this isn't being done in a thread
+        if self.FileData_Root in ('projectdir', 
+                                  'librarydir',
+                                  'meetingpaperdir',
+                                  'recentdocsdir'):
+            try:
+                self.FileData_FolderAdv = referable_folder_byobj(self, sqsess=sqsess)
+            except:
+                traceback.print_exc()
+                print 'Warning: Could not link file to its folder'
+    
+    def set_file(self, loc, sqsess=session):
         '''Set all kinds of data associated with this being a local file.
         Should have full absolute path given to it.'''
         if not os.path.exists(loc):
@@ -384,6 +407,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 fdroot = key
                 self.FileData_Root = key
                 self.FileData_Folder = diry[len(pdir):].split(os.sep)
+                self.est_folder_rel(sqsess=sqsess)
                 break
         if not fdroot: raise Exception, 'File stored outside pieberry domain'
         print "DONE", self.FileData_Root, self.FileData_FileName
@@ -392,12 +416,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         '''Set the type of file, drawing on mime information or specified type'''
         if not ft:
             try:
-                print 'GENNINIG', self.FileData_FullPath
+                # print 'GENNINIG', self.FileData_FullPath
                 self.FileData_FileType = determine_file_type(
                     self.FileData_FullPath)
             except:
                 traceback.print_exc()
-                raise IOError, 'no'
                 # if examination of the file fails to determine its
                 # type, but the type has already been set, just return
                 # (assume the type hasn't changed).
@@ -432,6 +455,16 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 if self.FileData_Root == 'librarydir':
                     return 'yellowball'
                 elif self.FileData_Root == 'projectdir':
+                    if self.FileData_FolderAdv:
+                        defcon = PIE_INTERNALS.getint(
+                            'Security', 
+                            'EncryptAfterSecurityLevel')
+                        if self.FileData_FolderAdv.SecurityLevel > defcon:
+                            if self.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+                                return 'unlocked'
+                            elif self.aspects['encrypted'] == EC_TRUE_LOCKED:
+                                return 'locked'
+                            else: return 'neverlocked'
                     return 'greenball'
                 elif self.FileData_Root == 'meetingpaperdir':
                     return 'redball'
@@ -462,3 +495,50 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
 # metadata = SQLABase.metadata
 # metadata.create_all(engine)
+
+# TODO - create a general version upgrade process and module
+from copy import copy
+
+def reconcile_object_folder_gen():
+    '''Generator function to serve file-bearing objects which are
+    ex-post linked to their folders, aslo some sanity checks needed
+    post beta3'''
+    # sift out folders that have a bug (null subdirectory)
+    for fobj in session.query(PieFolder):
+        if [ True for i in fobj.SubFolders if i == u'' ]:
+            print 'sanity check deleting', fobj
+            session.delete(fobj)
+    # link folders to objects
+    for obj in session.query(PieObject):
+        # prepare for encryptability
+        if not obj.aspects.has_key('encrypted'):
+            newobj = copy(obj)
+            newobj.aspects['encrypted'] = EC_FALSE
+            print 'set encryption status', newobj.aspects['encrypted'], obj
+            session.delete(obj)
+            session.flush()
+            session.add(newobj)
+            session.commit()
+            assert newobj.aspects.has_key('encrypted') == True
+            # session.add(obj)
+            # session.refresh(obj)
+            # session.commit()
+            # assert obj.aspects.has_key('encrypted')
+            print 'Happy!'
+        obj = newobj
+        if obj.has_aspect('stored') and not obj.FileData_FolderAdv:
+            # fix up null subdirs in the pieobject
+            obj.FileData_Folder = [i for i in obj.FileData_Folder if i]
+            # query whether our folder exists
+            qf = session.query(PieFolder).filter(and_(
+                    PieFolder.Root == obj.FileData_Root,
+                    PieFolder.SubFolders == obj.FileData_Folder
+                    )).first()
+            if qf:
+                print 'linking', obj, 'to', qf
+                obj.FileData_FolderAdv = qf
+                yield 'obj'
+            else:
+                print 'no link to be made', obj
+                yield 'obj'
+                # don't forget to commit the session in the calling fn

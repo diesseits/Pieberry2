@@ -23,8 +23,7 @@ class PieZbarScanner:
 
     def _init_webcam(self):
         self.proc.parse_config('enable')
-        if stalone: device = '/dev/video0'
-        else: device = PIE_CONFIG.get('Internal', 'webcam_device')
+        device = PIE_CONFIG.get('Internal', 'webcam_device')
         self.proc.init(device)
         self.proc.visible = True
         print 'web cam init done'
@@ -51,6 +50,7 @@ class PieZbarScanner:
             try:
                 data = self._do_scan()
             except zbar.WindowClosed:
+                print 'zbar.WindowClosed exception caught'
                 return
             if data:
                 print data

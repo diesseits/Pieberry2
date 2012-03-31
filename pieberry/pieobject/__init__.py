@@ -26,6 +26,35 @@ EC_FALSE = 0
 EC_TRUE_LOCKED = 1
 EC_TRUE_UNLOCKED = 2
 
+from sqlalchemy.ext.mutable import Mutable
+
+class MutationDict(Mutable, dict):
+    @classmethod
+    def coerce(cls, key, value):
+        "Convert plain dictionaries to MutationDict."
+
+        if not isinstance(value, MutationDict):
+            if isinstance(value, dict):
+                return MutationDict(value)
+
+            # this call will raise ValueError
+            return Mutable.coerce(key, value)
+        else:
+            return value
+
+    def __setitem__(self, key, value):
+        "Detect dictionary set events and emit change events."
+
+        dict.__setitem__(self, key, value)
+        self.changed()
+
+    def __delitem__(self, key):
+        "Detect dictionary del events and emit change events."
+
+        dict.__delitem__(self, key)
+        self.changed()
+
+
 class PieObject(SQLABase, TagHandler, BiblioHandler):
     __tablename__ = 'pieobjects'
 
@@ -38,8 +67,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 
     collection = Column(Unicode(length=1024)) # i.e. 'category_phrase'
     corpauthor = Column(Unicode(length=255))
-    aspects = Column(PickleType)
-    filemetadata = Column(PickleType)
+    aspects = Column(PickleType(mutable=True))
+    filemetadata = Column(PickleType(mutable=True))
     notes = Column(Unicode)
 
     # User Stats
@@ -497,6 +526,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
 # metadata.create_all(engine)
 
 # TODO - create a general version upgrade process and module
+from copy import copy
+
+
 
 def reconcile_object_folder_gen():
     '''Generator function to serve file-bearing objects which are
