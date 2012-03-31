@@ -1,3 +1,4 @@
+import sys
 from ConfigParser import ConfigParser, SafeConfigParser
 from pprint import pprint
 from globalvars import *
@@ -8,6 +9,9 @@ from defaults import *
 from profiles import *
 
 import keyring, getpass, hashlib
+
+if sys.platform in ('win32', 'win64'):
+    keyring.set_keyring(keyring.backend.Win32CryptoKeyring())
 
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and

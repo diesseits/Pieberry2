@@ -422,6 +422,7 @@ The password is not stored anywhere in the Pieberry database.''')),
             wx.MessageBox(_('This password seems a bit short. Try another'))
             return
         PIE_CONFIG.set('Security', 'file_key', pwd1)
+        assert PIE_CONFIG.get('Security', 'file_key') != None
         PIE_INTERNALS.set_encryption_hash(PIE_CONFIG.get('Security', 'file_key'))
         
 
