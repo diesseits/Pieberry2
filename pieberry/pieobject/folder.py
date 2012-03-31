@@ -175,7 +175,7 @@ def contribute_folder(path, components):
     root, subfolders, fn = components
     if os.path.exists(path) and not os.path.isdir(path):
         raise ValueError, 'Conflict: a file with this path exists: %s' % path
-    if os.path.isdir(path):
+    if  os.path.isdir(path):
         return True # return if the folder exists
     else:
         os.makedirs(path)
