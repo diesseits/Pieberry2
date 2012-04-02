@@ -2,6 +2,7 @@
 
 # DB object for storing information about folders
 
+import locale
 import sys, os, os.path, datetime
 from pprint import pprint
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType
@@ -195,7 +196,6 @@ def contribute_folder(path, components):
         newpf.set_path_precut(root, subfolders)
         session.add(newpf)
         session.commit()
-        print 'CREATED', newpf
         return newpf
 
 def contribute_and_get_folder(path, components):
@@ -215,7 +215,6 @@ def contribute_and_get_folder(path, components):
         newpf.set_path_precut(root, subfolders)
         session.add(newpf)
         session.commit()
-        print 'CREATED', newpf
         return newpf
     
     

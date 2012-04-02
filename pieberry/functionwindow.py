@@ -4,6 +4,7 @@ import thread
 import time
 import traceback
 import shutil, os, os.path
+import locale
 
 from sqlalchemy.exc import IntegrityError
 
@@ -284,10 +285,10 @@ class FunctionMainWindow(BaseMainWindow):
             dpath, components = suggest_path_store_fromweb(obj)
             # I don't trust windows filesystems
             if sys.platform == 'win32':
-                dpath = dpath.encode('ascii', 'ignore')
+                dpath = dpath.encode(locale.getpreferredencoding(), 'ignore')
             # Ensure relevant directory exists
             contribute_folder(os.path.dirname(dpath), components)
-            print 'COPYING: %s to %s' % (path, dpath)
+            print u'COPYING: %s to %s' % (path, dpath)
             assert os.path.exists(path)
             assert os.path.exists(os.path.dirname(dpath))
             shutil.move(path, dpath)
