@@ -282,18 +282,20 @@ class FunctionMainWindow(BaseMainWindow):
             if PIE_CONFIG.getboolean('Format', 'write_file_metadata'):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
-            dpath, components = suggest_path_store_fromweb(obj)
+            upath, components = suggest_path_store_fromweb(obj)
             # I don't trust windows filesystems
             if sys.platform == 'win32':
-                dpath = dpath.encode(locale.getpreferredencoding(), 'ignore')
+                dpath = upath.encode(locale.getpreferredencoding(), 'ignore')
+                upath = dpath.decode(locale.getpreferredencoding())
             # Ensure relevant directory exists
-            contribute_folder(os.path.dirname(dpath), components)
-            print u'COPYING: %s to %s' % (path, dpath)
+            contribute_folder(os.path.dirname(upath), components)
+            # print 'COPYING: %s to %s' % (path, upath)
+            print "COPYING"
             assert os.path.exists(path)
-            assert os.path.exists(os.path.dirname(dpath))
-            shutil.move(path, dpath)
+            assert os.path.exists(os.path.dirname(upath))
+            shutil.move(path, upath)
             # os.renames(path, dpath)
-            obj.add_aspect_stored(dpath)
+            obj.add_aspect_stored(upath)
         # session = Session()
         ostore.set_aspect_saved()
         session.add_all(ostore)

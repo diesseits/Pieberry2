@@ -291,7 +291,7 @@ class PieFolder(SQLABase):
         if path: self.set_path(path)
 
     def __repr__(self):
-        return "<PieFolder %s>" % self.path()
+        return "<PieFolder %s>" % self.path().encode(locale.getpreferredencoding())
 
     def set_path(self, path):
         # if not os.path.isdir(path):

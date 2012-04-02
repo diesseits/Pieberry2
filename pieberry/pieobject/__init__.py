@@ -1,6 +1,7 @@
 #GPLv3 Raif Sarcich 2011
 
 import datetime
+import locale
 import os, os.path, traceback
 from pprint import pprint, pformat
 from sqlalchemy import Column, Integer, String, DateTime, Unicode, PickleType, Boolean, Binary
@@ -176,7 +177,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.StatData_OpenedCount = 0
 
     def __repr__(self):
-        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10].encode('ascii', 'ignore'), self.Author().encode('ascii', 'ignore'), str(self.ReferDate()))
+        ec = locale.getpreferredencoding()
+        return "<PieObject %s - %s. (%s)>" % (self.Title()[:10].encode(ec, 'ignore'), self.Author().encode(ec, 'ignore'), str(self.ReferDate()))
 
     def __getattr__(self, name):
         if name == 'FileData_FullPath': 
