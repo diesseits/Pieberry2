@@ -4,6 +4,7 @@ import thread
 import time
 import traceback
 import shutil, os, os.path
+import locale
 
 from sqlalchemy.exc import IntegrityError
 
@@ -284,10 +285,10 @@ class FunctionMainWindow(BaseMainWindow):
             dpath, components = suggest_path_store_fromweb(obj)
             # I don't trust windows filesystems
             if sys.platform == 'win32':
-                dpath = dpath.encode('ascii', 'ignore')
+                dpath = dpath.encode(locale.getpreferredencoding(), 'ignore')
             # Ensure relevant directory exists
             contribute_folder(os.path.dirname(dpath), components)
-            print 'COPYING: %s to %s' % (path, dpath)
+            print u'COPYING: %s to %s' % (path, dpath)
             assert os.path.exists(path)
             assert os.path.exists(os.path.dirname(dpath))
             shutil.move(path, dpath)
@@ -598,9 +599,10 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
-        dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
-        ans = dia.ShowModal()
-        if ans == wx.ID_NO: return
+        if not evt == 'justquit':
+            dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
+            ans = dia.ShowModal()
+            if ans == wx.ID_NO: return
         print 'Closing'
         self.indextimer.Stop()
         session.commit()
@@ -632,7 +634,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnChangeLocation(self, evt):
         wx.MessageBox(_('As you have changed the database location, Pieberry will need to close and be restarted for the changes to come into effect. Closing now (no data will be lost).'))
-        self.onClose(1)
+        self.onClose('justquit')
         # Totally failed at trying to dynamically close and reopen the database. 
 
         # self.StatusBar.SetStatusText(_("Changing Pieberry's storage location"))

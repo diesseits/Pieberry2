@@ -27,11 +27,12 @@ re_tex = re.compile(r'\\.+?\{(.+)\}')
 def untexify(texstring):
     '''remove curly braces and other tex-related stuff'''
     # TODO this is unlikely to work if there's more than one latex macro
+    assert type(texstring) == unicode
     tex_match = re_tex.search(texstring)
     if tex_match:
         texstring = re_tex.sub(tex_match.group(1), texstring)
     texstring = unescape_bad_latex_chars(texstring)
-    transtbl = {ord('{'): None, ord('}'): None}
+    transtbl = {ord(u'{'): u'', ord(u'}'): u''}
     texstring = texstring.translate(transtbl)
     return texstring
 

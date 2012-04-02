@@ -95,7 +95,8 @@ opts = {
                      'sqlalchemy',
                      'sqlalchemy.dialects.sqlite',
                      'sqlite3',
-                     'pdfrw'
+                     'pdfrw',
+                     'keyring',
                      ],
 #        "dll_excludes": ["MSVCP90.dll"]
         }

@@ -34,7 +34,7 @@ def get_real_metadata(fn):
     raw_meta = processFileReturn(fn)
     if not raw_meta: return None
     r_title = string.join(
-        [i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], ' - ')
+        [i[8:].strip() for i in raw_meta if i[:8] == '- Title:'], u' - ')
 
     mod_time = datetime.datetime.fromtimestamp(os.stat(fn)[8])
     for i in raw_meta: # go by modification not creation

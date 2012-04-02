@@ -16,9 +16,9 @@ def get_oxml_metadata(fn):
     r['description'] = bs.find(u'dc:description').text if bs.find(u'dc:description') else None
     r['subject'] = bs.find(u'dc:subject').text if bs.find(u'dc:subject') else None
     r['creation_date'] = datetime.datetime.strptime(
-        bs.find('dcterms:created').text[:19], "%Y-%m-%dT%H:%M:%S")
+        bs.find(u'dcterms:created').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['modification_date'] = datetime.datetime.strptime(
-        bs.find('dcterms:modified').text[:19], "%Y-%m-%dT%H:%M:%S")
+        bs.find(u'dcterms:modified').text[:19], "%Y-%m-%dT%H:%M:%S")
     r['creation_date_guessed'] = False
     r['metadata_is_replaceable'] = False
     unzipped.close()

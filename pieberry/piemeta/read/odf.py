@@ -12,16 +12,20 @@ def get_odf_metadata(fn):
     r = {}
     unzipped = zipfile.ZipFile(fn)
     bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'meta.xml'))
-    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
-    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else ''
+    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else u''
+    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else u''
     r['description'] = bs.find(u'dc:description').text if bs.find(u'dc:description') else None
     r['subject'] = bs.find(u'dc:subject').text if bs.find(u'dc:subject') else None
-    r['creation_date'] = datetime.datetime.strptime(
-        bs.find('meta:creation-date').text[:19], "%Y-%m-%dT%H:%M:%S")
-    r['modification_date'] = datetime.datetime.strptime(
-        bs.find('dc:date').text[:19], "%Y-%m-%dT%H:%M:%S")
-    r['creation_date_guessed'] = False
-    r['metadata_is_replaceable'] = False
+    crdate_node = bs.find('meta:creation-date')
+    if crdate_node:
+        r['creation_date'] = datetime.datetime.strptime(
+            crdate_node.text[:19], "%Y-%m-%dT%H:%M:%S")
+        r['creation_date_guessed'] = False
+    mddate_node = bs.find('dc:date')
+    if mddate_node:
+        r['modification_date'] = datetime.datetime.strptime(
+            mddate_node.text[:19], "%Y-%m-%dT%H:%M:%S")
+    r['metadata_is_replaceable'] = True
     unzipped.close()
     return r
 
