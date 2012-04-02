@@ -10,6 +10,7 @@ import pieberry.pieutility
 
 # from atomise_exec import *
 from pieberry.ui.events import *
+from pieberry.ui.editdialog import PieBibEditDialog
 from pieberry.atomise.atomise_window import *
 from pieberry.pieconfig.paths import *
 from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
@@ -86,7 +87,6 @@ class atomWidget(wx.Panel):
 
     def onCreateBib(self, row):
         '''override for bib entry creation implementation'''
-        from ui.editdialog import PieBibEditDialog
         obj = self.atomDisplay.rowdata[row]
         ed = PieBibEditDialog(obj, self.GetParent().GetParent())
         res = ed.ShowModal()
