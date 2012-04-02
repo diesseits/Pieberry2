@@ -1,5 +1,4 @@
 #+TITLE: Pieberry library assistant
-
 #+STYLE: <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
 #+BEGIN_HTML
@@ -7,14 +6,14 @@
 	<div id="header">
 		<div id="logo">
                         
-			<h1><a href="#"><img src='berry.png'>  Pieberry </a></h1>
+			<h1><a href="index.html"><img src='berry.png'>  Pieberry </a></h1>
 			<p> library assistant</p>
 		</div>
 	</div>
 	<!-- end #header -->
 	<div id="menu">
 		<ul>
-			<li class="current_page_item"><a href="#">Home</a></li>
+			<li class="current_page_item"><a href="index.html">Home</a></li>
 			<li><a href="download.html">Download</a></li>
 			<li><a href="screenshots.html">Screenshots</a></li>
 			<li><a href="manual.html">Manual</a></li>
