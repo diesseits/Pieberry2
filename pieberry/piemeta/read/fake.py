@@ -18,12 +18,13 @@ def get_fake_metadata(fn):
         ttl = os.path.splitext(os.path.basename(fn))[0]
         cdate = datetime.datetime.fromtimestamp(os.stat(fn)[9])
     mdate = datetime.datetime.fromtimestamp(os.stat(fn)[8])
+    assert type(ttl) == unicode
     r = {
         'creation_date': cdate,
         'creation_date_guessed': True,
         'modification_date': mdate,
         'title': ttl,
-        'author': ''
+        'author': u''
         }
     return r
 

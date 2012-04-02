@@ -143,12 +143,15 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     GoogleData = Column(PickleType)
     AmazonData = Column(PickleType)
 
-    def __init__(self, title='', author='', date=datetime.datetime.today(),
+    def __init__(self, title=u'', author=u'', date=datetime.datetime.today(),
                  fileloc=None):
+
+        assert type(title) == unicode
+        assert type(author) == unicode
 
         self.title = title
         self.author = author
-        self.corpauthor = ''
+        self.corpauthor = u''
         self.date = date
         self.tags = []
         self.filemetadata = {}
@@ -195,7 +198,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return self.WebData_LinkText
             if self.FileData_FileName:
                 return self.FileData_FileName
-        ttl = untexify(self.title) if not texstuff else self.title
+        ttl = self.title if texstuff else untexify(self.title)
         if atom_title_hack and self.FileData_FileName:
             if self.FileData_Root in ('projectdir', 'meetingpaperdir'):
                 return "%s [%s]" % (ttl, self.FileData_FileName)

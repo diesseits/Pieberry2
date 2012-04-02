@@ -166,8 +166,10 @@ class PieFileIndexer(Thread):
             # Todo - check handle-able file types
             print 'DOING', fp
             obj = piemeta.get_metadata_object(fp)
-            print type(obj.title), obj.title
+            # print 'DOING' obj.FileData_FullPath
+            print 'DOING', type(obj.title), obj.title
             print 'DOING', obj, fp
+            print '-----'
             obj.add_aspect_stored(fp, sqsess=self.session)
             obj.add_aspect_saved()
             self.session.add(obj)

@@ -27,8 +27,8 @@ def pypdf_object(fn):
 def pypdf_metadata(fn):
     retinfo = {}
     retinfo['creation_date'] = datetime.datetime.fromtimestamp(os.stat(fn)[9])
-    retinfo['author'] = ''
-    retinfo['title'] = ''
+    retinfo['author'] = u''
+    retinfo['title'] = u''
     try:
         pdf_file = file(fn, 'rb')
         pdfread = pyPdf.PdfFileReader(pdf_file)
@@ -53,13 +53,13 @@ def pypdf_metadata(fn):
         traceback.print_exc()
         retinfo['creation_date_guessed'] = True
     # some reformatting necessary when author names are computer-inserted
-    authst = ''
+    authst = u''
     if not pdfread.documentInfo:
         return retinfo
     if pdfread.documentInfo.author:
         authst = string.join(splre.split(pdfread.documentInfo.author))
         authst = string.capwords(authst)
     retinfo['author'] = authst
-    retinfo['title'] = unicode(pdfread.documentInfo.title)
+    retinfo['title'] = unicode(pdfread.documentInfo.title) if pdfread.documentInfo.title else u''
     pdf_file.close()
     return retinfo

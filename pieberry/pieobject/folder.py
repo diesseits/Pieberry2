@@ -119,7 +119,7 @@ def generate_folder_list():
     def verify_existing():
         for qf in session.query(PieFolder):
             if not os.path.isdir(qf.path()):
-                print 'nonexistant folder -', qf
+                # print 'nonexistant folder -', qf
                 session.delete(qf)
         session.commit()
 

@@ -12,8 +12,8 @@ def get_odf_metadata(fn):
     r = {}
     unzipped = zipfile.ZipFile(fn)
     bs = BeautifulSoup.BeautifulSoup(unzipped.open(u'meta.xml'))
-    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else ''
-    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else ''
+    r['title'] = bs.find(u'dc:title').text if bs.find(u'dc:title') else u''
+    r['author'] = bs.find(u'dc:creator').text if bs.find(u'dc:creator') else u''
     r['description'] = bs.find(u'dc:description').text if bs.find(u'dc:description') else None
     r['subject'] = bs.find(u'dc:subject').text if bs.find(u'dc:subject') else None
     r['creation_date'] = datetime.datetime.strptime(
