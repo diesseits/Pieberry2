@@ -599,9 +599,10 @@ class FunctionMainWindow(BaseMainWindow):
             n.show()
                 
     def onClose(self, evt):
-        dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
-        ans = dia.ShowModal()
-        if ans == wx.ID_NO: return
+        if not evt == 'justquit':
+            dia = wx.MessageDialog(self, _("Confirm that you want to quit"), _('Quit Pieberry'), style=wx.YES|wx.NO)
+            ans = dia.ShowModal()
+            if ans == wx.ID_NO: return
         print 'Closing'
         self.indextimer.Stop()
         session.commit()
@@ -633,7 +634,7 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnChangeLocation(self, evt):
         wx.MessageBox(_('As you have changed the database location, Pieberry will need to close and be restarted for the changes to come into effect. Closing now (no data will be lost).'))
-        self.onClose(1)
+        self.onClose('justquit')
         # Totally failed at trying to dynamically close and reopen the database. 
 
         # self.StatusBar.SetStatusText(_("Changing Pieberry's storage location"))
