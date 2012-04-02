@@ -2,6 +2,14 @@
 #+STYLE: <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
 #+BEGIN_HTML
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <div id="wrapper">
 	<div id="header">
 		<div id="logo">
@@ -55,53 +63,53 @@ rutrum. Nam vestibulum accumsan nisl.
 #+BEGIN_HTML
 </div></div></div></div>
 <div id="sidebar">
-					<ul>
-						<li>
-							<h2>What is is it?</h2>
-							<p>The swiss army knife of the public servant. A program encompassing web scraping, cataloguing, filing, search, citation, organisation and archival functions.</p>
-						</li>
-						<li>
-							<h2>Download</h2>
-							<ul>
-								<li><a href="download.html">Download here</a></li>
-                                                        </ul>
-                                                </li>
-						<li>
-							<h2>Links</h2>
-							<ul>
-								<li><a href="http://www.python.org">Python</a></li>
-								<li><a href="http://pybtex.sourceforge.net">Pybtex</a></li>
-								<li><a href="http://books.google.com">Google Books</a></li>
-								<li><a href="http://zbar.sourceforge.net">Zbar</a></li>
-								<li><a href="http://www.sqlalchemy.org">Sqlalchemy</a></li>
-								<li><a href="https://www.dlitz.net/software/pycrypto/">PyCrypto</a></li>
-								<li><a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a></li>
-								<li><a href="http://www.orgmode.org">Org-mode</a></li>
-                                                                <li><a href="http://www.zoter.org">Zotero</a>
-							</ul>
-						</li>
-						<li>
-							<h2>Also by the Author</h2>
-							<ul>
-								<li><a href="https://www.joindiaspora.com/people/4d00a3be2c17430e24005554">My Diaspora Profile</a></li>
-                                                                <li><a href="http://www.emacswiki.org/emacs/AcroBuffer">Acronyms in emacs</a>
-							</ul>
-						</li>
-					</ul>
-				</div>
-				<!-- end #sidebar -->
-#+END_HTML
-
-#+BEGIN_HTML
+  <ul>
+    <li>
+      <h2>What is is it?</h2>
+      <p>The swiss army knife of the public servant. A program encompassing web scraping, cataloguing, filing, search, citation, organisation and archival functions.</p>
+    </li>
+    <li> 
+      <h2>Social crap</h2>
+       <ul>
+        <div class="fb-like" data-send="true" data-width="280" data-show-faces="false" data-colorscheme="dark"></div>
+       </ul>
+    </li>
+    <li>
+      <h2>Download</h2>
+      <ul>
+	<li><a href="download.html">Download here</a></li>
+      </ul>
+    </li>
+    <li>
+      <h2>Links</h2>
+      <ul>
+	<li><a href="http://www.python.org">Python</a></li>
+	<li><a href="http://pybtex.sourceforge.net">Pybtex</a></li>
+	<li><a href="http://books.google.com">Google Books</a></li>
+	<li><a href="http://zbar.sourceforge.net">Zbar</a></li>
+	<li><a href="http://www.sqlalchemy.org">Sqlalchemy</a></li>
+	<li><a href="https://www.dlitz.net/software/pycrypto/">PyCrypto</a></li>
+	<li><a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a></li>
+	<li><a href="http://www.orgmode.org">Org-mode</a></li>
+        <li><a href="http://www.zoter.org">Zotero</a>
+      </ul>
+    </li>
+    <li>
+      <h2>Also by the Author</h2>
+      <ul>
+	<li><a href="https://www.joindiaspora.com/people/4d00a3be2c17430e24005554">My Diaspora Profile</a></li>
+        <li><a href="http://www.emacswiki.org/emacs/AcroBuffer">Acronyms in emacs</a>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!-- end #sidebar -->
 <div id="footer">
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
-	<p>Copyright (c) 2012 Pieberry.info. All rights reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>Copyright (c) 2012 Pieberry.info. All rights reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
 </div>
 <!-- end #footer -->
 #+END_HTML
-
-
