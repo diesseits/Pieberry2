@@ -182,12 +182,18 @@ class atomActionWindow(wx.ScrolledWindow):
         tc = getattr(
             self,
             'suggesttc%d' % self.maxrow)
+        tctt = wx.ToolTip(_('You may set the desired filename for this document when it is filed'))
+        tc.SetToolTip(tctt)
                          
         setattr(self, 'choice%d' % self.maxrow, wx.Choice(self, -1, choices=self.defaultchoices))
         ch = getattr(self, 'choice%d' % self.maxrow)
+        chtt = wx.ToolTip(_('Select a destination project folder here'))
+        ch.SetToolTip(chtt)
 
         setattr(self, 'bibbutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='To Library'))
         bt = getattr(self, 'bibbutton%d' % self.maxrow)
+        bttt = wx.ToolTip(_('Fill out bibliographic data and send to the Library'))
+        bt.SetToolTip(bttt)
         # if obj.FileData_FileType != 'pdf':
         #     bt.Enable(False)
 
@@ -197,6 +203,8 @@ class atomActionWindow(wx.ScrolledWindow):
             atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_DELETE, wx.ART_TOOLBAR, (16, 16)))
             )
         delbt = getattr(self, 'delbutton%d' % self.maxrow)
+        delbttt = wx.ToolTip(_('Delete'))
+        delbt.SetToolTip(delbttt)
 
         setattr(
             self,
@@ -204,13 +212,22 @@ class atomActionWindow(wx.ScrolledWindow):
             atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, (16, 16)))
             )
         openbt = getattr(self, 'openbutton%d' % self.maxrow)
+        openbttt = wx.ToolTip(_('Open file'))
+        openbt.SetToolTip(openbttt)
+
         setattr(self, 'flagbutton%d' % self.maxrow, FlagBitmapButton(self, self.maxrow, id=-1)#, bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_flag16.png')))
                 )
         flagbt = getattr(self, 'flagbutton%d' % self.maxrow)
+        flagbttt = wx.ToolTip(_('Flag document for follow up'))
+        flagbt.SetToolTip(flagbttt)
+
         if obj.StatData_FollowUpFlag:
             flagbt.SetBackgroundColour('pink')
         setattr(self, 'gobutton%d' % self.maxrow, atomButton(self, self.maxrow, id=-1, label='File it'))
         gobt = getattr(self, 'gobutton%d' % self.maxrow)
+        gobttt = wx.ToolTip(_('File this document'))
+        gobt.SetToolTip(gobttt)
+
         self.Bind(wx.EVT_BUTTON, self._on_createbib, bt)
         self.Bind(wx.EVT_BUTTON, self._on_gofile, gobt)
         self.Bind(wx.EVT_BUTTON, self._on_delfile, delbt)
