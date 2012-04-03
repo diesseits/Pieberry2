@@ -9,9 +9,9 @@ from pieberry.pieutility.latex import unescape_bad_latex_chars as ublc
 from pieberry.pieutility.latex import protect_caps
 from pieberry.pieutility.bibtex import *
 
-# from pieberry.pieoutput.formatter import Formatter
 
-from pybtex.style.formatting.unsrt import Style as Formatter
+from pieberry.pieoutput.formatter import Formatter
+# from pybtex.style.formatting.unsrt import Style as Formatter
 from pybtex.richtext import Text, Tag
 from pybtex.backends import latex, html, plaintext
 from pybtex.bibtex.utils import split_name_list
