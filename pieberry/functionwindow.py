@@ -479,7 +479,6 @@ class FunctionMainWindow(BaseMainWindow):
             # Do the file movement stuff
             storepath, components = suggest_path_cache_fromdesktop(obj)
             contribute_folder(os.path.dirname(storepath), components)
-            print storepath, os.path.exists(os.path.dirname(storepath))
             try:
                 os.rename(obj.FileData_FullPath, storepath)
             except:
