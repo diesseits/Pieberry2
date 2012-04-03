@@ -241,6 +241,7 @@ class FunctionMainWindow(BaseMainWindow):
         wx.CallAfter(self.StatusBar.SetStatusText, '')
 
     def OnCommitStaged(self, evt):
+        print 'functionwindow.OnCommitStaged'
         self.StatusBar.SetStatusText(_('Storing staged files'))
         ostore = evt.ostore
         progress_dialog = wx.ProgressDialog( 
@@ -252,6 +253,7 @@ class FunctionMainWindow(BaseMainWindow):
             progress_dialog.Update(counter, 'Adding: %s' % obj.Title())
             # handle need to input a unique bibtex key:
             if obj.has_aspect('bibdata'):
+                print 'processing bibdata'
                 bkey = self._find_unique_key(obj)
                 # if there's already a key in the db same as the user
                 # set key, query the user whether to proceed (the item
@@ -265,6 +267,7 @@ class FunctionMainWindow(BaseMainWindow):
                 elif (bkey != obj.BibData_Key) and not obj.BibData_Key:
                     obj.BibData_Key = bkey
             if obj.has_aspect('onweb'):
+                print 'processing webdata'
                 # test if this has been downloaded/referenced before
                 no_dupes = session.query(PieObject).filter(
                     PieObject.WebData_Url == obj.WebData_Url).count()
@@ -277,14 +280,18 @@ class FunctionMainWindow(BaseMainWindow):
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
             # All activity past this point pertains to files 
-            if not obj.has_aspect('cached'): continue
+            if not obj.has_aspect('cached'): 
+                print obj, 'is not cached - continuing'
+                continue
             # Write metadata to file if possible
+            print 'metadata write stage'
             if PIE_CONFIG.getboolean('Format', 'write_file_metadata'):
                 piemeta.write_metadata_to_object(obj)
             path = obj.FileData_FullPath
             upath, components = suggest_path_store_fromweb(obj)
             # I don't trust windows filesystems
             if sys.platform == 'win32':
+                print 're-encoding'
                 dpath = upath.encode(locale.getpreferredencoding(), 'ignore')
                 upath = dpath.decode(locale.getpreferredencoding())
             # Ensure relevant directory exists

@@ -92,12 +92,12 @@ def generate_initial_project_folder_list():
         PieFolder).filter(PieFolder.Root == 'projectdir').all()
     for folder in existing:
         if not os.path.isdir(folder.path()):
-            print 'Warning - %s was loaded but does not exist' % existing.path()
+            print u'Warning - %s was loaded but does not exist' % existing.path()
     FOLDER_LOOKUP['projectdir'].extend(existing)
     for diry in os.walk(ROOT_MAP['projectdir']).next()[1]:
         if not get_project_folder_by_endname(diry):
             newf = add_new_folder('projectdir', diry)
-            print 'Note: new unmapped project folder %s added' % os.path.join(
+            print u'Note: new unmapped project folder %s added' % os.path.join(
                 ROOT_MAP['projectdir'], diry)
 
 
@@ -175,7 +175,7 @@ def contribute_folder(path, components):
     corresponding PieFolder entry in the database'''
     root, subfolders, fn = components
     if os.path.exists(path) and not os.path.isdir(path):
-        raise ValueError, 'Conflict: a file with this path exists: %s' % path
+        raise ValueError, u'Conflict: a file with this path exists: %s' % path
     if os.path.isdir(path):
         return True # return if the folder exists
     else:
@@ -203,7 +203,7 @@ def contribute_and_get_folder(path, components):
     was contributed (more DB intensive)'''
     root, subfolders, fn = components
     if os.path.exists(path) and not os.path.isdir(path):
-        raise Exception, 'Conflict: a file with this path exists: %s' % path
+        raise Exception, u'Conflict: a file with this path exists: %s' % path
     if not os.path.isdir(path):
         os.makedirs(path)
     existpf = session.query(PieFolder).filter(and_(

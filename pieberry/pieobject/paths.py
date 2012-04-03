@@ -35,7 +35,7 @@ def trim_filename(path):
         dirn = os.path.dirname(path)
         basen, ext = os.path.splitext(os.path.basename(path))
         basen = basen[:PIE_CONFIG.getint('Format', 'filesystem_length_limit') - len(ext) - len(dirn) - 5] # -5 to account for addition chars from auto_increment_fn
-        return os.path.join(dirn, basen + ext)
+        return os.path.join(dirn, basen.strip() + ext)
     else:
         return path
 
@@ -74,9 +74,9 @@ def suggest_path_store_fromweb(obj):
     assert obj.has_aspect('cached')
     root = LIBRARYDIR
     auth = obj.Author(favour_corporate=True)
-    subd = obj.collection if obj.collection else ''
+    subd = obj.collection if obj.collection else u''
     if obj.tags: tsubd = unicode(obj.tags[0])
-    else: tsubd = ''
+    else: tsubd = u''
     print 'suggest_path_store_fromweb: ____'
     ext = os.path.splitext(obj.FileData_FullPath)[1]
     # try to fix odd file extensions (phtml, php etc)
@@ -93,8 +93,8 @@ def suggest_path_store_fromweb(obj):
         obj.ReferDate().strftime("%Y%m%d"),
         translate_non_alphanumerics(obj.Title()), ext)
     proposal = os.path.join(
-        root, auth, subd, tsubd,
-        fn_prop
+        root, auth.strip(), subd.strip(), tsubd.strip(),
+        fn_prop.strip()
         )
     proposal = trim_filename(proposal)
     proposal = auto_increment_fn(proposal)
@@ -115,7 +115,7 @@ def suggest_path_store_with_bibdata(obj):
         subd = obj.BibData_Journal
     # elif obj.
     #     obj.
-    else: subd = ''
+    else: subd = u''
     print 'suggest_path_store_with_bibdata: ____'
     ext = os.path.splitext(obj.FileData_FullPath)[1]
     # try to fix odd file extensions (phtml, php etc)
@@ -128,8 +128,8 @@ def suggest_path_store_with_bibdata(obj):
         translate_non_alphanumerics(obj.Title()),
         ext)
     proposal = os.path.join(
-        root, auth, subd, 
-        fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')]
+        root, auth.strip(), subd.strip(), 
+        fn_prop[:PIE_CONFIG.getint('Format', 'filesystem_length_limit')].strip()
         )
     proposal = trim_filename(proposal)
     proposal = auto_increment_fn(proposal)

@@ -11,7 +11,9 @@ from pieberry.pieutility.latex import escape_bad_latex_chars as eblc
 from pieberry.pieutility.latex import unescape_bad_latex_chars as ublc
 from pieberry.pieutility.bibtex import *
 
+
 from pieberry.pieoutput.formatter import Formatter
+# from pybtex.style.formatting.unsrt import Style as Formatter
 from pybtex.database.input import bibtex
 from pybtex.backends import latex, html, plaintext
 
@@ -37,6 +39,7 @@ def pybtex_to_pieberry(key, ent):
             person.text = unicode(person)
     formatter = Formatter()
     formatted_names = formatter.format_people(ent)
+    # formatted_names = formatter.format_author_or_editor(ent)
     rendered_names = formatted_names.render(plaintext.Backend()).rstrip('.')
     corpnamehere = re_corpname.match(rendered_names)
     if not ent.fields.has_key('year'):
