@@ -9,6 +9,7 @@ from pybtex.style.template import (
 from pybtex.richtext import Text, Symbol
 
 class Formatter(Style):
+    default_name_style = 'lastfirst'
 
     def format_people(self, e):
         template = toplevel [ 
