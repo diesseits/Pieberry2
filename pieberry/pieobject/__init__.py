@@ -507,10 +507,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return 'blueball'
         
         if window_type == 'filewindow':
-            if self.FileData_FileType == 'pdf':
-                return 'pdf'
-            elif self.FileData_FileType == 'word_doc':
-                return 'doc'
+            if self.FileData_FileType == 'pdf': return 'pdf'
+            elif self.FileData_FileType == 'word_doc': return 'doc'
+            elif self.FileData_FileType == 'oxml_doc': return 'docx'
+            elif self.FileData_FileType == 'odf': return 'odf'
+            elif self.FileData_FileType == 'html': return 'html'
             else: return 'text'
         elif window_type == 'bibwindow':
             if self.StatData_FollowUpFlag and self.StatData_Favourite:

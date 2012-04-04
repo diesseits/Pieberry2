@@ -32,7 +32,7 @@ def init_config_location():
 def init_resource_locations():
     '''Where to find various bits of the program like bitmaps & help docs'''
     if frozen in  ('dll', 'console_exe', 'windows_exe'):
-        IMGDIR = os.path.dirname(sys.executable)
+        IMGDIR = os.path.join(os.path.dirname(sys.executable), 'pieberry', 'ui')
         HELPDIR = os.path.dirname(sys.executable)
     else:
         IMGDIR = os.path.join(os.getcwd(), 'ui')

@@ -12,7 +12,7 @@ shutil.rmtree("build", ignore_errors=True)
 # do the same for dist folder
 shutil.rmtree("dist", ignore_errors=True)
 
-ics = [os.path.join('pieberry', 'ui', i) for i in os.listdir('pieberry/ui') if os.path.splitext(i)[1] == '.png']
+ics = glob('pieberry/ui/*.png')
 
 try:
     import py2exe
@@ -112,8 +112,8 @@ opts = {
 
 files=[
     ('pieberry/ui', ['pieberry/ui/pieberry.ico', 'pieberry/ui/pieberry32.ico']), 
-    imfiles, 
-    # ('pieberry', ['pieberry/help/manual.html', 'pieberry/help/pieberrymanual.hhp', 'pieberry/help/pieberrymanual_contents.hhc', 'pieberry/help/pieberrymanual_index.hhk'])
+    # imfiles, 
+    ('pieberry/ui', ics),
     ]
 
 #redist visual c runtime dlls for py2exe
@@ -128,7 +128,7 @@ setup(name = "pieberry-library-assistant",
       url = "http://members.iinet.net.au/~raifsarcich/pieberry/",
       download_url = 'http://members.iinet.net.au/~raifsarcich/pieberry/',
       classifiers = classifiers_x86,
-      license = 'GNU General public licence',
+      license = 'GNU General Public Licence v3',
       #Name the folder where your packages live:
           #(If you have other packages (dirs) or modules (py files) then
       #put them into the package directory - they will be found 
@@ -184,15 +184,7 @@ quota, delete them, realise I've lost them and download them all over
 again.
 
 Hence, Pieberry, which will do all of the good and none of the bad
-described above.
-
-It's mainly for my use, but I hope that someone else will find it
-useful. I'm open to requests for features.
-
-It's written in Python, with the PortablePython 2.5.4 distribution
-(which contains wxpython) in mind, but also requires Beautiful Soup,
-pyPdf and Pybtex, which are all available through easy_install from
-setuptools.""",
+described above.""",
       windows = [{
             "script": 'pieberry.pyw',
             #"console": 'pieberrydm.pyw',

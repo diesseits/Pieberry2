@@ -7,6 +7,7 @@ from pieberry.pieconfig.paths import IMGDIR
 from pieberry.pieobject import PieObjectStore
 from pieberry.ui.events import *
 from wx.lib.buttons import ThemedGenBitmapToggleButton 
+from pieberry.atomise.atomise_imagelist import *
 
 if sys.platform == 'win32':
     class atomIcon(wx.StaticBitmap):
@@ -154,22 +155,15 @@ class atomActionWindow(wx.ScrolledWindow):
         self.maxrow += 1
         # setattr(self, 'icon%d' % self.maxrow, atomIcon(self, self.maxrow, -1, size=(22, 22)))
         print 'File type', obj.FileData_FileType
-        if obj.FileData_FileType == 'pdf':
-            icon = wx.Image(
-                os.path.join(IMGDIR, 'ic_file_pdf_22.png'), wx.BITMAP_TYPE_PNG)
-            setattr(self, 
-                    'icon%d' % self.maxrow, 
-                    atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
-        else:
-            icon = wx.Image(
-                os.path.join(IMGDIR, 'ic_file_doc_22.png'), wx.BITMAP_TYPE_PNG)
-            setattr(self, 
-                    'icon%d' % self.maxrow, 
-                    atomIcon(self, self.maxrow, wx.BitmapFromImage(icon)))
+        iconcode = obj.get_icon_code(window_type='filewindow')
+        icon = AtomImageList.GetBitmap(IconType[iconcode])
+        setattr(self, 
+                'icon%d' % self.maxrow, 
+                atomIcon(self, self.maxrow, icon))
 
         bm = getattr(self, 'icon%d' % self.maxrow)
         if sys.platform == 'win32':
-            bm.SetBitmap(wx.BitmapFromImage(icon))
+            bm.SetBitmap(icon)
 
         bm.Bind(wx.EVT_ENTER_WINDOW, self.onMouseOverBmp)
         bm.Bind(wx.EVT_LEAVE_WINDOW, self.onMouseOffBmp)
