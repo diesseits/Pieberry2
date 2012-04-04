@@ -75,11 +75,29 @@ class PieScraper:
         if not self._further_init_done:
             self._further_init()
         print 'getting context object'
-        co = GetContextObject(self._urlopener, self._cmstype)
+        if not hasattr(self, '_ttl'):
+            co = GetContextObject(self._urlopener, self._cmstype)
         # in old money this was:        translate_non_alphanumerics(readup.title.string.split(' - ')[0][:100].strip())
-        ttl = co.get_context_title().strip()
-        print 'PieScraper.get_page_context:', ttl
-        return ttl #in future maybe return a more complex object
+            self._ttl = co.get_context_title().strip()
+        print 'PieScraper.get_page_context:', self._ttl
+        return self._ttl #in future maybe return a more complex object
+
+    def get_top_level_object(self, threaded=False):
+        '''get an object representing the top-level url (basically, a
+        web bookmark)'''
+        obj = PieObject()
+        obj.add_aspect_onweb(
+            url=self._origin_url,
+            pageurl=self._origin_url,
+            linktext='[Top Level Page]',
+            defaultauthor=self._default_author,
+            category_phrase=self._category_phrase,
+            author_is_corporate=self._author_is_corporate,
+            inferred_filetype='html',
+            threaded=threaded
+            )
+        obj.title = self.get_page_context()
+        return obj
 
     def snarf_urls(self, threaded=False, propagate_to=None, types=('pdf', 'word_doc')):
         '''return a tuple of pieobjects representing all the in-situ
@@ -106,6 +124,7 @@ class PieScraper:
             tag_append_behaviour=self._tag_append_behaviour
             )
         print 'wunn...'
+        ret.Add(self.get_top_level_object(threaded))
         for linky in urlz:
             ob = PieObject()
             try:
