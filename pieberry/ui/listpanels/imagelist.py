@@ -36,6 +36,7 @@ PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_greenballneverlocked16.png')
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_docx16.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_odf16.png')))
 PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_html16.png')))
+PieImageList.Add(wx.Bitmap(os.path.join(IMGDIR, 'ic_locked16.png')))
 
 MessageType = {
     'start': 'spin',
@@ -62,5 +63,6 @@ MessageType = {
     'neverlocked': 23,
     'docx': 24,
     'odf': 25,
-    'html': 26
+    'html': 26,
+    'filelocked': 27
     }

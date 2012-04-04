@@ -507,6 +507,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                 return 'blueball'
         
         if window_type == 'filewindow':
+            if self.aspects['encrypted'] in (EC_TRUE_LOCKED, EC_TRUE_UNLOCKED):
+                return 'filelocked'
             if self.FileData_FileType == 'pdf': return 'pdf'
             elif self.FileData_FileType == 'word_doc': return 'doc'
             elif self.FileData_FileType == 'oxml_doc': return 'docx'

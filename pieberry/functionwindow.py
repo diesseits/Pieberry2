@@ -543,6 +543,16 @@ class FunctionMainWindow(BaseMainWindow):
         folder = contribute_and_get_folder(
             os.path.dirname(storepath), components)
 
+        try: # Test we can move the file unhindered
+            os.rename(obj.FileData_FullPath,
+                      obj.FileData_FullPath + u'.0')
+            os.rename(obj.FileData_FullPath + u'.0',
+                      obj.FileData_FullPath)
+        except:
+            wx.MessageBox(_('File unable to be moved (is it in use?)'), 
+                          _('Error'))
+            return
+
         # ===== ENCRYPTION STUFF (TODO: Make more functional) ===============
         defcon = PIE_INTERNALS.getint('Security', 'EncryptAfterSecurityLevel')
         if folder.SecurityLevel > defcon:

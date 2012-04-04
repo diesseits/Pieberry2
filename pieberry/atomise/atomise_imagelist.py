@@ -20,7 +20,8 @@ IconType = {
     'text': 3,
     'plaintext': 3,
     'html': 4,
-    'odf': 5
+    'odf': 5,
+    'filelocked': 3, # shouldn't be possible
     }
 
 
