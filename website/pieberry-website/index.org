@@ -1,0 +1,174 @@
+#+TITLE: Pieberry library assistant - Home
+#+AUTHOR: Raif Sarcich
+#+OPTIONS: toc:nil
+#+STYLE: <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+
+#+BEGIN_HTML
+<div id="wrapper">
+	<div id="header">
+		<div id="logo">
+                        
+			<h1><a href="index.html"><img src='berry.png'>  Pieberry </a></h1>
+			<p> library assistant</p>
+		</div>
+	</div>
+	<!-- end #header -->
+	<div id="menu">
+		<ul>
+			<li class="current_page_item"><a href="index.html">Home</a></li>
+			<li><a href="download.html">Download</a></li>
+			<li><a href="screenshots.html">Screenshots</a></li>
+			<li><a href="manual.html">Manual</a></li>
+			<li><a href="links.html">Links</a></li>
+			<li><a href="contact.html">Contact</a></li>
+		</ul>
+	</div>
+	<!-- end #menu -->
+#+END_HTML
+
+# Begin content section
+#+BEGIN_HTML
+	<div id="page">
+		<div id="page-bgtop">
+			<div id="page-bgbtm">
+				<div id="content">
+#+END_HTML
+
+* Announcing Pieberry
+
+This is the first website of the revamped Pieberry library assistant
+software. It is still in Beta at this stage, but should be in a good
+state for you to give it a go. See [[download.html][the downloads]] section for options
+for your platform.
+
+* It's a coping strategy
+
+Pieberry is an idiosyncratic blend of functionality that you would
+typically find in applications classed as:
+
+- File managers
+- Desktop search engines
+- Bibliography managers
+- Bookshelf managers
+- "Screen scraping" scripts
+- Web search clients.
+
+While this makes it a creature that is "neither fish nor fowl", it has
+a compelling set of functionality for a particular, very common user:
+the neglected and forlorn desk worker, struggling to cope with
+gigabytes of files and data, with only the basic tools of typical
+corporate IT at their disposal - an email client, Windows Explorer,
+and a web browser. 
+
+*Pieberry is a coping strategy*, above all. It is a way of coping with
+ otherwise inadequate work tools. It doesn't strive to be the program
+ that you would implement if you had total control over your
+ environment and you could implement a system to optimise your
+ workflow. It caters to the reality that most office workers face - a
+ distant and fundamentally uninterested IT and Records management
+ bureaucracy, and strict policies and privilege restrictions for
+ users. It makes the most of these conditions by improving management
+ of documents of all kinds, making them findable and referable in a
+ professional context.
+
+* Philosophy & approach
+
+The approach taken by this program is somewhat at odds with common
+wisdom about how software, particularly workplace software should
+work. Perhaps it can be best summed up by 
+
+** Storage is cheap and plentiful
+
+Hard disks cost bugger all and Pieberry is cavalier with file
+space. Much better to have several copies of the same document in
+different places than to not be able to find it when you want
+it. Pieberry will try to keep an eye on multiple documents and stop
+things getting out of hand.
+
+** Near enough is well and truly good enough
+
+Pieberry is designed to be robust to the vagaries of ordinary internet
+and corporate life. Poorly made websites, inadequate metadata, foolish
+file naming conventions will not faze it, it will always make a best
+guess and keep on going.
+
+** Nobody (but you) knows or cares about Pieberry
+
+Pieberry is not an enterprise-wide solution, it isn't "social", and it
+doesn't want to get you into trouble for using 'non standard'
+software. It is portable and requires no installation on Windows. It
+doesn't shove everything into some database schema or sync things to
+the cloud. You may have a powerful data and document tracking system
+available to you, managing your stuff, but as far as anyone else can
+see, peering into your part of the share drive, is an immaculately
+logical, well named, navigable file structure that they can find
+whatever it is that they were looking for and sod off again.
+
+** Pieberry does not freak out
+
+Feel free to change your filenames, delete stuff, move stuff
+around. Pieberry won't panic. At worst, it may lose track of a file
+and think it's a new one. Otherwise, Pieberry just does its best to
+keep up with what you're doing and keep things navigable.
+
+* Licence
+
+Pieberry is licenced under the [[http://www.gnu.org/copyleft/gpl.html][GNU General Public Licence]]. It is free
+to redistribute and modify according to the terms of that
+licence. Libraries used by Pieberry are available under their
+respective licences.
+
+#+BEGIN_HTML
+</div></div></div></div>
+<div id="sidebar">
+					<ul>
+						<li>
+							<h2>What is is it?</h2>
+							<p>The swiss army knife of the public servant. A program encompassing web scraping, cataloguing, filing, search, citation, organisation and archival functions.</p>
+						</li>
+						<li>
+							<h2>Download</h2>
+							<ul>
+								<li><a href="http://dl.dropbox.com/u/18792382/Pieberry2-beta.zip">Windows (zipped executable)</a></li>
+                                                                <li><a href="download.html">Downloads page</a>
+                                                        </ul>
+                                                </li>
+						<li>
+							<h2>Links</h2>
+							<ul>
+								<li><a href="http://www.python.org">Python</a></li>
+								<li><a href="http://pybtex.sourceforge.net">Pybtex</a></li>
+								<li><a href="http://books.google.com">Google Books</a></li>
+								<li><a href="http://zbar.sourceforge.net">Zbar</a></li>
+								<li><a href="http://www.sqlalchemy.org">Sqlalchemy</a></li>
+								<li><a href="https://www.dlitz.net/software/pycrypto/">PyCrypto</a></li>
+								<li><a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a></li>
+								<li><a href="http://www.orgmode.org">Org-mode</a></li>
+                                                                <li><a href="http://www.zoter.org">Zotero</a>
+							</ul>
+						</li>
+						<li>
+							<h2>Also by the Author</h2>
+							<ul>
+								<li><a href="https://www.joindiaspora.com/people/4d00a3be2c17430e24005554">xMy Diaspora Profile</a></li>
+                                                                <li><a href="http://www.emacswiki.org/emacs/AcroBuffer">Acronyms in emacs</a>
+							</ul>
+						</li>
+					</ul>
+				</div>
+				<!-- end #sidebar -->
+#+END_HTML
+
+#+BEGIN_HTML
+<div id="footer">
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+	<p>Copyright (c) 2012 Pieberry.info. All rights reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
+</div>
+<!-- end #footer -->
+#+END_HTML
+
+

@@ -64,6 +64,15 @@ class BibListPanel(BaseListPanel):
             self.onEditNotes(0)
         elif keycode == 127:
             self.onDeleteObj(0)
+        elif keycode in (ord('['), ord(']'), ord('\\')):
+            obj = self.GetSelectedItem()
+            if obj.has_aspect('bibdata'):
+                if keycode == ord('['):
+                    self.onCopyCitation_PlainText(0)
+                elif keycode == ord(']'):
+                    self.onCopyCitation_RichText(0)
+                elif keycode == ord('\\'):
+                    self.onCopyCitation_OrgText(0)
         evt.Skip()
 
     def onDeleteItem(self, evt):
@@ -124,21 +133,21 @@ class BibListPanel(BaseListPanel):
             # citations
         if obj.has_aspect('bibdata'):
             rcm_copycitationplain = wx.MenuItem(copyMenu, 4,
-                                                _('Copy citation (plain text)'))
+                                                _('Copy citation (plain text)\t['))
             rcm_copycitationplain.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationplain)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_PlainText, 
                       rcm_copycitationplain)
             rcm_copycitationrich = wx.MenuItem(copyMenu, 5,
-                                                _('Copy citation (rich text)'))
+                                                _('Copy citation (rich text)\t]'))
             rcm_copycitationrich.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationrich)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_RichText, 
                       rcm_copycitationrich)
             rcm_copycitationorg = wx.MenuItem(copyMenu, 6,
-                                                _('Copy citation (org mode)'))
+                                                _('Copy citation (org mode)\t\\'))
             rcm_copycitationorg.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copycitationorg)
