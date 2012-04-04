@@ -118,7 +118,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
     def _set_columndata(self, idx, obj):
         '''Set relevant data to the column at row: idx'''
         self.SetStringItem(idx, 1, obj.WebData_LinkText)
-        self.SetStringItem(idx, 2, obj.Url())
+        self.SetStringItem(idx, 2, obj.WebData_Url)
 
     def _set_itemdata(self, idx, ref, obj, checkstatus=False):
         '''Set relevant data in the listctrl's data stores: for row:
@@ -127,7 +127,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         self.SetItemData(idx, ref)
         self.itemDataMap[ref] = [checkstatus,
                                  obj.WebData_LinkText,
-                                 obj.Url()]
+                                 obj.WebData_Url]
 
     def AddObject(self, obj, ref, 
                   statusmsg='', 
@@ -136,7 +136,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         '''Add an object, returning the item's current index in the ListCtrl'''
         # print 'Adding:', obj
         # print ' ... which should be checked:', checkstatus
-        if filterout(filtertext, (obj.WebData_LinkText, obj.Url())):
+        if filterout(filtertext, (obj.WebData_LinkText, obj.WebData_Url)):
             return
         nexidx = self.InsertStringItem(self.currentitem, statusmsg)
         self._set_columndata(nexidx, obj)
