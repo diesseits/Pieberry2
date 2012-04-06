@@ -1,7 +1,7 @@
 Required modules:
 
 pypdf (Metadata reading)
-pdfrw - http://www.google.com/url?q=http://code.google.com/p/pdfrw/&sa=U&ei=cXNxT7SfK4OhiQen7dTkDw&ved=0CBEQFjAA&usg=AFQjCNGxIS2MNhkUfAMm7DGxwyrdoQNS4A (Metadata reading and writing)
+pdfrw - http://www.google.com/url?q=http://code.google.com/p/pdfrw/&sa=U&ei=cXNxT7SfK4OhiQen7dTkDw&ved=0CBEQFjAA&usg=AFQjCNGxIS2MNhkUfAMm7DGxwyrdoQNS4A (Metadata reading and writing) (Bundled with linux sdist)
 wx (UI)
 pybtex - BibTeX functionality
 hachoir_metadata (Metadata reading)
