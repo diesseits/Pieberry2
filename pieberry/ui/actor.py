@@ -55,6 +55,9 @@ class PieActor:
         info.SetIcon(_icon)
         wx.AboutBox(info)
 
+    def OnViewFolders(self, evt):
+        self.OpenFolderPane()
+
     def onDiscard(self, evt):
         pass
 

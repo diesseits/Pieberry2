@@ -30,6 +30,10 @@ class BaseListCtrl(wx.ListCtrl,
     def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent=parent, id=-1, 
                              style=wx.LC_REPORT|wx.EXPAND|wx.LC_SORT_ASCENDING)
+        self.__init_columns()
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected)
+
+    def __init_columns(self):
         for i in range(len(self.columnheads)):
             self.InsertColumn(i, self.columnheads[i])
             self.SetColumnWidth(i, self.columnwidths[i])
@@ -38,7 +42,6 @@ class BaseListCtrl(wx.ListCtrl,
         listmix.ColumnSorterMixin.__init__(self, len(self.columnheads))
         listmix.ListCtrlAutoWidthMixin.__init__(self)
         self.currentitem = 0
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.onItemSelected)
 
     def GetListCtrl(self):
         '''function to support mixins'''
@@ -164,12 +167,14 @@ class FileListCtrl(BaseListCtrl):
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
 
     def _set_columndata(self, idx, obj):
+        # print 'FileListCtrl._set_columndata'
         self.SetItemImage(idx, MessageType[obj.get_icon_code(window_type='filewindow')])
         self.SetItemText(idx, obj.Title())
         self.SetStringItem(idx, 1, obj.FileData_ContainingFolder)
         self.SetStringItem(idx, 2, obj.FileData_FileName)
 
     def _set_itemdata(self, idx, ref, obj):
+        # print 'FileListCtrl._set_itemdata'
         self.SetItemData(idx, ref)
         self.itemDataMap[ref] = (obj.Title(), 
                                  obj.FileData_ContainingFolder,
@@ -198,12 +203,9 @@ class BibListCtrl(BaseListCtrl):
 
     def _set_columndata(self, idx, obj, msgtype=None):
         '''Set relevant data to the column at row: idx'''
+        # print 'BibListCtrl._set_columndata'
         if not msgtype:
             msgtype = obj.get_icon_code('bibwindow')
-        # self.SetImageStringItem(
-        #     idx, 
-        #     '', 
-        #     MessageType[msgtype])
         self.SetItemImage(idx, MessageType[msgtype])
         # self.SetItemText(idx, '')
         if obj.notes: self.SetStringItem(idx, 1, u'\u270D') # writing pen
@@ -309,32 +311,91 @@ class GBListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
         '''Give a tuple of indices of positively checked items'''
         return tuple([ idx for idx in self.itemDataMap.keys() if self.itemDataMap[idx][0] == True ])
 
-class DirListCtrl(BaseListCtrl):
+
+from pieberry.pieobject import PieFolder
+
+class DirListCtrl(BibListCtrl, FileListCtrl):
     '''File search/browsing control'''
-    columnheads = (_('Title'), _('Location'), _('File'))
-    columnwidths = (150, 150, 150)
+    # column setup for bib mode
+    columnheads_bib = ('', '', _('Author'), _('Date'), _('Title'))
+    columnwidths_bib = (20, 16, 160, 80, 240)
+    # column setup for file mgmt mode
+    columnheads_file = (_('Title'), _('Location'), _('File'))
+    columnwidths_file = (150, 150, 150)
+
+    columnheads = ('', '', _('Author'), _('Date'), _('Title'))
+    columnwidths = (20, 16, 160, 80, 240)
+
+    mode = 'bib'
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
         self.SetImageList(PieImageList, wx.IMAGE_LIST_SMALL)
 
+    def _set_itemdata(self, idx, ref, obj):
+        '''Set relevant data in the listctrl's data stores: for row:
+        idx; using ref: the reference number for the ostore; using
+        obj: the object in question.'''
+        self.SetItemData(idx, ref)
+        if type(obj) == PieFolder:
+            print 'special'
+            return
+        if self.mode == 'bib':
+            BibListCtrl._set_itemdata(self, idx, ref, obj)
+        elif self.mode == 'file':
+            FileListCtrl._set_itemdata(self, idx, ref, obj)
+        else:
+            raise Exception, 'invalid mode'
+
+    def _set_columndata(self, idx, obj, msgtype=None):
+        if type(obj) == PieFolder:
+            print 'special'
+            return
+        if self.mode == 'bib':
+            BibListCtrl._set_columndata(self, idx, obj)
+        elif self.mode == 'file':
+            FileListCtrl._set_columndata(self, idx, obj)
+        else:
+            raise Exception, 'invalid mode'
+
     def AddObject(self, obj, ref, statusmsg=None, 
                   msgtype='success', filtertext=None):
         # print 'FileListCtrl: AddObject at %d, %s' % (self.currentitem, obj)
-        if filterout(filtertext, (obj.FileData_FileName, obj.FileData_Root)):
+        if filterout(filtertext, (obj.FileData_FileName, obj.Title(), obj.Author())):
             return
         nexidx = self.InsertImageStringItem(
             self.currentitem, 
-            obj.Title(), 
-            MessageType[obj.get_icon_code(window_type='filewindow')])
-            # MessageType[msgtype])
-        self.SetStringItem(nexidx, 1, obj.FileData_ContainingFolder)
-        self.SetStringItem(nexidx, 2, obj.FileData_FileName)
-        self.SetItemData(nexidx, ref)
-        self.itemDataMap[ref] = (obj.Title(), 
-                                 obj.FileData_ContainingFolder,
-                                 obj.FileData_FileName)
+            '', 
+            0)
+        self._set_columndata(nexidx, obj, msgtype=msgtype)
+        self._set_itemdata(nexidx, ref, obj)
         self.currentitem += 1
         self.EnsureVisible(nexidx)
         return nexidx
 
+    def AddFolder(self, fobj):
+        pass
+
+    def ChangeMode(self, mode):
+        '''Change the display mode between bibliographic and file
+        management modes'''
+        self.DeleteAllItems()
+        self.DeleteAllColumns()
+        if mode == 'bib':
+            self.columnheads = self.columnheads_bib
+            self.columnwidths = self.columnwidths_bib
+            self.mode = 'bib'
+        elif mode == 'file':
+            self.columnheads = self.columnheads_file
+            self.columnwidths = self.columnwidths_file
+            self.mode = 'file'
+        else:
+            raise Exception, 'invalid mode %s' % mode
+        # self.__init_columns()
+        for i in range(len(self.columnheads)):
+            self.InsertColumn(i, self.columnheads[i])
+            self.SetColumnWidth(i, self.columnwidths[i])
+
+        self.itemDataMap = {}
+        self.currentitem = 0
+        # BaseListCtrl.__init_columns(self)

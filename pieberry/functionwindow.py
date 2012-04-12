@@ -773,5 +773,11 @@ class FunctionMainWindow(BaseMainWindow):
         gbs = GoogleBooksISBNScraper(evt.bcode, pan)
         pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
         gbs.start()
-        
+
+    def OnViewFolders(self, evt):
+        self.OpenFolderPane()
+        pan = self.GetCurrentPane()
+        f = FOLDER_LOOKUP['projectdir'][0]
+        for obj in f.referenced_objects:
+            pan.AddObject(obj)
         

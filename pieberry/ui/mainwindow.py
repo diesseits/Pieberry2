@@ -119,6 +119,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('View most r&ecently used documents\tCtrl-3'))
         self.menu_view_recent = wx.MenuItem(
             viewMenu, -1, _('View most &recently added documents\tCtrl-4'))
+        self.menu_view_folders = wx.MenuItem(
+            viewMenu, -1, _('&View folders and contents\tCtrl-5'))
 
         # BEGIN debug menu
         if PIE_CONFIG.getboolean('Internal', 'show_debug_ui'):
@@ -183,6 +185,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         viewMenu.AppendItem(self.menu_view_flagged)
         viewMenu.AppendItem(self.menu_view_recentact)
         viewMenu.AppendItem(self.menu_view_recent)
+        viewMenu.AppendSeparator()
+        viewMenu.AppendItem(self.menu_view_folders)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -213,6 +217,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
         self.Bind(wx.EVT_MENU, self.OnViewRecentlyInteracted, self.menu_view_recentact)
         self.Bind(wx.EVT_MENU, self.OnViewStarred, self.menu_view_starred)
+        self.Bind(wx.EVT_MENU, self.OnViewFolders, self.menu_view_folders)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         if ZBAR:
@@ -497,6 +502,13 @@ class BaseMainWindow(wx.Frame, PieActor):
             bitmap = wx.Bitmap(os.path.join(IMGDIR, 'pie_16.png'))
             )
 
+    def OpenFolderPane(self):
+        caption = _('Folders')
+        tab = DirListPanel(self.TabBook, -1)
+        self.TabBook.AddPage(
+            tab, caption, select=True,
+            bitmap = wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU))
+
     def DoSearch(self, evt):
         '''stub'''
         print 'altmainwindow.DoSearch'
@@ -520,6 +532,9 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OnUpdateAtomChoices(self, evt):
         apanes = self.GetPaneIdxOfType('AtomPanel')
         [ self.TabBook.GetPage(p).OnSetDestinations(evt) for p in apanes ]
+
+    def OnViewFolders(self, evt):
+        self.OpenFolderPane()
 
 # end of class GladeMainWindow
 
