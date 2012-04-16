@@ -138,6 +138,9 @@ class MenuFunctionsMixin:
 
     def onRenameFile(self, evt):
         obj = self.GetSelectedItem()
+        if obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
+            wx.MessageBox(_('Can\'t rename encrypted files in use'))
+            return
         fn = obj.FileData_FileName
         dia = wx.TextEntryDialog(
             self, _('New filename:'), _('Rename file'), defaultValue=fn)
