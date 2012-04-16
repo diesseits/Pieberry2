@@ -508,6 +508,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.TabBook.AddPage(
             tab, caption, select=True,
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_FOLDER_OPEN, wx.ART_MENU))
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
 
     def DoSearch(self, evt):
         '''stub'''
@@ -533,8 +534,6 @@ class BaseMainWindow(wx.Frame, PieActor):
         apanes = self.GetPaneIdxOfType('AtomPanel')
         [ self.TabBook.GetPage(p).OnSetDestinations(evt) for p in apanes ]
 
-    def OnViewFolders(self, evt):
-        self.OpenFolderPane()
 
 # end of class GladeMainWindow
 

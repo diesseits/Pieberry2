@@ -778,6 +778,9 @@ class FunctionMainWindow(BaseMainWindow):
         self.OpenFolderPane()
         pan = self.GetCurrentPane()
         f = FOLDER_LOOKUP['projectdir'][0]
+        newostore = PieObjectStore()
+        newostore.set_session_data(containing_folder=f.path())
         for obj in f.referenced_objects:
             pan.AddObject(obj)
+
         
