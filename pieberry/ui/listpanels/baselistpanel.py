@@ -121,10 +121,13 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self.ListDisplay.onItemSelected(evt)
         ref = self.ListDisplay.GetItemData(evt.GetIndex())
         # pprint(self.objectstore[ref].aspects)
-        newevt = PieListSelectionEvent(
-            ref=ref, 
-            pieobject=self.objectstore[ref])
-        wx.PostEvent(self, newevt)
+
+        # only emit if type is a pieobject
+        if self.objectstore.type_by_ref(ref) == PieObject:
+            newevt = PieListSelectionEvent(
+                ref=ref, 
+                pieobject=self.objectstore[ref])
+            wx.PostEvent(self, newevt)
 
     # def onSelectionActivated(self, evt):
         # print 'BaseListPanel.onSelectionActivated'

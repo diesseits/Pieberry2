@@ -186,3 +186,5 @@ class PieObjectStore:
             obj.flag_aspect_stored()
 
 
+    def type_by_ref(self, ref):
+        return type(self.store[ref])
