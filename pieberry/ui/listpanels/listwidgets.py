@@ -338,7 +338,12 @@ class DirListCtrl(BibListCtrl, FileListCtrl):
         obj: the object in question.'''
         self.SetItemData(idx, ref)
         if type(obj) == PieFolder:
-            print 'special'
+            self.SetItemData(idx, ref)
+            if self.mode == 'bib':
+                self.itemDataMap[ref] = ['000',
+                                         0, u'< folder >', None, obj.EndName]
+            elif self.mode == 'file':
+                self.itemDataMap[ref] = [obj.EndName, u'< folder >', None]
             return
         if self.mode == 'bib':
             BibListCtrl._set_itemdata(self, idx, ref, obj)
@@ -373,8 +378,22 @@ class DirListCtrl(BibListCtrl, FileListCtrl):
         self.EnsureVisible(nexidx)
         return nexidx
 
-    def AddFolder(self, fobj):
-        pass
+    def AddFolder(self, fobj, ref):
+        '''Shoehorn a folder into the list view'''
+        nexidx = self.InsertImageStringItem(
+            self.currentitem,
+            '',
+            MessageType['folder'])
+        if self.mode == 'bib':
+            self.SetStringItem(nexidx, 2, _('< folder >'))
+            self.SetStringItem(nexidx, 4, fobj.EndName)
+        elif self.mode == 'file':
+            self.SetStringItem(nexidx, 0, fobj.EndName)
+            self.SetStringItem(nexidx, 1, _('< folder >'))
+        self._set_itemdata(nexidx, ref, fobj)
+        self.currentitem += 1
+        self.EnsureVisible(nexidx)
+        return nexidx
 
     def ChangeMode(self, mode):
         '''Change the display mode between bibliographic and file

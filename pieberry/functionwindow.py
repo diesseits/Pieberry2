@@ -788,9 +788,16 @@ class FunctionMainWindow(BaseMainWindow):
         self.OpenFolderPane()
         pan = self.GetCurrentPane()
         f = FOLDER_LOOKUP['projectdir'][0]
-        newostore = PieObjectStore()
+        subfs = query_folders_contained(session, f.Root, f.SubFolders)
+        newostore = PieObjectStore([o for o in f.referenced_objects])
+        newostore.Add(f)
+        newostore.Extend(subfs)
         newostore.set_session_data(containing_folder=f.path())
-        for obj in f.referenced_objects:
-            pan.AddObject(obj)
+        pan.AddObjects(newostore)
+        # pan.AddFolder(f)
+        # for fobj in subfs:
+        #     pan.AddFolder(fobj)
+        # for obj in f.referenced_objects:
+        #     pan.AddObject(obj)
 
         

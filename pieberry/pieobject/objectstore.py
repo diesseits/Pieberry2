@@ -1,6 +1,5 @@
 #GPLv3 Raif Sarcich 2011
 
-#from pieobject import PieObject
 
 from types import NoneType
 
@@ -24,6 +23,16 @@ class PieObjectStore:
     session = None
 
     def __init__(self, initdata=None):
+        # need to be type-aware
+        from pieberry.pieobject import PieObject
+        from pieberry.pieobject import PieFolder
+        self.po_type = PieObject
+        self.pf_type = PieFolder
+        print 'TYPES:', self.po_type, self.pf_type
+        print 'type()s', type(self.po_type), type(self.pf_type)
+        self.pieobjects = []
+        self.piefolders = []
+
         self.store = {}
         assert type(initdata) in (list, tuple, NoneType)
         if initdata:
@@ -32,6 +41,7 @@ class PieObjectStore:
                 self.Add(i)
         self.sessiondata = {}
 
+        
     def __len__(self):
         # hmm, I think this is probably a bug. Not all these keys
         # might have items. Not changing it till some bugged behaviour
@@ -50,18 +60,28 @@ class PieObjectStore:
 
     def Add(self, obj):
         self.maxindex += 1
+        if type(obj) == self.po_type:
+            self.pieobjects.append(self.maxindex)
+        elif type(obj) == self.pf_type:
+            self.piefolders.append(self.maxindex)
+        else:
+            raise TypeError, 'Not a handleable type'
         self.store[self.maxindex] = obj
         if self.session:
             self.store[self.maxindex].set_session(self.session)
         return self.maxindex
 
-    def GetNext(self):
+    def GetNext(self, objtype='all'):
         '''Generator method that returns a key, val combination,
         yielding all objects'''
         if len(self.store) == 0:
             # raise EmptyStoreError
             return
         for ky, vl in self.store.items():
+            if objtype == 'piefolders' and type(vl) != self.pf_type:
+                continue
+            if objtype == 'pieobjects' and type(vl) != self.po_type:
+                continue
             if vl == None:
                 continue
             # GetNext() does not do aspect sensitivity, unlike next()
@@ -85,7 +105,11 @@ class PieObjectStore:
         '''Delete an item'''
         # self.store.pop(idx)
         self.store[idx] = None
-
+        try: self.pieobjects.pop(self.pieobjects.index(idx))
+        except: pass
+        try: self.piefolders.pop(self.piefolders.index(idx))
+        except: pass
+            
     def Extend(self, ostore):
         '''Append an object store to this one'''
         for obj in ostore: self.Add(obj)
@@ -140,7 +164,8 @@ class PieObjectStore:
         '''Mark all objects in the ostore as saved'''
         # print 'Setting %d objects to flag saved' % len(self)
         count = 0
-        for obj in self:
+        for obj in self:        
+
             count += 1
             # print '%d: flagging %s saved' % (count, obj)
             obj.add_aspect_saved()

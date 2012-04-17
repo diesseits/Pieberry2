@@ -1,7 +1,7 @@
-from sqlalchemy import or_, extract, desc
+from sqlalchemy import or_, extract, desc, and_
 import sys
 
-from pieberry.pieobject import PieObject, PieWebsite, PieObjectStore
+from pieberry.pieobject import PieObject, PieWebsite, PieObjectStore, PieFolder
 
 # search_choice_codes = ('all', 'library', 'projects', 'meetingpapers')
 # search_field_codes = ('main', 'all', 'title', 'author', 'notes', 'website', 'journal')
@@ -129,3 +129,9 @@ def query_starred(session):
         PieObject.StatData_Favourite == True)
     return PieObjectStore(q.all())
     
+def query_folders_contained(session, root, subfolders):
+    '''Query all folders within the root folder'''
+    q = session.query(PieFolder).filter(and_(
+        PieFolder.Root == root))
+    ret = [ o for o in q if o.SubFolders[:-1] == subfolders ]
+    return ret

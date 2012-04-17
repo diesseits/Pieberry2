@@ -323,6 +323,9 @@ class PieFolder(SQLABase):
             self.EndName == ROOT_MAP[fdkey].split(os.sep)[-1]
         self.initialised = 1
 
+    def get_icon_code(self, window_type=None):
+        return 'folder'
+
     def path(self):
         pathlist = [ROOT_MAP[self.Root],] + self.SubFolders
         return os.path.join(*pathlist)
@@ -344,6 +347,7 @@ class PieFolder(SQLABase):
         containing information on it.'''
         p = HeaderHandler(piefolder=self)
         p.write_header()
+
 
 #DEBUG STUFF
 
