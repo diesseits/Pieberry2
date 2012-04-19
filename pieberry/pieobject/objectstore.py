@@ -95,7 +95,7 @@ class PieObjectStore:
         for ky, vl in self.store.items():
             if vl == None:
                 continue
-            if vl.aspects['failed_dl'] == True:
+            if type(vl) == self.po_type and vl.aspects['failed_dl'] == True:
                 continue
             self.currentitem = ky
             yield vl

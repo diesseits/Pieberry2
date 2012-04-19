@@ -152,6 +152,14 @@ def generate_folder_list():
                         FOLDER_LOOKUP['projectdir'].append(exisf)
                     print 'found folder:', exisf
 
+    # Generate 'special' folders (i.e. the various root folders)
+    FOLDER_LOOKUP['special'] = [] # special (non-persistent) folders
+                                  # for the principle storage
+                                  # locations
+    FOLDER_LOOKUP['special'].append(PieFolder(ROOT_MAP['projectdir']))
+    FOLDER_LOOKUP['special'].append(PieFolder(ROOT_MAP['librarydir']))
+    FOLDER_LOOKUP['special'].append(PieFolder(ROOT_MAP['meetingpaperdir']))
+
 def referable_folder_byobj(obj, sqsess=session):
     print 'Getting referable object'
     print 'Using:', obj.FileData_Root, obj.FileData_Folder
@@ -259,8 +267,6 @@ class HeaderHandler(SafeConfigParser):
         except:
             raise 'Couldn\'t write folder info header file'
 
-                
-
 class PieFolder(SQLABase):
     '''A class for information about library and project folders'''
     __tablename__ = 'piefolders'
@@ -305,7 +311,7 @@ class PieFolder(SQLABase):
         if self.SubFolders: 
             self.EndName = self.SubFolders[-1]
         else:
-            self.EndName == ROOT_MAP[fdkey].split(os.sep)[-1]
+            self.EndName = [ a for a in ROOT_MAP[self.Root].split(os.sep) if len(a) > 0 ][-1]
         if not fdroot: raise Exception, 'Folder outside pieberry domain'
         self.initialised = 1
         print 'initialised:', self
@@ -320,7 +326,7 @@ class PieFolder(SQLABase):
         if self.SubFolders: 
             self.EndName = self.SubFolders[-1]
         else:
-            self.EndName == ROOT_MAP[fdkey].split(os.sep)[-1]
+            self.EndName == [ a for a in ROOT_MAP[self.Root].split(os.sep) if len(a) > 0 ][-1]
         self.initialised = 1
 
     def get_icon_code(self, window_type=None):

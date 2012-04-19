@@ -1,6 +1,11 @@
 import wx
 import wx.lib.newevent
 
+PieCrumbClickedEvent, EVT_PIE_CRUMB_CLICKED = wx.lib.newevent.NewEvent()
+# attributes - fobj - the folder object
+PieFolderClickedEvent, EVT_PIE_FOLDER_CLICKED = wx.lib.newevent.NewEvent()
+# attributes - fobj - the folder object
+#              notify_window - the window to address consequent calls
 PieBarcodeEvent, EVT_PIE_BARCODE = wx.lib.newevent.NewEvent()
 # attributes - btype - the barcode type
 #            - bcode - the barcode data
@@ -11,7 +16,7 @@ PieGoogleSearchEvent, EVT_PIE_GOOGLE_SEARCH = wx.lib.newevent.NewEvent()
 PieLocationChangedEvent, EVT_PIE_LOCATION_CHANGED = wx.lib.newevent.NewEvent()
 # No attributes
 PieFileIndexFinishedEvent, EVT_PIE_FILE_INDEX_FINISHED = wx.lib.newevent.NewEvent()
-# No attributes
+# No attributesnotifyfobj
 PieFileIndexEvent, EVT_PIE_FILE_INDEX = wx.lib.newevent.NewEvent()
 # attributes: count (total no objects being indexed)
 #             track (where we're up to in the above)

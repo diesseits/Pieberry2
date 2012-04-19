@@ -784,20 +784,40 @@ class FunctionMainWindow(BaseMainWindow):
         pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
         gbs.start()
 
-    def OnViewFolders(self, evt):
-        self.OpenFolderPane()
-        pan = self.GetCurrentPane()
-        f = FOLDER_LOOKUP['projectdir'][0]
-        subfs = query_folders_contained(session, f.Root, f.SubFolders)
-        newostore = PieObjectStore([o for o in f.referenced_objects])
-        newostore.Add(f)
-        newostore.Extend(subfs)
-        newostore.set_session_data(containing_folder=f.path())
-        pan.AddObjects(newostore)
-        # pan.AddFolder(f)
-        # for fobj in subfs:
-        #     pan.AddFolder(fobj)
-        # for obj in f.referenced_objects:
-        #     pan.AddObject(obj)
 
+    # FUNCTIONALITY FOR FOLDER (FILE MANAGER) VIEWS
+
+    def _open_folder(self, notify_window, fobj):
+        '''Do the legwork for opening a folder in a DirListView'''
+        subfs = query_folders_contained(session, fobj.Root, fobj.SubFolders)
+        newostore = PieObjectStore([o for o in fobj.referenced_objects])
+        newostore.Extend(subfs)
+        newostore.set_session_data(containing_folder=fobj)
+        return newostore
+
+    def _open_folder_view(self, root, caption):
+        '''Open a folder view from a root directory in the Pieberry domain'''
+        self.OpenFolderPane(caption=caption)
+        pan = self.GetCurrentPane()
+        key_map = {'projectdir': 0, 'librarydir': 1, 'meetingpaperdir': 2}
+        newostore = query_folders_toplevel(session, root)
+        newostore.set_session_data(
+            containing_folder=FOLDER_LOOKUP['special'][key_map[root]])
+        pan.UpLevel(newostore)
+
+    def Callback_OpenFolder(self, evt):
+        '''Receive a callback from a DirListPanel to open a given folder'''
+        newostore = self._open_folder(evt.notify_window, evt.fobj)
+        evt.notify_window.UpLevel(newostore)
+
+    def Callback_BackFolder(self, evt):
+        newostore = self._open_folder(evt.notify_window, evt.fobj)
+        evt.notify_window.DownLevel(newostore)
+        
+    def OnViewProjectFolders(self, evt):
+        self._open_folder_view('projectdir', _('Projects'))
+    def OnViewLibraryFolders(self, evt):
+        self._open_folder_view('librarydir', _('Library'))
+    def OnViewMeetingPaperFolders(self, evt):
+        self._open_folder_view('meetingpaperdir', _('Meeting Papers'))
         

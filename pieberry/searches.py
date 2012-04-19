@@ -132,6 +132,12 @@ def query_starred(session):
 def query_folders_contained(session, root, subfolders):
     '''Query all folders within the root folder'''
     q = session.query(PieFolder).filter(and_(
-        PieFolder.Root == root))
+            PieFolder.Root == root))
     ret = [ o for o in q if o.SubFolders[:-1] == subfolders ]
-    return ret
+    return PieObjectStore(ret)
+
+def query_folders_toplevel(session, root):
+    q = session.query(PieFolder).filter(and_(
+            PieFolder.Root == root))
+    ret = [ o for o in q if len(o.SubFolders) == 1 ] 
+    return PieObjectStore(ret)
