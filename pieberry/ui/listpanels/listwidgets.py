@@ -160,7 +160,7 @@ class WebListCtrl(BaseListCtrl, listmix.CheckListCtrlMixin):
 class FileListCtrl(BaseListCtrl):
     '''File search/browsing control'''
     columnheads = (_('Title'), _('Location'), _('File'))
-    columnwidths = (150, 150, 150)
+    columnwidths = (200, 150, 150)
 
     def __init__(self, parent):
         BaseListCtrl.__init__(self, parent)
@@ -321,7 +321,7 @@ class DirListCtrl(BibListCtrl, FileListCtrl):
     columnwidths_bib = (20, 16, 160, 80, 240)
     # column setup for file mgmt mode
     columnheads_file = (_('Title'), _('Location'), _('File'))
-    columnwidths_file = (150, 150, 150)
+    columnwidths_file = (200, 150, 150)
 
     columnheads = ('', '', _('Author'), _('Date'), _('Title'))
     columnwidths = (20, 16, 160, 80, 240)
@@ -386,10 +386,12 @@ class DirListCtrl(BibListCtrl, FileListCtrl):
             MessageType['folder'])
         if self.mode == 'bib':
             self.SetStringItem(nexidx, 2, _('< folder >'))
+            self.SetStringItem(nexidx, 3, u'...')
             self.SetStringItem(nexidx, 4, fobj.EndName)
         elif self.mode == 'file':
             self.SetStringItem(nexidx, 0, fobj.EndName)
-            self.SetStringItem(nexidx, 1, _('< folder >'))
+            self.SetStringItem(nexidx, 1, fobj.path())
+            self.SetStringItem(nexidx, 2, _('< folder >'))
         self._set_itemdata(nexidx, ref, fobj)
         self.currentitem += 1
         self.EnsureVisible(nexidx)

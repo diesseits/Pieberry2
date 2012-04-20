@@ -174,6 +174,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         it_idx, flags = self.ListDisplay.HitTest(ol_xy)
         cur_it = self.ListDisplay.GetItemData(it_idx)
         obj = self.objectstore[cur_it]
+        if not type(obj) == PieObject: return
 
         # if there's no file, don't do anything
         if not obj.has_aspect('hasfile'):
