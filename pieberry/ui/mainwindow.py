@@ -366,7 +366,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             'RecentView',
             'RecentActView',
             'StarredView',
-            'FlaggedView'):
+            'FlaggedView',
+            'DirListPanel'):
             if evt: evt.Skip()
             return
         if self.SearchPanel:
