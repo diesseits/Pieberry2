@@ -354,6 +354,13 @@ class PieFolder(SQLABase):
         p = HeaderHandler(piefolder=self)
         p.write_header()
 
+    def SortContext(self, context):
+        '''Return a key to allow objectstore sorting, dependent on
+        context (e.g. date, filename, title)'''
+        if context == 'date':
+            return datetime.datetime.today()
+        elif context in ('filename', 'title'): 
+            return self.EndName
 
 #DEBUG STUFF
 

@@ -528,7 +528,17 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
         self.StatData_LastOpened = date=datetime.datetime.today()
         self.StatData_OpenedCount += 1
         print '%s opened %d times' % (self, self.StatData_OpenedCount)
-        
+
+    def SortContext(self, context):
+        '''Return a key to allow objectstore sorting, dependent on
+        context (e.g. date, filename, title)'''
+        if context == 'date':
+            return self.ReferDate()
+        elif context == 'filename':
+            return self.FileData_FileName
+        elif context == 'title':
+            return self.Title()
+
 
 # metadata = SQLABase.metadata
 # metadata.create_all(engine)

@@ -88,8 +88,13 @@ class DirListPanel(BibListPanel, FileListPanel):
         if not ostore.get_session_data().has_key('containing_folder'):
             raise Exception, 'Cannot use this objectstore'
 
+
         self.ListDisplay.DeleteAllItems()
         self.objectstore = ostore
+        # if self.ListDisplay.mode == 'bib':
+        #     self.objectstore.Sort('title')
+        # elif self.ListDisplay.mode == 'file':
+        self.objectstore.Sort('filename')
         fill_class('piefolders')
         fill_class('pieobjects')
 

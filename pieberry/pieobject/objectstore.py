@@ -33,6 +33,7 @@ class PieObjectStore:
         self.pieobjects = []
         self.piefolders = []
 
+        self.store_orderlist = []
         self.store = {}
         assert type(initdata) in (list, tuple, NoneType)
         if initdata:
@@ -67,6 +68,7 @@ class PieObjectStore:
         else:
             raise TypeError, 'Not a handleable type'
         self.store[self.maxindex] = obj
+        self.store_orderlist.append(self.maxindex)
         if self.session:
             self.store[self.maxindex].set_session(self.session)
         return self.maxindex
@@ -77,7 +79,9 @@ class PieObjectStore:
         if len(self.store) == 0:
             # raise EmptyStoreError
             return
-        for ky, vl in self.store.items():
+        # for ky, vl in self.store.items():
+        for ky in self.store_orderlist:
+            vl = self.store[ky]
             if objtype == 'piefolders' and type(vl) != self.pf_type:
                 continue
             if objtype == 'pieobjects' and type(vl) != self.po_type:
@@ -92,7 +96,9 @@ class PieObjectStore:
     def next(self):
         '''Generator method that returns just objects, yeilding those
         that exist and aren't a "failed download"'''
-        for ky, vl in self.store.items():
+        # for ky, vl in self.store.items():
+        for ky in self.store_orderlist:
+            vl = self.store[ky]
             if vl == None:
                 continue
             if type(vl) == self.po_type and vl.aspects['failed_dl'] == True:
@@ -101,10 +107,19 @@ class PieObjectStore:
             yield vl
         self.currentitem = -1
 
+    def Sort(self, crit):
+        '''Change the order in which items will be returned through
+        the objecstore's iterator functions. Acceptable values are:
+        - "date" 
+        - "filename"
+        - "title"'''
+        self.store_orderlist.sort(key=lambda k: self.store[k].SortContext(crit))
+
     def Del(self, idx):
         '''Delete an item'''
         # self.store.pop(idx)
         self.store[idx] = None
+        self.store_orderlist.pop(self.store_orderlist.index(idx))
         try: self.pieobjects.pop(self.pieobjects.index(idx))
         except: pass
         try: self.piefolders.pop(self.piefolders.index(idx))
@@ -134,6 +149,7 @@ class PieObjectStore:
                 setattr(self, key, val)
 
     def delete_all(self):
+        '''Delete all files in the objectstore'''
         for obj in self:
             if obj.has_aspect('hasfile'):
                 try: 
