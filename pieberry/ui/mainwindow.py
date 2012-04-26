@@ -518,6 +518,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.Bind(EVT_PIE_FOLDER_CLICKED, self.Callback_OpenFolder)
         tab.Bind(EVT_PIE_CRUMB_CLICKED, self.Callback_BackFolder)
+        tab.Bind(EVT_PIE_FLAG_CHECKED, self.OnFlagChecked)
 
     def DoSearch(self, evt):
         '''stub'''

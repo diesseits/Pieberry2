@@ -137,6 +137,7 @@ def main():
     frame_1 = FunctionMainWindow(None, -1, "")
     app.SetTopWindow(frame_1)
     frame_1.Show()
+    frame_1.SetTitle(u'Pieberry [%s]' % PIE_CONFIG.get('TheProfile', 'current_profile'))
     PIE_CONFIG.set('Internal', 'first_run', 'False')
     PIE_CONFIG.write_pieconfig()
     if PIE_INTERNALS.getboolean('Identity', 'Hitherto_unset'):

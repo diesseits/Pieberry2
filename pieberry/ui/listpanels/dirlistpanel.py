@@ -48,6 +48,13 @@ class DirListPanel(BibListPanel, FileListPanel):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
                               self.onSelectionActivated)
         self.rd_FileButton.Bind(wx.EVT_RADIOBUTTON, self.onToggleMode)
+        self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
+
+    def onKeyDown(self, evt):
+        if self.ListDisplay.mode == 'bib':
+            BibListPanel.onKeyDown(self, evt)
+        elif self.ListDisplay.mode == 'file':
+            FileListPanel.onKeyDown(self, evt)
 
     def AddObject(self, obj, msgtype=None):
         '''This remaking of AddObject can add a PieObject or
@@ -118,7 +125,7 @@ class DirListPanel(BibListPanel, FileListPanel):
 
     def MakeMenu(self, menu, obj):
         if type(obj) == PieObject:
-            if self.ListDisplay. mode == 'bib':
+            if self.ListDisplay.mode == 'bib':
                 BibListPanel.MakeMenu(self, menu, obj)
             elif self.ListDisplay.mode == 'file':
                 FileListPanel.MakeMenu(self, menu, obj)

@@ -192,6 +192,7 @@ class MenuFunctionsMixin:
         self.ListDisplay.SetFocus()
 
     def onFlagFollowUp(self, evt=0):
+        print 'ee'
         obj = self.GetSelectedItem()
         newevt = PieFlagCheckedEvent(flagkey='StatData_FollowUpFlag',
                                      flagval=evt.Checked(),
