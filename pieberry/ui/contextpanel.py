@@ -11,19 +11,9 @@ from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_
 from pieberry.pieutility.date import fmtdate
 from pieberry.pieobject.folder import SECURITY_CLASSES
 
-html_fundamental = _('''
-<body bgcolor="%(color)s">
-<p>
-<font size=-1>
-<b>Author:</b> %(author)s<br>
-<b>Date:</b> %(date)s<br>
-<b>Tags:</b> %(tags)s
-</p>
-</font>
-</body>
-''')
-
-html_colors = {'kde': "#F0EBE2"}
+boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
+normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+itfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
 
 class BetterContextPanel(wx.Panel):
     '''Class for generic forms of context'''
@@ -98,97 +88,99 @@ class BetterContextPanel(wx.Panel):
         [ setattr(newevt, attrname, attrval) for attrname, attrval in otherargs ] 
         wx.PostEvent(self, newevt)
 
-bibhtml = _('''
-<body bgcolor="%(color)s">
-<font size=-1>
-<p>
-<b>BibTeX Type:</b> %(bibtex_type)s<br>
-<b>BibTeX Key:</b> %(bibtex_key)s<br>
-<b>Publication Date:</b> %(date)s<br>
-</p>
-</font>
-</body>
-''')
-
-
 class BibInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
-        kwargs['size'] = (80,80)
+        kwargs['size'] = (80,50)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
-        self.Html = wx.html.HtmlWindow(self, -1, size=(80,80))
         self._do_layout()
 
     def _do_layout(self):
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
-        self.SetSizer(self.sizer)
+        self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
+        self.fgsizer.AddGrowableCol(1)
+        self.type_lb = wx.StaticText(self, -1, _('Type:'))
+        self.type_ct = wx.StaticText(self, -1, u'')
+        self.key_lb = wx.StaticText(self, -1, _('Key:'))
+        self.key_ct = wx.StaticText(self, -1, u'')
+        self.date_lb = wx.StaticText(self, -1, _('Published:'))
+        self.date_ct = wx.StaticText(self, -1, u'')
+
+        self.date_lb.SetFont(boldfont)
+        self.type_lb.SetFont(boldfont)
+        self.key_lb.SetFont(boldfont)
+
+        self.fgsizer.Add(self.type_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.type_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.key_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.key_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.date_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.date_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add((3,3))
+        
+        self.SetSizer(self.fgsizer)
+        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
         self.Layout()
-        # wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
     def SetObject(self, obj):
-        self.sizer.Remove(self.Html)
-        self.Html.Destroy()
-        self.Html = wx.html.HtmlWindow(self, -1)
-        self.sizer.Add(self.Html, 1, wx.EXPAND|wx.ALL)
-        self.Layout()
-        info = {'color': html_colors['kde']}
-        info['bibtex_type'] = unicode(obj.BibData_Type)
-        info['bibtex_key'] = unicode(obj.BibData_Key)
-        if obj.BibData_DatePublished:
-            info['date'] = obj.BibData_DatePublished.strftime('%d %B %Y') if obj.BibData_DatePublished.year >= 1900 else fmtdate(obj.BibData_DatePublished)
-        else: info['date'] = 'None'
-        self.Html.AppendToPage(bibhtml % info)
-        self.Layout()
-        # wx.Panel.SetSize(self, self.sizer.GetMinSize())
-
-
-
-filehtml = _(u'''
-<body bgcolor="%(color)s">
-<font size=-1>
-<p>
-<b>Type:</b> %(type)s<br>
-<b>Size:</b> %(size)s<br>
-<b>Record:</b> %(record)s<br>
-<b>Security:</b> %(security)s<br>
-</p>
-</font>
-</body>
-''')
+        self.type_ct.SetLabel(unicode(obj.BibData_Type))
+        self.key_ct.SetLabel(unicode(obj.BibData_Key))
+        if obj.BibData_DatePublished: 
+            date = obj.BibData_DatePublished.strftime('%d %B %Y') if obj.BibData_DatePublished.year >= 1900 else fmtdate(obj.BibData_DatePublished)
+        else:
+            date = u'N/A'
+        self.date_ct.SetLabel(date)
 
 
 class FileInfoPanel(wx.Panel):
     def __init__(self, parent, id, *args, **kwargs):
+        kwargs['size'] = (80,120)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
-        self.locte = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_CHARWRAP)
-        self.Html = wx.html.HtmlWindow(self, -1)
         self._do_layout()
 
     def _do_layout(self):
+        self.locte = wx.TextCtrl(self, -1, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.TE_CHARWRAP, size=(20,50))
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.sizer.Add(wx.StaticText(self, -1, _('File location:')), 0, wx.ALL, 5)
         self.sizer.Add(self.locte, 1, wx.ALL|wx.EXPAND, 5)
-        self.sizer.Add(self.Html, 1, wx.ALL|wx.EXPAND)
+        self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
+        self.fgsizer.AddGrowableCol(1)
+
+        self.type_lb = wx.StaticText(self, -1, _('Type:'))
+        self.type_ct = wx.StaticText(self, -1, u'')
+        self.size_lb = wx.StaticText(self, -1, _('Size:'))
+        self.size_ct = wx.StaticText(self, -1, u'')
+        self.record_lb = wx.StaticText(self, -1, _('Record:'))
+        self.record_ct = wx.StaticText(self, -1, u'')
+        self.sec_lb = wx.StaticText(self, -1, _('Security:'))
+        self.sec_ct = wx.StaticText(self, -1, u'')
+
+        self.fgsizer.Add(self.type_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.type_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.size_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.size_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.record_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.record_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.sec_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.sec_ct, 0, wx.LEFT|wx.RIGHT, 3)
+
+        self.type_lb.SetFont(boldfont)
+        self.size_lb.SetFont(boldfont)
+        self.record_lb.SetFont(boldfont)
+        self.sec_lb.SetFont(boldfont)
+        
+        self.sizer.Add(self.fgsizer)
         self.SetSizer(self.sizer)
-        self.Layout()
         wx.Panel.SetSize(self, self.sizer.GetMinSize())
+        self.Layout()
 
     def SetObject(self, obj):
-        self.locte.SetValue(unicode(obj.FileData_FullPath))
-        self.sizer.Remove(self.Html)
-        self.Html.Destroy()
-        self.Html = wx.html.HtmlWindow(self, -1, size=(80,80))
-        self.sizer.Add(self.Html, 1, wx.EXPAND)
-        self.Layout()
         if obj.FileData_Size: fsize = unicode(obj.FileData_Size / 1000) + 'kb'
         else: fsize = _('Nil')
-        info = {'color': html_colors['kde']}
-        info['path'] = unicode(obj.FileData_FullPath)
-        info['type'] = unicode(obj.FileData_FileType)
-        info['size'] = fsize
-        info['record'] = obj.FileData_FolderAdv.RecordFile if obj.FileData_FolderAdv else ''
-        info['security'] = SECURITY_CLASSES[obj.FileData_FolderAdv.SecurityLevel] if obj.FileData_FolderAdv else _('N/A')
-        self.Html.AppendToPage(filehtml % info)
+        self.locte.SetValue(unicode(obj.FileData_FullPath))
+        self.type_ct.SetLabel(unicode(obj.FileData_FileType))
+        self.size_ct.SetLabel(unicode(fsize))
+        self.record_ct.SetLabel(obj.FileData_FolderAdv.RecordFile if obj.FileData_FolderAdv else '')
+        self.sec_ct.SetLabel(SECURITY_CLASSES[obj.FileData_FolderAdv.SecurityLevel] if obj.FileData_FolderAdv else _('N/A'))
+        self.Layout()
         wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
 class WebInfoPanel(wx.Panel):
@@ -218,9 +210,6 @@ class WebInfoPanel(wx.Panel):
         self.urlDisplay.Refresh()
         wx.Panel.SetSize(self, self.sizer.GetMinSize())
 
-boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-itfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_ITALIC, wx.FONTWEIGHT_NORMAL)
 
 class EditableText(wx.Panel):
     '''A thing that will flip from a static text to a textctrl on a
