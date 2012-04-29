@@ -23,6 +23,7 @@ h1, h2, h3 {
 
 h1 {
 	font-size: 2em;
+	visibility: hidden;
 }
 
 h2 {
@@ -49,6 +50,12 @@ a {
 
 a:hover {
 }
+
+/* Facebook shit */
+div.fb-like {
+    padding-top: 30px;
+    margin: 5px 5px;
+    }
 
 #wrapper {
 	width: 960px;

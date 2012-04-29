@@ -1,5 +1,6 @@
 #+TITLE: Pieberry library assistant
 #+STYLE: <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+#+OPTIONS: f:nil
 
 #+BEGIN_HTML
 <div id="fb-root"></div>
@@ -24,6 +25,7 @@
 			<li class="current_page_item"><a href="index.html">Home</a></li>
 			<li><a href="download.html">Download</a></li>
 			<li><a href="screenshots.html">Screenshots</a></li>
+			<li><a href="changelog.html">Changelog</a></li>
 			<li><a href="manual.html">Manual</a></li>
 			<li><a href="links.html">Links</a></li>
 			<li><a href="contact.html">Contact</a></li>
@@ -71,7 +73,7 @@ rutrum. Nam vestibulum accumsan nisl.
     <li> 
       <h2>Social crap</h2>
        <ul>
-        <div class="fb-like" data-send="true" data-width="280" data-show-faces="false" data-colorscheme="dark"></div>
+        <li><div class="fb-like" data-href="http://www.facebook.com/pages/Pieberry/140904975947112" data-send="false" data-width="200" data-show-faces="false" data-colorscheme="dark"></div>
        </ul>
     </li>
     <li>
