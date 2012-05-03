@@ -683,11 +683,30 @@ class FunctionMainWindow(BaseMainWindow):
         return bibkey
 
     def OnImportBibtex(self, evt):
+        '''Open a BibTeX file selected by the user'''
         fdia = wx.FileDialog(self, wildcard="BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
         res = fdia.ShowModal()
         if res == wx.ID_CANCEL: return
         self.StatusBar.SetStatusText(_('Importing from file'))
         bibfilepath = fdia.GetPath()
+        self._do_process_bibtex_file(bibfilepath)
+
+    def OnPasteBibtex(self, evt):
+        '''Allow the user to paste in bibtex data into a text entry
+        field and have it processed'''
+        from pieberry.ui.pasteindialog import TextEntryDialog
+        dlg = TextEntryDialog(self, _('Press Ctrl-v to Paste Copied BibTeX data from the clipboard:'), _('Paste BibTeX'))
+        ans = dlg.ShowModal()
+        if ans == wx.ID_CANCEL: return
+        bibtexdata = dlg.GetValue()
+        tempfile = open(BIBTEMPFILE, 'w')
+        tempfile.write(bibtexdata)
+        tempfile.close()
+        self._do_process_bibtex_file(BIBTEMPFILE)
+
+    def _do_process_bibtex_file(self, bibfilepath):
+        '''Handle the processing of a given BibTeX file as
+        instructed'''
         from pieberry.pieutility.bibtex import autogen_bibtex_key
         progress_dialog = wx.ProgressDialog( 
             _('Importing from file'), 

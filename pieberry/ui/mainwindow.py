@@ -104,6 +104,8 @@ class BaseMainWindow(wx.Frame, PieActor):
                 gatherMenu, -1, _('Scan ISBN &barcode\tCtrl-shift-b'), _('Scan a book\'s barcode containing its ISBN and look it up in Google Books'))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
+        self.menu_paste_bibtex = wx.MenuItem(
+            gatherMenu, -1, _('&Paste in BibTeX entries\tCtrl-shift-p'), _('Paste BibTeX format citations from a source like JStor'))
         self.menu_import_bibtex.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
         self.menu_filter = wx.MenuItem(
@@ -181,6 +183,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         gatherMenu.AppendSeparator()
         gatherMenu.AppendItem(self.menu_emptyref)
         gatherMenu.AppendItem(self.menu_import_bibtex)
+        gatherMenu.AppendItem(self.menu_paste_bibtex)
         gatherMenu.AppendSeparator()
         gatherMenu.AppendItem(self.menu_atom_process)
         viewMenu.AppendItem(self.menu_toggle_context)
@@ -219,6 +222,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
+        self.Bind(wx.EVT_MENU, self.OnPasteBibtex, self.menu_paste_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)
         self.Bind(wx.EVT_MENU, self.OnViewFlagged, self.menu_view_flagged)
         self.Bind(wx.EVT_MENU, self.OnViewRecentlyInteracted, self.menu_view_recentact)

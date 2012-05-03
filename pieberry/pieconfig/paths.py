@@ -79,6 +79,9 @@ def init_storage_location(path):
         'recentdocsdir': RECENTDOCSDIR,
         'backupdir': BACKUPDIR
         }
+    # bibtempfile is a temporary bibtex file for pasted-in data
+    global BIBTEMPFILE
+    BIBTEMPFILE = os.path.join(CACHEDIR, 'bibtmp.bib')
 
 def init_desktop_location(path):
     '''Set the new desktop location'''
@@ -111,7 +114,6 @@ def clean_cache_path():
             except:
                 print 'could not delete %s' % d
 
-    
     
 
 # if PY2EXE:
