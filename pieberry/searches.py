@@ -91,6 +91,11 @@ def query_favourites(session):
     return session.query(PieObject).filter(
         PieObject.StatData_Favourite == True)
 
+def query_all_library(session):
+    return session.query(PieObject).filter(or_(
+            PieObject.FileData_Root == 'librarydir',
+            PieObject.FileData_Root == None))
+
 def query_unique_key(session, key):
     '''Returns true if the bibtex key is unique within the session'''
     q = session.query(PieObject.BibData_Key).filter(PieObject.BibData_Key == key)

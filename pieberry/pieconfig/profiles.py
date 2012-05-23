@@ -7,7 +7,7 @@
 import cPickle, os.path, os
 from pieberry.pieconfig.initsys import *
 from pieberry.pieconfig.globalvars import DEBUG
-from pieberry.pieconfig.defaults import PIE_PROFILE_KEYS
+from pieberry.pieconfig.defaults import PIE_PROFILE_KEYS, PIE_CONFIG_DEFAULTS
 
 PROFILES={}
 global PROFILES
@@ -40,3 +40,15 @@ if not os.path.exists(os.path.join(SYSDIR, 'profiles.pickle')):
 pf = open(os.path.join(SYSDIR, 'profiles.pickle'), 'r')
 PROFILES=cPickle.load(pf)
 pf.close()
+
+required_keys = ('bibliography_file', 'desktopdir', 'rootdir', 'export_bibtex', 'export_starred_only')
+
+def sanity_check():
+    '''make sure profiles have all fields'''
+    for profile in PROFILES.values():
+        print profile
+        for rk in required_keys:
+            if not profile.has_key(rk):
+                profile[rk] = [d[2] for d in PIE_CONFIG_DEFAULTS if d[1] == rk][0]
+                
+sanity_check()

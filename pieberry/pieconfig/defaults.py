@@ -18,6 +18,7 @@ PIE_CONFIG_DEFAULTS = [
     # ('Profile', 'default_bibtex_url_handling', 'href_howpublished'),
     # ('Profile', 'export_tsv', 'false'),
     ('Profile', 'export_bibtex', False),
+    ('Profile', 'export_starred_only', True),
     # ('Format', 'url_level_scrape', 'full'),
     ('Format', 'url_level_represent', 'full'),
     ('Format', 'plaintext_citation_format', 'plaintext'),

@@ -600,7 +600,12 @@ class FunctionMainWindow(BaseMainWindow):
             if res == wx.ID_CANCEL: return
             bibfilepath = fdia.GetPath()
             exporter.setPath(bibfilepath)
-        for obj in query_favourites(session):
+        if PIE_CONFIG.getboolean('Profile', 'export_starred_only'):
+            thequery = query_favourites
+        else:
+            thequery = query_all_library
+        for obj in thequery(session): print obj
+        for obj in thequery(session):
             msg = exporter.addEntry(obj)
             if msg:
                 wx.MessageBox(msg, _('There is a problem'), wx.ICON_EXCLAMATION)

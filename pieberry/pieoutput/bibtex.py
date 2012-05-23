@@ -77,7 +77,7 @@ def get_pybtex_object(obj, texify=True):
         else:
             # if not getattr(obj, objfield): continue
             pybtex_entry.fields[btkey] = f_(getattr(obj, bibtexmap[btkey]))
-            if btkey == 'publisher': print 'PUBLISHER SET'
+            # if btkey == 'publisher': print 'PUBLISHER SET'
     if not (obj.ReferDate().day == 1 and obj.ReferDate().month == 1):
         # hacky hack - if publication date is supposedly 1 January,
         # then we disbelieve it and assume that only the year has been
@@ -85,7 +85,7 @@ def get_pybtex_object(obj, texify=True):
         pybtex_entry.fields['month'] = obj.ReferDate().strftime('%B')
     if not key_set: pybtex_entry.key = 'nominal_key'
     pybtex_entry.fields['year'] = obj.ReferDate().strftime('%Y')
-    pprint(pybtex_entry.fields)
+    # pprint(pybtex_entry.fields)
     return pybtex_entry
 
 

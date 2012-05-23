@@ -57,8 +57,8 @@ MIMEMAP = {'application/pdf': 'pdf',
            'text/html': 'html',
            'text/plain': 'plaintext',
            'application/x-empty': 'plaintext',
-           'application/x-compressed': 'hachoir_other'}
-
+           'application/x-compressed': 'hachoir_other',
+           'application/xhtml+xml': 'html'}
 def mime_map(mt):
     '''Util function to map file type to mime type'''
     if MIMEMAP.has_key(mt):

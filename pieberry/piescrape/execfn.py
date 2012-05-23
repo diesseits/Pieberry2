@@ -4,9 +4,12 @@ from pieberry.pieconfig.globalvars import U_ERROR_BEHAV, DEBUG
 from pieberry.piescrape.resource import *
 
 def safequote(url):
-    parse = [i for i in urlparse(url)]
-    parse[2] = urllib2.quote(parse[2])
-    return urlunparse(parse)
+    if not '%' in url:#hackity hack
+        parse = [i for i in urlparse(url)]
+        parse[2] = urllib2.quote(parse[2])
+        return urlunparse(parse)
+    else:
+        return url
 
 def download_file(
     url, # the url

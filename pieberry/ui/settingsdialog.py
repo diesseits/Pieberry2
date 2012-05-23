@@ -49,6 +49,12 @@ class ProfilePanel(wx.Panel):
             self.bibfilectrl.Enable(True)
         else: self.bibfilectrl.Enable(False)
         self.bibfilectrl.SetPath(PIE_CONFIG.get('Profile', 'bibliography_file'))
+        self.bibexpstarred_cb = wx.CheckBox(self, -1, 
+                                         _('Export starred items only'))
+        ttc = wx.ToolTip(_('Export only starred items with adequate bibliographic data (unchecking will export all with adequate bibliographic data in the library but not project folders)'))
+        self.bibexpstarred_cb.SetToolTip(ttc)
+        self.bibexpstarred_cb.SetValue(
+            PIE_CONFIG.getboolean('Profile', 'export_starred_only'))
         self._do_layout()
         self._do_bindings()
 
@@ -57,7 +63,8 @@ class ProfilePanel(wx.Panel):
                    {'bibliography_file': self.bibfilectrl.GetPath(),
                     'desktopdir': self.desktopdirctrl.GetPath(),
                     'rootdir': self.rootdirctrl.GetPath(),
-                    'export_bibtex': self.bib_cb.GetValue()})
+                    'export_bibtex': self.bib_cb.GetValue(),
+                    'export_starred_only': self.bibexpstarred_cb.GetValue()})
         return retdata
 
     def GetProfile(self):
@@ -78,6 +85,7 @@ class ProfilePanel(wx.Panel):
         self.rootdirctrl.SetPath(nprofile['rootdir'])
         self.desktopdirctrl.SetPath(nprofile['desktopdir'])
         self.bib_cb.SetValue(nprofile['export_bibtex'])
+        self.bibexpstarred_cb.SetValue(nprofile['export_starred_only'])
         if nprofile['export_bibtex'] == True: self.bibfilectrl.Enable(True)
         else: self.bibfilectrl.Enable(False)
         self.bibfilectrl.SetPath(nprofile['bibliography_file'])
@@ -127,6 +135,7 @@ class ProfilePanel(wx.Panel):
         self.mainsizer.Add(wx.StaticText(self, -1, _('Bibliography file:')), 0, 
                            wx.ALL, 5)
         self.mainsizer.Add(self.bibfilectrl, 0, wx.ALL|wx.EXPAND, 5)
+        self.mainsizer.Add(self.bibexpstarred_cb, 0, wx.ALL, 5)
 
         self.SetSizer(self.mainsizer)
         self.Layout()
