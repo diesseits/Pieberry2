@@ -699,17 +699,18 @@ class FunctionMainWindow(BaseMainWindow):
     def OnPasteBibtex(self, evt):
         '''Allow the user to paste in bibtex data into a text entry
         field and have it processed'''
-        from pieberry.ui.pasteindialog import TextEntryDialog
-        dlg = TextEntryDialog(self, _('Press Ctrl-v to Paste Copied BibTeX data from the clipboard:'), _('Paste BibTeX'))
+        from pieberry.ui.pasteindialog import BibtexEntryDialog
+        dlg = BibtexEntryDialog(self, _('Press Ctrl-v to Paste Copied BibTeX data from the clipboard:'), _('Paste BibTeX'))
         ans = dlg.ShowModal()
         if ans == wx.ID_CANCEL: return
         bibtexdata = dlg.GetValue()
+        attachfile = dlg.GetAttachedFile()
         tempfile = open(BIBTEMPFILE, 'w')
         tempfile.write(bibtexdata)
         tempfile.close()
-        self._do_process_bibtex_file(BIBTEMPFILE)
+        self._do_process_bibtex_file(BIBTEMPFILE, attachfile)
 
-    def _do_process_bibtex_file(self, bibfilepath):
+    def _do_process_bibtex_file(self, bibfilepath, attachfile=None):
         '''Handle the processing of a given BibTeX file as
         instructed'''
         from pieberry.pieutility.bibtex import autogen_bibtex_key
@@ -726,6 +727,18 @@ class FunctionMainWindow(BaseMainWindow):
             try:
                 obj = pieinput.pybtex_to_pieberry(bibkey, ent)
                 pan.AddObject(obj)
+                if count == 0 and attachfile:
+                    # if a file has been passed to be attached, we'll
+                    # attach it only to the first object. This follows
+                    # the same procedure as in
+                    # menufunctions.onAttachFile()
+                    obj.set_session(get_session())
+                    dpath, components = suggest_path_cache_fromother(obj, 
+                                                                     attachfile)
+                    contribute_folder(os.path.dirname(dpath), components)
+                    shutil.copyfile(attachfile, dpath)
+                    obj.add_aspect_cached(dpath)
+                    print 'file successfully attached'
                 count += 1
                 progress_dialog.UpdatePulse('%d items added' % count)
             except:

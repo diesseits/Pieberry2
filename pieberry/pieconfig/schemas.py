@@ -26,7 +26,8 @@ FEXTENSIONS = {'pdf': ('.pdf',),
                'odf_doc': ('.odt', '.odf', '.ods', '.odp'),
                'html': ('.htm', '.html'),
                'plaintext': ('.txt', '.org'),
-               'hachoir_other': ('.zip',)
+               'hachoir_other': ('.zip',),
+               'other': ('.unknown',)
                }
 
 PIE_TYPES_DOCUMENTS = ('pdf', 'word_doc', 'oxml_doc', 'odf_doc')
@@ -59,6 +60,7 @@ MIMEMAP = {'application/pdf': 'pdf',
            'application/x-empty': 'plaintext',
            'application/x-compressed': 'hachoir_other',
            'application/xhtml+xml': 'html'}
+
 def mime_map(mt):
     '''Util function to map file type to mime type'''
     if MIMEMAP.has_key(mt):

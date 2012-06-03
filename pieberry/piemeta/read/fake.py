@@ -1,6 +1,7 @@
 import os, os.path, datetime, re
 
 from pieberry.pieobject import PieObject
+from pieberry.pieobject.diagnostic import determine_file_type
 
 re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
@@ -40,4 +41,5 @@ def get_fake_metadata_object(fn):
         date = d['creation_date'])
     obj.FileData_DateCreated = d['creation_date']
     obj.FileData_DateModified = d['modification_date']
+    obj.FileData_FileType = determine_file_type(fn)
     return obj

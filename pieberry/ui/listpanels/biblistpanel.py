@@ -64,7 +64,7 @@ class BibListPanel(BaseListPanel):
             self.onEditNotes(0)
         elif keycode == 127:
             self.onDeleteObj(0)
-        elif keycode in (ord('['), ord(']'), ord('\\')):
+        elif keycode in (ord('['), ord(']'), ord('\\'), ord("'")):
             obj = self.GetSelectedItem()
             if obj.has_aspect('bibdata'):
                 if keycode == ord('['):
@@ -73,6 +73,8 @@ class BibListPanel(BaseListPanel):
                     self.onCopyCitation_RichText(0)
                 elif keycode == ord('\\'):
                     self.onCopyCitation_OrgText(0)
+                elif keycode == ord("'"):
+                    self.onCopyBibTeXKey(0)
         evt.Skip()
 
     def onDeleteItem(self, evt):
@@ -155,7 +157,7 @@ class BibListPanel(BaseListPanel):
                       rcm_copycitationorg)
         if obj.BibData_Key:
             rcm_copykey = wx.MenuItem(copyMenu, 8,
-                                      _('Copy BibTeX key'))
+                                      _('Copy BibTeX key\t\''))
             rcm_copykey.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_COPY, wx.ART_MENU))
             copyMenu.AppendItem(rcm_copykey)
