@@ -101,7 +101,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             wx.Bitmap(os.path.join(IMGDIR, 'ic_google16.png')))
         if ZBAR:
             self.menu_scan_barcode = wx.MenuItem(
-                gatherMenu, -1, _('Scan ISBN &barcode\tCtrl-shift-b'), _('Scan a book\'s barcode containing its ISBN and look it up in Google Books'))
+                gatherMenu, -1, _('Scan ISBN &barcode\tCtrl-shift-o'), _('Scan a book\'s barcode containing its ISBN and look it up in Google Books'))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_paste_bibtex = wx.MenuItem(
