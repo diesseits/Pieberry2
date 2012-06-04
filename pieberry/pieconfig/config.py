@@ -12,6 +12,7 @@ import keyring, getpass, hashlib
 
 if sys.platform in ('win32', 'win64'):
     keyring.set_keyring(keyring.backend.Win32CryptoKeyring())
+    # UncryptedFileKeyring for WinXP?
 
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and

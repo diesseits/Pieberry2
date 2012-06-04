@@ -719,8 +719,8 @@ class FunctionMainWindow(BaseMainWindow):
             _('Reading %s' % bibfilepath), maximum = 1)
         progress_dialog.Pulse()
         ents = pieinput.pybtex_entries_from_file(bibfilepath)
-        self.OpenBibImpPane()
-        # self.OpenStagingPane()
+        # self.OpenBibImpPane()
+        self.OpenStagingPane()
         pan = self.GetCurrentPane()
         count = 0
         for bibkey, ent in ents.items():

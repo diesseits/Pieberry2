@@ -52,6 +52,10 @@ class BaseListCtrl(wx.ListCtrl,
         give also a reference to position in objectstore'''
         print 'BaseListCtrl: not implemented: AddObject'
 
+    def EnsureVisible(self, idx):
+        if sys.platform in ('win32', 'win64'):
+            wx.ListCtrl.EnsureVisible(idx)
+
     def _set_columndata(self, idx, obj):
         '''Set relevant data to the column at row: idx'''
         pass

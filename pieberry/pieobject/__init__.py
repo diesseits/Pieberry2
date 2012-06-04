@@ -119,6 +119,9 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     BibData_HowPublished = Column(Unicode(length=255))
     BibData_DatePublished = Column(DateTime)
     BibData_Abstract = Column(Unicode)
+    # Future
+    # BibData_Language = Column(Unicode(length=255))
+    # BibData_Copyright = Column(Unicode(length=255))
 
     WebData_Url = Column(Unicode)
     WebData_PageUrl = Column(Unicode)
@@ -138,6 +141,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
                                            # (e.g. personal, library)
     PhysData_Dewey = Column(Unicode(length=20)) 
     PhysData_ISBN = Column(Unicode(length=50))
+    # PhysData_ISSN = Column(Unicode(length=50))
     PhysData_Accessed = Column(DateTime) # Borrowing/accession time
 
     # Services utility fields

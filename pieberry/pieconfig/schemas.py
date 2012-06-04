@@ -89,12 +89,12 @@ def mime_map(mt):
 #     ('publisher', 'BibData_Publisher')
 #     )
 
-
 bibtexmap = {
     'author': 'author',
     'title': 'title',
     # 'month': None,
     # 'year': None,
+    'abstract': 'BibData_Abstract',
     'editor': 'BibData_Editor',
     'url': 'WebData_Url',
     'journal': 'BibData_Journal',
