@@ -1,6 +1,10 @@
 import wx
 import wx.lib.newevent
 
+PieFileDroppedEvt, EVT_PIE_FILE_DROPPED = wx.lib.newevent.NewEvent()
+# attributes - panel - originating panel
+#              path - folder path shown in originating panel
+#              filenames - list of filenames dropped
 PieCrumbClickedEvent, EVT_PIE_CRUMB_CLICKED = wx.lib.newevent.NewEvent()
 # attributes - fobj - the folder object
 PieFolderClickedEvent, EVT_PIE_FOLDER_CLICKED = wx.lib.newevent.NewEvent()

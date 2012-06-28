@@ -30,6 +30,14 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self._do_bindings()
         self._last_item_right_clicked = 0
 
+        # Necessary for overseeing tipwindows
+        self.tipwindow = None # tooltip for bib data
+        self.tipwindow_lastpos = (0,0) # last position tipwindow was created
+        self.mouseoveritem = -1 # keep track of where the mouse was hovering
+        self.suppress_tipwindow = False # flag to keep the tooltip from popping up in inconvenient places
+        self.isdragging = False # flag to know if a drag&drop is in progress
+
+
     def _setup_data(self):
         pass
 
@@ -68,6 +76,16 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self.MakeMenu(menu, obj)
         self.ListDisplay.PopupMenu( menu, evt.GetPoint() )
         menu.Destroy() # destroy to avoid mem leak
+
+    def _onMouseEnterList(self, evt):
+        '''do when the mouse enters the listctrl'''
+        self.mouseOverList = True
+
+    def _onMouseExitList(self, evt):
+        self.mouseOverList = False
+        if self.tipwindow and sys.platform == 'linux2': #irritating non x-platform behaviour 
+            self.tipwindow.Destroy()
+            self.tipwindow = None
 
     def MakeMenu(self, menu, obj):
         pass

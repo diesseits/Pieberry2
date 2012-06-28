@@ -15,6 +15,27 @@ from pieberry.pieconfig.initsys import IMGDIR
 
 # from wx.lib.buttons import ThemedGenBitmapToggleButton 
 
+class DirDropTarget(wx.FileDropTarget):
+    """ This object implements Drop Target functionality for Files """
+    def __init__(self, panel):
+        """ Initialize the Drop Target, passing in the Object Reference to
+        indicate what should receive the dropped files """
+        # Initialize the wxFileDropTarget Object
+        wx.FileDropTarget.__init__(self)
+        # Store the Object Reference for dropped files
+        self.panel = panel
+ 
+    def OnDropFiles(self, x, y, filenames):
+        """ Implement File Drop """
+        print filenames
+        newevt = PieFileDroppedEvt(
+            panel = self.panel,
+            path = self.panel.GetCurrentFolder(),
+            filenames = filenames)
+        wx.PostEvent(self.panel, newevt)
+        print self.panel.GetCurrentFolder()
+        print newevt
+
 class DirListPanel(BibListPanel, FileListPanel):
     '''Class for displaying the contents of directories'''
     paneltype = 'DirListPanel'
@@ -28,6 +49,8 @@ class DirListPanel(BibListPanel, FileListPanel):
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         self.Bread = PieBreadcrumbTrail(self, -1)
         self.ListDisplay = DirListCtrl(self)
+        droptarget = DirDropTarget(self)
+        self.ListDisplay.SetDropTarget(droptarget)
         
         self.rd_BibButton = wx.RadioButton(self, -1, _('Biblio'))
         self.rd_FileButton = wx.RadioButton(self, -1, _('File'))
@@ -97,6 +120,16 @@ class DirListPanel(BibListPanel, FileListPanel):
         self.objectstore.Sort('filename')
         fill_class('piefolders')
         fill_class('pieobjects')
+
+    # def AddExtraObject(self, obj):
+    #     '''Add an object that wasn't present when the panel was
+    #     initialised (i.e. when a new file is copied to the displayed
+    #     folder.'''
+    #     self.objectstore.Add(obj)
+    #     self.AddObjects(self.objectstore)
+
+    def GetCurrentFolder(self):
+        return self.objectstore.sessiondata['containing_folder']
 
     def UpLevel(self, ostore):
         self.AddObjects(ostore)

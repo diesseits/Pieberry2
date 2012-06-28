@@ -59,3 +59,6 @@ class PieBreadcrumbTrail(wx.Panel):
             notify_window = self._parent)
         wx.PostEvent(self._parent, newevt)
         
+    def GetCurrentFolder(self):
+        '''Get the currently displayed folder'''
+        self._crumbs[-1].GetFolder()
