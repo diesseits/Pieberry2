@@ -54,6 +54,7 @@ class DirListPanel(BibListPanel, FileListPanel):
         
         self.rd_BibButton = wx.RadioButton(self, -1, _('Biblio'))
         self.rd_FileButton = wx.RadioButton(self, -1, _('File'))
+        self.rd_BibButton.SetValue(1)
         
         self.sizer1.Add(self.rd_BibButton, 0, wx.ALL, 5)
         self.sizer1.Add(self.rd_FileButton, 0, wx.ALL, 5)
