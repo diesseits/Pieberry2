@@ -29,7 +29,7 @@ class BetterContextPanel(wx.Panel):
 
         self.fund_win = FundInfoPanel(self.fund_fp, -1, bigparent=self)
         self.web_win = WebInfoPanel(self.web_fp, -1)
-        self.bib_win = BibInfoPanel(self.bib_fp, -1)
+        self.bib_win = BibInfoPanel(self.bib_fp, -1, bigparent=self)
         self.file_win = FileInfoPanel(self.file_fp, -1)
         self.bar.AddFoldPanelWindow(self.fund_fp, self.fund_win)
         self.bar.AddFoldPanelWindow(self.web_fp, self.web_win)
@@ -89,9 +89,10 @@ class BetterContextPanel(wx.Panel):
         wx.PostEvent(self, newevt)
 
 class BibInfoPanel(wx.Panel):
-    def __init__(self, parent, id, *args, **kwargs):
+    def __init__(self, parent, id, bigparent, *args, **kwargs):
         kwargs['size'] = (80,50)
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
+        self.bigparent = bigparent
         self._do_layout()
 
     def _do_layout(self):
@@ -103,10 +104,13 @@ class BibInfoPanel(wx.Panel):
         self.key_ct = wx.StaticText(self, -1, u'')
         self.date_lb = wx.StaticText(self, -1, _('Published:'))
         self.date_ct = wx.StaticText(self, -1, u'')
+        self.abst_lb = wx.StaticText(self, -1, _('Abstract:'))
+        self.abst_ct = EditableText(self, -1, '', objattr='abstract')
 
         self.date_lb.SetFont(boldfont)
         self.type_lb.SetFont(boldfont)
         self.key_lb.SetFont(boldfont)
+        self.abst_lb.SetFont(boldfont)
 
         self.fgsizer.Add(self.type_lb, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.type_ct, 0, wx.LEFT|wx.RIGHT, 3)
@@ -114,13 +118,20 @@ class BibInfoPanel(wx.Panel):
         self.fgsizer.Add(self.key_ct, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.date_lb, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add(self.date_ct, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.abst_lb, 0, wx.LEFT|wx.RIGHT, 3)
+        self.fgsizer.Add(self.abst_ct, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add((3,3))
+
+        self.abst_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         
         self.SetSizer(self.fgsizer)
         wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
         self.Layout()
 
     def SetObject(self, obj):
+
+        self.abst_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
+        self.abst_ct.SetValue(obj.BibData_Abstract if obj.BibData_Abstract else '')
         self.type_ct.SetLabel(unicode(obj.BibData_Type))
         self.key_ct.SetLabel(unicode(obj.BibData_Key))
         if obj.BibData_DatePublished: 
@@ -128,6 +139,7 @@ class BibInfoPanel(wx.Panel):
         else:
             date = u'N/A'
         self.date_ct.SetLabel(date)
+        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
 
 
 class FileInfoPanel(wx.Panel):
@@ -268,9 +280,16 @@ class EditableText(wx.Panel):
         print 'EditableText._exit_edit : event emitted'
 
     def SetValue(self, txt):
+        '''Set the text to be displayed'''
+        def trunc(t):
+            '''truncate some text with ... at the end if necessary'''
+            if len(t) > 200:
+                return t[:200] + u' ...'
+            else:
+                return t
         if len(txt) == 0: txt = _(u'[click to edit]')
         dc = wx.WindowDC(self.stext)
-        self.stext.SetLabel(wordwrap.wordwrap(txt, self.w, dc))
+        self.stext.SetLabel(wordwrap.wordwrap(trunc(txt), self.w, dc))
         self.dtext.SetValue(txt)
         self.settext = txt
 

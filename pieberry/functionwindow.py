@@ -348,7 +348,8 @@ class FunctionMainWindow(BaseMainWindow):
             evt.obj.title = evt.title
         if hasattr(evt, 'author'):
             evt.obj.author = evt.author
-        print evt.obj.StatData_Favourite
+        if hasattr(evt, 'abstract'):
+            evt.obj.BibData_Abstract = evt.abstract
         if evt.obj.has_aspect('saved'):
             session.commit()
         try:
@@ -830,7 +831,17 @@ class FunctionMainWindow(BaseMainWindow):
         newostore = PieObjectStore([o for o in fobj.referenced_objects])
         newostore.Extend(subfs)
         newostore.set_session_data(containing_folder=fobj)
+        self.TabBook.SetPageText(self.TabBook.GetPageIndex(notify_window), fobj.EndName)
         return newostore
+
+    def Callback_OpenFolder(self, evt):
+        '''Receive a callback from a DirListPanel to open a given folder''' 
+        newostore = self._open_folder(evt.notify_window, evt.fobj)
+        evt.notify_window.UpLevel(newostore)
+
+    def Callback_BackFolder(self, evt):
+        newostore = self._open_folder(evt.notify_window, evt.fobj)
+        evt.notify_window.DownLevel(newostore)
 
     def _open_folder_view(self, root, caption):
         '''Open a folder view from a root directory in the Pieberry domain'''
@@ -841,15 +852,6 @@ class FunctionMainWindow(BaseMainWindow):
         newostore.set_session_data(
             containing_folder=FOLDER_LOOKUP['special'][key_map[root]])
         pan.UpLevel(newostore)
-
-    def Callback_OpenFolder(self, evt):
-        '''Receive a callback from a DirListPanel to open a given folder'''
-        newostore = self._open_folder(evt.notify_window, evt.fobj)
-        evt.notify_window.UpLevel(newostore)
-
-    def Callback_BackFolder(self, evt):
-        newostore = self._open_folder(evt.notify_window, evt.fobj)
-        evt.notify_window.DownLevel(newostore)
         
     def OnViewProjectFolders(self, evt):
         self._open_folder_view('projectdir', _('Projects'))
@@ -858,3 +860,49 @@ class FunctionMainWindow(BaseMainWindow):
     def OnViewMeetingPaperFolders(self, evt):
         self._open_folder_view('meetingpaperdir', _('Meeting Papers'))
         
+    def OnFileDropped(self, evt):
+        '''Move/copy files into folders on file drop'''
+        progress_dialog = wx.ProgressDialog( 
+            'Committing to the database', 
+            '________________________________________', maximum = len(evt.filenames) )
+        counter = 0
+        for filename in evt.filenames:
+            counter += 1
+            progress_dialog.Update(counter, 'Adding: %s' % filename)
+            print filename
+            # check file type
+            try:
+                ftype = determine_file_type(filename)
+            except:
+                wx.MessageBox("Could not determine file type for %s" % filename)
+                continue
+            # check if shift down
+            mousestate = wx.GetMouseState()
+            move = True if mousestate.ShiftDown() else False
+            print 'Move', move
+            # get metadata object
+            obj = piemeta.get_metadata_object(filename, fakeonly=False)
+            if obj == None:
+                wx.MessageBox("Could not read file: %s" % filename)
+                continue
+            # test there's no file conflict
+            print 'PATH:', evt.path
+            destfn = os.path.join(evt.path.path(), os.path.basename(filename))
+            if os.path.exists(destfn):
+                wx.MessageBox("File already exists in folder: %s" % filename)
+                continue
+            # copy/move file to folder
+            shutil.copyfile(filename, destfn)
+            try:
+                if move: os.remove(filename)
+            except:
+                wx.MessageBox('Could not remove source file: %s. Is it in use?' % filename)
+            obj.add_aspect_stored(destfn)
+            obj.add_aspect_saved()
+            session.add(obj)
+            session.commit()
+            # add to displayed folder objectstore
+            evt.panel.objectstore.Add(obj)
+        # refresh folder view
+        progress_dialog.Destroy()
+        evt.panel.AddObjects(evt.panel.objectstore)

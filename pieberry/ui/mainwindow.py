@@ -524,6 +524,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_FOLDER_CLICKED, self.Callback_OpenFolder)
         tab.Bind(EVT_PIE_CRUMB_CLICKED, self.Callback_BackFolder)
         tab.Bind(EVT_PIE_FLAG_CHECKED, self.OnFlagChecked)
+        tab.Bind(EVT_PIE_FILE_DROPPED, self.OnFileDropped)
 
     def DoSearch(self, evt):
         '''stub'''
