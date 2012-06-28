@@ -831,10 +831,11 @@ class FunctionMainWindow(BaseMainWindow):
         newostore = PieObjectStore([o for o in fobj.referenced_objects])
         newostore.Extend(subfs)
         newostore.set_session_data(containing_folder=fobj)
+        self.TabBook.SetPageText(self.TabBook.GetPageIndex(notify_window), fobj.EndName)
         return newostore
 
     def Callback_OpenFolder(self, evt):
-        '''Receive a callback from a DirListPanel to open a given folder'''
+        '''Receive a callback from a DirListPanel to open a given folder''' 
         newostore = self._open_folder(evt.notify_window, evt.fobj)
         evt.notify_window.UpLevel(newostore)
 
