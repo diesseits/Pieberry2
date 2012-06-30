@@ -64,7 +64,6 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     title = Column(Unicode(length=1024))
     author = Column(Unicode(length=1024))
     date = Column(DateTime)
-    # tags = Column(PickleType)
 
     collection = Column(Unicode(length=1024)) # i.e. 'category_phrase'
     corpauthor = Column(Unicode(length=255))

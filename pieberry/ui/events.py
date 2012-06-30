@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieTagAddedEvent, EVT_PIE_TAG_ADDED = wx.lib.newevent.NewEvent()
+# attributes - tag - the tag added
 PieFileDroppedEvt, EVT_PIE_FILE_DROPPED = wx.lib.newevent.NewEvent()
 # attributes - panel - originating panel
 #              path - folder path shown in originating panel

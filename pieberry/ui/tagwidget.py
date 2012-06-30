@@ -2,6 +2,8 @@
 
 import wx
 from wx.lib.platebtn import *
+from pieberry.ui.events import PieTagAddedEvent, EVT_PIE_TAG_ADDED
+from pieberry.pieobject.tags import fn_add_tag
 
 tagnames = ['foo', 'bar', 'hoopla']
 
@@ -19,11 +21,13 @@ class PieTagWidget(wx.Panel):
         self.menubtn = None
         self.tags = []
         self.tagbuttons = []
+        self.mode = mode
+        self.taglist = tagnames
         self.__do_layout(mode, columns)
 
     def __build_menu(self):
         self.tagmenu = wx.Menu()
-        for tn in tagnames:
+        for tn in self.taglist:
             if not tn in self.tags:
                 self.tagmenu.Append(-1, tn)
         self.tagmenu.Append(-1, "New Tag")
@@ -38,31 +42,46 @@ class PieTagWidget(wx.Panel):
                 style=PB_STYLE_SQUARE
                 )
             self.menubtn.Bind(wx.EVT_BUTTON, self.onMenuButtonPress)
-        self.__build_menu()
-        self.menubtn.SetMenu(self.tagmenu)
+        tt = wx.ToolTip("Tags")
+        self.menubtn.SetToolTip(tt)
+        self.__refresh_menu()
+        # if not self.mode == "lhorizontal":
         self._sizer.Add(self.menubtn, 0)
         self.menubtn.Show()
 
+    def __refresh_menu(self):
+        self.__build_menu()
+        self.menubtn.SetMenu(self.tagmenu)
+
     def __do_layout(self, mode, columns):
-        if mode == "horizontal":
+        if mode == "rhorizontal": # button at right
             self._sizer = wx.BoxSizer(wx.HORIZONTAL)
-        elif mode == "vertical":
+        elif mode == "lhorizontal": # button at left
+            self._sizer = wx.BoxSizer(wx.HORIZONTAL)
+        elif mode == "lvertical": 
             self._sizer = wx.BoxSizer(wx.VERTICAL)
+        elif mode == "piespecial":
+            self._sizer = PieSpecialSizer(3)
         else:
             self._sizer = wx.FlexGridSizer(1, columns, 0, 0)
             [ self._sizer.AddGrowableCol(idx) for idx in range(columns) ]
-        self._sizer.Add((5,5))
+        # self._sizer.Add((5,5))
         self.__append_menubutton()
         self.SetSizer(self._sizer)
         self._sizer.Layout()
         self.Layout()
 
+    def setTagList(self, taglist):
+        self.taglist = taglist
+        self.__refresh_menu()
+
     def onMenuChoice(self, evt):
+        '''The user chose one of the tag menu options'''
         tagtxtchosen = self.tagmenu.FindItemById(evt.GetId()).GetLabel()
         if tagtxtchosen == "New Tag":
             self.onCreateNewTag()
         else:
-            self.AddTag(tagtxtchosen)
+            self.UserAddTag(tagtxtchosen)
 
     def onTagPress(self, evt):
         print evt.GetEventObject().GetTag()
@@ -75,10 +94,35 @@ class PieTagWidget(wx.Panel):
         ans = tdia.ShowModal()
         if ans == wx.ID_CANCEL: return
         if len(tdia.GetValue()) == 0: return
+        if tdia.GetValue in self.taglist: return
         print "Creating new tag: %s" % tdia.GetValue()
         newtag = tdia.GetValue()
-        tagnames.append(newtag)
-        self.AddTag(newtag)
+        fn_add_tag(tdia.GetValue())
+        self.taglist.append(newtag)
+        self.UserAddTag(newtag)
+
+    def Clear(self):
+        irange = range(len(self.tags))
+        irange.reverse()
+        print irange
+        print self.tags
+        print self.tagbuttons
+        for i in irange:
+            self.tags.pop(i)
+            self._sizer.Remove(self.tagbuttons[i])
+            self.tagbuttons[i].Destroy()
+            self.tagbuttons.pop(i)
+        self.__refresh_menu()
+        self._sizer.Layout()
+        self.Layout()
+
+    def AddTags(self, tags):
+        for tag in tags: self.AddTag(tag)
+
+    def UserAddTag(self, tag):
+        self.AddTag(tag)
+        newevt = PieTagAddedEvent(tag = tag)
+        wx.PostEvent(self, newevt)
 
     def AddTag(self, tag):
         self.tags.append(tag)
@@ -91,16 +135,36 @@ class PieTagWidget(wx.Panel):
         self.tagbuttons.append(btn)
         self._sizer.Add(btn, 0)
         btn.Bind(wx.EVT_BUTTON, self.onTagPress)
-        self.menubtn.Hide()
-        self._sizer.Remove(self.menubtn)
-        self.__append_menubutton()
+        if not self.mode == 'lhorizontal':
+            self.menubtn.Hide()
+            self._sizer.Remove(self.menubtn)
+            self.__append_menubutton()
+        else:
+            self.__refresh_menu()
         self._sizer.Layout()
         self.Layout()
-        newevt = PieTagAddedEvent(tag = tag)
-        wx.PostEvent(self, newevt)
+        wx.Panel.SetSize(self, self._sizer.GetMinSize())
 
-PieTagAddedEvent, EVT_PIE_TAG_ADDED = wx.lib.newevent.NewEvent()
-# attributes - tag - the tag added
+class PieSpecialSizer(wx.BoxSizer):
+    def __init__(self, columns):
+        wx.BoxSizer.__init__(self, wx.VERTICAL)
+        self._maxcolumn = columns
+        self.hsizers = []
+        self.__add_hsizer()
+        # self.Layout()
+
+    def __add_hsizer(self):
+        self.runningcount = 0
+        hs0 = wx.BoxSizer(wx.HORIZONTAL)
+        self.hsizers.append(hs0)
+        self.Add(hs0, 1, wx.EXPAND)
+
+    def Add(self, widget, size=0, flags=0, padding=0):
+        if self.runningcount == self._maxcolumn:
+            self.__add_hsizer()
+        sa = self.hsizers[-1]
+        self.hsizers[-1].Add(widget, size, flags, padding)
+        self.runningcount += 1
 
 class PieTagDialog(wx.Dialog):
     def __init__(self, parent):
@@ -109,7 +173,7 @@ class PieTagDialog(wx.Dialog):
         super(PieTagDialog, self).__init__(parent, -1, title, 
                                          size=(300,300),style=style)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.ptw = PieTagWidget(self, 1, mode="horizontal")
+        self.ptw = PieTagWidget(self, 1, mode="piespecial")
         buttons = self.CreateButtonSizer(wx.OK|wx.CANCEL)
         self.sizer.Add(wx.StaticText(self, -1, "Add Tags to Document:"), 
                        0, wx.ALL|wx.EXPAND, 5)
@@ -125,10 +189,11 @@ class PieTagDialog(wx.Dialog):
         wx.CallAfter(self.doRefresh())
 
     def doRefresh(self):
-        win = wx.GetTopLevelParent(self) 
-        win.sizer.SetSizeHints(win) 
-        win.Fit() 
-        win.Layout()         
+        pass
+        # win = wx.GetTopLevelParent(self) 
+        # win.sizer.SetSizeHints(win) 
+        # win.Fit() 
+        # win.Layout()         
 
 class testdialog(wx.Dialog):
     def __init__(self, parent):

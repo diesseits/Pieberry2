@@ -7,9 +7,11 @@ from pieberry.pieconfig.paths import IMGDIR
 from string import join
 from pieberry.ui.events import PieContextPanelUpdateEvent
 from urlparse import urlsplit
-from pieberry.ui.events import PieContextPanelFieldEvent, EVT_PIE_CONTEXT_PANEL_FIELD
+from pieberry.ui.events import *
+from pieberry.ui.tagwidget import *
 from pieberry.pieutility.date import fmtdate
 from pieberry.pieobject.folder import SECURITY_CLASSES
+from pieberry.pieobject.tags import get_all_tags
 
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
@@ -79,6 +81,9 @@ class BetterContextPanel(wx.Panel):
 
     def OnFieldEdit(self, evt):
         self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))
+
+    def OnTagAdded(self, evt):
+        self.obj.add_tag(evt.tag)
 
     def EmitUpdate(self, evt=0, ttltext=None, otherargs=()):
         newevt = PieContextPanelUpdateEvent(
@@ -315,8 +320,7 @@ class FundInfoPanel(wx.Panel):
         wx.Panel.__init__(self, parent, id, *args, **kwargs)
         self.bigparent = bigparent
         self.favpanel = FBBPanel(self, -1, bigparent=bigparent)
-        # self.sizer0 = wx.BoxSizer(wx.VERTICAL)
-        # self.sizer0.Add(self.favpanel, 0, wx.EXPAND)
+        self.sizer0 = wx.BoxSizer(wx.VERTICAL)
         
         self.fgsizer = wx.FlexGridSizer(0, 2, 5, 5)
         self.fgsizer.AddGrowableCol(1)
@@ -336,7 +340,10 @@ class FundInfoPanel(wx.Panel):
         self.locn_lb.SetFont(boldfont)
         self.locn_ct = wx.StaticText(self, -1, '')
         self.locn_ct.SetFont(normalfont)
-        
+        self.tagedit = PieTagWidget(self, -1, mode="lhorizontal")
+        self.tagedit.setTagList(get_all_tags().keys())
+
+        self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.bigparent.OnTagAdded)
         self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
 
@@ -352,12 +359,12 @@ class FundInfoPanel(wx.Panel):
         self.fgsizer.Add(self.locn_ct, 0, wx.LEFT|wx.RIGHT, 3)
         self.fgsizer.Add((5,5))
 
-        # self.sizer0.Add((5,5))
-        # self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
-        # self.SetSizer(self.sizer0)
-        self.SetSizer(self.fgsizer)
+        self.sizer0.Add(self.fgsizer, 1, wx.EXPAND)
+        self.sizer0.Add(self.tagedit, 0)
+        self.SetSizer(self.sizer0)
+        # self.SetSizer(self.fgsizer)
         self.Layout()
-        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
+        wx.Panel.SetSize(self, self.sizer0.GetMinSize())
 
     def SetObject(self, obj):
         # print 'COLWIDTHS', self.fgsizer.GetColWidths()
@@ -381,8 +388,10 @@ class FundInfoPanel(wx.Panel):
             self.locn_ct.SetLabel(MAP_LOCNS[obj.FileData_Root])
         else:
             self.locn_ct.SetLabel(_('Library'))
+        self.tagedit.Clear()
+        self.tagedit.AddTags(obj.get_taglist())
         self.fgsizer.Layout()
-        wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
+        wx.Panel.SetSize(self, self.sizer0.GetMinSize())
         # self.sizer0.Layout()
         # self.Layout()
 
