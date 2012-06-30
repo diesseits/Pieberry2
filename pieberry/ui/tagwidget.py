@@ -91,7 +91,7 @@ class PieTagWidget(wx.Panel):
             tag = evt.GetEventObject().GetTag()
             )
         wx.PostEvent(self, newevt)
-        print evt.GetEventObject().GetTag()
+        # print evt.GetEventObject().GetTag()
 
     def onMenuButtonPress(self, evt):
         self.menubtn.ShowMenu()
@@ -111,9 +111,6 @@ class PieTagWidget(wx.Panel):
     def Clear(self):
         irange = range(len(self.tags))
         irange.reverse()
-        print irange
-        print self.tags
-        print self.tagbuttons
         for i in irange:
             self.tags.pop(i)
             self._sizer.Remove(self.tagbuttons[i])

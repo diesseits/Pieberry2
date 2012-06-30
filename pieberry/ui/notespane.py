@@ -3,8 +3,10 @@ import wx.richtext as rt
 from pieberry.pieconfig.initsys import *
 from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieconfig.config import PIE_CONFIG
-from pieberry.ui.events import PieNotesPaneUpdateEvent
+from pieberry.ui.events import *
 from pieberry.ui.timers import PeriodicSaveTimer
+from pieberry.ui.tagwidget import PieTagWidget
+from pieberry.pieobject.tags import get_tag, get_all_tags
 
 class NotesPane(wx.Panel):
     paneltype = 'notespanel'
@@ -21,6 +23,10 @@ class NotesPane(wx.Panel):
         self.titlelabel = wx.StaticText(self, -1, 'The title')
         self.authorlabel = wx.StaticText(self, -1, 'The Author')
         self.datelabel = wx.StaticText(self, -1, 'Date')
+        self.tagedit = PieTagWidget(self, -1, mode="lhorizontal")
+        self.tagedit.setTagList(get_all_tags().keys())
+        self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.OnTagAdded)
+        self.tagedit.Bind(EVT_PIE_TAG_CLICKED, self.OnTagClicked)
         self.rtc = rt.RichTextCtrl(
             self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.WANTS_CHARS)
 
@@ -34,6 +40,7 @@ class NotesPane(wx.Panel):
 
         sizer.Add(self.authorlabel, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 5)
         sizer.Add(self.datelabel, 0, wx.EXPAND|wx.ALL, 5)
+        sizer.Add(self.tagedit)
         sizer.Add(self.toolbar, 0, wx.EXPAND)
         sizer.Add(self.rtc, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -64,11 +71,22 @@ class NotesPane(wx.Panel):
         self.donebt.Bind(wx.EVT_BUTTON, self.OnDone)
         self.savebt.Bind(wx.EVT_BUTTON, self.OnSave)
 
+    def OnTagAdded(self, evt):
+        self._obj.add_tag(evt.tag)
+
+    def OnTagClicked(self, evt):
+        relparent = self.GetParent().GetParent()
+        relparent.OpenTagsPane()
+        pan = relparent.GetCurrentPane()
+        pan.SelectTag(evt.tag)
+
     def SetObject(self, obj):
         self._obj = obj
         self.titlelabel.SetLabel(obj.Title())
         self.authorlabel.SetLabel(obj.Author())
         self.datelabel.SetLabel(obj.ReferDate().strftime('%d %B %Y'))
+        self.tagedit.Clear()
+        self.tagedit.AddTags(obj.get_taglist())
         if obj.notes:
             self.SetXMLContent(obj.notes)
         self.savebt.Enable(False)

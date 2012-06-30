@@ -28,8 +28,8 @@ class PieObjectStore:
         from pieberry.pieobject import PieFolder
         self.po_type = PieObject
         self.pf_type = PieFolder
-        print 'TYPES:', self.po_type, self.pf_type
-        print 'type()s', type(self.po_type), type(self.pf_type)
+        # print 'TYPES:', self.po_type, self.pf_type
+        # print 'type()s', type(self.po_type), type(self.pf_type)
         self.pieobjects = []
         self.piefolders = []
 
