@@ -3,6 +3,7 @@
 import wx
 from wx.lib.platebtn import *
 from pieberry.ui.events import PieTagAddedEvent, EVT_PIE_TAG_ADDED
+from pieberry.ui.events import PieTagClickedEvent, EVT_PIE_TAG_CLICKED
 from pieberry.pieobject.tags import fn_add_tag
 
 tagnames = ['foo', 'bar', 'hoopla']
@@ -86,6 +87,10 @@ class PieTagWidget(wx.Panel):
             self.UserAddTag(tagtxtchosen)
 
     def onTagPress(self, evt):
+        newevt = PieTagClickedEvent(
+            tag = evt.GetEventObject().GetTag()
+            )
+        wx.PostEvent(self, newevt)
         print evt.GetEventObject().GetTag()
 
     def onMenuButtonPress(self, evt):

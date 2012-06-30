@@ -380,7 +380,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             'RecentActView',
             'StarredView',
             'FlaggedView',
-            'DirListPanel'):
+            'DirListPanel',
+            'TagListPanel'):
             if evt: evt.Skip()
             return
         if self.SearchPanel:
@@ -540,9 +541,6 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.TabBook.AddPage(
             tab, _('Tags'), select=True)
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
-        
-            
-    
 
     def DoSearch(self, evt):
         '''stub'''

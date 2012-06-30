@@ -11,7 +11,7 @@ from pieberry.ui.events import *
 from pieberry.ui.tagwidget import *
 from pieberry.pieutility.date import fmtdate
 from pieberry.pieobject.folder import SECURITY_CLASSES
-from pieberry.pieobject.tags import get_all_tags
+from pieberry.pieobject.tags import get_all_tags, get_tag
 
 boldfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
 normalfont = wx.Font(8, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
@@ -84,6 +84,12 @@ class BetterContextPanel(wx.Panel):
 
     def OnTagAdded(self, evt):
         self.obj.add_tag(evt.tag)
+
+    def OnTagClicked(self, evt):
+        relparent = self.GetParent()
+        relparent.OpenTagsPane()
+        pan = relparent.GetCurrentPane()
+        pan.SelectTag(evt.tag)
 
     def EmitUpdate(self, evt=0, ttltext=None, otherargs=()):
         newevt = PieContextPanelUpdateEvent(
@@ -344,6 +350,7 @@ class FundInfoPanel(wx.Panel):
         self.tagedit.setTagList(get_all_tags().keys())
 
         self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.bigparent.OnTagAdded)
+        self.tagedit.Bind(EVT_PIE_TAG_CLICKED, self.bigparent.OnTagClicked)
         self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
 

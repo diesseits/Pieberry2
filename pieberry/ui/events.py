@@ -1,6 +1,8 @@
 import wx
 import wx.lib.newevent
 
+PieTagClickedEvent, EVT_PIE_TAG_CLICKED = wx.lib.newevent.NewEvent()
+# attributes - tag - the tag clicked
 PieTagAddedEvent, EVT_PIE_TAG_ADDED = wx.lib.newevent.NewEvent()
 # attributes - tag - the tag added
 PieFileDroppedEvt, EVT_PIE_FILE_DROPPED = wx.lib.newevent.NewEvent()

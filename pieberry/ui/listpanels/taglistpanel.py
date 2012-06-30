@@ -23,7 +23,10 @@ class TagListPanel(BibListPanel):
         self.sizer0 = wx.BoxSizer(wx.VERTICAL)
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.TagChoice = wx.Choice(self, -1, choices=get_all_tags().keys())
+        tagselections = get_all_tags().keys()
+        tagselections.sort()
+        self.TagChoice = wx.Choice(self, -1, choices=tagselections)
+        self.TagChoice.SetStringSelection('')
         self.ListDisplay = BibListCtrl(self)
         # self.DelButton = wx.Button(self, -1, label=_("Delete"))
         # self.sizer1.Add(self.DelButton, 1, wx.ALL, 5)
@@ -31,6 +34,7 @@ class TagListPanel(BibListPanel):
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
         self.sizer0.Add(self.sizer1)
         self.SetSizer(self.sizer0)
+        self.SelectTag(tagselections[0])
         # self.Layout()
 
     def _do_bindings(self):
@@ -47,5 +51,8 @@ class TagListPanel(BibListPanel):
         ostore = PieObjectStore([ t for t in tag.pieobjects ])
         self.AddObjects(ostore)
 
-    def SelectTag(self, tag):
-        print 'SelectTag'
+    def SelectTag(self, strtag):
+        self.TagChoice.SetStringSelection(strtag)
+        tag = get_tag(strtag)
+        ostore = PieObjectStore([ t for t in tag.pieobjects ])
+        self.AddObjects(ostore)
