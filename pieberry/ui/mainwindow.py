@@ -129,6 +129,8 @@ class BaseMainWindow(wx.Frame, PieActor):
             viewMenu, -1, _('N&avigate library folders\tCtrl-8'))
         self.menu_view_meetingpaper_folders = wx.MenuItem(
             viewMenu, -1, _('Na&vigate meeting paper folders\tCtrl-9'))
+        self.menu_view_tags = wx.MenuItem(
+            viewMenu, -1, _('View Tags\tCtrl-0'))
 
         # BEGIN debug menu
         if PIE_CONFIG.getboolean('Internal', 'show_debug_ui'):
@@ -199,6 +201,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         viewMenu.AppendItem(self.menu_view_project_folders)
         viewMenu.AppendItem(self.menu_view_library_folders)
         viewMenu.AppendItem(self.menu_view_meetingpaper_folders)
+        viewMenu.AppendSeparator()
+        viewMenu.AppendItem(self.menu_view_tags)
         menuBar.Append(fileMenu, _('&File'))
         menuBar.Append(gatherMenu, _('&Gather'))
         menuBar.Append(locateMenu, _('&Locate'))
@@ -234,6 +238,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.OnViewProjectFolders, self.menu_view_project_folders)
         self.Bind(wx.EVT_MENU, self.OnViewLibraryFolders, self.menu_view_library_folders)
         self.Bind(wx.EVT_MENU, self.OnViewMeetingPaperFolders, self.menu_view_meetingpaper_folders)
+        self.Bind(wx.EVT_MENU, self.OnViewTags, self.menu_view_tags)
         self.Bind(wx.EVT_MENU, self.OnStartIndexer, self.menu_rescan)
         self.Bind(wx.EVT_MENU, self.ToggleGoogleSearchPanel, self.menu_google_books)
         if ZBAR:
@@ -529,6 +534,15 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_CRUMB_CLICKED, self.Callback_BackFolder)
         tab.Bind(EVT_PIE_FLAG_CHECKED, self.OnFlagChecked)
         tab.Bind(EVT_PIE_FILE_DROPPED, self.OnFileDropped)
+
+    def OpenTagsPane(self):
+        tab = TagListPanel(self.TabBook, -1)
+        self.TabBook.AddPage(
+            tab, _('Tags'), select=True)
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        
+            
+    
 
     def DoSearch(self, evt):
         '''stub'''

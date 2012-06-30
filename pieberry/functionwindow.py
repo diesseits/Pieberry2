@@ -863,7 +863,12 @@ class FunctionMainWindow(BaseMainWindow):
 
     def _open_folder(self, notify_window, fobj):
         '''Do the legwork for opening a folder in a DirListView'''
-        subfs = query_folders_contained(session, fobj.Root, fobj.SubFolders)
+        print 'FOBJ', fobj.SubFolders
+        print fobj.Root
+        if len(fobj.SubFolders) == 0:
+            subfs = query_folders_toplevel(session, fobj.Root)
+        else:
+            subfs = query_folders_contained(session, fobj.Root, fobj.SubFolders)
         newostore = PieObjectStore([o for o in fobj.referenced_objects])
         newostore.Extend(subfs)
         newostore.set_session_data(containing_folder=fobj)
@@ -954,3 +959,6 @@ class FunctionMainWindow(BaseMainWindow):
         # refresh folder view
         progress_dialog.Destroy()
         evt.panel.AddObjects(evt.panel.objectstore)
+    
+    def OnViewTags(self, evt):
+        self.OpenTagsPane()

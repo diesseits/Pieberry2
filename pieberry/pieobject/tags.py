@@ -111,7 +111,7 @@ class PieTag(SQLABase):
         return self.TagName
 
     def __str__(self):
-        return str(self.TagName)
+        return "<PieTag - %s>" % str(self.TagName)
 
     def __unicode__(self):
         return unicode(self.TagName)

@@ -23,6 +23,7 @@ class PieTagWidget(wx.Panel):
         self.tagbuttons = []
         self.mode = mode
         self.taglist = tagnames
+        self.taglist.sort()
         self.__do_layout(mode, columns)
 
     def __build_menu(self):
@@ -73,6 +74,7 @@ class PieTagWidget(wx.Panel):
 
     def setTagList(self, taglist):
         self.taglist = taglist
+        self.taglist.sort()
         self.__refresh_menu()
 
     def onMenuChoice(self, evt):

@@ -37,7 +37,6 @@ class DirDropTarget(wx.FileDropTarget):
             filenames = filenames)
         wx.PostEvent(self.panel, newevt)
         print self.panel.GetCurrentFolder()
-        print newevt
 
 class DirListPanel(BibListPanel, FileListPanel):
     '''Class for displaying the contents of directories'''
