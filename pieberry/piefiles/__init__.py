@@ -119,6 +119,7 @@ class PieFileIndexer(Thread):
                 count=count, track=track,
                 message=_('Scanning for missing files - %d of %d' % (track, count)))
             wx.PostEvent(self.nwin, newevt)
+            print 'testing for existence:', obj.FileData_FullPath
             if not os.path.exists(obj.FileData_FullPath):
                 yield obj
         #         missing.append(obj)

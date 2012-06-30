@@ -155,6 +155,10 @@ class BibListPanel(BaseListPanel):
             copyMenu.AppendItem(rcm_copycitationorg)
             self.Bind(wx.EVT_MENU, self.onCopyCitation_OrgText, 
                       rcm_copycitationorg)
+            rcm_copypieslice = wx.MenuItem(copyMenu, 26,
+                                           _('Export as "pieslice" file'))
+            copyMenu.AppendItem(rcm_copypieslice)
+            self.Bind(wx.EVT_MENU, self.onCopyPieSlice, rcm_copypieslice)
         if obj.BibData_Key:
             rcm_copykey = wx.MenuItem(copyMenu, 8,
                                       _('Copy BibTeX key\t\''))

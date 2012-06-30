@@ -688,9 +688,26 @@ class FunctionMainWindow(BaseMainWindow):
                 bibkey = increment_bibtex_key(bibkey)
         return bibkey
 
+    def OnImportPieSlice(self, evt):
+        fdia = wx.FileDialog(self, 
+                             wildcard="PieSlice files (*.pieslice)|*.pieslice",
+                             style=wx.FD_OPEN,
+                             defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+        res = fdia.ShowModal()
+        if res == wx.ID_CANCEL: return
+        from pieberry.pieoutput.pieslice import PieSlice
+        pieslice = PieSlice(slicepath=fdia.GetPath())
+        bibfile = pieslice.ExtractBib()
+        # grok the bibtex file, passing the pieslice so that the core
+        # file can be attached to the results
+        self._do_process_bibtex_file(bibfile, attachslice=pieslice)
+
     def OnImportBibtex(self, evt):
         '''Open a BibTeX file selected by the user'''
-        fdia = wx.FileDialog(self, wildcard="BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex", style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+        fdia = wx.FileDialog(
+            self, 
+            wildcard="BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex", 
+            style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
         res = fdia.ShowModal()
         if res == wx.ID_CANCEL: return
         self.StatusBar.SetStatusText(_('Importing from file'))
@@ -701,7 +718,10 @@ class FunctionMainWindow(BaseMainWindow):
         '''Allow the user to paste in bibtex data into a text entry
         field and have it processed'''
         from pieberry.ui.pasteindialog import BibtexEntryDialog
-        dlg = BibtexEntryDialog(self, _('Press Ctrl-v to Paste Copied BibTeX data from the clipboard:'), _('Paste BibTeX'))
+        dlg = BibtexEntryDialog(
+            self,
+            _('Press Ctrl-v to Paste Copied BibTeX data from the clipboard:'), 
+            _('Paste BibTeX'))
         ans = dlg.ShowModal()
         if ans == wx.ID_CANCEL: return
         bibtexdata = dlg.GetValue()
@@ -709,13 +729,16 @@ class FunctionMainWindow(BaseMainWindow):
         tempfile = open(BIBTEMPFILE, 'w')
         tempfile.write(bibtexdata)
         tempfile.close()
-        self._do_process_bibtex_file(BIBTEMPFILE, attachfile)
+        self._do_process_bibtex_file(BIBTEMPFILE, attachfile=attachfile)
 
-    def _do_process_bibtex_file(self, bibfilepath, attachfile=None):
+    def _do_process_bibtex_file(self, 
+                                bibfilepath, 
+                                attachfile=None, 
+                                attachslice=None):
         '''Handle the processing of a given BibTeX file as
         instructed'''
         from pieberry.pieutility.bibtex import autogen_bibtex_key
-        progress_dialog = wx.ProgressDialog( 
+        progress_dialog = wx.ProgressDialog(
             _('Importing from file'), 
             _('Reading %s' % bibfilepath), maximum = 1)
         progress_dialog.Pulse()
@@ -740,6 +763,19 @@ class FunctionMainWindow(BaseMainWindow):
                     shutil.copyfile(attachfile, dpath)
                     obj.add_aspect_cached(dpath)
                     print 'file successfully attached'
+                elif count == 0 and attachslice:
+                    # in case of being passed a pieslice, handle
+                    # extraction of the core file to a cache directory
+                    obj.set_session(get_session())
+                    if attachslice.HasFile():
+                        fn = attachslice.GetFileName()
+                        dpath, components = suggest_path_cache_fromother(
+                            obj, fn)
+                        contribute_folder(os.path.dirname(dpath), components)
+                        attachslice.ExtractFile(dpath)
+                        obj.add_aspect_cached(dpath)
+                        obj.notes = attachslice.ExtractNotes()
+                        print 'file successfully extracted and cached'
                 count += 1
                 progress_dialog.UpdatePulse('%d items added' % count)
             except:

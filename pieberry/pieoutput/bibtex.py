@@ -159,7 +159,7 @@ class PiePybtexWriter:
             print msg
             return msg
 
-    def setPath(self, location):
+    def setPath(self, location=None):
         '''Set the location of the file'''
         self._location = location
 
@@ -177,6 +177,7 @@ class PiePybtexWriter:
                 f.close()
             except:
                 raise _('Could not open file')
+
         # wipe the file clean
         f = open(self._location, 'w')
         f.write('')

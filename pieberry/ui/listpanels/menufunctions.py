@@ -15,6 +15,7 @@ from pieberry.pieconfig.identity import PIE_APPNAME
 from pieberry.pieconfig.paths import IMGDIR
 from pieberry.pieconfig.globalvars import PYNOTIFY
 from pieberry.pieoutput.bibtex import *
+from pieberry.pieoutput.pieslice import *
 from pieberry.pieutility.decoding import translate_non_alphanumerics
 
 if PYNOTIFY:
@@ -297,6 +298,23 @@ class MenuFunctionsMixin:
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(clipdata)
         wx.TheClipboard.Close()
+
+    def onCopyPieSlice(self, evt):
+        '''Make available a pieslice glob file to the clipboard'''
+        obj = self.GetSelectedItem()
+        pieslice = PieSlice(obj = obj)
+        clipdata = wx.FileDataObject()
+        clipdata.AddFile(pieslice.GetSlice())
+        wx.TheClipboard.Open()
+        wx.TheClipboard.SetData(clipdata)
+        wx.TheClipboard.Close()
+        if PYNOTIFY:
+            n = pynotify.Notification(
+                _("Exported file to clipboard"), 
+                pieslice.GetSlice(), 
+                os.path.join(IMGDIR, 'pie_48.png'))
+            n.show()
+
 
     def onAttachFile(self, evt):
         '''Attach a file to a record (at the staging point)'''

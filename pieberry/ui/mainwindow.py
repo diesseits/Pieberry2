@@ -102,6 +102,8 @@ class BaseMainWindow(wx.Frame, PieActor):
         if ZBAR:
             self.menu_scan_barcode = wx.MenuItem(
                 gatherMenu, -1, _('Scan ISBN &barcode\tCtrl-shift-o'), _('Scan a book\'s barcode containing its ISBN and look it up in Google Books'))
+        self.menu_import_pieslice = wx.MenuItem(
+            gatherMenu, -1, _('Import from pieslice file'), _("Import bundled information in Pieberry's own 'pieslice' file format"))
         self.menu_import_bibtex = wx.MenuItem(
             gatherMenu, -1, _('&Import from BibTeX file'), _('Import biblographic items from a BibTeX file'))
         self.menu_paste_bibtex = wx.MenuItem(
@@ -182,6 +184,7 @@ class BaseMainWindow(wx.Frame, PieActor):
             gatherMenu.AppendItem(self.menu_scan_barcode)
         gatherMenu.AppendSeparator()
         gatherMenu.AppendItem(self.menu_emptyref)
+        gatherMenu.AppendItem(self.menu_import_pieslice)
         gatherMenu.AppendItem(self.menu_import_bibtex)
         gatherMenu.AppendItem(self.menu_paste_bibtex)
         gatherMenu.AppendSeparator()
@@ -221,6 +224,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
         self.Bind(wx.EVT_MENU, self.ToggleFilterPanel, self.menu_filter)
         self.Bind(wx.EVT_MENU, self.ToggleContextPanel, self.menu_toggle_context)
+        self.Bind(wx.EVT_MENU, self.OnImportPieSlice, self.menu_import_pieslice)
         self.Bind(wx.EVT_MENU, self.OnImportBibtex, self.menu_import_bibtex)
         self.Bind(wx.EVT_MENU, self.OnPasteBibtex, self.menu_paste_bibtex)
         self.Bind(wx.EVT_MENU, self.OnViewMostRecent, self.menu_view_recent)

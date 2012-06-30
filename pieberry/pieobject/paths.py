@@ -171,6 +171,22 @@ def suggest_path_ondrop(obj, fobj):
     print 'SUGGESTING:', proposal
     return proposal, (root, fobj.SubFolders, os.path.basename(proposal))
     
+def suggest_path_slice_name(obj):
+    '''Suggest a path to make a PieSlice export file'''
+    SLICEDIR = os.path.join(CACHEDIR, 'PieSlices')
+    if obj.has_aspect('hasfile'):
+        proposal = os.path.join(
+            SLICEDIR,
+            os.path.splitext(obj.FileData_FileName)[0] + '.pieslice'
+            )
+    else:
+        proposal = os.path.join(
+            SLICEDIR,
+            "%s - %s.pieslice" % (obj.ReferDate().strftime("%Y%m%d"), 
+                                  translate_non_alphanumerics(obj.Title()))
+            )
+    proposal = trim_filename(proposal)
+    return proposal
 
 #ATOMISE SHIT
 
