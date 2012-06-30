@@ -1,4 +1,5 @@
 import wx, time
+# from wx.lib.masked.combobox import ComboBox as mComboBox
 from validators import *
 from events import PieWebScrapeEvent, PiePrefetchStartEvent
 from timers import WebPanelUiTimer
@@ -33,6 +34,12 @@ class WebScrapePanel(wx.Panel):
 
         authorlist = get_authorlist()
         
+        # self.authorField = mComboBox(
+        #     self, -1, size=self._DEF_WIDTH, #choices=authorlist, 
+        #     # validator=PiePlainTextValidator(), 
+        #     autoSelect=True,
+        #     style=wx.EXPAND|wx.CB_DROPDOWN)
+        # self.authorField.AppendItems(authorlist)
         self.authorField = wx.ComboBox(
             self, -1, size=self._DEF_WIDTH, choices=authorlist, 
             validator=PiePlainTextValidator(), 

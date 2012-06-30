@@ -28,9 +28,12 @@ class DirDropTarget(wx.FileDropTarget):
     def OnDropFiles(self, x, y, filenames):
         """ Implement File Drop """
         print filenames
+        path = self.panel.GetCurrentFolder()
+        # if path.path() in ROOT_MAP.keys(): 
+        #     wx.MessageBox('Dragging into root folders not supported for various reasons')
         newevt = PieFileDroppedEvt(
             panel = self.panel,
-            path = self.panel.GetCurrentFolder(),
+            path = path,
             filenames = filenames)
         wx.PostEvent(self.panel, newevt)
         print self.panel.GetCurrentFolder()
