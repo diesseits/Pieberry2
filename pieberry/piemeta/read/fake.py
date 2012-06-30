@@ -42,4 +42,5 @@ def get_fake_metadata_object(fn):
     obj.FileData_DateCreated = d['creation_date']
     obj.FileData_DateModified = d['modification_date']
     obj.FileData_FileType = determine_file_type(fn)
+    obj.FileData_FileName = os.path.basename(fn)
     return obj

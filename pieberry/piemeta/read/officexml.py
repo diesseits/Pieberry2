@@ -6,6 +6,7 @@ from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieobject.paths import auto_increment_fn
 from pieberry.pieconfig.globalvars import DEBUG
 from pieberry.piemeta.read.fake import get_fake_metadata_object
+from pieberry.pieobject.diagnostic import determine_file_type
 
 def get_oxml_metadata(fn):
     r = {}
@@ -44,6 +45,8 @@ def get_oxml_metadata_object(fn):
     obj.FileData_DateCreated = d['creation_date']
     obj.FileData_DateModified = d['modification_date']
     if d['description']: obj.BibData_Annote = d['description']
+    obj.FileData_FileType = 'oxml_doc'
+    obj.FileData_FileName = os.path.basename(fn)
     return obj
 
 def get_oxml_metadata_for_aspect(obj):

@@ -874,7 +874,8 @@ class FunctionMainWindow(BaseMainWindow):
             try:
                 ftype = determine_file_type(filename)
             except:
-                wx.MessageBox("Could not determine file type for %s" % filename)
+                wx.MessageBox("Could not determine file type for %s" % filename,
+                              style=wx.ICON_ERROR)
                 continue
             # check if shift down
             mousestate = wx.GetMouseState()
@@ -883,20 +884,31 @@ class FunctionMainWindow(BaseMainWindow):
             # get metadata object
             obj = piemeta.get_metadata_object(filename, fakeonly=False)
             if obj == None:
-                wx.MessageBox("Could not read file: %s" % filename)
+                wx.MessageBox(_("Could not read file: %s" % filename),
+                              style=wx.ICON_ERROR)
                 continue
             # test there's no file conflict
             print 'PATH:', evt.path
-            destfn = os.path.join(evt.path.path(), os.path.basename(filename))
+            destfn, components = suggest_path_ondrop(obj, evt.path)
+            # os.path.join(evt.path.path(), os.path.basename(filename))
             if os.path.exists(destfn):
-                wx.MessageBox("File already exists in folder: %s" % filename)
+                wx.MessageBox(_("File already exists in folder: %s" % filename),
+                              style=wx.ICON_ERROR)
                 continue
             # copy/move file to folder
-            shutil.copyfile(filename, destfn)
+            try:
+                shutil.copyfile(filename, destfn)
+            except Exception, exc:
+                wx.MessageBox(_('Could not copy file: %s' % filename),
+                              style=wx.ICON_ERROR)
+                traceback.print_exc()
+                continue
             try:
                 if move: os.remove(filename)
             except:
-                wx.MessageBox('Could not remove source file: %s. Is it in use?' % filename)
+                wx.MessageBox(
+                    'Could not remove source file: %s. Is it in use?' % filename,
+                    style=wx.ICON_ERROR)
             obj.add_aspect_stored(destfn)
             obj.add_aspect_saved()
             session.add(obj)

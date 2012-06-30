@@ -2,6 +2,7 @@
 
 import zipfile, BeautifulSoup, os, os.path, sys, re, datetime, traceback
 from pprint import pprint
+from pieberry.pieobject.diagnostic import determine_file_type
 # from pieberry.pieconfig.paths import CACHEDIR
 # from pieberry.pieobject.paths import auto_increment_fn
 # from pieberry.pieconfig.globalvars import DEBUG
@@ -49,6 +50,8 @@ def get_odf_metadata_object(fn):
     obj.FileData_DateCreated = d['creation_date']
     obj.FileData_DateModified = d['modification_date']
     if d['description']: obj.BibData_Annote = d['description']
+    obj.FileData_FileType = 'odf_doc'
+    obj.FileData_FileName = os.path.basename(fn)
     return obj
 
 def get_odf_metadata_for_aspect(obj):

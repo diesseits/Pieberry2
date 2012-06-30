@@ -4,6 +4,7 @@ from pieberry.pieobject.paths import auto_increment_fn
 from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieobject import PieObject
 from pieberry.piemeta.read.fake import get_fake_metadata
+from pieberry.pieobject.diagnostic import determine_file_type
 
 # TODO: bring up to date for P2
 splre = re.compile("[./_ ]")
@@ -22,6 +23,8 @@ def pypdf_object(fn):
         date=data['creation_date']
         )
     obj.FileData_DateCreated = data['creation_date']
+    obj.FileData_FileType = 'pdf'
+    obj.FileData_FileName = os.path.basename(fn)
     return obj
 
 def pypdf_metadata(fn):

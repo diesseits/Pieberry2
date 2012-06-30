@@ -7,6 +7,7 @@ from pieberry.pieconfig.globalvars import DEBUG
 import hachoir_metadata
 from pieberry.piemeta.read.atomise_hachoir import processFileReturn
 from pieberry.piemeta.read.fake import get_fake_metadata_object
+from pieberry.pieobject.diagnostic import determine_file_type
 
 def get_real_metadata_object(fn):
     '''get object with metadata gleaned from internal file metadata'''
@@ -25,6 +26,8 @@ def get_real_metadata_object(fn):
     obj.date = d['creation_date']
     obj.FileData_DateCreated = d['creation_date']
     obj.FileData_DateModified = d['modification_date']
+    obj.FileData_FileType = determine_file_type(fn)
+    obj.FileData_FileName = os.path.basename(fn)
     return obj
 
 def get_real_metadata_for_aspect(obj):

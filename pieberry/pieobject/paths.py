@@ -31,6 +31,7 @@ def auto_increment_fn(fn):
     return fn
 
 def trim_filename(path):
+    assert type(path) in (str, unicode)
     if len(path) > PIE_CONFIG.getint('Format', 'filesystem_length_limit') - 5:
         dirn = os.path.dirname(path)
         basen, ext = os.path.splitext(os.path.basename(path))
@@ -158,6 +159,18 @@ def suggest_path_store_fromdesktop(obj, folder, new_fn=None):
 def suggest_path_rehome(obj):
     pass
 
+def suggest_path_ondrop(obj, fobj):
+    '''Suggest a path for when a file is dropped into a particular folder'''
+    root = fobj.Root
+    print 'suggest_path_store_ondrop: ____'
+    fn = "%s - %s" % (obj.ReferDate().strftime("%Y%m%d"), obj.FileData_FileName)
+    pcomponents = [ROOT_MAP[root],] + fobj.SubFolders + [fn,]
+    proposal = os.path.join(*pcomponents)
+    proposal = trim_filename(proposal)
+    # proposal = auto_increment_fn(proposal)
+    print 'SUGGESTING:', proposal
+    return proposal, (root, fobj.SubFolders, os.path.basename(proposal))
+    
 
 #ATOMISE SHIT
 

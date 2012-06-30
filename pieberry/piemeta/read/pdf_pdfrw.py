@@ -8,6 +8,7 @@ if sys.platform in ('linux2', 'linux3'):
     from pieberry.pdfrw import PdfReader
 else:
     from pdfrw import PdfReader
+from pieberry.pieobject.diagnostic import determine_file_type
 from pieberry.piemeta.read.fake import get_fake_metadata_object
 
 def pdfrw_object(fn):
@@ -46,6 +47,8 @@ def pdfrw_object(fn):
         author = author,
         date = creation_date)
     obj.FileData_DateCreated = creation_date
+    obj.FileData_FileType = 'pdf'
+    obj.FileData_FileName = os.path.basename(fn)
     return obj
 
 def pdfrw_metadata(fn):
