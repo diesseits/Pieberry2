@@ -54,7 +54,7 @@ class BaseListCtrl(wx.ListCtrl,
 
     def EnsureVisible(self, idx):
         if sys.platform in ('win32', 'win64'):
-            wx.ListCtrl.EnsureVisible(idx)
+            wx.ListCtrl.EnsureVisible(self, idx)
 
     def _set_columndata(self, idx, obj):
         '''Set relevant data to the column at row: idx'''
