@@ -321,10 +321,11 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             self.author = defaultauthor
         self.collection = category_phrase
         # Set basic bibliographic data
-        self.BibData_HowPublished = PIE_CONFIG.get(
-            'Format', 'default_howpublished_text')
-        self.BibData_Type = PIE_CONFIG.get(
-            'Format', 'default_bibtex_entry_type')
+        if not self.BibData_Type:
+            self.BibData_HowPublished = PIE_CONFIG.get(
+                'Format', 'default_howpublished_text')
+            self.BibData_Type = PIE_CONFIG.get(
+                'Format', 'default_bibtex_entry_type')
         if tags:
             self.add_tags(tags, threaded)
         if inferred_filetype:

@@ -10,7 +10,7 @@
 
 from BeautifulSoup import *
 import urllib2
-import CMSnormal, CMSpdf
+import CMSnormal, CMSpdf, CMSciteseerx
 
 from pieberry.pieconfig.schemas import FEXTENSIONS, MIMEMAP
 
@@ -22,6 +22,8 @@ def DiagnoseCMS(uobj):
      '''receive a urlopener object, diagnose what sort of CMS
      the site uses'''
      uoi = uobj.info()
+     if CMSciteseerx.diagnose(uobj):
+          return 'CMS_citeseerx'
      if MIMEMAP[uoi.gettype()] == 'html':
           return 'CMS_normal'
      elif MIMEMAP[uoi.gettype()] == 'pdf':
@@ -31,7 +33,9 @@ def DiagnoseCMS(uobj):
 
 def GetContextObject(uobj, cmstype):
      '''receive a urlopener object, return a context object'''
-     if cmstype == 'CMS_normal':
+     if cmstype == 'CMS_citeseerx':
+          return CMSciteseerx.get_context_object(uobj)
+     elif cmstype == 'CMS_normal':
           return CMSnormal.get_context_object(uobj)
      elif cmstype == 'CMS_pdf':
           return CMSpdf.get_context_object(uobj)

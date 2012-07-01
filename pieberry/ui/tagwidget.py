@@ -32,7 +32,7 @@ class PieTagWidget(wx.Panel):
         for tn in self.taglist:
             if not tn in self.tags:
                 self.tagmenu.Append(-1, tn)
-        self.tagmenu.Append(-1, "New Tag")
+        self.tagmenu.Append(-1, _("[ New Tag ]"))
         self.tagmenu.Bind(wx.EVT_MENU, self.onMenuChoice)
 
     def __append_menubutton(self):
@@ -52,6 +52,7 @@ class PieTagWidget(wx.Panel):
         self.menubtn.Show()
 
     def __refresh_menu(self):
+        self.taglist.sort()
         self.__build_menu()
         self.menubtn.SetMenu(self.tagmenu)
 
@@ -81,7 +82,7 @@ class PieTagWidget(wx.Panel):
     def onMenuChoice(self, evt):
         '''The user chose one of the tag menu options'''
         tagtxtchosen = self.tagmenu.FindItemById(evt.GetId()).GetLabel()
-        if tagtxtchosen == "New Tag":
+        if tagtxtchosen == _("[ New Tag ]"):
             self.onCreateNewTag()
         else:
             self.UserAddTag(tagtxtchosen)

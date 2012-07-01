@@ -13,6 +13,7 @@ from cms import *
 from pieberry.pieobject.website import add_website
 from pieberry.piescrape.execfn import suggest_title
 from pieberry.piescrape.resource import cj, prefenc, user_agent, headers
+from pieberry.pieinput.bibtex import *
 
 class PieScraper:
     '''Functionality for scraping web pages'''
@@ -110,6 +111,7 @@ class PieScraper:
         co = GetContextObject(self._urlopener, self._cmstype)
         try:
             urlz = co.get_links(types=types, baseurl=self._origin_url)
+            assert type(urlz) == list
         except:
             traceback.print_exc()
             raise Exception
@@ -126,7 +128,10 @@ class PieScraper:
         print 'wunn...'
         ret.Add(self.get_top_level_object(threaded))
         for linky in urlz:
-            ob = PieObject()
+            if linky.has_key('BibTeX'):
+                ob = pybtex_to_pieberry(*linky['BibTeX'])
+            else:
+                ob = PieObject()
             try:
                 ob.add_aspect_onweb(
                     url=linky['Url'],
@@ -139,10 +144,11 @@ class PieScraper:
                     inferred_filetype = linky['InferredFileType'],
                     threaded=threaded
                     )
-                ob.title = suggest_title(
-                    linky['SuggestedTitle'],
-                    self._category_phrase,
-                    self._tag_append_behaviour)
+                if not ob.title:
+                    ob.title = suggest_title(
+                        linky['SuggestedTitle'],
+                        self._category_phrase,
+                        self._tag_append_behaviour)
             except Exception, exc:
                 traceback.print_exc()
             ret.Add(ob)
