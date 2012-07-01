@@ -397,6 +397,8 @@ class FundInfoPanel(wx.Panel):
             self.locn_ct.SetLabel(_('Library'))
         self.tagedit.Clear()
         self.tagedit.AddTags(obj.get_taglist())
+        if not obj.has_aspect('saved'):
+            self.tagedit.Disable()
         self.fgsizer.Layout()
         wx.Panel.SetSize(self, self.sizer0.GetMinSize())
         # self.sizer0.Layout()
