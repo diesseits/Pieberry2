@@ -14,8 +14,11 @@ if sys.platform in ('win32', 'win64'):
     if sys.getwindowsversion().major == 6:
         keyring.set_keyring(keyring.backend.Win32CryptoKeyring())
     else:
-        keyring.set_keyring(keyring.backend.UncryptedFileKeyring())
-    # UncryptedFileKeyring for 
+        try:
+            keyring.set_keyring(keyring.backend.UncryptedFileKeyring())
+        except: #hack: think there may be a bug where uncrypted won't
+                #work if there's no PATH variable
+            keyring.set_keyring(keyring.backend.Win32CryptoKeyring())
 
 class PieConfig(SafeConfigParser):
     '''ConfigParser with extra methods to allow the loading and

@@ -2,6 +2,7 @@
 
 from BeautifulSoup import BeautifulSoup
 import re, urlparse, os.path, traceback
+from pieberry.pieconfig.paths import CACHEDIR
 from pieberry.pieutility.decoding import translate_non_alphanumerics as tr_nan
 from pieberry.pieutility.decoding import decode_htmlentities
 from pieberry.pieconfig.schemas import PIE_TYPES_DOCUMENTS, PIE_TYPES_ALL, FEXTENSIONS
@@ -74,11 +75,11 @@ class CSXContextObject:
                 if len(l) > 0 and l[0] != '<' 
                 ]
             bibtexdata = u'\n'.join(bibtexdata)
-            f = open('/tmp/bibtexsc.bib', 'w')
+            f = open(os.path.join(CACHEDIR, 'bibtexsc.bib'), 'w')
             # f.write(bibtexdata)
             f.write(unicode(decode_htmlentities(bibtexdata)))
             f.close()
-            btread = pybtex_entries_from_file('/tmp/bibtexsc.bib')
+            btread = pybtex_entries_from_file(os.path.join(CACHEDIR, 'bibtexsc.bib'))
             for ky, vl in btread.items(): print pybtex_to_pieberry(ky, vl)
             
             linkdata['BibTeX'] = btread.items()[0]
