@@ -150,6 +150,8 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
     def __init__(self, title=u'', author=u'', date=datetime.datetime.today(),
                  fileloc=None):
 
+        TagHandler.__init__(self)
+
         assert type(title) == unicode
         assert type(author) == unicode
 

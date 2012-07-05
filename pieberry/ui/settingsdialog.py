@@ -175,6 +175,11 @@ class FormatPanel(wx.Panel):
                                        choices=self.ptxtfchz.keys())
         self.plaintextfmtchoice.SetStringSelection(
             self.ptxtfchz_rv[PIE_CONFIG.get('Format', 'plaintext_citation_format')])
+        self.protectcaps_cb = wx.CheckBox(self, -1, 
+                                          _('Prevent reformatting of capital letters in citations'))
+        self.protectcaps_cb.SetValue(
+            PIE_CONFIG.getboolean('Format', 'protect_all_caps_in_citations'))
+
         self.writepdf_cb = wx.CheckBox(self, -1, 
                                        _('Write file metadata when possible'))
         ttd = wx.ToolTip(_('''
@@ -199,7 +204,8 @@ document files to reflect the known bibliographic data to a limited extent
                 'url_level_represent': self.uchz[self.urlchoice.GetStringSelection()],
                 'plaintext_citation_format': self.ptxtfchz[self.plaintextfmtchoice.GetStringSelection()],
                 'write_file_metadata': self.writepdf_cb.GetValue(),
-                'filesystem_length_limit': self.fnlen_spinner.GetValue()
+                'filesystem_length_limit': self.fnlen_spinner.GetValue(),
+                'protect_all_caps_in_citations': self.protectcaps_cb.GetValue()
                 })
         return retdata
 
@@ -233,6 +239,8 @@ document files to reflect the known bibliographic data to a limited extent
             1, wx.ALL, 5)
         sizer4.Add(self.plaintextfmtchoice, 0, wx.ALL, 5)
         self.mainsizer.Add(sizer4, 0, wx.EXPAND)
+        self.mainsizer.Add(self.protectcaps_cb, 0, wx.EXPAND|wx.ALL, 5)
+
         self.mainsizer.Add((20, 20))
         self.mainsizer.Add(wx.StaticText(self, -1, _('File Handling Options')), 
                            0, wx.ALL, 5)

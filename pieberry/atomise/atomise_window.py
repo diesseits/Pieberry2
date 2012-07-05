@@ -69,11 +69,11 @@ class atomActionWindow(wx.ScrolledWindow):
         self.parent = parent
         
     def __do_layout(self):
-        self.flexsizer = wx.FlexGridSizer(0, 8, 5, 10)
+        self.flexsizer = wx.FlexGridSizer(0, 9, 5, 10)
         self.flexsizer.AddGrowableCol(1, 2)
         # self.flexsizer.AddGrowableCol(3, 3)
         font =  wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        for i in ('    ', 'File name', 'Destination folder', '', '', '', '', ''):
+        for i in ('    ', 'File name', 'Destination folder', '', '', '', '', '', ''):
             txt = wx.StaticText(self, -1, i, style=wx.ALIGN_CENTER|wx.EXPAND)
             txt.SetFont(font)
             self.flexsizer.Add(txt)
@@ -116,6 +116,11 @@ class atomActionWindow(wx.ScrolledWindow):
         val = bt.GetValue()
         # bt.SetBackgroundColour('pink')
         self.parent.onFlag(self.currentrow, val)
+        
+    def _on_tag(self, evt):
+        ob = evt.GetEventObject()
+        self.currentrow = ob.getRowId()
+        self.parent.onTag(self.currentrow)
 
     def onFileAll(self):
         pass
@@ -191,6 +196,7 @@ class atomActionWindow(wx.ScrolledWindow):
         # if obj.FileData_FileType != 'pdf':
         #     bt.Enable(False)
 
+        # button for deleting files
         setattr(
             self, 
             'delbutton%d' % self.maxrow, 
@@ -200,15 +206,29 @@ class atomActionWindow(wx.ScrolledWindow):
         delbttt = wx.ToolTip(_('Delete'))
         delbt.SetToolTip(delbttt)
 
+
+        # button for opening files to check what they are
         setattr(
             self,
             'openbutton%d' % self.maxrow,
             atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_TOOLBAR, (16, 16)))
             )
         openbt = getattr(self, 'openbutton%d' % self.maxrow)
-        openbttt = wx.ToolTip(_('Open file'))
+        openbttt = wx.ToolTip(_('Open document'))
         openbt.SetToolTip(openbttt)
 
+
+        # button for tagging files
+        setattr(
+            self,
+            'tagbutton%d' % self.maxrow,
+            atomBmpButton(self, self.maxrow, id=-1, bitmap=wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK, wx.ART_TOOLBAR, (16, 16)))
+            )
+        tagbt = getattr(self, 'tagbutton%d' % self.maxrow)
+        tagbttt = wx.ToolTip(_('Tag document'))
+        tagbt.SetToolTip(tagbttt)
+        
+        # button for flagging docs for follow-up
         setattr(self, 'flagbutton%d' % self.maxrow, FlagBitmapButton(self, self.maxrow, id=-1)#, bitmap=wx.Bitmap(os.path.join(IMGDIR, 'ic_flag16.png')))
                 )
         flagbt = getattr(self, 'flagbutton%d' % self.maxrow)
@@ -227,12 +247,14 @@ class atomActionWindow(wx.ScrolledWindow):
         self.Bind(wx.EVT_BUTTON, self._on_delfile, delbt)
         self.Bind(wx.EVT_BUTTON, self._on_openfile, openbt)
         self.Bind(wx.EVT_BUTTON, self._on_flag, flagbt)
+        self.Bind(wx.EVT_BUTTON, self._on_tag, tagbt)
         self.flexsizer.Add(bm)
         self.flexsizer.Add(tc, flag=wx.EXPAND)
         self.flexsizer.Add(ch, flag=wx.EXPAND)
         self.flexsizer.Add(bt)
         self.flexsizer.Add(delbt)
         self.flexsizer.Add(openbt)
+        self.flexsizer.Add(tagbt)
         self.flexsizer.Add(flagbt)
         self.flexsizer.Add(gobt)
         self.SetScrollbars(0, 20, 0, 50)
@@ -258,6 +280,7 @@ class atomActionWindow(wx.ScrolledWindow):
         gobt = getattr(self, 'gobutton%d' % row, None)
         delbt = getattr(self, 'delbutton%d' % row, None)
         opbt = getattr(self, 'openbutton%d' % row, None)
+        tgbt = getattr(self, 'tagbutton%d' % row, None)
         flbt = getattr(self, 'flagbutton%d' % row, None)
         tc = getattr(self, 'suggesttc%d' % row, None)
 
@@ -267,6 +290,7 @@ class atomActionWindow(wx.ScrolledWindow):
         self.flexsizer.Remove(tc)
         self.flexsizer.Remove(delbt)
         self.flexsizer.Remove(opbt)
+        self.flexsizer.Remove(tgbt)
         self.flexsizer.Remove(flbt)
         self.flexsizer.Remove(gobt)
         bm.Destroy()
@@ -275,6 +299,7 @@ class atomActionWindow(wx.ScrolledWindow):
         tc.Destroy()
         delbt.Destroy()
         opbt.Destroy()
+        tgbt.Destroy()
         flbt.Destroy()
         gobt.Destroy()
         self.Layout()

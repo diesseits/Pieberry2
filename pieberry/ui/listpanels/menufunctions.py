@@ -117,7 +117,7 @@ class MenuFunctionsMixin:
             msg = _('Do you want to delete this document? The database entry will be deleted.')
         dia = wx.MessageDialog(self, msg, style=wx.YES|wx.NO)
         ans = dia.ShowModal()
-        if ans == wx.ID_NO: return
+        if not ans == wx.ID_YES: return
         if obj.has_aspect('hasfile'):
             print 'deleting', obj.FileData_FullPath
             try:
@@ -206,7 +206,7 @@ class MenuFunctionsMixin:
         obj = self.GetSelectedItem()
         fmt = PIE_CONFIG.get('Format', 'plaintext_citation_format')
         try:
-            bobj = get_pybtex_object(obj)
+            bobj = get_pybtex_object(obj, texify=False)
             cite = get_formatted_citation(bobj, format=fmt)
         except Exception, exc:
             traceback.print_exc()
@@ -263,7 +263,7 @@ class MenuFunctionsMixin:
         print 'onCopyCitiation_PlainText'
         obj = self.GetSelectedItem()
         try:
-            bobj = get_pybtex_object(obj)
+            bobj = get_pybtex_object(obj, texify=False)
             cite = get_formatted_citation(bobj, format='org')
         except Exception, exc:
             traceback.print_exc()

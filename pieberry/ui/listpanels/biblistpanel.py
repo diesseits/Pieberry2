@@ -51,6 +51,8 @@ class BibListPanel(BaseListPanel):
     def onKeyDown(self, evt):
         keycode = evt.GetKeyCode()
         # print keycode
+        if evt.ControlDown() and keycode == ord('E'):
+            self.onEditBibData(0)
         if evt.HasModifiers():
             evt.Skip()
             return
@@ -110,7 +112,7 @@ class BibListPanel(BaseListPanel):
         if obj.has_aspect('saved'):
             menu.AppendSeparator()
             rcm_editbibdata = wx.MenuItem(menu, 3, 
-                                          _('Edit bibliographic information'))
+                                          _('Edit bibliographic information\tCtrl-e'))
             menu.AppendItem(rcm_editbibdata)
             self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)
             rcm_editnotes = wx.MenuItem(menu, 18, 

@@ -60,6 +60,9 @@ class TagHandler:
                 raise TypeError
             if not it in self.tag_queue:
                 self.tag_queue.append(it)
+
+    def get_queued_tags(self):
+        return self.tag_queue
             
     def process_queued_tags(self):
         for it in self.tag_queue:

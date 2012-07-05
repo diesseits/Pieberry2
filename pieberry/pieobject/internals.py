@@ -84,7 +84,7 @@ class PieInternalsHandler:
         '''Set the hash of the valid encryption key (md5 hex digest of
         the user set password) for this archive'''
         if self.has_setting('Security', 'Hash'):
-            raise 'Already set password for this archive'
+            raise Exception, 'Already set password for this archive'
         self.set('Security', 'Hash',
                  salted_hash(self.get('Security', 'Salt'), pwd)
                  )

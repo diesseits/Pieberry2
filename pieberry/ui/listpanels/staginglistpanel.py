@@ -46,6 +46,7 @@ class StagingListPanel(BaseListPanel):
                             self.onCommitObjects)
         self.DiscardButton.Bind(wx.EVT_BUTTON,
                                 self.onDiscardAll)
+        self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
 
     def AddObject(self, obj, msgtype='success'):
         '''An augmented AddObject incorporating spinning trigger'''
@@ -105,6 +106,16 @@ class StagingListPanel(BaseListPanel):
             ref=ref,
             msgtype=outcome)
         print 'StagingListPanel.DownloadDone'
+
+    def onKeyDown(self, evt):
+        keycode = evt.GetKeyCode()
+        # print keycode
+        if evt.ControlDown():
+            if keycode == ord('E'):
+                self.onEditBibData(0)
+            elif keycode == ord('A'):
+                self.onAttachFile(0)
+        evt.Skip()
     
     def MakeMenu(self, menu, obj):
         '''Function to construct a particular context menu'''
@@ -126,7 +137,7 @@ class StagingListPanel(BaseListPanel):
             menu.AppendItem(rcm_deletefile)
             self.Bind(wx.EVT_MENU, self.onDeleteObj, rcm_deletefile)
         elif not obj.has_aspect('hasfile'):
-            rcm_attachfile = wx.MenuItem(menu, 23, _('Attach File'))
+            rcm_attachfile = wx.MenuItem(menu, 23, _('Attach File\tCtrl-a'))
             rcm_attachfile.SetBitmap(
                 wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_MENU))
             menu.AppendItem(rcm_attachfile)
@@ -134,6 +145,6 @@ class StagingListPanel(BaseListPanel):
             
 
         rcm_editbibdata = wx.MenuItem(menu, 3, 
-                                      _('Edit bibliographic information'))
+                                      _('Edit bibliographic information\tCtrl-e'))
         menu.AppendItem(rcm_editbibdata)
         self.Bind(wx.EVT_MENU, self.onEditBibData, rcm_editbibdata)

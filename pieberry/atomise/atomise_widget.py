@@ -11,10 +11,12 @@ import pieberry.pieutility
 # from atomise_exec import *
 from pieberry.ui.events import *
 from pieberry.ui.editdialog import PieBibEditDialog
+from pieberry.ui.tagwidget import PieTagDialog
 from pieberry.atomise.atomise_window import *
 from pieberry.pieconfig.paths import *
 from pieberry.pieobject.folder import FOLDER_LOOKUP, PieFolder, recommend_folder
 from pieberry.pieobject.paths import suggest_initial_fn
+from pieberry.pieobject.tags import get_all_tags, get_tag
 
 class atomWidget(wx.Panel):
     '''A ui class for displaying files grabbed from the user's desktop'''
@@ -115,6 +117,7 @@ class atomWidget(wx.Panel):
         self.atomDisplay.removeRow(rowid)
 
     def onFileAll(self, evt):
+        '''File all documents that have a destination assigned'''
         for i in range(0, self.atomDisplay.maxrow + 1):
             obj = self.atomDisplay.rowdata[i]
             ch = getattr(self.atomDisplay, 'choice%d' % i)
@@ -126,7 +129,16 @@ class atomWidget(wx.Panel):
         pieberry.pieutility.open_file(self.atomDisplay.rowdata[rowid].FileData_FullPath)
 
     def onFlag(self, rowid, val):
+        '''Flag this object for follow up'''
         self.atomDisplay.rowdata[rowid].flag_followup(val)
+
+    def onTag(self, rowid):
+        '''Add tags to tag queue for this object'''
+        obj = self.atomDisplay.rowdata[rowid]
+        dia = PieTagDialog(self, get_all_tags().keys(), obj.get_queued_tags())
+        ans = dia.ShowModal()
+        if ans == wx.ID_CANCEL: return
+        obj.add_tags_queued(*dia.GetTags())
 
     def onFilterView(self, evt=0):
         '''Does nothing for this widget'''

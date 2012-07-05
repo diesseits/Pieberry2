@@ -264,7 +264,7 @@ class BaseMainWindow(wx.Frame, PieActor):
         else:
             _icon.CopyFromBitmap(wx.Bitmap(os.path.join(IMGDIR, 'pieberry.ico'), wx.BITMAP_TYPE_ANY))
         self.SetIcon(_icon)
-        self.SetSize((862, 546))
+        self.SetSize((1000, 660))
         # end wxGlade
         self.SearchPanel = None
         self.WebPanel = None

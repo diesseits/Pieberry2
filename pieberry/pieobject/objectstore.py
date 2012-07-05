@@ -204,3 +204,7 @@ class PieObjectStore:
 
     def type_by_ref(self, ref):
         return type(self.store[ref])
+
+    def process_queued_tags(self):
+        '''Process queued tags for all objects in the ostore'''
+        [ o.process_queued_tags() for o in self.next() ]

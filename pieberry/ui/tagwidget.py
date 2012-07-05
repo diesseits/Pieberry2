@@ -75,6 +75,7 @@ class PieTagWidget(wx.Panel):
         self.Layout()
 
     def setTagList(self, taglist):
+        '''Sets the available tags (list of strings, not PieTags)'''
         self.taglist = taglist
         self.taglist.sort()
         self.__refresh_menu()
@@ -88,6 +89,7 @@ class PieTagWidget(wx.Panel):
             self.UserAddTag(tagtxtchosen)
 
     def onTagPress(self, evt):
+        '''The user clicked a tag platebutton '''
         newevt = PieTagClickedEvent(
             tag = evt.GetEventObject().GetTag()
             )
@@ -95,9 +97,11 @@ class PieTagWidget(wx.Panel):
         # print evt.GetEventObject().GetTag()
 
     def onMenuButtonPress(self, evt):
+        '''Show the menu when menu button pressed'''
         self.menubtn.ShowMenu()
 
     def onCreateNewTag(self):
+        '''The user opts to create a non-preexisting tag'''
         tdia = wx.TextEntryDialog(self, "Name of new tag:", "Create new tag")
         ans = tdia.ShowModal()
         if ans == wx.ID_CANCEL: return
@@ -122,14 +126,17 @@ class PieTagWidget(wx.Panel):
         self.Layout()
 
     def AddTags(self, tags):
+        '''Add a list of tags (strings)'''
         for tag in tags: self.AddTag(tag)
 
     def UserAddTag(self, tag):
+        '''The user has added a tag'''
         self.AddTag(tag)
         newevt = PieTagAddedEvent(tag = tag)
         wx.PostEvent(self, newevt)
 
     def AddTag(self, tag):
+        '''A tag is added by any means'''
         self.tags.append(tag)
         btn = PieTagButton(
             self, -1, 
@@ -149,6 +156,10 @@ class PieTagWidget(wx.Panel):
         self._sizer.Layout()
         self.Layout()
         wx.Panel.SetSize(self, self._sizer.GetMinSize())
+
+    def GetTags(self):
+        '''Return list of tags applicable'''
+        return self.tags
 
 class PieSpecialSizer(wx.BoxSizer):
     def __init__(self, columns):
@@ -172,15 +183,15 @@ class PieSpecialSizer(wx.BoxSizer):
         self.runningcount += 1
 
 class PieTagDialog(wx.Dialog):
-    def __init__(self, parent):
-        title = 'Add tags'
+    def __init__(self, parent, taglist=[], existingtags=[]):
+        title = _('Add tags')
         style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER
         super(PieTagDialog, self).__init__(parent, -1, title, 
                                          size=(300,300),style=style)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.ptw = PieTagWidget(self, 1, mode="piespecial")
+        self.ptw = PieTagWidget(self, 1, mode="standard")
         buttons = self.CreateButtonSizer(wx.OK|wx.CANCEL)
-        self.sizer.Add(wx.StaticText(self, -1, "Add Tags to Document:"), 
+        self.sizer.Add(wx.StaticText(self, -1, _("Add Tags to Document:")), 
                        0, wx.ALL|wx.EXPAND, 5)
         self.sizer.Add(wx.StaticLine(self, -1), 0, wx.ALL|wx.EXPAND, 5)
         self.sizer.Add(self.ptw, 1, wx.EXPAND)
@@ -189,16 +200,21 @@ class PieTagDialog(wx.Dialog):
 
         self.SetSizerAndFit(self.sizer)
         self.ptw.Bind(EVT_PIE_TAG_ADDED, self.onTagAdded)
+
+        self.ptw.setTagList(taglist)
+        self.ptw.AddTags(existingtags)
         
     def onTagAdded(self, evt):
         wx.CallAfter(self.doRefresh())
 
     def doRefresh(self):
-        pass
-        # win = wx.GetTopLevelParent(self) 
-        # win.sizer.SetSizeHints(win) 
-        # win.Fit() 
-        # win.Layout()         
+        win = wx.GetTopLevelParent(self) 
+        win.sizer.SetSizeHints(win) 
+        win.Fit() 
+        win.Layout()         
+
+    def GetTags(self):
+        return self.ptw.GetTags()
 
 class testdialog(wx.Dialog):
     def __init__(self, parent):

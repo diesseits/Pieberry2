@@ -83,7 +83,10 @@ class BetterContextPanel(wx.Panel):
         self.EmitUpdate(otherargs=((evt.objattr, evt.objattrval),))
 
     def OnTagAdded(self, evt):
-        self.obj.add_tag(evt.tag)
+        if self.obj.has_aspect('saved'):
+            self.obj.add_tag(evt.tag)
+        else:
+            self.obj.add_tags_queued(evt.tag)
 
     def OnTagClicked(self, evt):
         relparent = self.GetParent()
@@ -396,9 +399,14 @@ class FundInfoPanel(wx.Panel):
         else:
             self.locn_ct.SetLabel(_('Library'))
         self.tagedit.Clear()
-        self.tagedit.AddTags(obj.get_taglist())
-        if not obj.has_aspect('saved'):
-            self.tagedit.Disable()
+        if obj.has_aspect('saved'):
+            self.tagedit.AddTags(obj.get_taglist())
+        else:
+            self.tagedit.AddTags(obj.get_queued_tags())
+        # if not obj.has_aspect('saved'):
+        #     self.tagedit.Disable()
+        # else:
+        #     self.tagedit.Enable()
         self.fgsizer.Layout()
         wx.Panel.SetSize(self, self.sizer0.GetMinSize())
         # self.sizer0.Layout()

@@ -28,10 +28,14 @@ def get_pybtex_object(obj, texify=True):
     '''convert from PieObject to a pybtex Entry'''
     def f_(text):
         if type(text) in (str, unicode):
+            text = protect_caps(
+                text,
+                PIE_CONFIG.getboolean(
+                    'Format', 'protect_all_caps_in_citations')
+                )
             if texify:
-                return eblc(protect_caps(text, False))
-            else:
-                return text
+                text = eblc(text)
+            return text
         else: #this ain't text, don't touch it
             return text
 

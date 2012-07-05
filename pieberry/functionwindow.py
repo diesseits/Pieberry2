@@ -301,9 +301,10 @@ class FunctionMainWindow(BaseMainWindow):
             assert os.path.exists(path)
             assert os.path.exists(os.path.dirname(upath))
             shutil.move(path, upath)
-            # os.renames(path, dpath)
+            # convert queued tags to real tags
             obj.add_aspect_stored(upath)
         # session = Session()
+        ostore.process_queued_tags()
         ostore.set_aspect_saved()
         session.add_all(ostore)
         # time.sleep(1)
@@ -583,6 +584,9 @@ class FunctionMainWindow(BaseMainWindow):
             os.rename(obj.FileData_FullPath, storepath)
         # ============= END ENCRYPTION STUFF ================================
 
+        # convert queued tags to real tags
+        obj.process_queued_tags()
+        
         obj.add_aspect_stored(storepath)
         obj.add_aspect_saved()
 
