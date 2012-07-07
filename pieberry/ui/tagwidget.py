@@ -17,7 +17,7 @@ class PieTagButton(PlateButton):
 
 class PieTagWidget(wx.Panel):
     '''A tag display/editing widget'''
-    def __init__(self, parent, id, mode="horizontal", columns=3):
+    def __init__(self, parent, id, mode="horizontal", columns=4):
         wx.Panel.__init__(self, parent, id, size=(28,28))
         self.menubtn = None
         self.tags = []
@@ -35,6 +35,37 @@ class PieTagWidget(wx.Panel):
         self.tagmenu.Append(-1, _("[ New Tag ]"))
         self.tagmenu.Bind(wx.EVT_MENU, self.onMenuChoice)
 
+    def __add_to_sizer(self, widget, *params):
+        '''Add things to the sizer, with various modes'''
+        def addrow():
+            '''Add a row for multiline mode'''
+            newrow = wx.BoxSizer(wx.HORIZONTAL)
+            self._sizer.Add(newrow, 0)
+            self._rows.append(newrow)
+            self._rowcount += 1
+            return newrow
+        if self.mode == "multiline":
+            if self._rowcount == -1:
+                row = addrow()
+            elif self._colcount == self._columns:
+                self._colcount = 0
+                row = addrow()
+            else: 
+                row = self._rows[self._rowcount]
+            row.Add(widget, *params)
+            self._colcount += 1
+            self._sizer.Layout()
+            self.Layout()
+        else:
+            self._sizer.Add(widget, *params)
+
+    def __remove_from_sizer(self, widget):
+        for row in self._rows:
+            try: 
+                row.Remove(widget)
+            except:
+                pass
+
     def __append_menubutton(self):
         if not self.menubtn:
             self.menubtn = PlateButton(
@@ -48,7 +79,8 @@ class PieTagWidget(wx.Panel):
         self.menubtn.SetToolTip(tt)
         self.__refresh_menu()
         # if not self.mode == "lhorizontal":
-        self._sizer.Add(self.menubtn, 0)
+        self.__add_to_sizer(self.menubtn, 0)
+        print "MENUBUTTON INVOKED"
         self.menubtn.Show()
 
     def __refresh_menu(self):
@@ -63,11 +95,15 @@ class PieTagWidget(wx.Panel):
             self._sizer = wx.BoxSizer(wx.HORIZONTAL)
         elif mode == "lvertical": 
             self._sizer = wx.BoxSizer(wx.VERTICAL)
-        elif mode == "piespecial":
-            self._sizer = PieSpecialSizer(3)
+        elif mode == "multiline":
+            self._sizer = wx.BoxSizer(wx.VERTICAL)
         else:
             self._sizer = wx.FlexGridSizer(1, columns, 0, 0)
             [ self._sizer.AddGrowableCol(idx) for idx in range(columns) ]
+        self._columns = columns
+        self._colcount = 0
+        self._rowcount = -1
+        self._rows = []
         # self._sizer.Add((5,5))
         self.__append_menubutton()
         self.SetSizer(self._sizer)
@@ -116,11 +152,20 @@ class PieTagWidget(wx.Panel):
     def Clear(self):
         irange = range(len(self.tags))
         irange.reverse()
+        if self.mode == "multiline":
+            print self._rows
+            [ self._sizer.Remove(row) for row in self._rows ] 
+        self._colcount = 0
+        self._rowcount = -1
+        self._rows = []
         for i in irange:
             self.tags.pop(i)
-            self._sizer.Remove(self.tagbuttons[i])
+            if self.mode != "multiline":
+                self._sizer.Remove(self.tagbuttons[i])
             self.tagbuttons[i].Destroy()
             self.tagbuttons.pop(i)
+        if self.mode == 'multiline':
+            self.__append_menubutton()
         self.__refresh_menu()
         self._sizer.Layout()
         self.Layout()
@@ -145,9 +190,9 @@ class PieTagWidget(wx.Panel):
             style=PB_STYLE_SQUARE
             )
         self.tagbuttons.append(btn)
-        self._sizer.Add(btn, 0)
+        self.__add_to_sizer(btn, 0)
         btn.Bind(wx.EVT_BUTTON, self.onTagPress)
-        if not self.mode == 'lhorizontal':
+        if not self.mode in ('lhorizontal', 'multiline'):
             self.menubtn.Hide()
             self._sizer.Remove(self.menubtn)
             self.__append_menubutton()

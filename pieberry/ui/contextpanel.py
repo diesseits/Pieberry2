@@ -87,6 +87,9 @@ class BetterContextPanel(wx.Panel):
             self.obj.add_tag(evt.tag)
         else:
             self.obj.add_tags_queued(evt.tag)
+        self.fund_win.Layout()
+        self.fund_fp.Layout()
+        self.ResizeFPB()
 
     def OnTagClicked(self, evt):
         relparent = self.GetParent()
@@ -349,7 +352,7 @@ class FundInfoPanel(wx.Panel):
         self.locn_lb.SetFont(boldfont)
         self.locn_ct = wx.StaticText(self, -1, '')
         self.locn_ct.SetFont(normalfont)
-        self.tagedit = PieTagWidget(self, -1, mode="lhorizontal")
+        self.tagedit = PieTagWidget(self, -1, mode="multiline")
         self.tagedit.setTagList(get_all_tags().keys())
 
         self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.bigparent.OnTagAdded)
