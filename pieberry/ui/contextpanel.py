@@ -118,7 +118,8 @@ class BibInfoPanel(wx.Panel):
         self.type_lb = wx.StaticText(self, -1, _('Type:'))
         self.type_ct = wx.StaticText(self, -1, u'')
         self.key_lb = wx.StaticText(self, -1, _('Key:'))
-        self.key_ct = wx.StaticText(self, -1, u'')
+        self.key_ct = EditableText(self, -1, '', objattr='key')
+        # self.key_ct = wx.StaticText(self, -1, u'')
         self.date_lb = wx.StaticText(self, -1, _('Published:'))
         self.date_ct = wx.StaticText(self, -1, u'')
         self.abst_lb = wx.StaticText(self, -1, _('Abstract:'))
@@ -140,6 +141,7 @@ class BibInfoPanel(wx.Panel):
         self.fgsizer.Add((3,3))
 
         self.abst_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
+        self.key_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         
         self.SetSizer(self.fgsizer)
         wx.Panel.SetSize(self, self.fgsizer.GetMinSize())
@@ -150,7 +152,8 @@ class BibInfoPanel(wx.Panel):
         self.abst_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.abst_ct.SetValue(obj.BibData_Abstract if obj.BibData_Abstract else '')
         self.type_ct.SetLabel(unicode(obj.BibData_Type))
-        self.key_ct.SetLabel(unicode(obj.BibData_Key))
+        self.key_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
+        self.key_ct.SetValue(unicode(obj.BibData_Key) if obj.BibData_Key else '')
         if obj.BibData_DatePublished: 
             date = obj.BibData_DatePublished.strftime('%d %B %Y') if obj.BibData_DatePublished.year >= 1900 else fmtdate(obj.BibData_DatePublished)
         else:

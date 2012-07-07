@@ -351,6 +351,8 @@ class FunctionMainWindow(BaseMainWindow):
             evt.obj.author = evt.author
         if hasattr(evt, 'abstract'):
             evt.obj.BibData_Abstract = evt.abstract
+        if hasattr(evt, 'key'):
+            evt.obj.BibData_Key = evt.key
         if evt.obj.has_aspect('saved'):
             session.commit()
         try:

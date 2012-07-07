@@ -116,10 +116,9 @@ class PieBibEditDialog(wx.Dialog):
         self.titleAltCtrl = wx.TextCtrl(
             self.panelx, -1, "", style=wx.TE_READONLY)
         self.datePicker = wx.DatePickerCtrl(self.panelx, -1)
-
+        
         
         # Dialog controls
-
         self.btCancel = wx.Button(self.panelx, wx.ID_CANCEL, "Cancel")
         self.btOk = wx.Button(self.panelx, -1, "Ok")
 
@@ -131,6 +130,8 @@ class PieBibEditDialog(wx.Dialog):
             self.choiceBook.AddPage(pan, k.capitalize())
             self.panelref.append(k)
 
+        self.abstractct = wx.TextCtrl(self.panelx, -1, '', style=wx.TE_MULTILINE)
+        
         # Finish initialisation
 
         self.__set_properties()
@@ -159,6 +160,7 @@ class PieBibEditDialog(wx.Dialog):
         sizer2 = wx.BoxSizer(wx.HORIZONTAL)
         sizer3 = wx.BoxSizer(wx.VERTICAL)
         sizer4 = wx.BoxSizer(wx.VERTICAL)
+        sizer5 = wx.BoxSizer(wx.VERTICAL)
 
         sizerA = wx.BoxSizer(wx.HORIZONTAL)
         sizerB = wx.BoxSizer(wx.HORIZONTAL)
@@ -201,6 +203,10 @@ class PieBibEditDialog(wx.Dialog):
         sizer1.Add(sizerB, 0, wx.EXPAND)
         sizer1.Add(sizerD, 0, wx.EXPAND)
         sizer2.Add(self.choiceBook, 1, wx.ALL|wx.EXPAND, 3)
+        
+        sizer5.Add(wx.StaticText(self.panelx, -1, _('Abstract:')), 0, wx.ALL, 3)
+        sizer5.Add(self.abstractct, 1, wx.ALL|wx.EXPAND, 3)
+        sizer2.Add(sizer5, 1, wx.EXPAND)
 
         sizer3.Add(sizer1, 0, wx.EXPAND)
         sizer3.Add(sizer2, 1, wx.EXPAND)
@@ -244,6 +250,7 @@ class PieBibEditDialog(wx.Dialog):
         print obj.ReferDate().timetuple()
         self.datePicker.SetValue(
             pydate2wxdate(obj.ReferDate()))
+        if obj.BibData_Abstract: self.abstractct.SetValue(obj.BibData_Abstract)
         self.authorCtrl.SetFocus()
         
         bibdata = {}
@@ -290,6 +297,7 @@ class PieBibEditDialog(wx.Dialog):
             wx.MessageBox(unicode(exc))
             return
         ret['BibData_Type'] = et
+        ret['BibData_Abstract'] = self.abstractct.GetValue()
         ret.update(moredata)
         self.obj.add_aspect_bibdata(**ret)
         newevt = PieBibEditEvent(obj=self.obj)
