@@ -64,7 +64,7 @@ def pieberry_from_google(gdict, url):
         except:
             bd['BibData_DatePublished'] = datetime.datetime.today()
     if gdict.has_key('description') and gdict['description']:
-        bd['BibData_Annote'] = unicode(gdict['description'], 'utf8')
+        bd['BibData_Abstract'] = unicode(gdict['description'], 'utf8')
     if gdict.has_key('publishers') and gdict['publishers']:
         bd['BibData_Publisher'] = u' - '.join([unicode(p, 'utf8') for p in gdict['publishers']])
     googlekey = ''
