@@ -18,42 +18,46 @@ class PieFieldPanel(wx.ScrolledWindow):
         compulsory fields for that article type and (2) representing
         optional fields.'''
         wx.ScrolledWindow.__init__(self, parent)
+        self.panel = wx.Panel(self, -1)
+        sizer0 = wx.BoxSizer(wx.VERTICAL)
         sizer1 = wx.FlexGridSizer(0, 2, 3, 3)
         sizer1.AddGrowableCol(1)
 
         # Compulsory fields
         for opt_field in fieldlist[0]:
             # Create a label and control dynamically
-            setattr(self, 
+            setattr(self.panel, 
                     '%sLabel' % opt_field, 
-                    wx.StaticText(self, -1, opt_field.capitalize() + ':'))
-            setattr(self, 
+                    wx.StaticText(self.panel, -1, opt_field.capitalize() + ':'))
+            setattr(self.panel, 
                     '%sCtrl' % opt_field, 
-                    wx.TextCtrl(self, -1, style=wx.EXPAND, 
+                    wx.TextCtrl(self.panel, -1, style=wx.EXPAND, 
                                 validator=pieBibtexValidator(compulsory=True)))
-            a = getattr(self, '%sCtrl' % opt_field)
+            a = getattr(self.panel, '%sCtrl' % opt_field)
             a.Bind(wx.EVT_TEXT, 
                    parent.GetParent().GetParent().onFieldValidate)
             # Add to sizer
-            sizer1.Add(getattr(self, '%sLabel' % opt_field), 0, wx.EXPAND)
+            sizer1.Add(getattr(self.panel, '%sLabel' % opt_field), 0, wx.EXPAND)
             sizer1.Add(a, 1, wx.EXPAND)
 
         # Optional fields
         for opt_field in fieldlist[1]:
-            setattr(self, 
+            setattr(self.panel, 
                     '%sLabel' % opt_field, 
-                    wx.StaticText(self, -1, opt_field.capitalize() + ':'))
-            setattr(self, 
+                    wx.StaticText(self.panel, -1, opt_field.capitalize() + ':'))
+            setattr(self.panel, 
                     '%sCtrl' % opt_field, 
-                    wx.TextCtrl(self, -1, style=wx.EXPAND, 
+                    wx.TextCtrl(self.panel, -1, style=wx.EXPAND, 
                                 validator=pieBibtexValidator(compulsory=False)))
-            a = getattr(self, '%sCtrl' % opt_field)
+            a = getattr(self.panel, '%sCtrl' % opt_field)
             a.SetBackgroundColour('yellow')
             a.Bind(wx.EVT_TEXT, parent.GetParent().GetParent().onFieldValidate)
-            sizer1.Add(getattr(self, '%sLabel' % opt_field), 0, wx.EXPAND)
+            sizer1.Add(getattr(self.panel, '%sLabel' % opt_field), 0, wx.EXPAND)
             sizer1.Add(a, 1, wx.EXPAND)
 
-        self.SetSizer(sizer1)
+        self.panel.SetSizer(sizer1)
+        sizer0.Add(self.panel, 1, wx.EXPAND)
+        self.SetSizer(sizer0)
         self.entry_type = entry_type
         self.SetScrollbars(0, 20, 0, 50)
         self.fieldlist = fieldlist
@@ -61,12 +65,12 @@ class PieFieldPanel(wx.ScrolledWindow):
     def getData(self):
         ret = {}
         for it in self.fieldlist[0]:
-            f = getattr(self, '%sCtrl' % it)
+            f = getattr(self.panel, '%sCtrl' % it)
             if not f.GetValidator().Validate():
                 raise Exception, 'Value in %s is inappropriate for BibTeX' % it
             ret[bibtexmap[it]] = f.GetValue()
         for it in self.fieldlist[1]:
-            f = getattr(self, '%sCtrl' % it)
+            f = getattr(self.panel, '%sCtrl' % it)
             if not f.GetValidator().Validate():
                 raise Exception, 'Value in %s is inappropriate for BibTeX' % it
             if len(f.GetValue()) > 0:
@@ -77,7 +81,7 @@ class PieFieldPanel(wx.ScrolledWindow):
 
     def setData(self, data):
         for it, val in data.items():
-            f = getattr(self, '%sCtrl' % it, None)
+            f = getattr(self.panel, '%sCtrl' % it, None)
             if f and val:
                 f.SetValue(val)
 
@@ -117,11 +121,6 @@ class PieBibEditDialog(wx.Dialog):
             self.panelx, -1, "", style=wx.TE_READONLY)
         self.datePicker = wx.DatePickerCtrl(self.panelx, -1)
         
-        
-        # Dialog controls
-        self.btCancel = wx.Button(self.panelx, wx.ID_CANCEL, "Cancel")
-        self.btOk = wx.Button(self.panelx, -1, "Ok")
-
         # The dynamic panel - construction
         self.choiceBook = wx.Choicebook(self.panelx, -1)
         self.panelref = []
@@ -131,9 +130,12 @@ class PieBibEditDialog(wx.Dialog):
             self.panelref.append(k)
 
         self.abstractct = wx.TextCtrl(self.panelx, -1, '', style=wx.TE_MULTILINE)
+
+        # Dialog controls
+        self.btCancel = wx.Button(self.panelx, wx.ID_CANCEL, "Cancel")
+        self.btOk = wx.Button(self.panelx, -1, "Ok")
         
         # Finish initialisation
-
         self.__set_properties()
         self.__do_layout()
         self.__fill_fields(obj)
