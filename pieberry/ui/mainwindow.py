@@ -539,7 +539,8 @@ class BaseMainWindow(wx.Frame, PieActor):
     def OpenTagsPane(self):
         tab = TagListPanel(self.TabBook, -1)
         self.TabBook.AddPage(
-            tab, _('Tags'), select=True)
+            tab, _('Tags'), select=True,
+            bitmap = wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK, wx.ART_MENU))
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
 
     def DoSearch(self, evt):
