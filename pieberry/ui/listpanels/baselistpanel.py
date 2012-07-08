@@ -37,6 +37,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self.suppress_tipwindow = False # flag to keep the tooltip from popping up in inconvenient places
         self.isdragging = False # flag to know if a drag&drop is in progress
 
+        self.ListDisplay.SetFocus()
 
     def _setup_data(self):
         pass
