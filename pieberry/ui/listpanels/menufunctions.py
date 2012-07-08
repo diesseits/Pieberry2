@@ -115,7 +115,7 @@ class MenuFunctionsMixin:
         else:
             islib = False
             msg = _('Do you want to delete this document? The database entry will be deleted.')
-        dia = wx.MessageDialog(self, msg, style=wx.YES|wx.NO)
+        dia = wx.MessageDialog(self, msg, style=wx.YES|wx.NO|wx.NO_DEFAULT)
         ans = dia.ShowModal()
         if not ans == wx.ID_YES: return
         if obj.has_aspect('hasfile'):

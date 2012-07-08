@@ -17,12 +17,14 @@ class PieTagButton(PlateButton):
 
 class PieTagWidget(wx.Panel):
     '''A tag display/editing widget'''
-    def __init__(self, parent, id, mode="horizontal", columns=4):
+    def __init__(self, parent, id, mode="horizontal", columns=4,
+                 allow_removal=False):
         wx.Panel.__init__(self, parent, id, size=(28,28))
         self.menubtn = None
         self.tags = []
         self.tagbuttons = []
         self.mode = mode
+        self.allow_removal = allow_removal
         self.taglist = tagnames
         self.taglist.sort()
         self.__do_layout(mode, columns)

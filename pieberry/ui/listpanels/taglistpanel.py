@@ -68,7 +68,7 @@ class TagListPanel(BibListPanel):
 
     def OnDelTag(self, evt):
         if not self.TagChoice.GetStringSelection(): return
-        msg = wx.MessageDialog(self, _('Are you sure you want to delete this tag?'), _('Delete Tag'), style=wx.YES|wx.NO|wx.ICON_QUESTION)
+        msg = wx.MessageDialog(self, _('Are you sure you want to delete this tag?'), _('Delete Tag'), style=wx.YES|wx.NO|wx.ICON_QUESTION|wx.NO_DEFAULT)
         ans = msg.ShowModal()
         if ans == wx.ID_YES: 
             fn_del_tag(self.TagChoice.GetStringSelection())

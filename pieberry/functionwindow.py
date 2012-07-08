@@ -259,7 +259,7 @@ class FunctionMainWindow(BaseMainWindow):
                 # set key, query the user whether to proceed (the item
                 # may be a dupe).
                 if (bkey != obj.BibData_Key) and obj.BibData_Key:
-                    dia = wx.MessageDialog(self, _('''A record with a BibTeX key of %s already exists. Change to %s? (If 'no', then the record won't be added).''' % (obj.BibData_Key, bkey)), style=wx.YES|wx.NO)
+                    dia = wx.MessageDialog(self, _('''A record with a BibTeX key of %s already exists. Change to %s? (If 'no', then the record won't be added).''' % (obj.BibData_Key, bkey)), style=wx.YES|wx.NO|wx.YES_DEFAULT)
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
@@ -275,7 +275,7 @@ class FunctionMainWindow(BaseMainWindow):
                     dia = wx.MessageDialog(
                         self, 
                         _('''You have downloaded "%s" before.\nDo you still want to add it to your library?''' % obj.Title().strip('. ,-:')), 
-                        style=wx.YES|wx.NO)
+                        style=wx.YES|wx.NO|wx.NO_DEFAULT)
                     ans = dia.ShowModal()
                     if ans == wx.ID_NO:
                         ostore.Del(ref)
