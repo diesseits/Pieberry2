@@ -70,6 +70,9 @@ class TagHandler:
                 self.tag_queue.append(it)
 
     def get_queued_tags(self):
+        if not hasattr(self, 'tag_queue'):
+            print 'WARNING: no tag queue for this object'
+            return []
         return self.tag_queue
             
     def process_queued_tags(self):
