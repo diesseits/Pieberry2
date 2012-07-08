@@ -54,7 +54,24 @@ setup(name='pieberry-library-assistant',
       #   'pieberry': '.',
       #   },
       package_data = {
+        'pieberry': ['*.desktop',],
         'pieberry.ui': ['*.png', '*.ico'],
         },
       scripts = ['runpieberry', 'pieberry-library-assistant'],
       )
+
+
+if sys.argv[1] == 'install':
+    shutil.copyfile('./pieberry/pieberry-library-assistant.desktop',
+                    '/usr/share/applications/pieberry-library-assistant.desktop')
+    shutil.copyfile('./pieberry/ui/pie_128.png',
+                    '/usr/share/icons/hicolor/128x128/apps/pieberry.png')
+    shutil.copyfile('./pieberry/ui/pie_48.png',
+                    '/usr/share/icons/hicolor/48x48/apps/pieberry.png')
+    shutil.copyfile('./pieberry/ui/pie_36.png',
+                    '/usr/share/icons/hicolor/36x36/apps/pieberry.png')
+    shutil.copyfile('./pieberry/ui/pie_22.png',
+                    '/usr/share/icons/hicolor/22x22/apps/pieberry.png')
+    shutil.copyfile('./pieberry/ui/pie_16.png',
+                    '/usr/share/icons/hicolor/16x16/apps/pieberry.png')
+

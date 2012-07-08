@@ -225,7 +225,7 @@ class BaseListPanel(wx.Panel, MenuFunctionsMixin):
         self.isdragging = False
     
     def ClearAllData(self, evt=0):
-        '''Clear everthing including object store and list view'''
+        '''Clear everything including object store and list view'''
         self.objectstore = {}
         self.ListDisplay.DeleteAllItems()
 

@@ -11,6 +11,8 @@ PIE_CONFIG_DEFAULTS = [
     # ('Profile', 'exclude_by_default', 'submissions'),
     ('Profile', 'desktopdir', os.getcwd()),
     ('Profile', 'rootdir', os.getcwd()),
+    ('Profile', 'last_dir_saved_to', os.getcwd()),
+    ('Profile', 'last_dir_opened', os.getcwd()),
     ('Format', 'default_bibtex_entry_type', 'Misc'),
     ('Format', 'default_howpublished_text', 'On The Web'),
     ('Format', 'atom_title_hack', True),

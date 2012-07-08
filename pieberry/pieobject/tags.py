@@ -45,6 +45,14 @@ def fn_add_tag(tag):
     gen_tag_lookup()
     return g
 
+def fn_del_tag(tag):
+    '''Delete a tag from the db'''
+    g = get_tag(tag)
+    session.delete(g)
+    session.commit()
+    session.expire_all()
+    gen_tag_lookup()
+
 class TagHandler:
     '''tag functionality'''
     

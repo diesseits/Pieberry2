@@ -64,7 +64,12 @@ class ProfilePanel(wx.Panel):
                     'desktopdir': self.desktopdirctrl.GetPath(),
                     'rootdir': self.rootdirctrl.GetPath(),
                     'export_bibtex': self.bib_cb.GetValue(),
-                    'export_starred_only': self.bibexpstarred_cb.GetValue()})
+                    'export_starred_only': self.bibexpstarred_cb.GetValue(),
+                    'last_dir_saved_to': PIE_CONFIG.get('Profile', 
+                                                        'last_dir_saved_to'),
+                    'last_dir_opened': PIE_CONFIG.get('Profile', 
+                                                      'last_dir_opened')
+                    })
         return retdata
 
     def GetProfile(self):

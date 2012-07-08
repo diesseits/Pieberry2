@@ -80,7 +80,7 @@ class PieTagWidget(wx.Panel):
         self.__refresh_menu()
         # if not self.mode == "lhorizontal":
         self.__add_to_sizer(self.menubtn, 0)
-        print "MENUBUTTON INVOKED"
+        # print "MENUBUTTON INVOKED"
         self.menubtn.Show()
 
     def __refresh_menu(self):
@@ -153,7 +153,7 @@ class PieTagWidget(wx.Panel):
         irange = range(len(self.tags))
         irange.reverse()
         if self.mode == "multiline":
-            print self._rows
+            # print self._rows
             [ self._sizer.Remove(row) for row in self._rows ] 
         self._colcount = 0
         self._rowcount = -1

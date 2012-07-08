@@ -602,10 +602,15 @@ class FunctionMainWindow(BaseMainWindow):
         # handle time-of-use export file selection
         bibfilepath = PIE_CONFIG.get('Profile', 'bibliography_file')
         if not PIE_CONFIG.getboolean('Profile', 'export_bibtex'):
-            fdia = wx.FileDialog(self, wildcard="*.bib|*.bibtex", style=wx.FD_SAVE)
+            fdia = wx.FileDialog(
+                self, wildcard="*.bib|*.bibtex", 
+                style=wx.FD_SAVE,
+                defaultDir=PIE_CONFIG.get('Profile', 'last_dir_saved_to'),
+                defaultFile='library.bib')
             res = fdia.ShowModal()
             if res == wx.ID_CANCEL: return
             bibfilepath = fdia.GetPath()
+            PIE_CONFIG.set('Profile', 'last_dir_saved_to', fdia.GetDirectory())
             exporter.setPath(bibfilepath)
         if PIE_CONFIG.getboolean('Profile', 'export_starred_only'):
             thequery = query_favourites
@@ -698,9 +703,11 @@ class FunctionMainWindow(BaseMainWindow):
         fdia = wx.FileDialog(self, 
                              wildcard="PieSlice files (*.pieslice)|*.pieslice",
                              style=wx.FD_OPEN,
-                             defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+                             defaultDir=PIE_CONFIG.get('Profile', 
+                                                       'last_dir_opened'))
         res = fdia.ShowModal()
         if res == wx.ID_CANCEL: return
+        PIE_CONFIG.set('Profile', 'last_dir_opened', fdia.GetDirectory())
         from pieberry.pieoutput.pieslice import PieSlice
         pieslice = PieSlice(slicepath=fdia.GetPath())
         bibfile = pieslice.ExtractBib()
@@ -713,9 +720,11 @@ class FunctionMainWindow(BaseMainWindow):
         fdia = wx.FileDialog(
             self, 
             wildcard="BibTeX files (*.bib;*.bibtex)|*.bib;*.bibtex", 
-            style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 'rootdir'))
+            style=wx.FD_OPEN, defaultDir=PIE_CONFIG.get('Profile', 
+                                                        'last_dir_opened'))
         res = fdia.ShowModal()
         if res == wx.ID_CANCEL: return
+        PIE_CONFIG.set('Profile', 'last_dir_opened', fdia.GetDirectory())
         self.StatusBar.SetStatusText(_('Importing from file'))
         bibfilepath = fdia.GetPath()
         self._do_process_bibtex_file(bibfilepath)
