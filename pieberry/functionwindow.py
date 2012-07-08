@@ -740,9 +740,10 @@ class FunctionMainWindow(BaseMainWindow):
         ans = dlg.ShowModal()
         if ans == wx.ID_CANCEL: return
         bibtexdata = dlg.GetValue()
+        assert type(bibtexdata) == unicode
         attachfile = dlg.GetAttachedFile()
         tempfile = open(BIBTEMPFILE, 'w')
-        tempfile.write(bibtexdata)
+        tempfile.write(bibtexdata.encode('utf8'))
         tempfile.close()
         self._do_process_bibtex_file(BIBTEMPFILE, attachfile=attachfile)
 

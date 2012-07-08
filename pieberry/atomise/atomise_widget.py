@@ -139,6 +139,10 @@ class atomWidget(wx.Panel):
         ans = dia.ShowModal()
         if ans == wx.ID_CANCEL: return
         obj.add_tags_queued(*dia.GetTags())
+        tagbt = getattr(self.atomDisplay, 'tagbutton%d' % rowid)
+        tt = wx.ToolTip(u'; '.join(obj.get_queued_tags()))
+        tagbt.SetToolTip(tt)
+
 
     def onFilterView(self, evt=0):
         '''Does nothing for this widget'''
