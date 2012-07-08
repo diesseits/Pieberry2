@@ -782,6 +782,7 @@ class FunctionMainWindow(BaseMainWindow):
                     # in case of being passed a pieslice, handle
                     # extraction of the core file to a cache directory
                     obj.set_session(get_session())
+                    obj.notes = attachslice.ExtractNotes()
                     if attachslice.HasFile():
                         fn = attachslice.GetFileName()
                         dpath, components = suggest_path_cache_fromother(
@@ -791,7 +792,6 @@ class FunctionMainWindow(BaseMainWindow):
                         contribute_folder(os.path.dirname(dpath), components)
                         attachslice.ExtractFile(os.path.dirname(dpath))
                         obj.add_aspect_cached(dpath)
-                        obj.notes = attachslice.ExtractNotes()
                         print 'file successfully extracted and cached'
                 count += 1
                 progress_dialog.UpdatePulse('%d items added' % count)
