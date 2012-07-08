@@ -786,8 +786,10 @@ class FunctionMainWindow(BaseMainWindow):
                         fn = attachslice.GetFileName()
                         dpath, components = suggest_path_cache_fromother(
                             obj, fn)
+                        print 'Extracting file with name:', fn
+                        print 'Extracting file to location:', dpath
                         contribute_folder(os.path.dirname(dpath), components)
-                        attachslice.ExtractFile(dpath)
+                        attachslice.ExtractFile(os.path.dirname(dpath))
                         obj.add_aspect_cached(dpath)
                         obj.notes = attachslice.ExtractNotes()
                         print 'file successfully extracted and cached'

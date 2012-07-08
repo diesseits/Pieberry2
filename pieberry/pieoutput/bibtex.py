@@ -26,13 +26,14 @@ re_dateprefix = re.compile(r'^[12][0-9]{3}[01][0-9][0123][0-9]')
 
 def get_pybtex_object(obj, texify=True):
     '''convert from PieObject to a pybtex Entry'''
-    def f_(text):
+    def f_(text, protectcaps=False):
         if type(text) in (str, unicode):
-            text = protect_caps(
-                text,
-                PIE_CONFIG.getboolean(
-                    'Format', 'protect_all_caps_in_citations')
-                )
+            if protectcaps:
+                text = protect_caps(
+                    text,
+                    PIE_CONFIG.getboolean(
+                        'Format', 'protect_all_caps_in_citations')
+                    )
             if texify:
                 text = eblc(text)
             return text
@@ -61,7 +62,8 @@ def get_pybtex_object(obj, texify=True):
                 pybtex_entry.add_person(Person(name), btkey)
             continue 
         elif btkey == 'title':
-            pybtex_entry.fields[btkey] = f_(obj.Title(texstuff=True))
+            pybtex_entry.fields[btkey] = f_(obj.Title(texstuff=True), 
+                                            protectcaps=False)
             continue
         elif type(getattr(obj, objfield)) not in (str, unicode):
             continue

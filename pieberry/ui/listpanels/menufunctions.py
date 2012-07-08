@@ -123,7 +123,10 @@ class MenuFunctionsMixin:
             try:
                 if obj.aspects['encrypted'] == EC_TRUE_UNLOCKED:
                     os.remove(decrypted_path(obj))
-                os.remove(obj.FileData_FullPath)
+                if os.path.isdir(obj.FileData_FullPath):
+                    shutil.rmtree(obj.FileData_FullPath)
+                else:
+                    os.remove(obj.FileData_FullPath)
                 obj.clear_file()
             except:
                 traceback.print_exc()
