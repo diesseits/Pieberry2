@@ -89,7 +89,7 @@ class BetterContextPanel(wx.Panel):
             self.obj.add_tags_queued(evt.tag)
         self.fund_win.Layout()
         self.fund_fp.Layout()
-        self.ResizeFPB()
+        # self.ResizeFPB()
 
     def OnTagClicked(self, evt):
         relparent = self.GetParent()
@@ -358,7 +358,8 @@ class FundInfoPanel(wx.Panel):
         self.tagedit = PieTagWidget(self, -1, mode="multiline")
         self.tagedit.setTagList(get_all_tags().keys())
 
-        self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.bigparent.OnTagAdded)
+        # self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.bigparent.OnTagAdded)
+        self.tagedit.Bind(EVT_PIE_TAG_ADDED, self.onTagAdded)
         self.tagedit.Bind(EVT_PIE_TAG_CLICKED, self.bigparent.OnTagClicked)
         self.auth_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
         self.title_ct.Bind(EVT_PIE_CONTEXT_PANEL_FIELD, self.bigparent.OnFieldEdit)
@@ -382,8 +383,20 @@ class FundInfoPanel(wx.Panel):
         self.Layout()
         wx.Panel.SetSize(self, self.sizer0.GetMinSize())
 
+    def onTagAdded(self, evt):
+        print 'onTagAdded firing'
+        if self.obj.has_aspect('saved'):
+            self.obj.add_tag(evt.tag)
+        else:
+            self.obj.add_tags_queued(evt.tag)
+        self.sizer0.Layout()
+        wx.Panel.SetSize(self, self.sizer0.GetMinSize())
+        self.Layout()
+        self.bigparent.ResizeFPB()
+
     def SetObject(self, obj):
         # print 'COLWIDTHS', self.fgsizer.GetColWidths()
+        self.obj = obj
         self.auth_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.title_ct.SetWrapWidth(self.fgsizer.GetColWidths()[1])
         self.favpanel.SetValue(obj.StatData_Favourite)
