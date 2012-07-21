@@ -976,6 +976,10 @@ class FunctionMainWindow(BaseMainWindow):
         # refresh folder view
         progress_dialog.Destroy()
         evt.panel.AddObjects(evt.panel.objectstore)
+        
+    # =================== Object tagging functionality ===================
     
     def OnViewTags(self, evt):
+        '''View tags pane'''
         self.OpenTagsPane()
+

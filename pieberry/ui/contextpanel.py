@@ -390,7 +390,7 @@ class FundInfoPanel(wx.Panel):
         else:
             self.obj.add_tags_queued(evt.tag)
         self.sizer0.Layout()
-        wx.Panel.SetSize(self, self.sizer0.GetMinSize())
+        # wx.Panel.SetSize(self, self.sizer0.GetMinSize())
         self.Layout()
         self.bigparent.ResizeFPB()
 

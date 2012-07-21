@@ -3,6 +3,8 @@ import wx.lib.newevent
 
 PieTagClickedEvent, EVT_PIE_TAG_CLICKED = wx.lib.newevent.NewEvent()
 # attributes - tag - the tag clicked
+PieTagRemovedEvent, EVT_PIE_TAG_REMOVED = wx.lib.newevent.NewEvent()
+# attributes - tag - the tag removed
 PieTagAddedEvent, EVT_PIE_TAG_ADDED = wx.lib.newevent.NewEvent()
 # attributes - tag - the tag added
 PieFileDroppedEvt, EVT_PIE_FILE_DROPPED = wx.lib.newevent.NewEvent()

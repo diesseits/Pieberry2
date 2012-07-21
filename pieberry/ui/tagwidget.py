@@ -229,6 +229,17 @@ class PieSpecialSizer(wx.BoxSizer):
         self.hsizers[-1].Add(widget, size, flags, padding)
         self.runningcount += 1
 
+    def UserAddedTagFromElsewhere(self, evt):
+        '''To be called when the user has added a tag to the obj from
+        somewhere else in the program'''
+        pass
+
+    def UserRemovedTagFromElsewhere(self, evt):
+        '''To be called when the user has removed a tag from the obj
+        from somewhere else in the program'''
+        pass
+
+
 class PieTagDialog(wx.Dialog):
     def __init__(self, parent, taglist=[], existingtags=[]):
         title = _('Add tags')
@@ -252,6 +263,8 @@ class PieTagDialog(wx.Dialog):
         self.ptw.AddTags(existingtags)
         
     def onTagAdded(self, evt):
+        newevt = PieTagAddedEvent(tag = evt.tag)
+        wx.PostEvent(self, newevt)
         wx.CallAfter(self.doRefresh())
 
     def doRefresh(self):
@@ -263,6 +276,16 @@ class PieTagDialog(wx.Dialog):
     def GetTags(self):
         return self.ptw.GetTags()
 
+    def UserAddedTagFromElsewhere(self, evt):
+        '''To be called when the user has added a tag to the obj from
+        somewhere else in the program'''
+        pass
+
+    def UserRemovedTagFromElsewhere(self, evt):
+        '''To be called when the user has removed a tag from the obj
+        from somewhere else in the program'''
+        pass
+v
 class testdialog(wx.Dialog):
     def __init__(self, parent):
         title = 'nt'

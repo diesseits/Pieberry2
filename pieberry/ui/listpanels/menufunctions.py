@@ -298,6 +298,12 @@ class MenuFunctionsMixin:
         obj = self.GetSelectedItem()
         clipdata = wx.TextDataObject()
         clipdata.SetText(obj.BibData_Key)        
+        if PYNOTIFY:
+            n = pynotify.Notification(
+                "BibTeX Key", 
+                obj.BibData_Key,
+                os.path.join(IMGDIR, 'pie_48.png'))
+            n.show()
         wx.TheClipboard.Open()
         wx.TheClipboard.SetData(clipdata)
         wx.TheClipboard.Close()

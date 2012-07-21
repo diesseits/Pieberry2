@@ -112,7 +112,8 @@ class PieObjectStore:
         the objecstore's iterator functions. Acceptable values are:
         - "date" 
         - "filename"
-        - "title"'''
+        - "title"
+        - "author"'''
         self.store_orderlist.sort(key=lambda k: self.store[k].SortContext(crit))
 
     def Del(self, idx):
