@@ -1,4 +1,4 @@
-import sys
+import sys, traceback
 from ConfigParser import ConfigParser, SafeConfigParser
 from pprint import pprint
 from globalvars import *
@@ -18,6 +18,7 @@ if sys.platform in ('win32', 'win64'):
             keyring.set_keyring(keyring.backend.UncryptedFileKeyring())
         except: #hack: think there may be a bug where uncrypted won't
                 #work if there's no PATH variable
+            traceback.print_exc()
             keyring.set_keyring(keyring.backend.Win32CryptoKeyring())
 
 class PieConfig(SafeConfigParser):
