@@ -549,13 +549,14 @@ class BaseMainWindow(wx.Frame, PieActor):
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.Bind(EVT_PIE_GEN_REPORT, self.OnMakeReport)
 
-    def OpenReportPane(self, ostore):
+    def OpenReportPane(self, ostore, subject):
         tab = ReportPanel(self.TabBook, -1)
         self.TabBook.AddPage(
-            tab, _('Report'), select=True,
+            tab, _('Report: ') + subject, select=True,
             )
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
         tab.AddObjects(ostore)
+        tab.SetSubject(subject)
 
     def DoSearch(self, evt):
         '''stub'''

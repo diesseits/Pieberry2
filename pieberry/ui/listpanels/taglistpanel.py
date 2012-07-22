@@ -58,7 +58,8 @@ class TagListPanel(BibListPanel):
 
     def OnMakeReport(self, evt):
         newevt = PieGenReportEvent(
-            ostore = self.objectstore
+            ostore = self.objectstore,
+            subject = self.TagChoice.GetStringSelection()
             )
         wx.PostEvent(self, newevt)
 

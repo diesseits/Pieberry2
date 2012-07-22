@@ -3,6 +3,7 @@ import wx.lib.newevent
 
 PieGenReportEvent, EVT_PIE_GEN_REPORT = wx.lib.newevent.NewEvent()
 # attributes - ostore - all potential objects for the report
+#            - subject - report subject
 PieTagClickedEvent, EVT_PIE_TAG_CLICKED = wx.lib.newevent.NewEvent()
 # attributes - tag - the tag clicked
 PieTagRemovedEvent, EVT_PIE_TAG_REMOVED = wx.lib.newevent.NewEvent()

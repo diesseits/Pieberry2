@@ -987,7 +987,7 @@ class FunctionMainWindow(BaseMainWindow):
     # =================== Report generation =============================
 
     def OnMakeReport(self, evt):
-        self.OpenReportPane(evt.ostore)
+        self.OpenReportPane(evt.ostore, evt.subject)
 
     # =================== Printing support ==============================
 

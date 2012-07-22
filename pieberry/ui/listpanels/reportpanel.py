@@ -30,7 +30,7 @@ class ReportPanel(BaseListPanel):
         self.ListDisplay = GBListCtrl(self) # google books listctrl will do
         self.RichText = rt.RichTextCtrl(
             self, style=wx.VSCROLL|wx.HSCROLL|wx.NO_BORDER|wx.TE_READONLY)
-        self.PrintButton = wx.Button(self, -1, label=_('Print'))
+        self.RevertButton = wx.Button(self, -1, label=_('Review Sources'))
         self.SelAllButton = wx.Button(self, -1, label=_('Select All'))
         self.DoReportButton = wx.Button(self, -1, label=_('Make Report'))
         self.OrderChoice = wx.Choice(self, -1, choices=ORDERS.keys())
@@ -47,7 +47,7 @@ class ReportPanel(BaseListPanel):
         #add to sizers
         self.sizer1.Add(self.SelAllButton, 0, wx.ALL, 5)
         self.sizer1.Add((20,20), 1)
-        self.sizer1.Add(self.PrintButton, 0, wx.ALL, 5)
+        self.sizer1.Add(self.RevertButton, 0, wx.ALL, 5)
         self.sizer1.Add(self.OrderChoice, 0, wx.ALL|wx.EXPAND, 5)
         self.sizer1.Add(self.DoReportButton, 0, wx.ALL, 5)
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
@@ -55,7 +55,7 @@ class ReportPanel(BaseListPanel):
         self.sizer0.Add(self.sizer1, 0, wx.EXPAND)
 
         #layout
-        self.PrintButton.Hide()
+        self.RevertButton.Hide()
         self.RichText.Hide()
 
         self.SetSizer(self.sizer0)
@@ -68,8 +68,30 @@ class ReportPanel(BaseListPanel):
         self.DoReportButton.Hide()
         self.ListDisplay.Hide()
         self.RichText.Show()
-        self.PrintButton.Show()
+        self.RevertButton.Show()
         self.Layout()
+
+    def _revert_mode(self):
+        '''Opposite of _change_mode'''
+        self.SelAllButton.Show()
+        self.OrderChoice.Show()
+        self.DoReportButton.Show()
+        self.ListDisplay.Show()
+        self.RichText.Hide()
+        self.RevertButton.Hide()
+        self.Layout()
+
+    def AddObjects(self, ostore):
+        '''Overriding to ensure they're pre-ticked'''
+        self.ListDisplay.DeleteAllItems()
+        self.objectstore = ostore
+        for ref, i in self.objectstore.GetNext():
+            try:
+                self.ListDisplay.AddObject(i, ref, 
+                                           checkstatus=True)
+            except:
+                traceback.print_exc()
+                print 'Had trouble here:', ref, i
 
     def SetXMLContent(self, content):
         # print content
@@ -91,7 +113,7 @@ class ReportPanel(BaseListPanel):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
                               self.onSelectionActivated)
         self.DoReportButton.Bind(wx.EVT_BUTTON, self.onShowReport)
-        self.PrintButton.Bind(wx.EVT_BUTTON, self.onPrintReport)
+        self.RevertButton.Bind(wx.EVT_BUTTON, self.onRevert)
 
     def Repopulate(self, filtertext=None, checkstatus=False):
         '''repopulate the list from current data, possibly filtering it
@@ -110,19 +132,15 @@ class ReportPanel(BaseListPanel):
                                        filtertext=filtertext,
                                        checkstatus=cs)
 
-
     def GetBuffer(self):
         '''return buffer for printing'''
         return self.RichText.GetBuffer()
 
-    def onPrintReport(self, evt):
-        pass
-        # printbuffer = self.RichText.GetBuffer()
-        # rtprinting = rt.RichTextPrinting()
-        # rtprinting.PreviewBuffer(printbuffer)
+    def SetSubject(self, subject):
+        self.subject = subject
 
-        # rtprinting.PrintBuffer(printbuffer)
-        # rtprinting.PageSetup()
+    def onRevert(self, evt):
+        self._revert_mode()
 
     def onShowReport(self, evt):
         '''User chooses to compile the report, show it'''
@@ -134,6 +152,7 @@ class ReportPanel(BaseListPanel):
                   for x in self.ListDisplay.GetCheckedList() ]
                 )
             )
+        reporter.SetSubject(self.subject)
         reporter.Sort(order=
                       ORDERS[self.OrderChoice.GetStringSelection()])
         xml = reporter.GenerateReport()
