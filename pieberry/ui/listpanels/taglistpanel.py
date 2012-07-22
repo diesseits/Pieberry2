@@ -34,13 +34,14 @@ class TagListPanel(BibListPanel):
         tdbtt = wx.ToolTip(_('Delete this tag'))
         self.TagDelButton.SetToolTip(tdbtt)
         self.ListDisplay = BibListCtrl(self)
-        # self.DelButton = wx.Button(self, -1, label=_("Delete"))
-        # self.sizer1.Add(self.DelButton, 1, wx.ALL, 5)
+        self.reportButton = wx.Button(self, -1, label=("Generate Report"))
+        self.sizer1.Add((20,20), 1)
+        self.sizer1.Add(self.reportButton, 0, wx.ALL, 5)
         self.sizer2.Add(self.TagChoice, 1, wx.ALL|wx.EXPAND, 5)
         self.sizer2.Add(self.TagDelButton, 0, wx.ALL, 5)
         self.sizer0.Add(self.sizer2, 0, wx.ALL|wx.EXPAND, 5)
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
-        self.sizer0.Add(self.sizer1)
+        self.sizer0.Add(self.sizer1, 0, wx.ALL|wx.EXPAND, 5)
         self.SetSizer(self.sizer0)
         if len(tagselections) > 0: self.SelectTag(tagselections[0])
         # self.Layout()
@@ -53,6 +54,13 @@ class TagListPanel(BibListPanel):
         self.ListDisplay.Bind(wx.EVT_KEY_DOWN, self.onKeyDown)
         self.TagChoice.Bind(wx.EVT_CHOICE, self.OnTagChosen)
         self.TagDelButton.Bind(wx.EVT_BUTTON, self.OnDelTag)
+        self.reportButton.Bind(wx.EVT_BUTTON, self.OnMakeReport)
+
+    def OnMakeReport(self, evt):
+        newevt = PieGenReportEvent(
+            ostore = self.objectstore
+            )
+        wx.PostEvent(self, newevt)
 
     def OnTagChosen(self, evt):
         print evt.GetString()

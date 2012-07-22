@@ -285,7 +285,7 @@ class PieTagDialog(wx.Dialog):
         '''To be called when the user has removed a tag from the obj
         from somewhere else in the program'''
         pass
-v
+
 class testdialog(wx.Dialog):
     def __init__(self, parent):
         title = 'nt'

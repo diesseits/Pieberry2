@@ -875,7 +875,6 @@ class FunctionMainWindow(BaseMainWindow):
         pan.Bind(EVT_PIE_GOOGLE_SEARCH, self.Callback_GoogleSearch)
         gbs.start()
 
-
     # FUNCTIONALITY FOR FOLDER (FILE MANAGER) VIEWS
 
     def _open_folder(self, notify_window, fobj):
@@ -983,3 +982,8 @@ class FunctionMainWindow(BaseMainWindow):
         '''View tags pane'''
         self.OpenTagsPane()
 
+
+    # =================== Report generation =============================
+
+    def OnMakeReport(self, evt):
+        self.OpenReportPane(evt.ostore)

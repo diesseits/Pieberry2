@@ -542,6 +542,15 @@ class BaseMainWindow(wx.Frame, PieActor):
             tab, _('Tags'), select=True,
             bitmap = wx.ArtProvider.GetBitmap(wx.ART_ADD_BOOKMARK, wx.ART_MENU))
         tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.Bind(EVT_PIE_GEN_REPORT, self.OnMakeReport)
+
+    def OpenReportPane(self, ostore):
+        tab = ReportPanel(self.TabBook, -1)
+        self.TabBook.AddPage(
+            tab, _('Report'), select=True,
+            )
+        tab.Bind(EVT_PIE_LIST_SELECTION_EVENT, self.onNewContextToShow)
+        tab.AddObjects(ostore)
 
     def DoSearch(self, evt):
         '''stub'''

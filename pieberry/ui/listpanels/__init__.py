@@ -7,3 +7,4 @@ from pieberry.ui.listpanels.bibimppanel import BibImpPanel
 from pieberry.ui.listpanels.intropanel import IntroPanel
 from pieberry.ui.listpanels.dirlistpanel import DirListPanel
 from pieberry.ui.listpanels.taglistpanel import TagListPanel
+from pieberry.ui.listpanels.reportpanel import ReportPanel

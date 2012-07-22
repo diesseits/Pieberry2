@@ -5,7 +5,12 @@
 
 import xml.dom.minidom
 
-ORDERS = ('author', 'title', 'date', 'filename')
+ORDERS = {
+    _('Author'): 'author', 
+    _('Title'): 'title', 
+    _('Date of Publication'): 'date', 
+    _('File Name'): 'filename'
+    }
 HEADER_FORMATS = ('citation', 'title', 'authortitle', 'filename')
 
 report_xml_header = '<?xml version="1.0" encoding="UTF-8"?><richtext version="1.0.0.0" xmlns="http://www.wxwidgets.org">'
