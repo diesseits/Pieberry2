@@ -111,6 +111,10 @@ class NotesPane(wx.Panel):
         wx.CallAfter(self.savebt.Disable)
 
 
+    def GetBuffer(self):
+        '''return buffer for printing'''
+        return self.rtc.GetBuffer()
+
     def GetXMLContent(self):
         handler = rt.RichTextXMLHandler()
         # handler.SetFlags(rt.RICHTEXT_HANDLER_SAVE_IMAGES_TO_MEMORY)

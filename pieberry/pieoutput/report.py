@@ -97,7 +97,7 @@ class ReportFormatter:
             # create overall header
             header = self.basedom.createElement('paragraphlayout')
             header.setAttribute('textcolor', "#000000")
-            header.setAttribute('fontsize', "14")
+            header.setAttribute('fontsize', "12")
             header.setAttribute('fontstyle', '90')
             header.setAttribute('fontweight', '90')
             header.setAttribute('fontunderlined', '0')
@@ -110,7 +110,7 @@ class ReportFormatter:
             dummypara = self.basedom.createElement('paragraph')
             headertext = self.basedom.createElement('text')
             headertext.setAttribute('fontface', 'sansserif')
-            headertext.setAttribute('fontsize', '16')
+            headertext.setAttribute('fontsize', '14')
             headertext.setAttribute('fontweight', '92')
             # headertext.setAttribute('fontunderlined', '1')
             headertextnode = self.basedom.createTextNode(self._get_header(obj))

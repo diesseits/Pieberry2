@@ -34,7 +34,7 @@ class ReportPanel(BaseListPanel):
         self.SelAllButton = wx.Button(self, -1, label=_('Select All'))
         self.DoReportButton = wx.Button(self, -1, label=_('Make Report'))
         self.OrderChoice = wx.Choice(self, -1, choices=ORDERS.keys())
-        self.OrderChoice.SetSelection(0)
+        self.OrderChoice.SetSelection(2)
 
         rtcfont = wx.Font(
             12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
@@ -91,6 +91,7 @@ class ReportPanel(BaseListPanel):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_ACTIVATED, 
                               self.onSelectionActivated)
         self.DoReportButton.Bind(wx.EVT_BUTTON, self.onShowReport)
+        self.PrintButton.Bind(wx.EVT_BUTTON, self.onPrintReport)
 
     def Repopulate(self, filtertext=None, checkstatus=False):
         '''repopulate the list from current data, possibly filtering it
@@ -108,6 +109,20 @@ class ReportPanel(BaseListPanel):
             self.ListDisplay.AddObject(i, ref, 
                                        filtertext=filtertext,
                                        checkstatus=cs)
+
+
+    def GetBuffer(self):
+        '''return buffer for printing'''
+        return self.RichText.GetBuffer()
+
+    def onPrintReport(self, evt):
+        pass
+        # printbuffer = self.RichText.GetBuffer()
+        # rtprinting = rt.RichTextPrinting()
+        # rtprinting.PreviewBuffer(printbuffer)
+
+        # rtprinting.PrintBuffer(printbuffer)
+        # rtprinting.PageSetup()
 
     def onShowReport(self, evt):
         '''User chooses to compile the report, show it'''

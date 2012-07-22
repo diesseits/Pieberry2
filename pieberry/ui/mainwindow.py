@@ -1,5 +1,6 @@
 import wx
 import wx.lib.agw.aui as wxauip
+import wx.richtext
 # import wx.lib.agw.flatnotebook as fnb
 import wx.aui as wxaui
 import os, sys
@@ -16,6 +17,7 @@ from pieberry.pieconfig.config import PIE_CONFIG
 from pieberry.atomise.atomise_widget import atomWidget
 from pieberry.ui.notespane import NotesPane
 from pieberry.pieconfig.globalvars import ZBAR
+
 
 class BaseMainWindow(wx.Frame, PieActor):
     def __init__(self, *args, **kwds):
@@ -53,9 +55,12 @@ class BaseMainWindow(wx.Frame, PieActor):
             _('Export all starred items with bibliographic data to a BibTeX file'))
         self.menu_savebibs.SetBitmap(
             wx.ArtProvider.GetBitmap(wx.ART_FILE_SAVE, wx.ART_MENU, (16, 16)))
-        # self.menu_discard = wx.MenuItem(
-        #     fileMenu, -1, 
-        #     _('&Discard Bibliography Changes'), _('Discard'))
+        self.menu_print = wx.MenuItem(
+            fileMenu, -1, _('&Print\tCtrl-p'), _('Print notes or report'))
+        self.menu_print.SetBitmap(
+            wx.ArtProvider.GetBitmap(wx.ART_PRINT, wx.ART_MENU))
+        self.menu_pagesetup = wx.MenuItem(
+            fileMenu, -1, _('P&age setup'), _('Set up printer page layout'))
         self.menu_quit = wx.MenuItem(
             fileMenu, -1, _('&Quit\tCtrl-q'), _('Quit'))
         self.menu_quit.SetBitmap(
@@ -168,15 +173,14 @@ class BaseMainWindow(wx.Frame, PieActor):
             # END debug menu
 
         fileMenu.AppendItem(self.menu_savebibs)
-        # fileMenu.AppendItem(self.menu_discard)
+        fileMenu.AppendItem(self.menu_print)
+        fileMenu.AppendItem(self.menu_pagesetup)
         fileMenu.AppendItem(self.menu_config)
-        # fileMenu.AppendItem(self.menu_atom_settings)
         fileMenu.AppendItem(self.menu_rescan)
         fileMenu.AppendSeparator()
         fileMenu.AppendItem(self.menu_quit)
         helpMenu.AppendItem(self.menu_manual)
         helpMenu.AppendItem(self.menu_about)
-        # gatherMenu.AppendItem(self.menu_pageref)
         locateMenu.AppendItem(self.menu_find)
         locateMenu.AppendItem(self.menu_find_in_folders)
         locateMenu.AppendItem(self.menu_filter)
@@ -212,17 +216,16 @@ class BaseMainWindow(wx.Frame, PieActor):
         self.SetMenuBar(menuBar)
         self.SetAutoLayout(True)
 
+        self.Bind(wx.EVT_MENU, self.OnPrint, self.menu_print)
+        self.Bind(wx.EVT_MENU, self.OnPageSetup, self.menu_pagesetup)
         self.Bind(wx.EVT_MENU, self.onFind, self.menu_find)
         self.Bind(wx.EVT_MENU, self.onFindInFolders, self.menu_find_in_folders)
         self.Bind(wx.EVT_MENU, self.OnDesktopProcessGen, self.menu_atom_process)
-        # self.Bind(wx.EVT_MENU, self.onDesktopSettings, self.menu_atom_settings)
         self.Bind(wx.EVT_MENU, self.onSaveBibs, self.menu_savebibs)
         self.Bind(wx.EVT_MENU, self.onClose, self.menu_quit)
         wx.EVT_CLOSE(self, self.onClose)
         self.Bind(wx.EVT_MENU, self.onConfig, self.menu_config)
         self.Bind(wx.EVT_MENU, self.onAbout, self.menu_about)
-        # self.Bind(wx.EVT_MENU, self.onDiscard, self.menu_discard)
-        # self.Bind(wx.EVT_MENU, self.onPageReference, self.menu_pageref)
         self.Bind(wx.EVT_MENU, self.OnCreateNewBibObj, self.menu_emptyref)
         self.Bind(wx.EVT_MENU, self.onShowManual, self.menu_manual)
         self.Bind(wx.EVT_MENU, self.ToggleWebPanel, self.menu_scan_web_page)
@@ -246,8 +249,10 @@ class BaseMainWindow(wx.Frame, PieActor):
         # self.menu_savebibs.Enable(False)
         # self.menu_discard.Enable(False)
 
-
         # Menu Bar end
+
+        # Printing
+        self.printer = wx.richtext.RichTextPrinting()
 
         self.__set_properties()
         self.__do_layout()

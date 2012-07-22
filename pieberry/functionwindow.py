@@ -988,3 +988,18 @@ class FunctionMainWindow(BaseMainWindow):
 
     def OnMakeReport(self, evt):
         self.OpenReportPane(evt.ostore)
+
+    # =================== Printing support ==============================
+
+    def OnPrint(self, evt):
+        pan = self.GetCurrentPane()
+        if pan.paneltype not in ('notespanel', 'ReportPanel'):
+            wx.MessageBox(_('Not a printable buffer'), _('Pieberry'), 
+                          style=wx.ICON_EXCLAMATION)
+            return
+        printbuffer = pan.GetBuffer()
+        self.printer.PrintBuffer(printbuffer)
+        self.StatusBar.SetStatusText(_('Printing...'))
+
+    def OnPageSetup(self, evt):
+        self.printer.PageSetup()
