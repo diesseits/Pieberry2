@@ -544,7 +544,7 @@ class PieObject(SQLABase, TagHandler, BiblioHandler):
             return self.FileData_FileName
         elif context == 'title':
             return self.Title()
-        elif contex == 'author':
+        elif context == 'author':
             return self.Author()
 
 

@@ -33,7 +33,12 @@ class ReportPanel(BaseListPanel):
         self.PrintButton = wx.Button(self, -1, label=_('Print'))
         self.SelAllButton = wx.Button(self, -1, label=_('Select All'))
         self.DoReportButton = wx.Button(self, -1, label=_('Make Report'))
-        self.HeaderFmtChoice = wx.Choice(self, -1, choices=ORDERS.keys())
+        self.OrderChoice = wx.Choice(self, -1, choices=ORDERS.keys())
+        self.OrderChoice.SetSelection(0)
+
+        rtcfont = wx.Font(
+            12, wx.FONTFAMILY_ROMAN, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
+        self.RichText.SetFont(rtcfont)
 
         #tooltips
         tt1 = wx.ToolTip(_('Make a report with the selected contents'))
@@ -43,7 +48,7 @@ class ReportPanel(BaseListPanel):
         self.sizer1.Add(self.SelAllButton, 0, wx.ALL, 5)
         self.sizer1.Add((20,20), 1)
         self.sizer1.Add(self.PrintButton, 0, wx.ALL, 5)
-        self.sizer1.Add(self.HeaderFmtChoice, 0, wx.ALL|wx.EXPAND, 5)
+        self.sizer1.Add(self.OrderChoice, 0, wx.ALL|wx.EXPAND, 5)
         self.sizer1.Add(self.DoReportButton, 0, wx.ALL, 5)
         self.sizer0.Add(self.ListDisplay, 1, wx.ALL|wx.EXPAND, 5)
         self.sizer0.Add(self.RichText, 1, wx.ALL|wx.EXPAND, 5)
@@ -59,12 +64,25 @@ class ReportPanel(BaseListPanel):
     def _change_mode(self):
         '''Change mode from selection of sources to presentation of report'''
         self.SelAllButton.Hide()
-        self.HeaderFmtChoice.Hide()
+        self.OrderChoice.Hide()
         self.DoReportButton.Hide()
         self.ListDisplay.Hide()
         self.RichText.Show()
         self.PrintButton.Show()
         self.Layout()
+
+    def SetXMLContent(self, content):
+        # print content
+        from cStringIO import StringIO
+        out = StringIO()
+        handler = wx.richtext.RichTextXMLHandler()
+        buffer = self.RichText.GetBuffer()
+        buffer.AddHandler(handler)
+        out.write(content)
+        out.seek(0)
+        handler.LoadStream(buffer, out)
+        # print out.read()
+        self.RichText.Refresh()
 
     def _do_bindings(self):
         self.ListDisplay.Bind(wx.EVT_LIST_ITEM_SELECTED,
@@ -94,6 +112,18 @@ class ReportPanel(BaseListPanel):
     def onShowReport(self, evt):
         '''User chooses to compile the report, show it'''
         self._change_mode()
+        reporter = ReportFormatter()
+        reporter.AddObjects(
+            PieObjectStore(
+                [ self.objectstore[x] 
+                  for x in self.ListDisplay.GetCheckedList() ]
+                )
+            )
+        reporter.Sort(order=
+                      ORDERS[self.OrderChoice.GetStringSelection()])
+        xml = reporter.GenerateReport()
+        self.SetXMLContent(xml)
+
 
     def onToggleSelectAll(self, evt):
         print 'ReportPanel.onToggleSelectAll'

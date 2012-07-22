@@ -1,15 +1,15 @@
 # (c) Raif Sarcich 2012 GPLv3
 
-# from pieberry.pieobject import PieObjectStore
-# from pieberry.pieoutput import bibtex
+from pieberry.pieobject import PieObjectStore
+from pieberry.pieoutput import bibtex
 
 import xml.dom.minidom
 
 ORDERS = {
-    _('Author'): 'author', 
-    _('Title'): 'title', 
-    _('Date of Publication'): 'date', 
-    _('File Name'): 'filename'
+    _('Order by Author'): 'author', 
+    _('Order by Title'): 'title', 
+    _('Order by Date of Publication'): 'date', 
+    _('Order by File Name'): 'filename'
     }
 HEADER_FORMATS = ('citation', 'title', 'authortitle', 'filename')
 
@@ -73,14 +73,13 @@ if __name__ == '__main__':
 class ReportFormatter:
     '''A class to prepare wxXML formatted reports for the user'''
     def __init__(self, header_format='authortitle'):
-        # self.ostore = PieObjectStore()
-        self.ostore = []
+        self.ostore = PieObjectStore()
         self.header_format = header_format
         self.basedom = xml.dom.minidom.parseString(report_xml_header+report_xml_footer)
 
     def _get_header(self, obj):
         if self.header_format == 'authortitle':
-            return obj.Author() + u' - ' + obj.Title()
+            return obj.Author() + u' \u2014 ' + obj.Title()
         else:
             raise Exception, 'header style not implemented'
 
@@ -105,24 +104,33 @@ class ReportFormatter:
             header.setAttribute('fontface', 'serif')
             header.setAttribute('alignment', '1')
             header.setAttribute('parspacingafter', '10')
-            header.setAttribute('parspacingbefore', '10')
+            header.setAttribute('parspacingbefore', '20')
             header.setAttribute('linespacing', '10')
             headerpara = self.basedom.createElement('paragraph')
+            dummypara = self.basedom.createElement('paragraph')
+            headertext = self.basedom.createElement('text')
+            headertext.setAttribute('fontface', 'sansserif')
+            headertext.setAttribute('fontsize', '16')
+            headertext.setAttribute('fontweight', '92')
+            # headertext.setAttribute('fontunderlined', '1')
             headertextnode = self.basedom.createTextNode(self._get_header(obj))
 
             # pin it to the DOM tree
-            headerpara.appendChild(headertextnode)
+            headertext.appendChild(headertextnode)
+            headerpara.appendChild(headertext)
+            header.appendChild(dummypara)
             header.appendChild(headerpara)
-            basedom.childNodes[0].appendChild(header)
+            self.basedom.childNodes[0].appendChild(header)
 
             if obj.notes:
                 # pull the xml payload out of the notes page
                 xparse = xml.dom.minidom.parseString(obj.notes)
                 payload = xparse.getElementsByTagName('paragraphlayout')[0]
-
-            newnode = basedom.importNode(payload, True)
-            basedom.childNodes[0].appendChild(newnode)
+                newnode = self.basedom.importNode(payload, True)
+                self.basedom.childNodes[0].appendChild(newnode)
             
-        return basedom.toxml()
+        # print self.basedom.toprettyxml(encoding="UTF-8", indent="  ")
+
+        return self.basedom.toprettyxml(encoding="UTF-8", indent="  ")
 
     
