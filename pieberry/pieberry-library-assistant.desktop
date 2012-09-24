@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Application
+Exec=pieberry-library-assistant
+Icon=pieberry.png
+Path=
+Terminal=false
+GenericName=Library Assistant
+Name=Pieberry
+X-DCOP-ServiceType=Multi
+Categories=Applications;Office;
