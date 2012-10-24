@@ -85,7 +85,7 @@ class NormalContextObject:
                 linkdata['Url'] = urlparse.urljoin(
                     baseurl, link['href'].encode('utf-8'))
             except: continue
-            linkdata['Url'] = unicode(linkdata['Url'])
+            linkdata['Url'] = linkdata['Url'].decode('utf-8')
             if link.findPrevious(head_re):
                 linkdata['LastHeading'] = unicode(
                     link.findPrevious(head_re).text)

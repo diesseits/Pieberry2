@@ -27,7 +27,7 @@ def download_file(
         if os.path.exists(suggested_path):
             raise 'download_file: File already exists!'
         
-        request = urllib2.Request(safequote(url), headers=headers)
+        request = urllib2.Request(safequote(url.encode('utf-8')), headers=headers)
         response = urllib2.urlopen(request)
         cj.extract_cookies(response,request)
         cookie_handler= urllib2.HTTPCookieProcessor( cj )
